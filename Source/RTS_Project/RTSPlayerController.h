@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "RTSHUD.h"
+#include "RTSMinion.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
+#include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 #include "RTSPlayerController.generated.h"
+
 
 
 /**
@@ -30,4 +33,6 @@ protected:
 	void SelectPressed();
 	void SelectReleased();
 	void MoveSelected();
+
+	TArray <ARTSMinion*> SelectedUnits;
 };

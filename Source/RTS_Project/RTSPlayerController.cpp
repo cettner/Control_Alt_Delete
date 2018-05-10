@@ -33,9 +33,19 @@ void ARTSPlayerController::SelectPressed()
 void ARTSPlayerController::SelectReleased()
 {
 	HudPtr->SelctionInProcess = false;
+	SelectedUnits = HudPtr->Selected_Units;
 }
 
 void ARTSPlayerController::MoveSelected()
 {
-
+	if (SelectedUnits.Num() > 0)
+	{
+		for (int32 i = 0; i < SelectedUnits.Num(); i++)
+		{
+			FHitResult Hit;
+			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, Hit);
+			FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
+			UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(),MoveLocal);
+		}
+	}
 }
