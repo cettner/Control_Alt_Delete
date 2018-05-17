@@ -9,6 +9,8 @@ ARTSMinionController::ARTSMinionController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+
+	//fps elements
 }
 
 void ARTSMinionController::PlayerTick(float DeltaTime)

@@ -17,6 +17,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 AFP_FirstPersonCharacter::AFP_FirstPersonCharacter()
 {
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -37,6 +38,8 @@ AFP_FirstPersonCharacter::AFP_FirstPersonCharacter()
 	Mesh1P->bCastDynamicShadow = false;			// Disallow mesh to cast dynamic shadows
 	Mesh1P->CastShadow = false;				// Disallow mesh to cast other shadows
 
+	// Should set the mesh to invisible to the owner.... but dosn't
+	GetMesh()->SetOwnerNoSee(true);
 
 	// Create a gun mesh component
 	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));

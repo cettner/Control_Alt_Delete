@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FP_FirstPersonHUD.h"
 #include "FP_FirstPersonCharacter.generated.h"
+
 
 class UInputComponent;
 class UCameraComponent;
@@ -21,9 +23,6 @@ class AFP_FirstPersonCharacter : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;
 
-	/** View Mesh: Mesh that other players can see  */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
-	USkeletalMeshComponent* Mesh2P;
 
 	/** Gun mesh */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
@@ -65,6 +64,8 @@ public:
 	float WeaponDamage;
 
 protected:
+
+//	AFP_FirstPersonHUD * hud;
 
 	/** Handler for a touch input beginning. */
 	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);

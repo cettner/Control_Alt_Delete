@@ -24,7 +24,7 @@ ARTSCamera::ARTSCamera()
 	Camera_Speed = 800.0f;
 
 	//Give control to player 0
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
