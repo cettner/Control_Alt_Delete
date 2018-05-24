@@ -22,6 +22,9 @@ void ARTSPlayerController::SetupInputComponent()
 	InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSPlayerController::SelectPressed);
 	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSPlayerController::SelectReleased);
 	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSPlayerController::MoveSelected);
+	
+	// switch to other character hud used for debugging, supported by level blueprint
+	InputComponent->BindAction("KeyOne", IE_Pressed, this, &ARTSPlayerController::SwapHud);
 }
 
 void ARTSPlayerController::SelectPressed()
@@ -48,4 +51,9 @@ void ARTSPlayerController::MoveSelected()
 			UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(),MoveLocal);
 		}
 	}
+}
+
+void ARTSPlayerController::SwapHud()
+{
+	HudPtr->bIsRTSCharacter = !HudPtr->bIsRTSCharacter;
 }

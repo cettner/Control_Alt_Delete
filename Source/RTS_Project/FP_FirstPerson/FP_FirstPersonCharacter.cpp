@@ -38,7 +38,7 @@ AFP_FirstPersonCharacter::AFP_FirstPersonCharacter()
 	Mesh1P->bCastDynamicShadow = false;			// Disallow mesh to cast dynamic shadows
 	Mesh1P->CastShadow = false;				// Disallow mesh to cast other shadows
 
-	// Should set the mesh to invisible to the owner.... but dosn't
+	// Should set the mesh to invisible to the owner.... but dosn't had to configure blueprint
 	GetMesh()->SetOwnerNoSee(true);
 
 	// Create a gun mesh component
