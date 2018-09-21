@@ -8,6 +8,9 @@ ARTSPlayerController::ARTSPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	this->bEnableClickEvents = true;
+	this->bEnableAutoLODGeneration = true;
+
 
 }
 
@@ -23,6 +26,8 @@ void ARTSPlayerController::SetupInputComponent()
 	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSPlayerController::SelectReleased);
 	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSPlayerController::MoveSelected);
 	
+	ClickEventKeys.Add(EKeys::RightMouseButton);
+
 	// switch to other character hud used for debugging, supported by level blueprint
 	InputComponent->BindAction("KeyOne", IE_Pressed, this, &ARTSPlayerController::SwapHud);
 }
