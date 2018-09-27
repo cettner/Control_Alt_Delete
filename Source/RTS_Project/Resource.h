@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RTSMinion.h"
+#include "RTSHUD.h"
 #include "GameFramework/Actor.h"
 #include "Resource.generated.h"
 
@@ -22,6 +24,9 @@ protected:
 	UFUNCTION(Category = Default)
 	void OnRightClick(AActor* Target, FKey ButtonPressed);
 
+	TArray <ARTSMinion*> Tasked_Units;
+
+	ARTSHUD * HudPtr;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -25,6 +25,7 @@ public:
 	ARTSPlayerController();
 	
 	ARTSHUD * HudPtr;
+	TArray <ARTSMinion*> SelectedUnits;
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -36,5 +37,5 @@ protected:
 	void MoveSelected();
 	void SwapHud();
 
-	TArray <ARTSMinion*> SelectedUnits;
+	
 };

@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Resource.h"
+#include "RTSPlayerController.h"
+#include "GameFramework/PlayerController.h"
 #include "Components/StaticMeshComponent.h"
 
 
@@ -27,7 +29,13 @@ void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 
 	if (ButtonPressed == EKeys::RightMouseButton)
 	{
-		int assignment = 6;
+		ARTSPlayerController * PC =	(ARTSPlayerController*)GetWorld()->GetFirstPlayerController();
+		Tasked_Units = PC->SelectedUnits;
+
+		if (Tasked_Units.Num() > 0)
+		{
+			int hit = 12;
+		}
 	}
 	
 }
