@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSPlayerController.h"
-
 #include "ConstructorHelpers.h"
 
 ARTSPlayerController::ARTSPlayerController()

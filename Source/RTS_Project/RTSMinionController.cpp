@@ -4,7 +4,7 @@
 #include "AI/Navigation/NavigationSystem.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "RTSMinion.h"
-
+/*
 ARTSMinionController::ARTSMinionController()
 {
 	bShowMouseCursor = true;
@@ -90,3 +90,4 @@ void ARTSMinionController::OnSetDestinationReleased()
 	// clear flag to indicate we should stop updating the destination
 	bMoveToMouseCursor = false;
 }
+*/

@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "RTSMinion.h"
 #include "RTSHUD.h"
+#include "RTSBUILDER.h"
 #include "GameFramework/Actor.h"
 #include "Resource.generated.h"
+
 
 UCLASS(Blueprintable)
 class RTS_PROJECT_API AResource : public AActor
@@ -16,6 +18,9 @@ class RTS_PROJECT_API AResource : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AResource(const FObjectInitializer& ObjectInitializer);
+	int Mine(UINT amount_to_mine);
+
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,6 +30,11 @@ protected:
 	void OnRightClick(AActor* Target, FKey ButtonPressed);
 
 	TArray <ARTSMinion*> Tasked_Units;
+	TArray <ARTSBUILDER*> Mining_Units;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	bool is_infinite;
+	UINT resource_val = 500;
 
 	ARTSHUD * HudPtr;
 public:	
@@ -35,7 +45,7 @@ public:
 	UStaticMeshComponent* Mesh;
 
 private:
-	bool is_harvested;
+	
 
 	
 };
