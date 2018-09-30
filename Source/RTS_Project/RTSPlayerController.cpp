@@ -3,6 +3,7 @@
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
 
+
 ARTSPlayerController::ARTSPlayerController()
 {
 	bShowMouseCursor = true;
@@ -52,7 +53,16 @@ void ARTSPlayerController::MoveSelected()
 			FHitResult Hit;
 			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, Hit);
 			FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
-			UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(),MoveLocal);
+
+			if (SelectedUnits[i]->HasAssets())
+			{
+				SelectedUnits[i]->ReleaseAssets(MoveLocal);
+			}
+			else
+			{
+				UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(), MoveLocal);
+			}
+
 		}
 	}
 }

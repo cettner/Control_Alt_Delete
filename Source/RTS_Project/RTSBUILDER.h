@@ -10,6 +10,7 @@
  * 
  */
 
+
 class AResource;
 
 enum Builder_State
@@ -28,6 +29,9 @@ class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion
 public:
 	void Set_Node(AResource * current_node);
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual bool HasAssets() override;
+	virtual void ReleaseAssets(FVector Base_Order) override;
 
 	void Check_Mine_Status();
 	void Mine_Resource();
@@ -49,6 +53,7 @@ private:
 	AResource * target_node;
 	FTimerHandle Mine_Handler;
 	float mine_range = 175.0;
-	
+	bool node_timer_set = false;
 
+	int node_ref = -1;
 };

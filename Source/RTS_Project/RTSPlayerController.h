@@ -6,6 +6,7 @@
 #include "RTSHUD.h"
 #include "RTSMinion.h"
 #include "RTSCamera.h"
+#include "RTSBUILDER.h"
 #include "GameFramework/PlayerController.h"
 #include "Components/InputComponent.h"
 #include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
@@ -36,6 +37,4 @@ protected:
 	void SelectReleased();
 	void MoveSelected();
 	void SwapHud();
-
-	
 };

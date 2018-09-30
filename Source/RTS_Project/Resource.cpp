@@ -2,10 +2,9 @@
 
 #include "Resource.h"
 #include "RTSPlayerController.h"
-
 #include "GameFramework/PlayerController.h"
 #include "Components/StaticMeshComponent.h"
-
+#include "Engine.h"
 
 
 
@@ -27,7 +26,30 @@ void AResource::Tick(float DeltaTime)
 void AResource::BeginPlay()
 {
 	Super::BeginPlay();
-	SetActorTickEnabled(true);
+	FVector currentlocal = GetActorLocation();
+	FVector AddLocal = currentlocal;
+	float radius = 50.0;
+
+	AddLocal.X = currentlocal.X + radius;
+	Slots.Add(AddLocal);
+
+	AddLocal.X = currentlocal.X - radius;
+	Slots.Add(AddLocal);
+
+	AddLocal.X = currentlocal.X;
+
+	AddLocal.Y = currentlocal.Y + radius;
+	Slots.Add(AddLocal);
+
+	AddLocal.Y = currentlocal.Y - radius;
+	Slots.Add(AddLocal);
+
+	for (int i = 0; i < Slots.Num(); i++)
+	{
+		Slot_Available.Add(true);
+	}
+		
+
 }
 
 void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
@@ -58,13 +80,35 @@ int AResource::Mine(UINT amount_to_mine)
 	{
 		int retval = resource_val;
 		resource_val = 0;
+		Destroy(this);
 
-		bool die = Destroy(this);
-		
 		return(retval);
 	}
 
 
+}
+
+// attempts to get a valid node location, if unsuccesful, returns nodes rootlocation
+FVector AResource::GetSlot(int &ref_idx)
+{
+	for (int i = 0; i < NUM_SLOTS; i++)
+	{
+		if (Slot_Available[i])
+		{
+			Slot_Available[i] = false;
+			ref_idx = i;
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Actor Claimed Slot %d"),i));
+			return(Slots[i]);
+		}		
+	}	
+
+	return(this->GetActorLocation());
+}
+
+void AResource::FreeSlot(int i)
+{
+	Slot_Available[i] = true;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Actor Freed Slot %d"), i));
 }
 
 

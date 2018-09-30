@@ -10,6 +10,8 @@
 #include "Resource.generated.h"
 
 
+#define NUM_SLOTS 4
+
 UCLASS(Blueprintable)
 class RTS_PROJECT_API AResource : public AActor
 {
@@ -20,7 +22,8 @@ public:
 	AResource(const FObjectInitializer& ObjectInitializer);
 	int Mine(UINT amount_to_mine);
 
-
+	FVector GetSlot(int &ref_idx);
+	void FreeSlot(int i);
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,12 +32,12 @@ protected:
 	UFUNCTION(Category = Default)
 	void OnRightClick(AActor* Target, FKey ButtonPressed);
 
-	TArray <ARTSMinion*> Tasked_Units;
-	TArray <ARTSBUILDER*> Mining_Units;
+	TArray <bool> Slot_Available;
+	TArray <FVector> Slots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool is_infinite;
-	UINT resource_val = 500;
+	UINT resource_val = 90;
 
 	ARTSHUD * HudPtr;
 public:	

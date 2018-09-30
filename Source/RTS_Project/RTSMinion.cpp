@@ -51,6 +51,24 @@ void ARTSMinion::SetDeselected()
 	CursorToWorld->SetVisibility(false);
 }
 
+void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the unit to ignore the PC or dispatch any remaining tasks before enacting the move operation.
+{
+	if (bismovespecial) // we have special instructions from elsewhere so ignore the PC this time.
+	{
+		bismovespecial = false;
+	}
+	else  //unless overloaded this should never be called
+	{
+		UNavigationSystem::SimpleMoveToLocation(this->GetController(), Order_Local);
+	}
+	
+}
+
+bool ARTSMinion::HasAssets()
+{
+	return (bismovespecial);
+}
+
 void ARTSMinion::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
