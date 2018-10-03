@@ -37,8 +37,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool is_infinite;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UINT resource_val = 90;
+	int resource_val = 90;
 
 	ARTSHUD * HudPtr;
 public:	

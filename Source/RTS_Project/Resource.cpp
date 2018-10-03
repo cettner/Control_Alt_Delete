@@ -71,7 +71,7 @@ void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 
 int AResource::Mine(UINT amount_to_mine)
 {
-	if (resource_val > amount_to_mine)
+	if (resource_val > (int)amount_to_mine)
 	{
 		resource_val -= amount_to_mine;
 		return(amount_to_mine);
