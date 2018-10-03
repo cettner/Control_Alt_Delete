@@ -41,7 +41,7 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 	{
 		bismovespecial = false;
 	}
-	else if(state == MINING)
+	else if(state == MINING || state == MINE_ON_ROUTE)
 	{
 		if (IsValid(target_node))
 		{
@@ -57,14 +57,12 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 		state = IDLE;
 		UNavigationSystem::SimpleMoveToLocation(this->GetController(),Base_Order);
 	}
-
 }
 
 void ARTSBUILDER::Set_Node(AResource * current_node)   //EDIT THIS
 {
-	if (current_node != target_node)
-	{
-		if (IsValid(current_node))
+	
+		if (IsValid(current_node)  && current_node != target_node)
 		{
 			target_node = current_node;
 			state = MINE_ON_ROUTE;
@@ -73,12 +71,16 @@ void ARTSBUILDER::Set_Node(AResource * current_node)   //EDIT THIS
 
 			UNavigationSystem::SimpleMoveToLocation(this->GetController(), nodelocal);
 		}
+		else if (current_node == target_node && (state == MINING || state == MINE_ON_ROUTE)) // we're already mining or traveling to this node, so ignore the command.
+		{
+			bismovespecial = true;
+		}
 		else
 		{
 			state = IDLE;
 		}
 	}
-}
+
 
 void ARTSBUILDER::Check_Mine_Status()
 {

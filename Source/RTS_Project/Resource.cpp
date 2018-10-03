@@ -48,13 +48,10 @@ void AResource::BeginPlay()
 	{
 		Slot_Available.Add(true);
 	}
-		
-
 }
 
 void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 {
-
 	if (ButtonPressed == EKeys::RightMouseButton)
 	{
 		ARTSPlayerController * PC =	(ARTSPlayerController*)GetWorld()->GetFirstPlayerController();
