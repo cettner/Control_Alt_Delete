@@ -43,7 +43,10 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 	}
 	else if(state == MINING)
 	{
-		target_node->FreeSlot(node_ref);
+		if (IsValid(target_node))
+		{
+			target_node->FreeSlot(node_ref);
+		}
 		target_node = NULL;
 		node_ref = -1;
 		state = IDLE;
@@ -59,45 +62,60 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 
 void ARTSBUILDER::Set_Node(AResource * current_node)   //EDIT THIS
 {
-	if (IsValid(current_node))
+	if (current_node != target_node)
 	{
-		target_node = current_node;
-		state = MINE_ON_ROUTE;
-		FVector nodelocal = target_node->GetSlot(node_ref);
-		bismovespecial = true;
+		if (IsValid(current_node))
+		{
+			target_node = current_node;
+			state = MINE_ON_ROUTE;
+			FVector nodelocal = target_node->GetSlot(node_ref);
+			bismovespecial = true;
 
-		UNavigationSystem::SimpleMoveToLocation(this->GetController(), nodelocal);
-	}
-	else
-	{
-		state = IDLE;
+			UNavigationSystem::SimpleMoveToLocation(this->GetController(), nodelocal);
+		}
+		else
+		{
+			state = IDLE;
+		}
 	}
 }
 
 void ARTSBUILDER::Check_Mine_Status()
 {
-	FVector mylocal = GetActorLocation();
-
-	float distance = mylocal.Dist(mylocal, target_node->GetActorLocation());
-	if (carried_resource == max_resource)
+	if (IsValid(target_node))
 	{
-		if (node_ref != -1)
+		FVector mylocal = GetActorLocation();
+		FVector nodelocal = target_node->GetActorLocation();
+
+		float distance = mylocal.Dist(mylocal, nodelocal);
+		if (carried_resource == max_resource)
 		{
-			target_node->FreeSlot(node_ref);
+			if (node_ref != -1)
+			{
+				target_node->FreeSlot(node_ref);
+			}
+			state = DElIVERY;
 		}
-		state = DElIVERY;
-	}
-	else if (distance <  mine_range && !node_timer_set) // we're in range of the node and we havnt set the timer already
-	{
-		state = MINING;
-		GetWorldTimerManager().SetTimer(Mine_Handler, this, &ARTSBUILDER::Mine_Resource, 1.0, false, mine_interval);
-		node_timer_set = true;
-	}
-	else if (distance < mine_range && state == MINE_ON_ROUTE)
-	{
-		state = MINING;
-	}
+		else if (distance < mine_range && !node_timer_set) // we're in range of the node and we havnt set the timer already
+		{
+			state = MINING;
 
+			FRotator newrot = (nodelocal - mylocal).Rotation();
+			newrot.Pitch = 0;
+			RootComponent->SetWorldRotation(newrot);
+
+			GetWorldTimerManager().SetTimer(Mine_Handler, this, &ARTSBUILDER::Mine_Resource, 1.0, false, mine_interval);
+			node_timer_set = true;
+		}
+		else if (distance < mine_range && state == MINE_ON_ROUTE)
+		{
+			state = MINING;
+		}
+	}
+	else
+	{
+		node_ref = -1;
+	}
 }
 
 void ARTSBUILDER::Mine_Resource()

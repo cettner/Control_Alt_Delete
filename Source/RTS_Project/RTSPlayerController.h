@@ -26,6 +26,8 @@ public:
 	ARTSPlayerController();
 	
 	ARTSHUD * HudPtr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
 
 	virtual void BeginPlay() override;
