@@ -12,7 +12,7 @@
 #include "Engine/Texture2D.h"
 #include "RTSHUD.generated.h"
 
-
+class ARTSStructure; 
 /**
  * 
  */
@@ -31,8 +31,11 @@ public:
 	FVector2D GetMouseLocation();
 
 	TArray <ARTSMinion*> Selected_Units;
+	TArray <ARTSStructure*> Selected_Structure;
 
 	bool SelctionInProcess = false;
+	bool StructureSelected = false;
+
 
 	UPROPERTY(EditAnywhere)
 		float selection_transparency = 0.15f;
@@ -43,5 +46,7 @@ public:
 private:
 	/** Crosshair asset pointer */
 	class UTexture2D* CrosshairTex;
-		
+	void GetSelectedUnits();
+	void GetSelectedStructures();
+	void CleanSelectedActors();
 };

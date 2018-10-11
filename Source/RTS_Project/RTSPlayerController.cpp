@@ -2,6 +2,7 @@
 
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
+#include "RTSStructure.h"
 
 
 ARTSPlayerController::ARTSPlayerController()
@@ -27,6 +28,7 @@ void ARTSPlayerController::SetupInputComponent()
 	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSPlayerController::MoveSelected);
 	
 	ClickEventKeys.Add(EKeys::RightMouseButton);
+	ClickEventKeys.Add(EKeys::LeftMouseButton);
 
 	// switch to other character hud used for debugging, supported by level blueprint
 	InputComponent->BindAction("KeyOne", IE_Pressed, this, &ARTSPlayerController::SwapHud);
@@ -34,14 +36,26 @@ void ARTSPlayerController::SetupInputComponent()
 
 void ARTSPlayerController::SelectPressed()
 {
-	HudPtr->Initial_select = HudPtr->GetMouseLocation();
-	HudPtr->SelctionInProcess = true;
+	if (!HudPtr->StructureSelected)
+	{
+		HudPtr->Initial_select = HudPtr->GetMouseLocation();
+		HudPtr->SelctionInProcess = true;
+	}
 }
 
 void ARTSPlayerController::SelectReleased()
 {
-	HudPtr->SelctionInProcess = false;
-	SelectedUnits = HudPtr->Selected_Units;
+	if (HudPtr->SelctionInProcess)
+	{
+		HudPtr->SelctionInProcess = false;
+		SelectedUnits = HudPtr->Selected_Units;
+	}
+	else if (HudPtr->StructureSelected)
+	{
+		HudPtr->StructureSelected = false;
+		SelectedStructures = HudPtr->Selected_Structure;
+	}
+
 }
 
 void ARTSPlayerController::MoveSelected()
@@ -62,7 +76,6 @@ void ARTSPlayerController::MoveSelected()
 			{
 				UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(), MoveLocal);
 			}
-
 		}
 	}
 }

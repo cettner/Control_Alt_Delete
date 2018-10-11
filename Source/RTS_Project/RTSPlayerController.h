@@ -17,6 +17,8 @@
 /**
  * 
  */
+
+class ARTSStructure;
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public APlayerController
 {
@@ -29,6 +31,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
+	TArray <ARTSStructure*> SelectedStructures;
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
