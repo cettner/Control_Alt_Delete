@@ -3,7 +3,7 @@
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
 #include "RTSStructure.h"
-
+#include "Engine.h"
 
 ARTSPlayerController::ARTSPlayerController()
 {
@@ -93,6 +93,8 @@ void ARTSPlayerController::SwapHud()
 void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)
 {
 	Resource_Count[type] += amount_to_add;
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Minion Delivered %d of Resource %d"), amount_to_add, (int)type));
 
 	if (Resource_Count[type] > MAX_RESOURCES)
 	{

@@ -50,6 +50,7 @@ void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
 		{
 			if (Cast<ARTSBUILDER>(PC->SelectedUnits[i]))
 			{
+				Cast<ARTSBUILDER>(PC->SelectedUnits[i])->ReleaseAssets();
 				Cast<ARTSBUILDER>(PC->SelectedUnits[i])->Set_Structure(this);
 			}
 		}

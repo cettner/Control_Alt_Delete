@@ -3,13 +3,21 @@
 #include "RTSBUILDER.h"
 #include "Resource.h"
 #include "RTSStructure.h"
+#include "GameFramework/PlayerController.h"
 #include "RTSPlayerController.h"
 #include "Runtime/Engine/Public/TimerManager.h "
+#include "GameFramework/Actor.h"
 #include "Engine.h"
 #include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 
 
-
+ARTSBUILDER::ARTSBUILDER()
+{
+	for (int i = 0; i < NUM_RESOURCES; i++)
+	{
+		type_count.Add(0);
+	}
+}
 
 void ARTSBUILDER::Set_Structure(ARTSStructure * current_struct)
 {
@@ -42,9 +50,19 @@ void ARTSBUILDER::Check_Delivery_Status()
 		FVector structlocal = target_struct->GetActorLocation();
 		float distance = mylocal.Dist(mylocal, structlocal);
 
-		if (distance < mine_range)
+		if (distance < deliver_range)
 		{
 			DeliverResources();
+
+			if (is_state_machine_active)  // automatically go back to the node we were mining, or a node nearby.
+			{
+				state = MINE_ON_ROUTE;
+			}
+			else
+			{
+				state = IDLE;
+			}
+
 		}
 
 	}
@@ -56,7 +74,17 @@ void ARTSBUILDER::Check_Delivery_Status()
 
 void ARTSBUILDER::DeliverResources()
 {
-	ARTSPlayerController * PC = (ARTSPlayerController *)this->GetController();
+	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	for (int i = 0; i < NUM_RESOURCES; i++)
+	{
+		if (type_count[i] > 0)
+		{
+			PC->AddResource(type_count[i], (Resource_Types)i);
+			type_count[i] = 0;
+		}
+	}
+
 	carried_resource = 0;
 }
 
@@ -125,6 +153,38 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 		state = IDLE;
 		is_state_machine_active = false;
 		UNavigationSystem::SimpleMoveToLocation(this->GetController(),Base_Order);
+	}
+}
+
+void ARTSBUILDER::ReleaseAssets()
+{
+	if (bismovespecial)  // we recieved orders from elsewhere so ignore the call the first time
+	{
+		bismovespecial = false;
+	}
+	else if (state == MINING || state == MINE_ON_ROUTE)
+	{
+		if (IsValid(target_node))
+		{
+			target_node->FreeSlot(node_ref);
+		}
+		target_node = NULL;
+		target_struct = NULL;
+		node_ref = -1;
+		state = IDLE;
+		is_state_machine_active = false;
+	}
+	else if (state == DELIVERY_ON_ROUTE)
+	{
+		target_struct = NULL;
+		target_node = NULL;
+		state = IDLE;
+		is_state_machine_active = false;
+	}
+	else
+	{
+		state = IDLE;
+		is_state_machine_active = false;
 	}
 }
 
@@ -213,12 +273,14 @@ void ARTSBUILDER::Mine_Resource()
 		if (added_resource == gather_amount)  // we got the amount we requested so ask for more.
 		{
 			carried_resource += added_resource;
+			type_count[type] += added_resource;
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"),carried_resource, max_resource));
 			Check_Mine_Status();
 		}
 		else  // the node was destroyed by our request.
 		{
 			carried_resource += added_resource;
+			type_count[type] += added_resource;
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
 		}
 	}

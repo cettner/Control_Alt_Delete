@@ -43,6 +43,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int resource_val = 90;
 
+	virtual void SetType(Resource_Types typeset);
 	ARTSHUD * HudPtr;
 public:	
 	// Called every frame
@@ -53,5 +54,6 @@ public:
 
 private:
 	Resource_Types mytype = TYPE_ONE;
+	
 	
 };

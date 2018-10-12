@@ -64,6 +64,15 @@ void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the 
 	
 }
 
+//interface function for override;
+void ARTSMinion::ReleaseAssets()
+{
+	if (bismovespecial) // we have special instructions from elsewhere so ignore the PC this time.
+	{
+		bismovespecial = false;
+	}
+}
+
 bool ARTSMinion::HasAssets()
 {
 	return (bismovespecial);

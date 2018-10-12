@@ -30,6 +30,8 @@ public:
 
 	virtual void ReleaseAssets(FVector Order_Local);
 
+	virtual void ReleaseAssets();
+
 	virtual bool HasAssets();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

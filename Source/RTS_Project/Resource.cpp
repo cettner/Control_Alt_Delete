@@ -16,6 +16,11 @@ AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(Object
 	OnClicked.AddUniqueDynamic(this, &AResource::OnRightClick);
 }
 
+void AResource::SetType(Resource_Types typeset)
+{
+	mytype = typeset;
+}
+
 // Called every frame
 void AResource::Tick(float DeltaTime)
 {
@@ -68,6 +73,7 @@ void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 
 int AResource::Mine(UINT amount_to_mine, Resource_Types& type )
 {
+	type = mytype;
 	if (resource_val > (int)amount_to_mine)
 	{
 		resource_val -= amount_to_mine;

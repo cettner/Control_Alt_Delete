@@ -7,7 +7,7 @@
 #include "RTSMinion.h"
 #include "RTSCamera.h"
 #include "RTSBUILDER.h"
-#include "GameFramework/PlayerController.h"
+
 #include "Components/InputComponent.h"
 #include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 #include "RTSPlayerController.generated.h"
@@ -61,6 +61,8 @@ public:
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	void AddResource(int amount_to_add, Resource_Types type);
+	bool TakeResource(int amount_to_take, Resource_Types type);
 	
 protected:
 
@@ -68,8 +70,6 @@ protected:
 	void SelectReleased();
 	void MoveSelected();
 	void SwapHud();
-	void AddResource(int amount_to_add, Resource_Types type);
-	bool TakeResource(int amount_to_take, Resource_Types type);
 
 private:
 	TArray <int> Resource_Count;
