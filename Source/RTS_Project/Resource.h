@@ -26,7 +26,6 @@ public:
 	FVector GetSlot(int &ref_idx);
 	void FreeSlot(int i);
 
-	int type = 0;
 
 protected:
 	// Called when the game starts or when spawned
@@ -53,7 +52,6 @@ public:
 	UStaticMeshComponent* Mesh;
 
 private:
-	
-
+	Resource_Types mytype = TYPE_ONE;
 	
 };
