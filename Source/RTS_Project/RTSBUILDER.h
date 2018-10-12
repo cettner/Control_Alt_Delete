@@ -41,7 +41,7 @@ public:
 	void Mine_Resource();
 
 	void Check_Delivery_Status();
-
+	ARTSStructure * Get_Nearest_Dropoint();
 	
 	int carried_resource = 0;
 	int max_resource = 50;
@@ -57,6 +57,8 @@ protected:
 
 private:
 	AResource * target_node;
+	FVector Node_Local;
+
 	ARTSStructure * target_struct;
 	FTimerHandle Mine_Handler;
 	float mine_range = 175.0;
@@ -65,6 +67,9 @@ private:
 	bool is_state_machine_active = false;
 	int node_ref = -1;
 	TArray<int> type_count;
+
+
 	void DeliverResources();
 	bool Drop_Point_Available();
+	bool Node_Nearby(FVector check_local);
 };

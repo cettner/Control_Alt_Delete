@@ -87,8 +87,6 @@ int AResource::Mine(UINT amount_to_mine, Resource_Types& type )
 
 		return(retval);
 	}
-
-
 }
 
 // attempts to get a valid node location, if unsuccesful, returns nodes rootlocation

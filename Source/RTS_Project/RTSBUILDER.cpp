@@ -56,7 +56,22 @@ void ARTSBUILDER::Check_Delivery_Status()
 
 			if (is_state_machine_active)  // automatically go back to the node we were mining, or a node nearby.
 			{
-				state = MINE_ON_ROUTE;
+				if (IsValid(target_node)) // the node we were mining is still legit.
+				{
+					state = MINE_ON_ROUTE;
+					FVector nodelocal = target_node->GetSlot(node_ref);
+					UNavigationSystem::SimpleMoveToLocation(this->GetController(), nodelocal);
+				}
+				else if (false) // node we were mining is full or gone so look to see if a nearby one exists.
+				{
+					// do stuff here for NodeLocal(); 
+				}
+				else // we couldnt find anything to mine within reason.
+				{
+					is_state_machine_active = false;
+					state = IDLE;
+				}
+				
 			}
 			else
 			{
@@ -70,6 +85,35 @@ void ARTSBUILDER::Check_Delivery_Status()
 	{
 		target_struct = NULL;
 	}
+}
+
+ARTSStructure * ARTSBUILDER::Get_Nearest_Dropoint()
+{
+
+	float closest_dist = FLT_MAX;
+	float dist;
+
+	FVector mylocal = GetActorLocation();
+
+	ARTSStructure * retval = NULL;
+
+	for (TActorIterator<ARTSStructure>ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		if (ActorItr->IsDropPoint())
+		{
+			FVector struct_local = ActorItr->GetActorLocation();
+			dist = mylocal.Dist(mylocal, struct_local);
+
+			if (dist < closest_dist)
+			{
+				retval = *ActorItr;
+				closest_dist = dist;
+			}
+
+		}
+	}
+
+	return retval;
 }
 
 void ARTSBUILDER::DeliverResources()
@@ -225,8 +269,19 @@ void ARTSBUILDER::Check_Mine_Status()
 				target_node->FreeSlot(node_ref);
 			}
 
-			state = DElIVERY;
-			is_state_machine_active = true;
+			ARTSStructure * droppoint = Get_Nearest_Dropoint();
+			if(droppoint != NULL)
+			{		
+				is_state_machine_active = true;
+				target_struct = droppoint;
+				state = DELIVERY_ON_ROUTE;
+				UNavigationSystem::SimpleMoveToLocation(this->GetController(), droppoint->GetActorLocation());
+			}
+			else
+			{
+				state = IDLE;
+			}
+
 		}
 		else if (distance < mine_range && !node_timer_set) // we're in range of the node and we havnt set the timer already
 		{
@@ -246,6 +301,14 @@ void ARTSBUILDER::Check_Mine_Status()
 	}
 	else
 	{
+		ARTSStructure * droppoint = Get_Nearest_Dropoint();
+		if (droppoint != NULL)
+		{
+			is_state_machine_active = true;
+			target_struct = droppoint;
+			state = DELIVERY_ON_ROUTE;
+			UNavigationSystem::SimpleMoveToLocation(this->GetController(), droppoint->GetActorLocation());
+		}
 		node_ref = -1;
 	}
 }
@@ -286,5 +349,12 @@ void ARTSBUILDER::Mine_Resource()
 	}
 
 }
+
+// TODO:: IMPLEMENT ME
+bool ARTSBUILDER::Node_Nearby(FVector check_local)  
+{
+	return false;
+}
+
 
 

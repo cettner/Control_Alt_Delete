@@ -38,12 +38,9 @@ public:
 	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gameplay)
-		float CurrentIntegrity;
-		float MaxIntegrity;
-		bool bIsConstructed;
-
-
-		
+	float CurrentIntegrity;
+	float MaxIntegrity;
+	bool bIsConstructed;
 
 	FVector BannerLocation;
 		
