@@ -25,6 +25,7 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer)
 	CursorToWorld->DecalSize = FVector(300.0f, 300.0f, 300.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 	CursorToWorld->SetVisibility(false);
+
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +33,8 @@ void ARTSStructure::BeginPlay()
 {
 	PC = (ARTSPlayerController*)GetWorld()->GetFirstPlayerController();
 	HudPtr = Cast<ARTSHUD>(PC->GetHUD());
+	bIsConstructed = false;
+	CurrentIntegrity = 1.0;
 }
 
 void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
@@ -40,6 +43,16 @@ void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
 	{
 		HudPtr->StructureSelected = true;
 		HudPtr->Selected_Structure.Add(this);
+	}
+	else if (ButtonPressed == EKeys::RightMouseButton)
+	{
+		for (int i = 0; i < PC->SelectedUnits.Num(); i++)
+		{
+			if (Cast<ARTSBUILDER>(PC->SelectedUnits[i]))
+			{
+				Cast<ARTSBUILDER>(PC->SelectedUnits[i])->Set_Structure(this);
+			}
+		}
 	}
 }
 // Called every frame
@@ -56,5 +69,10 @@ void ARTSStructure::SetSelected()
 void ARTSStructure::SetDeselected()
 {
 	CursorToWorld->SetVisibility(false);
+}
+
+bool ARTSStructure::IsDropPoint()
+{
+	return (true);
 }
 

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Resource.h"
-#include "RTSPlayerController.h"
+
 #include "GameFramework/PlayerController.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine.h"
@@ -66,7 +66,7 @@ void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 	}
 }
 
-int AResource::Mine(UINT amount_to_mine)
+int AResource::Mine(UINT amount_to_mine, Resource_Types& type )
 {
 	if (resource_val > (int)amount_to_mine)
 	{

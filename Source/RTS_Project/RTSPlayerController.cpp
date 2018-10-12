@@ -18,6 +18,11 @@ ARTSPlayerController::ARTSPlayerController()
 void ARTSPlayerController::BeginPlay()
 {
 	HudPtr = Cast<ARTSHUD>(GetHUD());  // GetHud only returns AHUD, need to cast to get child type, ARTSHUD
+
+	Resource_Count.Add(ResourceOnePLayerStart);
+	Resource_Count.Add(ResourceTwoPLayerStart);
+	Resource_Count.Add(ResourceThreePLayerStart);
+
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -83,4 +88,14 @@ void ARTSPlayerController::MoveSelected()
 void ARTSPlayerController::SwapHud()
 {
 	HudPtr->bIsRTSCharacter = !HudPtr->bIsRTSCharacter;
+}
+
+void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)
+{
+	Resource_Count[type] += amount_to_add;
+
+	if (Resource_Count[type] > MAX_RESOURCES)
+	{
+		Resource_Count[type] = MAX_RESOURCES;
+	}
 }

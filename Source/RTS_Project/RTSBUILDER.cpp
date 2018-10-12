@@ -2,12 +2,68 @@
 
 #include "RTSBUILDER.h"
 #include "Resource.h"
+#include "RTSStructure.h"
+#include "RTSPlayerController.h"
 #include "Runtime/Engine/Public/TimerManager.h "
 #include "Engine.h"
 #include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 
 
 
+
+void ARTSBUILDER::Set_Structure(ARTSStructure * current_struct)
+{
+	if (IsValid(current_struct) && current_struct != target_struct)
+	{
+		target_struct = current_struct;
+
+		if (carried_resource > 0)
+		{
+			state = DELIVERY_ON_ROUTE;
+			bismovespecial = true;
+			UNavigationSystem::SimpleMoveToLocation(this->GetController(),target_struct->GetActorLocation());
+		}
+		else if (current_struct == target_struct && state == DELIVERY_ON_ROUTE)
+		{
+			bismovespecial = true;
+		}
+		else
+		{
+			state = IDLE;
+		}
+	}
+}
+
+void ARTSBUILDER::Check_Delivery_Status()
+{
+	if (IsValid(target_struct))
+	{
+		FVector mylocal = GetActorLocation();
+		FVector structlocal = target_struct->GetActorLocation();
+		float distance = mylocal.Dist(mylocal, structlocal);
+
+		if (distance < mine_range)
+		{
+			DeliverResources();
+		}
+
+	}
+	else // Structure was destroyed before we delivered.
+	{
+		target_struct = NULL;
+	}
+}
+
+void ARTSBUILDER::DeliverResources()
+{
+	ARTSPlayerController * PC = (ARTSPlayerController *)this->GetController();
+	carried_resource = 0;
+}
+
+bool ARTSBUILDER::Drop_Point_Available()
+{
+	return (true);
+}
 
 // Called every frame
 void ARTSBUILDER::Tick(float DeltaTime)
@@ -19,7 +75,9 @@ void ARTSBUILDER::Tick(float DeltaTime)
 	case MINE_ON_ROUTE:
 		Check_Mine_Status();
 		break;
-	
+	case DELIVERY_ON_ROUTE:
+		Check_Delivery_Status();
+		break;
 	default: // IDLE
 		break;
 	}
@@ -48,18 +106,29 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 			target_node->FreeSlot(node_ref);
 		}
 		target_node = NULL;
+		target_struct = NULL;
 		node_ref = -1;
 		state = IDLE;
+		is_state_machine_active = false;
+		UNavigationSystem::SimpleMoveToLocation(this->GetController(), Base_Order);
+	}
+	else if (state == DELIVERY_ON_ROUTE)
+	{
+		target_struct = NULL;
+		target_node = NULL;
+		state = IDLE;
+		is_state_machine_active = false;
 		UNavigationSystem::SimpleMoveToLocation(this->GetController(), Base_Order);
 	}
 	else
 	{
 		state = IDLE;
+		is_state_machine_active = false;
 		UNavigationSystem::SimpleMoveToLocation(this->GetController(),Base_Order);
 	}
 }
 
-void ARTSBUILDER::Set_Node(AResource * current_node)   //EDIT THIS
+void ARTSBUILDER::Set_Node(AResource * current_node)   // IsValid in the past has thrown an unrecognizable exception....
 {
 	
 		if (IsValid(current_node)  && current_node != target_node)
@@ -81,7 +150,6 @@ void ARTSBUILDER::Set_Node(AResource * current_node)   //EDIT THIS
 		}
 	}
 
-
 void ARTSBUILDER::Check_Mine_Status()
 {
 	if (IsValid(target_node))
@@ -96,7 +164,9 @@ void ARTSBUILDER::Check_Mine_Status()
 			{
 				target_node->FreeSlot(node_ref);
 			}
+
 			state = DElIVERY;
+			is_state_machine_active = true;
 		}
 		else if (distance < mine_range && !node_timer_set) // we're in range of the node and we havnt set the timer already
 		{
@@ -127,15 +197,17 @@ void ARTSBUILDER::Mine_Resource()
 	{
 		int gather_amount = (max_resource - carried_resource);  // determine how much room we have to add.
 		int added_resource = 0;
+		Resource_Types type = NULL_TYPE;
 
 		if (gather_amount < mine_amount)  //ask the node for less if we can only fit that much
 		{
-			added_resource = target_node->Mine(gather_amount);
+			
+			added_resource = target_node->Mine(gather_amount,type);
 		}
 		else    // we can ask for the full value
 		{
 			gather_amount = mine_amount; 
-			added_resource = target_node->Mine(gather_amount);
+			added_resource = target_node->Mine(gather_amount,type);
 		}
 
 		if (added_resource == gather_amount)  // we got the amount we requested so ask for more.
@@ -152,3 +224,5 @@ void ARTSBUILDER::Mine_Resource()
 	}
 
 }
+
+

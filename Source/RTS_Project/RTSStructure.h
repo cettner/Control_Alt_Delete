@@ -7,6 +7,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "RTSHUD.h"
 #include "RTSPlayerController.h"
+#include "Resource.h"
 #include "RTSStructure.generated.h"
 
 UCLASS()
@@ -36,12 +37,23 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = StaticMeshComponents)
 	UStaticMeshComponent* Mesh;
 
-	/** A decal that projects to the cursor location. */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gameplay)
+		float CurrentIntegrity;
+		float MaxIntegrity;
+		bool bIsConstructed;
+
+
+		
+
+	FVector BannerLocation;
+		
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
 
 	void SetSelected();
 	void SetDeselected();
+	bool IsDropPoint();
+
 
 private:
 	ARTSHUD* HudPtr;

@@ -7,6 +7,7 @@
 #include "RTSHUD.h"
 #include "RTSBUILDER.h"
 #include "GameFramework/Actor.h"
+#include "RTSPlayerController.h"
 #include "Resource.generated.h"
 
 
@@ -20,10 +21,12 @@ class RTS_PROJECT_API AResource : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AResource(const FObjectInitializer& ObjectInitializer);
-	int Mine(UINT amount_to_mine);
+	int Mine(UINT amount_to_mine, Resource_Types& type);
 
 	FVector GetSlot(int &ref_idx);
 	void FreeSlot(int i);
+
+	int type = 0;
 
 protected:
 	// Called when the game starts or when spawned
