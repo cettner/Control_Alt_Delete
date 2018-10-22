@@ -147,6 +147,9 @@ void ARTSBUILDER::Tick(float DeltaTime)
 	case MINE_ON_ROUTE:
 		Check_Mine_Status();
 		break;
+	case MINING:
+		Check_Node_Status();
+		break;
 	case DELIVERY_ON_ROUTE:
 		Check_Delivery_Status();
 		break;
@@ -348,6 +351,33 @@ void ARTSBUILDER::Mine_Resource()
 		}
 	}
 
+}
+
+void ARTSBUILDER::Check_Node_Status()
+{
+	if (IsValid(target_node))
+	{
+
+	}
+	else if(carried_resource > 0)
+	{
+		ARTSStructure * droppoint = Get_Nearest_Dropoint();
+		if (droppoint != NULL)
+		{
+			is_state_machine_active = true;
+			target_struct = droppoint;
+			state = DELIVERY_ON_ROUTE;
+			UNavigationSystem::SimpleMoveToLocation(this->GetController(), droppoint->GetActorLocation());
+		}
+		else
+		{
+			state = IDLE;
+		}
+	}
+	else
+	{
+		state = IDLE;
+	}
 }
 
 // TODO:: IMPLEMENT ME
