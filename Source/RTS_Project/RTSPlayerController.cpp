@@ -79,7 +79,13 @@ void ARTSPlayerController::MoveSelected()
 			}
 			else
 			{
-				UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(), MoveLocal);
+
+				ARTSAIController * AIC = Cast<ARTSAIController>(SelectedUnits[i]->GetController());
+				if(AIC != NULL)
+				{
+					AIC->MoveToLocation(MoveLocal, 5.0f, false, true, true, true, 0, false);
+				}
+				
 			}
 		}
 	}

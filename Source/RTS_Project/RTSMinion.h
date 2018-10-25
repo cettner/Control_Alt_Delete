@@ -39,6 +39,10 @@ public:
 	float damage;
 
 
+	UPROPERTY(EditAnywhere, Category = Behavior)
+		class UBehaviorTree *RTSBehavior;
+
+
 
 private:
 
