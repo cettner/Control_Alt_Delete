@@ -79,13 +79,7 @@ void ARTSPlayerController::MoveSelected()
 			}
 			else
 			{
-
-				ARTSAIController * AIC = Cast<ARTSAIController>(SelectedUnits[i]->GetController());
-				if(AIC != NULL)
-				{
-					AIC->MoveToLocation(MoveLocal, 5.0f, false, true, true, true, 0, false);
-				}
-				
+				SelectedUnits[i]->RtsMove(MoveLocal);
 			}
 		}
 	}

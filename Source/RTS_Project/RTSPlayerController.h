@@ -9,7 +9,6 @@
 #include "RTSBUILDER.h"
 #include "RTSAIController.h"
 #include "Components/InputComponent.h"
-#include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 #include "RTSPlayerController.generated.h"
 
 

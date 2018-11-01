@@ -9,6 +9,7 @@
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
+#include "RTSAIController.h"
 
 ARTSMinion::ARTSMinion()
 {
@@ -59,7 +60,7 @@ void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the 
 	}
 	else  //unless overloaded this should never be called
 	{
-		UNavigationSystem::SimpleMoveToLocation(this->GetController(), Order_Local);
+		RtsMove(Order_Local);
 	}
 	
 }
@@ -76,6 +77,24 @@ void ARTSMinion::ReleaseAssets()
 bool ARTSMinion::HasAssets()
 {
 	return (bismovespecial);
+}
+
+void ARTSMinion::RtsMove(FVector Local)
+{
+	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+	if (AIC != NULL)
+	{
+		AIC->MoveToLocation(Local, 5.0f, false, true, true, true, 0, false);
+	}
+}
+
+void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
+{
+	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+	if (AIC != NULL)
+	{
+		AIC->MoveToActor(move_to_me, 5.0f, true, false, false, 0, false);
+	}
 }
 
 void ARTSMinion::Tick(float DeltaSeconds)

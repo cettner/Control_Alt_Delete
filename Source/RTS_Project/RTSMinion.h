@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 #include "RTSMinion.generated.h"
 
 UCLASS(Blueprintable)
@@ -14,6 +13,8 @@ class ARTSMinion : public ACharacter
 
 public:
 	ARTSMinion();
+
+	
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
@@ -33,6 +34,9 @@ public:
 	virtual void ReleaseAssets();
 
 	virtual bool HasAssets();
+
+	virtual void RtsMove(FVector Local);
+	virtual void RtsMoveToActor(AActor * move_to_me);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float health;
