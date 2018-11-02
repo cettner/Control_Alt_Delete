@@ -7,9 +7,8 @@
 #include "RTSMinion.h"
 #include "RTSCamera.h"
 #include "RTSBUILDER.h"
-
+#include "RTSAIController.h"
 #include "Components/InputComponent.h"
-#include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 #include "RTSPlayerController.generated.h"
 
 

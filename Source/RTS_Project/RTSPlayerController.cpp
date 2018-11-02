@@ -79,7 +79,7 @@ void ARTSPlayerController::MoveSelected()
 			}
 			else
 			{
-				UNavigationSystem::SimpleMoveToLocation(SelectedUnits[i]->GetController(), MoveLocal);
+				SelectedUnits[i]->RtsMove(MoveLocal);
 			}
 		}
 	}

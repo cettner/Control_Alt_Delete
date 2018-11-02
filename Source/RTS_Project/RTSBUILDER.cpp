@@ -8,7 +8,6 @@
 #include "Runtime/Engine/Public/TimerManager.h "
 #include "GameFramework/Actor.h"
 #include "Engine.h"
-#include "Runtime/Engine/Classes/AI/Navigation/NavigationSystem.h"
 
 
 ARTSBUILDER::ARTSBUILDER()
@@ -29,7 +28,7 @@ void ARTSBUILDER::Set_Structure(ARTSStructure * current_struct)
 		{
 			state = DELIVERY_ON_ROUTE;
 			bismovespecial = true;
-			UNavigationSystem::SimpleMoveToLocation(this->GetController(),target_struct->GetActorLocation());
+			RtsMoveToActor(target_struct);
 		}
 		else if (current_struct == target_struct && state == DELIVERY_ON_ROUTE)
 		{
@@ -60,7 +59,7 @@ void ARTSBUILDER::Check_Delivery_Status()
 				{
 					state = MINE_ON_ROUTE;
 					FVector nodelocal = target_node->GetSlot(node_ref);
-					UNavigationSystem::SimpleMoveToLocation(this->GetController(), nodelocal);
+					RtsMove(nodelocal);
 				}
 				else if (false) // node we were mining is full or gone so look to see if a nearby one exists.
 				{
@@ -147,6 +146,9 @@ void ARTSBUILDER::Tick(float DeltaTime)
 	case MINE_ON_ROUTE:
 		Check_Mine_Status();
 		break;
+	case MINING:
+		Check_Node_Status();
+		break;
 	case DELIVERY_ON_ROUTE:
 		Check_Delivery_Status();
 		break;
@@ -182,7 +184,7 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 		node_ref = -1;
 		state = IDLE;
 		is_state_machine_active = false;
-		UNavigationSystem::SimpleMoveToLocation(this->GetController(), Base_Order);
+		RtsMove(Base_Order);
 	}
 	else if (state == DELIVERY_ON_ROUTE)
 	{
@@ -190,13 +192,13 @@ void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles in
 		target_node = NULL;
 		state = IDLE;
 		is_state_machine_active = false;
-		UNavigationSystem::SimpleMoveToLocation(this->GetController(), Base_Order);
+		RtsMove(Base_Order);
 	}
 	else
 	{
 		state = IDLE;
 		is_state_machine_active = false;
-		UNavigationSystem::SimpleMoveToLocation(this->GetController(),Base_Order);
+		RtsMove(Base_Order);
 	}
 }
 
@@ -242,7 +244,7 @@ void ARTSBUILDER::Set_Node(AResource * current_node)   // IsValid in the past ha
 			FVector nodelocal = target_node->GetSlot(node_ref);
 			bismovespecial = true;
 
-			UNavigationSystem::SimpleMoveToLocation(this->GetController(), nodelocal);
+			RtsMove(nodelocal);
 		}
 		else if (current_node == target_node && (state == MINING || state == MINE_ON_ROUTE)) // we're already mining or traveling to this node, so ignore the command.
 		{
@@ -275,7 +277,7 @@ void ARTSBUILDER::Check_Mine_Status()
 				is_state_machine_active = true;
 				target_struct = droppoint;
 				state = DELIVERY_ON_ROUTE;
-				UNavigationSystem::SimpleMoveToLocation(this->GetController(), droppoint->GetActorLocation());
+				RtsMoveToActor(droppoint);
 			}
 			else
 			{
@@ -307,7 +309,7 @@ void ARTSBUILDER::Check_Mine_Status()
 			is_state_machine_active = true;
 			target_struct = droppoint;
 			state = DELIVERY_ON_ROUTE;
-			UNavigationSystem::SimpleMoveToLocation(this->GetController(), droppoint->GetActorLocation());
+			RtsMoveToActor(droppoint);
 		}
 		node_ref = -1;
 	}
@@ -348,6 +350,33 @@ void ARTSBUILDER::Mine_Resource()
 		}
 	}
 
+}
+
+void ARTSBUILDER::Check_Node_Status()
+{
+	if (IsValid(target_node))
+	{
+
+	}
+	else if(carried_resource > 0)
+	{
+		ARTSStructure * droppoint = Get_Nearest_Dropoint();
+		if (droppoint != NULL)
+		{
+			is_state_machine_active = true;
+			target_struct = droppoint;
+			state = DELIVERY_ON_ROUTE;
+			RtsMoveToActor(target_struct);
+		}
+		else
+		{
+			state = IDLE;
+		}
+	}
+	else
+	{
+		state = IDLE;
+	}
 }
 
 // TODO:: IMPLEMENT ME

@@ -37,8 +37,7 @@ public:
 	virtual void ReleaseAssets(FVector Base_Order) override;
 	virtual void ReleaseAssets() override;
 
-	void Check_Mine_Status();
-	void Mine_Resource();
+
 
 	void Check_Delivery_Status();
 	ARTSStructure * Get_Nearest_Dropoint();
@@ -56,7 +55,9 @@ protected:
 
 
 private:
+	UPROPERTY(Transient)
 	AResource * target_node;
+
 	FVector Node_Local;
 
 	ARTSStructure * target_struct;
@@ -69,6 +70,9 @@ private:
 	TArray<int> type_count;
 
 
+	void Check_Mine_Status();
+	void Mine_Resource();
+	void Check_Node_Status();
 	void DeliverResources();
 	bool Drop_Point_Available();
 	bool Node_Nearby(FVector check_local);
