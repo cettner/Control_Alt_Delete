@@ -12,31 +12,55 @@ ARTSHUD::ARTSHUD()
 	// Set the crosshair texture
 	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/FirstPerson/Textures/FirstPersonCrosshair"));
 	CrosshairTex = CrosshairTexObj.Object;
+
+	state = RTS_SELECT_AND_MOVE;
 }
 
 void ARTSHUD::DrawHUD() //similiar to "tick" of actor class overridden
 {
+	switch (state)
+	{
+	case ARTSHUD::RTS_SELECT_AND_MOVE:
+		RTSSelectAndMoveHandler();
+		break;
+	case ARTSHUD::RTS_STRUCTURE_SELECT:
+		RTSStructureSelectHandler();
+		break;
+	default:
+		break;
+	}
 
-		if (SelctionInProcess)
-		{
-			CleanSelectedActors();
-			GetSelectedUnits();
-		}
-		else if (StructureSelected)
-		{
-			CleanSelectedActors();
-			GetSelectedStructures();
-		}
 }
 
-FVector2D ARTSHUD::GetMouseLocation()
+
+void ARTSHUD::Change_HUD_State(int statetype)
 {
-	float PosX;
-	float PosY;
-	GetOwningPlayerController()->GetMousePosition(PosX,PosY);
-
-	return(FVector2D(PosX, PosY));
+	if (statetype > (int)LBOUND && statetype < (int)UBOUND)
+	{
+		state = (HUDSTATE)statetype;
+	}
 }
+
+
+void ARTSHUD::RTSSelectAndMoveHandler()
+{
+	if (SelctionInProcess)
+	{
+		CleanSelectedActors();
+		GetSelectedUnits();
+	}
+	else if (StructureSelected)
+	{
+		CleanSelectedActors();
+		GetSelectedStructures();
+	}
+}
+
+void ARTSHUD::RTSStructureSelectHandler()
+{
+
+}
+
 
 void ARTSHUD::GetSelectedUnits()
 {
@@ -54,6 +78,15 @@ void ARTSHUD::GetSelectedUnits()
 			Selected_Units[i]->SetSelected();
 		}
 	}
+}
+
+FVector2D ARTSHUD::GetMouseLocation()
+{
+	float PosX;
+	float PosY;
+	GetOwningPlayerController()->GetMousePosition(PosX, PosY);
+
+	return(FVector2D(PosX, PosY));
 }
 
 void ARTSHUD::GetSelectedStructures()
@@ -85,4 +118,6 @@ void ARTSHUD::CleanSelectedActors()
 	}
 
 }
+
+
 

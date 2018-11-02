@@ -39,19 +39,26 @@ void ARTSStructure::BeginPlay()
 
 void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
 {
-	if (ButtonPressed == EKeys::LeftMouseButton)
+	if (HudPtr->state == ARTSHUD::RTS_SELECT_AND_MOVE)
 	{
-		HudPtr->StructureSelected = true;
-		HudPtr->Selected_Structure.Add(this);
-	}
-	else if (ButtonPressed == EKeys::RightMouseButton)
-	{
-		for (int i = 0; i < PC->SelectedUnits.Num(); i++)
+		if (ButtonPressed == EKeys::LeftMouseButton)
 		{
-			if (Cast<ARTSBUILDER>(PC->SelectedUnits[i]))
+			if (HudPtr->Selected_Structure.Find(this))
 			{
-				Cast<ARTSBUILDER>(PC->SelectedUnits[i])->ReleaseAssets();
-				Cast<ARTSBUILDER>(PC->SelectedUnits[i])->Set_Structure(this);
+				HudPtr->StructureSelected = true;
+				HudPtr->Selected_Structure.Add(this);
+			}
+
+		}
+		else if (ButtonPressed == EKeys::RightMouseButton)
+		{
+			for (int i = 0; i < PC->SelectedUnits.Num(); i++)
+			{
+				if (Cast<ARTSBUILDER>(PC->SelectedUnits[i]))
+				{
+					Cast<ARTSBUILDER>(PC->SelectedUnits[i])->ReleaseAssets();
+					Cast<ARTSBUILDER>(PC->SelectedUnits[i])->Set_Structure(this);
+				}
 			}
 		}
 	}
