@@ -83,7 +83,7 @@ int AResource::Mine(UINT amount_to_mine, Resource_Types& type )
 	{
 		int retval = resource_val;
 		resource_val = 0;
-		Destroy(this);
+		Destroy();
 
 		return(retval);
 	}
