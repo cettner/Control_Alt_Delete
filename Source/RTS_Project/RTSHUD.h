@@ -36,6 +36,18 @@ public:
 	bool SelctionInProcess = false;
 	bool StructureSelected = false;
 
+	enum HUDSTATE {
+		LBOUND,
+		RTS_SELECT_AND_MOVE,
+		RTS_STRUCTURE_SELECT,
+		UBOUND
+	};
+
+	HUDSTATE state;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Output")
+		void Change_HUD_State(int statetype);
 
 	UPROPERTY(EditAnywhere)
 		float selection_transparency = 0.15f;
@@ -49,4 +61,9 @@ private:
 	void GetSelectedUnits();
 	void GetSelectedStructures();
 	void CleanSelectedActors();
+	void RTSSelectAndMoveHandler();
+	void RTSStructureSelectHandler();
+
+
+
 };
