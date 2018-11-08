@@ -43,8 +43,11 @@ public:
 	bool bIsConstructed;
 
 	FVector BannerLocation;
-		
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	class USceneComponent * Empty;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	class UDecalComponent* CursorToWorld;
 
 	void SetSelected();
