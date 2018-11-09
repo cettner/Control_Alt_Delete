@@ -11,12 +11,17 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer)
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
+	//Empty = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
+	//Empty->AttachTo(RootComponent);
+	RootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
+
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
 	Mesh->AttachTo(RootComponent);
 	OnClicked.AddUniqueDynamic(this, &ARTSStructure::OnClick);
 
 	CursorToWorld = CreateDefaultSubobject<UDecalComponent>("CursorToWorld");
-	CursorToWorld->SetupAttachment(RootComponent);
+	CursorToWorld->AttachTo(RootComponent);
+
 	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT("Material'/Game/TopDownCPP/Blueprints/M_Cursor_Decal.M_Cursor_Decal'"));
 	if (DecalMaterialAsset.Succeeded())
 	{
@@ -25,7 +30,6 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer)
 	CursorToWorld->DecalSize = FVector(300.0f, 300.0f, 300.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 	CursorToWorld->SetVisibility(false);
-
 }
 
 // Called when the game starts or when spawned
