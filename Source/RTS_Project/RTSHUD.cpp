@@ -66,6 +66,7 @@ void ARTSHUD::GetSelectedUnits()
 {
 	End_Select = GetMouseLocation();
 	Selected_Units.Empty();
+	Selected_Structure.Empty();
 	DrawRect(FLinearColor(0, 0, 1, selection_transparency), Initial_select.X, Initial_select.Y,
 		End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
 
