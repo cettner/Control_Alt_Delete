@@ -12,7 +12,32 @@ ARTSPlayerController::ARTSPlayerController()
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
 
+	static ConstructorHelpers::FObjectFinder<UBlueprint> MineBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/MINE_BP.MINE_BP'"));
 
+	if (MineBlueprint.Object)
+	{
+		Mine = (UClass*)MineBlueprint.Object->GeneratedClass;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed to Load Mine Asset!")));
+	}
+}
+
+void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
+{
+	UWorld* const World = GetWorld();
+	if (Structure_index > (int)LBOUND && Structure_index < (int)UBOUND && World)
+	{
+		Structure_Types type = (Structure_Types)Structure_index;
+
+		if (type == MINE)
+		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			ARTSStructure * SpawnedMine = World->SpawnActor<ARTSStructure>(Mine, Location, Rotation, SpawnParams);
+		}
+	}
 }
 
 void ARTSPlayerController::BeginPlay()

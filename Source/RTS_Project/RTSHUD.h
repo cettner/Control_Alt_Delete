@@ -46,7 +46,7 @@ public:
 	HUDSTATE state;
 
 
-	UFUNCTION(BlueprintCallable, Category = "Output")
+	UFUNCTION(BlueprintCallable, Category = HUD)
 		void Change_HUD_State(int statetype);
 
 	UPROPERTY(EditAnywhere)

@@ -31,6 +31,14 @@ enum Resource_Types
 	NULL_TYPE
 };
 
+enum Structure_Types
+{
+	LBOUND,
+	MINE,
+	SPAWNER,
+	UBOUND
+};
+
 class ARTSStructure;
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public APlayerController
@@ -44,6 +52,10 @@ public:
 
 
 	ARTSHUD * HudPtr;
+
+	UFUNCTION(BlueprintCallable, Category = HUD)
+		void Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -72,4 +84,6 @@ protected:
 
 private:
 	TArray <int> Resource_Count;
+	TSubclassOf<class ARTSStructure> Mine;
+	TSubclassOf<class ARTSStructure> Spawner;
 };
