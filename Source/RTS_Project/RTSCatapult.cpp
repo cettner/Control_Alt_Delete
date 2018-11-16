@@ -28,8 +28,20 @@ void ARTSCatapult::LaunchProjectile()
 		LaunchRot = GetActorRotation();
 		LaunchRot.Pitch = 45;
 
+		FTransform object;
 
-		SpawnedProjectile = GetWorld()->SpawnActor<ASiegeProjectile>(Projectile,LaunchLocal,LaunchRot,SpawnParams);
+		object.SetTranslation(LaunchLocal);
+		object.SetRotation(LaunchRot.Quaternion());
+
+		SpawnedProjectile = GetWorld()->SpawnActorDeferred<ASiegeProjectile>(Projectile, object, nullptr, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		SpawnedProjectile->init_velocity = 20.0f;
+		SpawnedProjectile->angle_init = 45.0f;
+		SpawnedProjectile->Owner = this;
+
+
+		UGameplayStatics::FinishSpawningActor(SpawnedProjectile,object);
+		GetWorldTimerManager().SetTimer(Launch_Handler, this, &ARTSCatapult::LaunchProjectile, 1.0, false, LaunchTime);
 	}
 
 
