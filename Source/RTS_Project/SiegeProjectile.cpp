@@ -15,15 +15,18 @@ ASiegeProjectile::ASiegeProjectile(const FObjectInitializer& ObjectInitializer )
 	RootComponent = CollisionSphere;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	Mesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void ASiegeProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	CollisionSphere->IgnoreActorWhenMoving(Owner, true);
 	Mesh->bUseDefaultCollision = false;
 	Mesh->SetSimulatePhysics(true);
+	Mesh->AddImpulse(FVector(9000.0,0, 9000.0));
+
 }
 
 

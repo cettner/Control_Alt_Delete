@@ -20,7 +20,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(EditAnywhere)
+
+	float angle_init = 0;
+	float init_velocity = 0;
+	AActor * Owner = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Collision")
 		float Collision_Radius = 200.0;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")

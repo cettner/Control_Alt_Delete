@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "RTSMinion.h"
+#include "SiegeProjectile.h"
 #include "RTSCatapult.generated.h"
 
 /**
@@ -19,8 +20,17 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly,Category = Debug)
 	float LaunchTime = 5.0;
+	void LaunchProjectile();
+	ARTSCatapult();
+
 private:
 	FTimerHandle Launch_Handler;
-	
-	
+	UPROPERTY(EditDefaultsOnly, Category = Debug)
+	FVector LaunchLocal;
+
+	UPROPERTY(EditDefaultsOnly, Category = Debug)
+	FRotator LaunchRot;
+
+
+	TSubclassOf<class ASiegeProjectile> Projectile;
 };
