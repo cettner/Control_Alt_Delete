@@ -15,7 +15,7 @@ ASiegeProjectile::ASiegeProjectile(const FObjectInitializer& ObjectInitializer )
 	RootComponent = CollisionSphere;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	Mesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
