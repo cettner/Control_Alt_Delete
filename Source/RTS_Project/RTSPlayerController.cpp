@@ -85,7 +85,7 @@ void ARTSPlayerController::SelectReleased()
 		HudPtr->StructureSelected = false;
 		SelectedStructures = HudPtr->Selected_Structure;
 	}
-
+	Update_UI_Selection();
 }
 
 void ARTSPlayerController::MoveSelected()
