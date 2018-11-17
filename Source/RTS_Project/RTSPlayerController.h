@@ -48,8 +48,8 @@ class RTS_PROJECT_API ARTSPlayerController : public APlayerController
 public:
 	ARTSPlayerController();
 	
-
-
+	UFUNCTION(BlueprintImplementableEvent, Category = UI)
+		void Update_UI_Selection();
 
 	ARTSHUD * HudPtr;
 
