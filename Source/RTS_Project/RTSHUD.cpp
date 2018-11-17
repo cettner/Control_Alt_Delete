@@ -76,7 +76,16 @@ void ARTSHUD::GetSelectedUnits()
 	{
 		for (int32 i = 0; i < Selected_Units.Num(); i++)
 		{
-			Selected_Units[i]->SetSelected();
+			
+			if (Selected_Units[i]->team_index != GetWorld()->GetControllerIterator().GetIndex())
+			{
+				Selected_Units.RemoveAt(i);
+			}
+			else
+			{
+				Selected_Units[i]->SetSelected();
+			}
+
 		}
 	}
 }

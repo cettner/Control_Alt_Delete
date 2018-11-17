@@ -40,8 +40,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float damage;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	int team_index;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 		class UBehaviorTree *RTSBehavior;
