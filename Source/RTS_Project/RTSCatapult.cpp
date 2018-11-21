@@ -61,4 +61,51 @@ ARTSCatapult::ARTSCatapult()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed to Load Projectile Asset!")));
 	}
+
+
+
+	Min_Range_Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("MinRange"));
+	Min_Range_Sphere->InitSphereRadius(Min_Range);
+	Min_Range_Sphere->AttachTo(RootComponent);
+	Min_Range_Sphere->OnComponentBeginOverlap.AddDynamic(this, &ARTSCatapult::OnMinRangeOverlapBegin);
+	Min_Range_Sphere->OnComponentEndOverlap.AddDynamic(this,&ARTSCatapult::OnMinRangeOverlapEnd);
+
+	Max_Range_Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("MaxRange"));
+	Max_Range_Sphere->InitSphereRadius(Max_Range);
+	Max_Range_Sphere->AttachTo(RootComponent);
+	Max_Range_Sphere->OnComponentBeginOverlap.AddDynamic(this, &ARTSCatapult::OnMaxRangeOverlapBegin);
+	Max_Range_Sphere->OnComponentEndOverlap.AddDynamic(this, &ARTSCatapult::OnMaxRangeOverlapEnd);
+}
+
+void ARTSCatapult::OnMinRangeOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy too close to fire!")));
+	}
+
+}
+
+void ARTSCatapult::OnMinRangeOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy in range!")));
+	}
+}
+
+void ARTSCatapult::OnMaxRangeOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy in range!")));
+	}
+}
+
+void ARTSCatapult::OnMaxRangeOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy has left max range!")));
+	}
 }
