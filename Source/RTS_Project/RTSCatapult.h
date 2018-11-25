@@ -16,6 +16,9 @@ class RTS_PROJECT_API ARTSCatapult : public ARTSMinion
 	GENERATED_BODY()
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+	virtual void RtsMove(FVector Local) override;
+	virtual void RtsMoveToActor(AActor * move_to_me) override;
 
 public:
 	UPROPERTY(EditDefaultsOnly,Category = Debug)
@@ -43,12 +46,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Debug)
 	FRotator LaunchRot;
 
-	UPROPERTY(Transient)
-	AActor * Target;
 
-//	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray<AActor*> In_Range;
+	bool Target_Available;
 
+	bool ShouldTurn(AActor* TurnTo);
 
 	TSubclassOf<class ASiegeProjectile> Projectile;
 

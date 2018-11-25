@@ -2,6 +2,7 @@
 
 #include "RTSCatapult.h"
 #include "Runtime/Engine/Public/TimerManager.h "
+#include "RTSAIController.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
@@ -9,8 +10,40 @@
 void ARTSCatapult::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(Launch_Handler, this, &ARTSCatapult::LaunchProjectile, 1.0, false, LaunchTime);
+}
 
+void ARTSCatapult::Tick(float DeltaSeconds)
+{
+	if (Target_Available)
+	{
+		if (IsValid(TargetActor) && In_Range.Contains(TargetActor))
+		{
+			if (ShouldTurn(TargetActor))
+			{
+				FVector mylocal = GetActorLocation();
+				FVector targetloc = TargetActor->GetActorLocation();
+				FVector Face_Direction = (targetloc - mylocal);
+				Face_Direction.Normalize();
+				FRotator turnto = Face_Direction.Rotation();
+
+				turnto.Pitch = 0;
+				SetActorRotation(FMath::Lerp(GetActorRotation(), turnto, .05f));
+			}
+			else
+			{
+
+			}
+		}
+	}
+}
+
+void ARTSCatapult::RtsMove(FVector Local)
+{
+	Super::RtsMove(Local);
+}
+
+void ARTSCatapult::RtsMoveToActor(AActor * move_to_me)
+{
 }
 
 void ARTSCatapult::LaunchProjectile()
@@ -36,12 +69,9 @@ void ARTSCatapult::LaunchProjectile()
 		SpawnedProjectile = GetWorld()->SpawnActorDeferred<ASiegeProjectile>(Projectile, object, nullptr, this, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		SpawnedProjectile->init_velocity = 20.0f;
-		SpawnedProjectile->angle_init = 45.0f;
 		SpawnedProjectile->Owner = this;
 
-
 		UGameplayStatics::FinishSpawningActor(SpawnedProjectile,object);
-		GetWorldTimerManager().SetTimer(Launch_Handler, this, &ARTSCatapult::LaunchProjectile, 1.0, false, LaunchTime);
 	}
 
 
@@ -51,6 +81,7 @@ void ARTSCatapult::LaunchProjectile()
 
 ARTSCatapult::ARTSCatapult()
 {
+
 	static ConstructorHelpers::FObjectFinder<UBlueprint> ProjectileBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/SiegeProjectile_BP.SiegeProjectile_BP'"));
 
 	if (ProjectileBlueprint.Object)
@@ -77,11 +108,28 @@ ARTSCatapult::ARTSCatapult()
 	Max_Range_Sphere->OnComponentEndOverlap.AddDynamic(this, &ARTSCatapult::OnMaxRangeOverlapEnd);
 }
 
+bool ARTSCatapult::ShouldTurn(AActor * TurnTo)
+{
+	FRotator newrot = (TurnTo->GetActorLocation() - GetActorLocation()).Rotation();
+	newrot.Pitch = 0;
+
+	if (GetActorRotation() == newrot)
+	{
+		return(false);
+	}
+
+	return(true);
+}
+
 void ARTSCatapult::OnMinRangeOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy too close to fire!")));
+		if (In_Range.Contains(OtherActor))
+		{
+			In_Range.Remove(OtherActor);
+		}
 	}
 
 }
@@ -91,6 +139,18 @@ void ARTSCatapult::OnMinRangeOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy in range!")));
+		if (!In_Range.Contains(OtherActor))
+		{
+			if (!In_Range.Num())
+			{
+				Target_Available = true;
+			}
+			if (!TargetActor)
+			{
+				TargetActor = OtherActor;
+			}
+			In_Range.Add(OtherActor);
+		}
 	}
 }
 
@@ -99,6 +159,18 @@ void ARTSCatapult::OnMaxRangeOverlapBegin(UPrimitiveComponent * OverlappedCompon
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy in range!")));
+		if (!In_Range.Contains(OtherActor))
+		{
+			if (!In_Range.Num())
+			{
+				Target_Available = true;
+			}
+			if (!TargetActor)
+			{
+				TargetActor = OtherActor;
+			}
+			In_Range.Add(OtherActor);
+		}
 	}
 }
 
@@ -107,5 +179,9 @@ void ARTSCatapult::OnMaxRangeOverlapEnd(UPrimitiveComponent * OverlappedComp, AA
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy has left max range!")));
+		if (In_Range.Contains(OtherActor))
+		{
+			In_Range.Remove(OtherActor);
+		}
 	}
 }

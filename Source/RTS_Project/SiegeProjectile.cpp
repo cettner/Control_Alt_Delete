@@ -39,7 +39,6 @@ void ASiegeProjectile::BeginPlay()
 
 
 void ASiegeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-
 {
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Hit Another Actor!")));
