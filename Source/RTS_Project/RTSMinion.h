@@ -18,19 +18,12 @@ public:
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
-	virtual void BeginPlay() override;
+
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
 
 	bool bismovespecial = false;
-
-	// the location the unit is supposed to be at as instructed by the player controller.
-	FVector TargetLocation;
-
-	//Unit or Structure the unit is to interact with
-	UPROPERTY(Transient)
-	AActor* TargetActor;
 
 	void SetSelected();
 

@@ -51,9 +51,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
 		void Update_UI_Selection();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-		void Update_UI_Resource();
-
 	ARTSHUD * HudPtr;
 
 	UFUNCTION(BlueprintCallable, Category = HUD)
@@ -61,13 +58,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSStructure*> SelectedStructures;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	TArray <int> Resource_Count;
-
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay)
 		int ResourceOnePLayerStart = 200;
@@ -91,6 +83,7 @@ protected:
 	void SwapHud();
 
 private:
+	TArray <int> Resource_Count;
 	TSubclassOf<class ARTSStructure> Mine;
 	TSubclassOf<class ARTSStructure> Spawner;
 };

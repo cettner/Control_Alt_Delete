@@ -119,23 +119,10 @@ void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)
 {
 	Resource_Count[type] += amount_to_add;
 
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Minion Delivered %d of Resource %d"), amount_to_add, (int)type));
+
 	if (Resource_Count[type] > MAX_RESOURCES)
 	{
 		Resource_Count[type] = MAX_RESOURCES;
-	}
-	Update_UI_Resource();
-}
-
-bool ARTSPlayerController::TakeResource(int amount_to_take, Resource_Types type)
-{
-	if (amount_to_take > Resource_Count[type])
-	{
-		return false;
-	}
-	else
-	{
-		Resource_Count[type] -= amount_to_take;
-		Update_UI_Resource();
-		return true;
 	}
 }

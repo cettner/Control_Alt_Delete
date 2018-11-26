@@ -118,9 +118,3 @@ void ARTSMinion::Tick(float DeltaSeconds)
 		}
 	}
 }
-
-void ARTSMinion::BeginPlay()
-{
-	Super::BeginPlay();
-	TargetLocation = GetActorLocation();
-}

@@ -12,6 +12,7 @@ ASiegeProjectile::ASiegeProjectile(const FObjectInitializer& ObjectInitializer )
 {
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
 	CollisionSphere->InitSphereRadius(Collision_Radius);
+	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &ASiegeProjectile::OnProjectileOverlapBegin);
 	CollisionSphere->OnComponentHit.AddDynamic(this, &ASiegeProjectile::OnHit);
 
 	RootComponent = CollisionSphere;
@@ -34,11 +35,18 @@ void ASiegeProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	CollisionSphere->IgnoreActorWhenMoving(Owner, true);
-	Mesh->bUseDefaultCollision = true;	
+	Mesh->bUseDefaultCollision = true;
+
+	
 }
 
+void ASiegeProjectile::OnProjectileOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Overlapped Actor")));
+}
 
 void ASiegeProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+
 {
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Hit Another Actor!")));
