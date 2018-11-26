@@ -112,6 +112,11 @@ void ARTSHUD::Change_HUD_State(int statetype)
 	}
 }
 
+int ARTSHUD::Get_HUD_State()
+{
+	return ((int)state);
+}
+
 void ARTSHUD::RTSSelectAndMoveHandler()
 {
 	if (SelctionInProcess)
