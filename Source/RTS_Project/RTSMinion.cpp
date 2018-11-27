@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "RTSAIController.h"
+#include"Runtime/Engine/Classes/Engine/World.h"
 
 ARTSMinion::ARTSMinion()
 {
@@ -40,6 +41,9 @@ ARTSMinion::ARTSMinion()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator();
+	team_index = Iterator.GetIndex();
 }
 
 void ARTSMinion::SetSelected()
@@ -113,4 +117,10 @@ void ARTSMinion::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+}
+
+void ARTSMinion::BeginPlay()
+{
+	Super::BeginPlay();
+	TargetLocation = GetActorLocation();
 }

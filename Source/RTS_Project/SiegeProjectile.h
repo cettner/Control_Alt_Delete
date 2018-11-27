@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "SiegeProjectile.generated.h"
 
 UCLASS()
@@ -33,4 +34,10 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = StaticMeshComponents)
 		UStaticMeshComponent * Mesh;
+
+private:
+	UFUNCTION(Category = Collision)
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UProjectileMovementComponent * ProjectileMovement;
 };

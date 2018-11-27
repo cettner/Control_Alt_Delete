@@ -24,7 +24,32 @@ class RTS_PROJECT_API ARTSHUD : public AHUD
 public:
 	ARTSHUD();
 	virtual void DrawHUD() override;  // HUD "tick" function
+	
+	//overriden engine functions to give more control over unit selection
+	template <typename ClassFilter>
+	bool GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false)
+	{
+		//Is Actor subclass?
+		if (!ClassFilter::StaticClass()->IsChildOf(AActor::StaticClass()))
+		{
+			return false;
+		}
 
+		//Run Inner Function, output to Base AActor Array
+		TArray<AActor*> OutActorsBaseArray;
+		GetActorsInSelectionRectangle(ClassFilter::StaticClass(), FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed);
+
+		//Construct casted template type array
+		for (AActor* EachActor : OutActorsBaseArray)
+		{
+			OutActors.Add(CastChecked<ClassFilter>(EachActor));
+		}
+
+		return true;
+	};
+	virtual void GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
+	
+	
 	FVector2D Initial_select;  // intial mouse cursor location
 	FVector2D End_Select;		//mouse cursor location on release
 	
@@ -48,6 +73,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = HUD)
 		void Change_HUD_State(int statetype);
+
+	UFUNCTION(BlueprintCallable, Category = HUD)
+		int Get_HUD_State();
 
 	UPROPERTY(EditAnywhere)
 		float selection_transparency = 0.15f;
