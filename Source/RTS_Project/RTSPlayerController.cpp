@@ -47,6 +47,7 @@ void ARTSPlayerController::BeginPlay()
 	Resource_Count.Add(ResourceOnePLayerStart);
 	Resource_Count.Add(ResourceTwoPLayerStart);
 	Resource_Count.Add(ResourceThreePLayerStart);
+	Update_UI_Resource();
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Resources starting out at 0:%d, 1:%d, and 2:%d!"),ResourceOnePLayerStart,ResourceTwoPLayerStart,ResourceThreePLayerStart));
 
 }
