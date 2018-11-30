@@ -33,7 +33,7 @@ void AResource::BeginPlay()
 	Super::BeginPlay();
 	FVector currentlocal = GetActorLocation();
 	FVector AddLocal = currentlocal;
-	float radius = 75.0;
+	float radius = 120.0;
 
 	AddLocal.X = currentlocal.X + radius;
 	Slots.Add(AddLocal);
