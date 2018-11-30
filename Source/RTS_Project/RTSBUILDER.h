@@ -62,8 +62,12 @@ private:
 
 	ARTSStructure * target_struct;
 	FTimerHandle Mine_Handler;
-	float mine_range = 175.0;
-	float deliver_range = 250.0;
+
+	UPROPERTY(EditDefaultsOnly)
+	float mine_range = 200.0;
+	UPROPERTY (EditDefaultsOnly)
+	float deliver_range = 500.0;
+
 	bool node_timer_set = false;
 	bool is_state_machine_active = false;
 	int node_ref = -1;
