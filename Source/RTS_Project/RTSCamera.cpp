@@ -42,7 +42,7 @@ void ARTSCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AddActorWorldOffset(GetCameraPanDirection() * CamSpeed);
+	//AddActorWorldOffset(GetCameraPanDirection() * CamSpeed);
 
 	if (!CameraMove.IsZero())
 	{
