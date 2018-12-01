@@ -29,9 +29,11 @@ void ARTSCatapult::Tick(float DeltaSeconds)
 				turnto.Pitch = 0;
 				SetActorRotation(FMath::Lerp(GetActorRotation(), turnto, .05f));
 			}
-			else
+			else if(fireready)
 			{
-
+				LaunchProjectile();
+				fireready = false;
+				GetWorldTimerManager().SetTimer(Launch_Handler, this, &ARTSCatapult::Reload, 1.0, false, LaunchTime);
 			}
 		}
 	}
@@ -79,6 +81,11 @@ void ARTSCatapult::LaunchProjectile()
 
 }
 
+void ARTSCatapult::Reload()
+{
+	fireready = true;
+}
+
 ARTSCatapult::ARTSCatapult()
 {
 
@@ -111,9 +118,11 @@ ARTSCatapult::ARTSCatapult()
 bool ARTSCatapult::ShouldTurn(AActor * TurnTo)
 {
 	FRotator newrot = (TurnTo->GetActorLocation() - GetActorLocation()).Rotation();
+	FRotator myrot = GetActorRotation();
 	newrot.Pitch = 0;
 
-	if (GetActorRotation() == newrot)
+
+	if (FMath::IsNearlyEqual(newrot.Yaw, myrot.Yaw,.1f))
 	{
 		return(false);
 	}

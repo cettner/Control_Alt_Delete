@@ -24,6 +24,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,Category = Debug)
 	float LaunchTime = 5.0;
 	void LaunchProjectile();
+	void Reload();
 	ARTSCatapult();
 	
 	UPROPERTY(EditAnywhere, Category = Gameplay)
@@ -51,6 +52,7 @@ private:
 	bool Target_Available;
 
 	bool ShouldTurn(AActor* TurnTo);
+	bool fireready = true;
 
 	TSubclassOf<class ASiegeProjectile> Projectile;
 
