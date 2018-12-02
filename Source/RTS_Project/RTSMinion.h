@@ -21,8 +21,13 @@ public:
 	virtual void BeginPlay() override;
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
+	
+	UFUNCTION(BlueprintCallable, Category = UI)
+	UTexture* GetThumbnail();
 
-
+	UPROPERTY(EditDefaultsOnly,Category = UI)
+	UTexture* Thumbnail;
+	
 	bool bismovespecial = false;
 
 	// the location the unit is supposed to be at as instructed by the player controller.
