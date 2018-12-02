@@ -31,11 +31,18 @@ ARTSMinion::ARTSMinion()
 	{
 		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
 	}
+
 	CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 	
 	//make the cursor invisble, because we only want selected units to have it
 	CursorToWorld->SetVisibility(false);
+
+	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/mine.mine'"));
+	if (ThumbnailAsset.Succeeded())
+	{
+		Thumbnail = ThumbnailAsset.Object;
+	}
 
 
 	// Activate ticking in order to update the cursor every frame.
@@ -123,4 +130,9 @@ void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
 	TargetLocation = GetActorLocation();
+}
+
+UTexture * ARTSMinion::GetThumbnail()
+{
+	return Thumbnail;
 }
