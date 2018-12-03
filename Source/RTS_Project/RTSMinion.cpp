@@ -44,6 +44,9 @@ ARTSMinion::ARTSMinion()
 		Thumbnail = ThumbnailAsset.Object;
 	}
 
+	//AI recives Access on Spawn
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;

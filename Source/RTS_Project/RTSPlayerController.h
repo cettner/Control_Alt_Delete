@@ -33,10 +33,18 @@ enum Resource_Types
 
 enum Structure_Types
 {
-	LBOUND,
+	STRUCTURELBOUND,
 	MINE,
 	SPAWNER,
-	UBOUND
+	STRUCTUREUBOUND
+};
+
+enum Unit_Types
+{
+	UNITLBOUND,
+	BUILDER,
+	CATAPULT,
+	UNITUBOUND
 };
 
 class ARTSStructure;
