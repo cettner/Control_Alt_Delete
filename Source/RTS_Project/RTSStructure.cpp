@@ -89,12 +89,17 @@ void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
 	{
 		if (ButtonPressed == EKeys::LeftMouseButton)
 		{
+
 			if (HudPtr->Selected_Structure.Find(this))
 			{
-				HudPtr->StructureSelected = true;
+				for (int i = 0; i < HudPtr->Selected_Structure.Num(); i++)
+				{
+					HudPtr->Selected_Structure[i]->SetDeselected();
+				}
+				HudPtr->Selected_Structure.Empty();
 				HudPtr->Selected_Structure.Add(this);
 			}
-
+			HudPtr->StructureSelected = true;
 		}
 		else if (ButtonPressed == EKeys::RightMouseButton)
 		{

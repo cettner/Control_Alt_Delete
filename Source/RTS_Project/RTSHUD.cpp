@@ -127,6 +127,7 @@ void ARTSHUD::RTSSelectAndMoveHandler()
 	else if (StructureSelected)
 	{
 		CleanSelectedActors();
+		Selected_Units.Empty();
 		GetSelectedStructures();
 	}
 }
