@@ -38,7 +38,7 @@ ARTSMinion::ARTSMinion()
 	//make the cursor invisble, because we only want selected units to have it
 	CursorToWorld->SetVisibility(false);
 
-	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/mine.mine'"));
+	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/UI_Thumbnails/Builder_PNG.Builder_PNG'"));
 	if (ThumbnailAsset.Succeeded())
 	{
 		Thumbnail = ThumbnailAsset.Object;

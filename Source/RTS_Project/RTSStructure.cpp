@@ -45,7 +45,7 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer)
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Structure Failed to load Builder Asset!")));
+
 		}
 
 	}
@@ -61,7 +61,7 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer)
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Structure Failed to load Catapult Asset!")));
+
 		}
 	}
 }
@@ -77,10 +77,6 @@ void ARTSStructure::BeginPlay()
 	BannerLocation = GetActorLocation();
 	BannerLocation.X += spawndistance;
 	SpawnLocation = BannerLocation;
-
-	Queue_Minion(CATAPULT);
-	Queue_Minion(CATAPULT);
-	Queue_Minion(BUILDER);
 }
 
 void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
