@@ -10,7 +10,7 @@
 ARTSHUD::ARTSHUD()
 {
 	// Set the crosshair texture
-	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("/Game/FirstPerson/Textures/FirstPersonCrosshair"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("Texture2D'/Game/Pictures/MouseCursors/FirstPersonCrosshair.FirstPersonCrosshair'"));
 	CrosshairTex = CrosshairTexObj.Object;
 
 	state = RTS_SELECT_AND_MOVE;
@@ -127,6 +127,7 @@ void ARTSHUD::RTSSelectAndMoveHandler()
 	else if (StructureSelected)
 	{
 		CleanSelectedActors();
+		Selected_Units.Empty();
 		GetSelectedStructures();
 	}
 }
