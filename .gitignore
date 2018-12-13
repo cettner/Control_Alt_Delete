@@ -4,3 +4,8 @@ Saved/
 .vs/
 Content/StarterContent/
 RTS_Project.sln
+<<<<<<< HEAD
+=======
+*.log
+*.umap
+>>>>>>> master
