@@ -12,8 +12,8 @@ ARTSPlayerController::ARTSPlayerController()
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> MineBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/MINE_BP.MINE_BP'"));
-	static ConstructorHelpers::FObjectFinder<UBlueprint> SpawnerBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/Spawner_BP.Spawner_BP'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> MineBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/Structures/MINE_BP.MINE_BP'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> SpawnerBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/Structures/Spawner_BP.Spawner_BP'"));
 
 	if (MineBlueprint.Object)
 	{
@@ -21,7 +21,7 @@ ARTSPlayerController::ARTSPlayerController()
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed to Load Mine Asset!")));
+	
 	}
 
 	if (SpawnerBlueprint.Object)
@@ -30,7 +30,7 @@ ARTSPlayerController::ARTSPlayerController()
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed to Load Spawner Asset!")));
+	
 	}
 
 }
