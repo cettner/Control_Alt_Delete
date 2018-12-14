@@ -47,12 +47,14 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			ARTSStructure * SpawnedMine = World->SpawnActor<ARTSStructure>(Mine, Location, Rotation, SpawnParams);
+			Update_UI_Spawn(SpawnedMine);
 		}
 		else if(type == SPAWNER)
 		{
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			ARTSStructure * SpawnedSpawner = World->SpawnActor<ARTSStructure>(Spawner, Location, Rotation, SpawnParams);
+			Update_UI_Spawn(SpawnedSpawner);
 		}
 	}
 }

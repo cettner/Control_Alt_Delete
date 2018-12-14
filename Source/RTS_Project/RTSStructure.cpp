@@ -206,10 +206,12 @@ void ARTSStructure::SpawnUnit(int unit_index)
 	{
 		ARTSCatapult * SpawnedCatapult = World->SpawnActor<ARTSCatapult>(Catapult, SpawnLocation, SpawnRotation, SpawnParams); 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Catapult Spawned!")));
+		PC->Update_UI_Spawn(SpawnedCatapult);
 	}
 	else if (type == BUILDER && World)
 	{
 		ARTSBUILDER * SpawnedBuilder = World->SpawnActor<ARTSBUILDER>(Builder, SpawnLocation, SpawnRotation, SpawnParams);
+		PC->Update_UI_Spawn(SpawnedBuilder);
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Builder Spawned!")));
 	}
 	else
