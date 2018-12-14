@@ -339,14 +339,14 @@ void ARTSBUILDER::Mine_Resource()
 		{
 			carried_resource += added_resource;
 			type_count[type] += added_resource;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"),carried_resource, max_resource));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"),carried_resource, max_resource));
 			Check_Mine_Status();
 		}
 		else  // the node was destroyed by our request.
 		{
 			carried_resource += added_resource;
 			type_count[type] += added_resource;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
 		}
 	}
 

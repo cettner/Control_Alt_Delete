@@ -62,6 +62,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
 		void Update_UI_Resource();
 
+	UFUNCTION(BlueprintImplementableEvent, Category = UI)
+		void Update_UI_Spawn(AActor * NewSpawn);
+
 	ARTSHUD * HudPtr;
 
 	UFUNCTION(BlueprintCallable, Category = HUD)

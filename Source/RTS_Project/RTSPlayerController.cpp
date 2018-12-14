@@ -47,12 +47,14 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			ARTSStructure * SpawnedMine = World->SpawnActor<ARTSStructure>(Mine, Location, Rotation, SpawnParams);
+			Update_UI_Spawn(SpawnedMine);
 		}
 		else if(type == SPAWNER)
 		{
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			ARTSStructure * SpawnedSpawner = World->SpawnActor<ARTSStructure>(Spawner, Location, Rotation, SpawnParams);
+			Update_UI_Spawn(SpawnedSpawner);
 		}
 	}
 }
@@ -65,7 +67,7 @@ void ARTSPlayerController::BeginPlay()
 	Resource_Count.Add(ResourceTwoPLayerStart);
 	Resource_Count.Add(ResourceThreePLayerStart);
 	Update_UI_Resource();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Resources starting out at 0:%d, 1:%d, and 2:%d!"),ResourceOnePLayerStart,ResourceTwoPLayerStart,ResourceThreePLayerStart));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Resources starting out at 0:%d, 1:%d, and 2:%d!"),ResourceOnePLayerStart,ResourceTwoPLayerStart,ResourceThreePLayerStart));
 
 }
 
@@ -143,7 +145,7 @@ void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)
 		Resource_Count[type] = MAX_RESOURCES;
 	}
 	Update_UI_Resource();
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Added %d of resource type %d totals now: 1: %d, 2: %d, and 3: %d!"),amount_to_add,(int)type+1,Resource_Count[Resource_Types::TYPE_ONE],Resource_Count[Resource_Types::TYPE_TWO], Resource_Count[Resource_Types::TYPE_THREE]));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Added %d of resource type %d totals now: 1: %d, 2: %d, and 3: %d!"),amount_to_add,(int)type+1,Resource_Count[Resource_Types::TYPE_ONE],Resource_Count[Resource_Types::TYPE_TWO], Resource_Count[Resource_Types::TYPE_THREE]));
 }
 
 bool ARTSPlayerController::TakeResource(int amount_to_take, Resource_Types type)

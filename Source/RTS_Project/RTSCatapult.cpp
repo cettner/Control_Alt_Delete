@@ -101,6 +101,13 @@ ARTSCatapult::ARTSCatapult()
 	}
 
 
+	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/UI_Thumbnails/Catapult_PNG.Catapult_PNG'"));
+	if (ThumbnailAsset.Succeeded())
+	{
+		Thumbnail = ThumbnailAsset.Object;
+	}
+
+
 
 	Min_Range_Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("MinRange"));
 	Min_Range_Sphere->InitSphereRadius(Min_Range);
