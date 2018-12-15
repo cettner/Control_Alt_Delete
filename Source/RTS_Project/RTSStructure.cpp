@@ -93,6 +93,11 @@ void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
 					HudPtr->Selected_Structure[i]->SetDeselected();
 				}
 				HudPtr->Selected_Structure.Empty();
+				for (int i = 0; i < HudPtr->Selected_Units.Num(); i++)
+				{
+					HudPtr->Selected_Units[i]->SetDeselected();
+				}
+				HudPtr->Selected_Units.Empty();
 				HudPtr->Selected_Structure.Add(this);
 			}
 			HudPtr->StructureSelected = true;
