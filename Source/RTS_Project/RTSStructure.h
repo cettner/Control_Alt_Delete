@@ -23,6 +23,9 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
+	UFUNCTION(BlueprintImplementableEvent, Category = UI)
+	void Update_Queue_UI_Status(float status);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -88,7 +91,7 @@ public:
 	bool Can_Spawn_Catapult = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float Catapult_Spawn_Time = 10.0;
+	float Catapult_Spawn_Time = 20.0;
 
 
 private:

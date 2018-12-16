@@ -164,6 +164,7 @@ void ARTSStructure::Queue_Minion(int minion_index)
 
 void ARTSStructure::UpdateSpawnQueue()
 {
+	Update_Queue_UI_Status(queuestatus);
 	queuestatus++;
 	int spawnindex = -1;
 	if (queuestatus >= 100.0)

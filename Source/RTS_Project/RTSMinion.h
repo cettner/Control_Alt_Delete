@@ -58,7 +58,7 @@ public:
 	int team_index;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
-		class UBehaviorTree *RTSBehavior;
+	class UBehaviorTree *RTSBehavior;
 
 
 
