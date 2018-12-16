@@ -93,6 +93,11 @@ void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
 					HudPtr->Selected_Structure[i]->SetDeselected();
 				}
 				HudPtr->Selected_Structure.Empty();
+				for (int i = 0; i < HudPtr->Selected_Units.Num(); i++)
+				{
+					HudPtr->Selected_Units[i]->SetDeselected();
+				}
+				HudPtr->Selected_Units.Empty();
 				HudPtr->Selected_Structure.Add(this);
 			}
 			HudPtr->StructureSelected = true;
@@ -202,13 +207,13 @@ void ARTSStructure::SpawnUnit(int unit_index)
 	SpawnLocation.X -= 500;
 	SpawnLocation.Z = 100;
 
-	if (type == CATAPULT && World)
+	if (type == CATAPULT && World  && Can_Spawn_Catapult)
 	{
 		ARTSCatapult * SpawnedCatapult = World->SpawnActor<ARTSCatapult>(Catapult, SpawnLocation, SpawnRotation, SpawnParams); 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Catapult Spawned!")));
 		PC->Update_UI_Spawn(SpawnedCatapult);
 	}
-	else if (type == BUILDER && World)
+	else if (type == BUILDER && World && Can_Spawn_Builder)
 	{
 		ARTSBUILDER * SpawnedBuilder = World->SpawnActor<ARTSBUILDER>(Builder, SpawnLocation, SpawnRotation, SpawnParams);
 		PC->Update_UI_Spawn(SpawnedBuilder);

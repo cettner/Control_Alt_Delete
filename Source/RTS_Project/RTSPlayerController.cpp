@@ -99,13 +99,21 @@ void ARTSPlayerController::SelectReleased()
 	if (HudPtr->SelctionInProcess)
 	{
 		HudPtr->SelctionInProcess = false;
+		HudPtr->Selected_Structure.Empty();
+		SelectedStructures.Empty();
 		SelectedUnits = HudPtr->Selected_Units;
 	}
 	else if (HudPtr->StructureSelected)
 	{
 		HudPtr->StructureSelected = false;
 		SelectedStructures = HudPtr->Selected_Structure;
+	
+
+		HudPtr->Selected_Units.Empty();
+		SelectedUnits.Empty();
 	}
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Units: %d,Structures: %d"), SelectedUnits.Num(), SelectedStructures.Num()));
 	Update_UI_Selection();
 }
 
