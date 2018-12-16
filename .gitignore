@@ -5,8 +5,11 @@ Saved/
 Content/StarterContent/
 Content/KiteDemo
 RTS_Project.sln
+Content/GameData/Maps/TestMap_BuiltData.uasset
+
 <<<<<<< HEAD
 =======
 *.log
 *.umap
 >>>>>>> master
+Content/GameData/Maps/TestMap_BuiltData.uasset
