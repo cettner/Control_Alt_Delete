@@ -18,6 +18,7 @@ class RTS_PROJECT_API ACommander : public ARTSMinion
 
 public:
 	ACommander();
+	UPROPERTY(EditDefaultsOnly)
 	UCameraComponent* FPS_Camera;
 	
 	

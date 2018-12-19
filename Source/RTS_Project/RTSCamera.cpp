@@ -34,7 +34,6 @@ void ARTSCamera::BeginPlay()
 	Super::BeginPlay();
 	
 	PC = Cast<APlayerController>(GetController());
-	PC->GetViewportSize(ScreenSizeX, ScreenSizeY);
 }
 
 // Called every frame
@@ -71,7 +70,7 @@ void ARTSCamera::Zoom_In()
 {
 	CameraMove = CameraMove.GetSafeNormal() * Camera_Speed;
 	FVector NewLocal = GetActorLocation();
-	if (NewLocal.Z >= 1000) NewLocal += GetActorForwardVector() * (CameraMove.Z + 50);
+	NewLocal += GetActorForwardVector() * (CameraMove.Z + 50);
 	SetActorLocation(NewLocal);
 }
 
@@ -79,7 +78,7 @@ void ARTSCamera::Zoom_Out()
 {
 	CameraMove = CameraMove.GetSafeNormal() * Camera_Speed;
 	FVector NewLocal = GetActorLocation();
-	if (NewLocal.Z <= 3000) NewLocal += GetActorForwardVector() * (CameraMove.Z - 50);
+	NewLocal += GetActorForwardVector() * (CameraMove.Z - 50);
 	SetActorLocation(NewLocal);
 }
 
