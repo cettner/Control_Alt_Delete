@@ -14,13 +14,19 @@ UCLASS()
 class RTS_PROJECT_API ACommander : public ARTSMinion
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 public:
 	ACommander();
 	UPROPERTY(EditDefaultsOnly)
 	UCameraComponent* FPS_Camera;
-	
-	
-	
+
+	//handles moving forward/backward
+	UFUNCTION()
+	void MoveForward(float Val);
+	//handles strafing
+	UFUNCTION()
+	void MoveRight(float Val);
 };
