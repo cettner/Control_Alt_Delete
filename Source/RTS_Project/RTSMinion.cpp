@@ -114,19 +114,6 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 void ARTSMinion::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-
-	if (CursorToWorld != nullptr)
-	{
-		if (APlayerController* PC = Cast<APlayerController>(GetController()))
-		{
-			FHitResult TraceHitResult;
-			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-			FVector CursorFV = TraceHitResult.ImpactNormal;
-			FRotator CursorR = CursorFV.Rotation();
-			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
-			CursorToWorld->SetWorldRotation(CursorR);
-		}
-	}
 }
 
 void ARTSMinion::BeginPlay()

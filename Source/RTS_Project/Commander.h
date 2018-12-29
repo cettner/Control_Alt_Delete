@@ -17,6 +17,7 @@ class RTS_PROJECT_API ACommander : public ARTSMinion
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void Tick(float DeltaTime) override;
 
 public:
 	ACommander();

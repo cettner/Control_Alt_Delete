@@ -5,6 +5,10 @@
 
 
 
+void ACommander::Tick(float DeltaTime)
+{
+}
+
 ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
