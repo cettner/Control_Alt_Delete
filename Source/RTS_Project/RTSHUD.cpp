@@ -23,6 +23,9 @@ void ARTSHUD::DrawHUD() //similiar to "tick" of actor class overridden
 	case ARTSHUD::RTS_SELECT_AND_MOVE:
 		RTSSelectAndMoveHandler();
 		break;
+	case ARTSHUD::FPS_AIM_AND_SHOOT:
+		FPSAimAndShootHandler();
+		break;
 	case ARTSHUD::RTS_STRUCTURE_SELECT:
 		RTSStructureSelectHandler();
 		break;
@@ -135,6 +138,10 @@ void ARTSHUD::RTSSelectAndMoveHandler()
 void ARTSHUD::RTSStructureSelectHandler()
 {
 
+}
+
+void ARTSHUD::FPSAimAndShootHandler()
+{
 }
 
 void ARTSHUD::GetSelectedUnits()

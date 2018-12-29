@@ -7,6 +7,7 @@
 #include "RTSMinion.h"
 #include "RTSCamera.h"
 #include "RTSBUILDER.h"
+#include "Commander.h"
 #include "RTSAIController.h"
 #include "Components/InputComponent.h"
 #include "RTSPlayerController.generated.h"
@@ -67,6 +68,8 @@ public:
 
 	ARTSHUD * HudPtr;
 
+
+
 	UFUNCTION(BlueprintCallable, Category = HUD)
 		void Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
 
@@ -88,6 +91,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay)
 		int ResourceThreePLayerStart = 0;
+
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void PossessCommander(ACommander * commander);
+
+	UFUNCTION(BlueprintCallable, Category = Setup)
+	void PossessRTSCamera(ARTSCamera * camera);
 
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;

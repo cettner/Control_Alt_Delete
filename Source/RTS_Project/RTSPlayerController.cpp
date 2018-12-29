@@ -59,8 +59,23 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 	}
 }
 
+void ARTSPlayerController::PossessCommander(ACommander * commander)
+{
+	bShowMouseCursor = false;
+	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+	Possess(commander);
+}
+
+void ARTSPlayerController::PossessRTSCamera(ARTSCamera * camera)
+{
+	bShowMouseCursor = true;
+	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+	Possess(camera);
+}
+
 void ARTSPlayerController::BeginPlay()
 {
+	bShowMouseCursor = true;
 	HudPtr = Cast<ARTSHUD>(GetHUD());  // GetHud only returns AHUD, need to cast to get child type, ARTSHUD
 
 	Resource_Count.Add(ResourceOnePLayerStart);

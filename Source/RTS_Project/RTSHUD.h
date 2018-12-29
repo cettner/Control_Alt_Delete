@@ -65,6 +65,7 @@ public:
 		LBOUND,
 		RTS_SELECT_AND_MOVE,
 		RTS_STRUCTURE_SELECT,
+		FPS_AIM_AND_SHOOT,
 		UBOUND
 	};
 
@@ -91,7 +92,5 @@ private:
 	void CleanSelectedActors();
 	void RTSSelectAndMoveHandler();
 	void RTSStructureSelectHandler();
-
-
-
+	void FPSAimAndShootHandler();
 };
