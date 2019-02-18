@@ -63,6 +63,7 @@ void ARTSPlayerController::PossessCommander(ACommander * commander)
 {
 	bShowMouseCursor = false;
 	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+	state = FPS_MODE;
 	Possess(commander);
 }
 
@@ -70,6 +71,7 @@ void ARTSPlayerController::PossessRTSCamera(ARTSCamera * camera)
 {
 	bShowMouseCursor = true;
 	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+	state = RTS_MODE;
 	Possess(camera);
 }
 
@@ -96,8 +98,6 @@ void ARTSPlayerController::SetupInputComponent()
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
 
-	// switch to other character hud used for debugging, supported by level blueprint
-	InputComponent->BindAction("KeyOne", IE_Pressed, this, &ARTSPlayerController::SwapHud);
 }
 
 void ARTSPlayerController::SelectPressed()
@@ -152,11 +152,6 @@ void ARTSPlayerController::MoveSelected()
 			}
 		}
 	}
-}
-
-void ARTSPlayerController::SwapHud()
-{
-	HudPtr->bIsRTSCharacter = !HudPtr->bIsRTSCharacter;
 }
 
 void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)

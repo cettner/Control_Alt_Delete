@@ -48,6 +48,11 @@ enum Unit_Types
 	UNITUBOUND
 };
 
+enum Player_State {
+	RTS_MODE,
+	FPS_MODE
+};
+
 class ARTSStructure;
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public APlayerController
@@ -108,9 +113,9 @@ protected:
 	void SelectPressed();
 	void SelectReleased();
 	void MoveSelected();
-	void SwapHud();
 
 private:
 	TSubclassOf<class ARTSStructure> Mine;
 	TSubclassOf<class ARTSStructure> Spawner;
+	Player_State state;
 };
