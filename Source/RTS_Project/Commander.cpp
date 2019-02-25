@@ -2,11 +2,32 @@
 #include "Commander.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
-
+#include "Runtime/Engine/Public/DrawDebugHelpers.h"
+#include "Engine.h"
 
 
 void ACommander::Tick(float DeltaTime)
 {
+	FHitResult hit;
+	FVector fwd = FPS_Camera->GetForwardVector();
+	FVector start = FPS_Camera->GetComponentLocation();
+	FVector end = (fwd * 250.0f) + start;
+	
+	FCollisionQueryParams trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
+	trace.bTraceComplex = true;
+	trace.bTraceAsyncScene = true;
+	trace.bReturnPhysicalMaterial = false;
+	trace.AddIgnoredActor(this);
+
+	DrawDebugLine(GetWorld(), start, end, FColor(255, 0, 0), false, -1, 0, 12.33);
+
+	if (GetWorld()->LineTraceSingleByChannel(hit, start, end, ECC_Pawn, trace))
+	{
+		if (Cast<ARTSMinion>(hit.GetActor()))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Hit!")));
+		}
+	}
 }
 
 ACommander::ACommander()
