@@ -23,6 +23,7 @@
 #define RESOURCE_TWO_PLAYER_START 150
 #define RESOURCE_THREE_PLAYER_START 0
 #define MAX_RESOURCES 9999
+#define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
 enum Resource_Types
 {

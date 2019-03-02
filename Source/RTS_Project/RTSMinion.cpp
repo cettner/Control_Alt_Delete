@@ -56,6 +56,16 @@ ARTSMinion::ARTSMinion()
 	team_index = Iterator.GetIndex();
 }
 
+AActor * ARTSMinion::GetTarget()
+{
+	return(TargetActor);
+}
+
+void ARTSMinion::SetTarget(AActor * NewTarget)
+{
+	TargetActor = NewTarget;
+}
+
 void ARTSMinion::SetSelected()
 {
 	CursorToWorld->SetVisibility(true);

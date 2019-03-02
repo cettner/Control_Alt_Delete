@@ -11,9 +11,16 @@
 
 AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
 {
+	RootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
+
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
 	Mesh->AttachTo(RootComponent);
-	OnClicked.AddUniqueDynamic(this, &AResource::OnRightClick);
+	//OnClicked.AddUniqueDynamic(this, &AResource::OnRightClick);
+	Selection = ObjectInitializer.CreateDefaultSubobject<URTSSelectionComponent>(this, TEXT("Selection"));
+	AddOwnedComponent(Selection);
+	
+	Selection->SetRoot(RootComponent);
+	Selection->SetDetection(Mesh);
 }
 
 void AResource::SetType(Resource_Types typeset)
@@ -54,7 +61,7 @@ void AResource::BeginPlay()
 		Slot_Available.Add(true);
 	}
 }
-
+/*
 void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 {
 	if (ButtonPressed == EKeys::RightMouseButton)
@@ -70,7 +77,7 @@ void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
 		}	
 	}
 }
-
+*/
 int AResource::Mine(UINT amount_to_mine, Resource_Types& type )
 {
 	type = mytype;

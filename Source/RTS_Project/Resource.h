@@ -8,7 +8,9 @@
 #include "RTSBUILDER.h"
 #include "GameFramework/Actor.h"
 #include "RTSPlayerController.h"
+#include "RTSSelectionComponent.h"
 #include "Resource.generated.h"
+
 
 
 #define NUM_SLOTS 4
@@ -31,8 +33,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(Category = Default)
-	void OnRightClick(AActor* Target, FKey ButtonPressed);
+	//UFUNCTION(Category = Default)
+	//void OnRightClick(AActor* Target, FKey ButtonPressed);
 
 	TArray <bool> Slot_Available;
 	TArray <FVector> Slots;
@@ -51,6 +53,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = StaticMeshComponents)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Selection)
+	URTSSelectionComponent * Selection;
 
 private:
 	Resource_Types mytype = TYPE_ONE;

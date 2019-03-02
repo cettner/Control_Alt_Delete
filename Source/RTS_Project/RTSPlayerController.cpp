@@ -139,7 +139,14 @@ void ARTSPlayerController::MoveSelected()
 		for (int32 i = 0; i < SelectedUnits.Num(); i++)
 		{
 			FHitResult Hit;
-			GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, Hit);
+			GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
+			AActor * target = Hit.GetActor();
+
+			if (target)
+			{
+				SelectedUnits[i]->SetTarget(target);
+			}
+
 			FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
 
 			if (SelectedUnits[i]->HasAssets())

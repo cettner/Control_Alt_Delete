@@ -33,9 +33,8 @@ public:
 	// the location the unit is supposed to be at as instructed by the player controller.
 	FVector TargetLocation;
 
-	//Unit or Structure the unit is to interact with
-	UPROPERTY(Transient)
-	AActor* TargetActor;
+	AActor* GetTarget();
+	void SetTarget(AActor * NewTarget);
 
 	void SetSelected();
 
@@ -67,7 +66,11 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
-	
+
+protected:
+	//Unit or Structure the unit is to interact with
+	UPROPERTY(Transient)
+	AActor* TargetActor;
 
 
 };
