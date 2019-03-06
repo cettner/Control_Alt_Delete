@@ -26,5 +26,10 @@ public:
 
 	virtual void Possess(APawn *InPawn) override;
 
+	void SetTarget(AActor* newtarget);
+
 	uint8 RTSKeyID;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName Target = "Target";
 };

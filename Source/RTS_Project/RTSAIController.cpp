@@ -24,7 +24,16 @@ void ARTSAIController::Possess(APawn * InPawn)
 	if (Minion != NULL && Minion->RTSBehavior != NULL)
 	{
 		BlackboardComp->InitializeBlackboard(*Minion->RTSBehavior->BlackboardAsset);
-		RTSKeyID = BlackboardComp->GetKeyID("Target");
+		RTSKeyID = BlackboardComp->GetKeyID("TargetID");
 		BehaviorComp->StartTree(*Minion->RTSBehavior);
 	}
 }
+
+void ARTSAIController::SetTarget(AActor * newtarget)
+{
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsObject(Target, newtarget);
+	}
+}
+

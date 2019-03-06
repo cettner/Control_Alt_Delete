@@ -146,7 +146,7 @@ void ARTSPlayerController::MoveSelected()
 			{
 				SelectedUnits[i]->SetTarget(target);
 			}
-
+			/*
 			FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
 
 			if (SelectedUnits[i]->HasAssets())
@@ -157,6 +157,7 @@ void ARTSPlayerController::MoveSelected()
 			{
 				SelectedUnits[i]->RtsMove(MoveLocal);
 			}
+			*/
 		}
 	}
 }
