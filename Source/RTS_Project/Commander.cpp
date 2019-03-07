@@ -69,6 +69,36 @@ void ACommander::MoveRight(float Val)
 
 }
 
+int ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
+{
+	return(Squad.IndexOfByKey(needs_orders));
+}
+
+bool ACommander::AddtoSquad(ARTSMinion * squadmate)
+{
+	if (Squad.Contains(squadmate))
+	{
+		return(false);
+	}
+
+	Squad.Add(squadmate);
+	return(true);
+}
+
+bool ACommander::LeaveSquad(ARTSMinion * leaver)
+{
+	if (Squad.Contains(leaver))
+	{
+		Squad.Remove(leaver);
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+	
+}
+
 void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
 	// set up gameplay key bindings

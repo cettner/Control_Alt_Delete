@@ -30,4 +30,17 @@ public:
 	//handles strafing
 	UFUNCTION()
 	void MoveRight(float Val);
+
+	int GetMarchingOrder(ARTSMinion * needs_orders);
+
+	bool AddtoSquad(ARTSMinion * squadmate);
+	bool LeaveSquad(ARTSMinion * leaver);
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	TArray <ARTSMinion*> Squad;
+
+private:
+	int marching_order = 0;
+
 };
