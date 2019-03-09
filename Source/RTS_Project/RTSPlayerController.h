@@ -108,8 +108,6 @@ public:
 	virtual void SetupInputComponent() override;
 	void AddResource(int amount_to_add, Resource_Types type);
 	bool TakeResource(int amount_to_take, Resource_Types type);
-	
-protected:
 
 	void SelectPressed();
 	void SelectReleased();

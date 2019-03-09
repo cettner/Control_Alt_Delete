@@ -13,11 +13,6 @@ void ACommander::Tick(float DeltaTime)
 	FVector start = FPS_Camera->GetComponentLocation();
 	FVector end = (fwd * 250.0f) + start;
 	
-	FCollisionQueryParams trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
-	trace.bTraceComplex = true;
-	trace.bTraceAsyncScene = true;
-	trace.bReturnPhysicalMaterial = false;
-	trace.AddIgnoredActor(this);
 
 	DrawDebugLine(GetWorld(), start, end, FColor(255, 0, 0), false, -1, 0, 12.33);
 
@@ -34,6 +29,12 @@ ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	FPS_Camera->SetupAttachment(GetMesh(), TEXT("Head"));
+
+	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
+	trace.bTraceComplex = true;
+	trace.bTraceAsyncScene = true;
+	trace.bReturnPhysicalMaterial = false;
+	trace.AddIgnoredActor(this);
 }
 
 void ACommander::MoveForward(float Val)
@@ -99,6 +100,19 @@ bool ACommander::LeaveSquad(ARTSMinion * leaver)
 	
 }
 
+void ACommander::Interact()
+{
+
+}
+
+void ACommander::PrimaryFire()
+{
+}
+
+void ACommander::SecondaryFire()
+{
+}
+
 void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
 	// set up gameplay key bindings
@@ -106,4 +120,7 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
 	InputComponent->BindAxis("MoveRight", this, &ACommander::MoveRight);
 	InputComponent->BindAxis("Turn", this, &ACommander::AddControllerYawInput);
 	InputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
+	
+	InputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
+	
 }

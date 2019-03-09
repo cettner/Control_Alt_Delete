@@ -3,7 +3,7 @@
 #include "RTSCamera.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/PlayerController.h"
-
+#include "RTSPlayerController.h"
 // Sets default values
 ARTSCamera::ARTSCamera()
 {
@@ -91,7 +91,6 @@ void ARTSCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARTSCamera::Translate_Cam_LeftRight);
 	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &ARTSCamera::Zoom_In);
 	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &ARTSCamera::Zoom_Out);
-
 }
 
 FVector ARTSCamera::GetCameraPanDirection()

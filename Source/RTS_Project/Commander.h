@@ -36,11 +36,21 @@ public:
 	bool AddtoSquad(ARTSMinion * squadmate);
 	bool LeaveSquad(ARTSMinion * leaver);
 
+	UFUNCTION()
+	void Interact();
+
+	UFUNCTION()
+	void PrimaryFire();
+
+	UFUNCTION()
+	void SecondaryFire();
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
 
 private:
 	int marching_order = 0;
+	FCollisionQueryParams trace;
 
 };
