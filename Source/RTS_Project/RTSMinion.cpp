@@ -2,6 +2,7 @@
 
 #include "RTSMinion.h"
 #include "UObject/ConstructorHelpers.h"
+#include "RTSSelectionComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -23,21 +24,6 @@ ARTSMinion::ARTSMinion()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
-	// Create a decal in the world to show the cursor's location
-	CursorToWorld = CreateDefaultSubobject<UDecalComponent>("CursorToWorld");
-	CursorToWorld->SetupAttachment(RootComponent);
-	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT("Material'/Game/Decals/Selection_Decal.Selection_Decal'"));
-	if (DecalMaterialAsset.Succeeded())
-	{
-		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
-	}
-
-	CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
-	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-	
-	//make the cursor invisble, because we only want selected units to have it
-	CursorToWorld->SetVisibility(false);
-
 	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/UI_Thumbnails/Builder_PNG.Builder_PNG'"));
 	if (ThumbnailAsset.Succeeded())
 	{
@@ -54,6 +40,10 @@ ARTSMinion::ARTSMinion()
 
 	FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator();
 	team_index = Iterator.GetIndex();
+
+	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("Selection"));
+	Selection->SetRoot(RootComponent);
+	Selection->SetDetection(GetCapsuleComponent());
 }
 
 AActor * ARTSMinion::GetTarget()
@@ -72,12 +62,12 @@ void ARTSMinion::SetTarget(AActor * NewTarget)
 
 void ARTSMinion::SetSelected()
 {
-	CursorToWorld->SetVisibility(true);
+	Selection->SetSelected();
 }
 
 void ARTSMinion::SetDeselected()
 {
-	CursorToWorld->SetVisibility(false);
+	Selection->SetDeselected();
 }
 
 void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the unit to ignore the PC or dispatch any remaining tasks before enacting the move operation.

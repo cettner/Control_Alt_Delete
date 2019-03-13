@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "RTSSelectionComponent.h"
 #include "RTSMinion.generated.h"
 
 UCLASS(Blueprintable)
@@ -14,13 +15,9 @@ class ARTSMinion : public ACharacter
 public:
 	ARTSMinion();
 
-	
-
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
-	/** Returns CursorToWorld subobject **/
-	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 	
 	UFUNCTION(BlueprintCallable, Category = UI)
 	UTexture* GetThumbnail();
@@ -59,13 +56,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	class UBehaviorTree *RTSBehavior;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
+	URTSSelectionComponent * Selection;
 
 private:
-
-	/** A decal that projects to the cursor location. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UDecalComponent* CursorToWorld;
 
 protected:
 	//Unit or Structure the unit is to interact with

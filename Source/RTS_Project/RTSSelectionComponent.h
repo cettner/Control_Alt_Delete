@@ -32,6 +32,6 @@ protected:
 public:	
 	bool bcanclearselection = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UDecalComponent* CursorToWorld;
 };

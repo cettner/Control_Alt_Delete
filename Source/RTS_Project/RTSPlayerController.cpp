@@ -102,6 +102,15 @@ void ARTSPlayerController::SetupInputComponent()
 
 void ARTSPlayerController::SelectPressed()
 {
+	FHitResult Hit;
+	GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
+	AActor * target = Hit.GetActor();
+
+	if (target)
+	{
+		int debug = 90;
+	}
+
 	if (!HudPtr->StructureSelected)
 	{
 		HudPtr->Initial_select = HudPtr->GetMouseLocation();

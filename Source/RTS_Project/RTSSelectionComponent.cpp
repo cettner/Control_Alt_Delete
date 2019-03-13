@@ -16,6 +16,8 @@ URTSSelectionComponent::URTSSelectionComponent()
 		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
 	}
 	CursorToWorld->DecalSize = FVector(300.0f, 300.0f, 300.0f);
+	CursorToWorld->RelativeScale3D = FVector(1.0f,.25f,.25f);
+	CursorToWorld->SetRelativeLocation(FVector(0, 0, -100.0f));
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 	CursorToWorld->SetVisibility(false);
 }
