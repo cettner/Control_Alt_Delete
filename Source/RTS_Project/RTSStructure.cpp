@@ -8,30 +8,10 @@
 
 
 // Sets default values
-ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer)
+ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	
-	//Empty = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
-	//Empty->AttachTo(RootComponent);
-	RootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
-
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-	Mesh->AttachTo(RootComponent);
-	OnClicked.AddUniqueDynamic(this, &ARTSStructure::OnClick);
-
-	CursorToWorld = CreateDefaultSubobject<UDecalComponent>("CursorToWorld");
-	CursorToWorld->AttachTo(RootComponent);
-
-	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT("Material'/Game/Decals/Selection_Decal.Selection_Decal'"));
-	if (DecalMaterialAsset.Succeeded())
-	{
-		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
-	}
-	CursorToWorld->DecalSize = FVector(300.0f, 300.0f, 300.0f);
-	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-	CursorToWorld->SetVisibility(false);
 
 	if (Can_Spawn_Builder)
 	{
@@ -79,56 +59,10 @@ void ARTSStructure::BeginPlay()
 	SpawnLocation = BannerLocation;
 }
 
-void ARTSStructure::OnClick(AActor * Target, FKey ButtonPressed)
-{
-	if (HudPtr->state == ARTSHUD::RTS_SELECT_AND_MOVE)
-	{
-		if (ButtonPressed == EKeys::LeftMouseButton)
-		{
-
-			if (HudPtr->Selected_Structure.Find(this))
-			{
-				for (int i = 0; i < HudPtr->Selected_Structure.Num(); i++)
-				{
-					HudPtr->Selected_Structure[i]->SetDeselected();
-				}
-				HudPtr->Selected_Structure.Empty();
-				for (int i = 0; i < HudPtr->Selected_Units.Num(); i++)
-				{
-					HudPtr->Selected_Units[i]->SetDeselected();
-				}
-				HudPtr->Selected_Units.Empty();
-				HudPtr->Selected_Structure.Add(this);
-			}
-			HudPtr->StructureSelected = true;
-		}
-		else if (ButtonPressed == EKeys::RightMouseButton)
-		{
-			for (int i = 0; i < PC->SelectedUnits.Num(); i++)
-			{
-				if (Cast<ARTSBUILDER>(PC->SelectedUnits[i]))
-				{
-					Cast<ARTSBUILDER>(PC->SelectedUnits[i])->ReleaseAssets();
-					Cast<ARTSBUILDER>(PC->SelectedUnits[i])->Set_Structure(this);
-				}
-			}
-		}
-	}
-}
 // Called every frame
 void ARTSStructure::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ARTSStructure::SetSelected()
-{
-	CursorToWorld->SetVisibility(true);
-}
-
-void ARTSStructure::SetDeselected()
-{
-	CursorToWorld->SetVisibility(false);
 }
 
 bool ARTSStructure::IsDropPoint()

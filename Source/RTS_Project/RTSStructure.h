@@ -9,19 +9,17 @@
 #include "RTSPlayerController.h"
 #include "Resource.h"
 #include "Engine.h"
+#include "RTSSelectable.h"
 #include "RTSStructure.generated.h"
 
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public AActor
+class RTS_PROJECT_API ARTSStructure : public ARTSSelectable
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	ARTSStructure(const FObjectInitializer& ObjectInitializer);
-
-	/** Returns CursorToWorld subobject **/
-	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
 	void Update_Queue_UI_Status(float status);
@@ -30,9 +28,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
-	UFUNCTION(Category = Default)
-	void OnClick(AActor* Target, FKey ButtonPressed);
 
 public:	
 	// Called every frame
@@ -64,18 +59,6 @@ public:
 	FVector BannerLocation;
 	FVector SpawnLocation;
 
-	/*Actor Components*/
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-	class USceneComponent * Empty;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-	class UDecalComponent* CursorToWorld;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = StaticMeshComponents)
-	UStaticMeshComponent* Mesh;
-
-	void SetSelected();
-	void SetDeselected();
 	bool IsDropPoint();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
