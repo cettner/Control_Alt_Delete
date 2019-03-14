@@ -106,38 +106,50 @@ void ARTSPlayerController::SelectPressed()
 	GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 	AActor * target = Hit.GetActor();
 
-	if (target)
+	//save the result to check on release
+	TempClick = Cast<ARTSSelectable>(target);
+
+	if (CurrentView.Selectable && CurrentView.Selectable != TempClick)
 	{
-		int debug = 90;
+		CurrentView.Selectable->SetDeselected();
+		CurrentView.empty();
 	}
 
-	if (!HudPtr->StructureSelected)
-	{
 		HudPtr->Initial_select = HudPtr->GetMouseLocation();
 		HudPtr->SelctionInProcess = true;
-	}
 }
 
 void ARTSPlayerController::SelectReleased()
 {
-	if (HudPtr->SelctionInProcess)
-	{
-		HudPtr->SelctionInProcess = false;
-		HudPtr->Selected_Structure.Empty();
-		SelectedStructures.Empty();
-		SelectedUnits = HudPtr->Selected_Units;
-	}
-	else if (HudPtr->StructureSelected)
-	{
-		HudPtr->StructureSelected = false;
-		SelectedStructures = HudPtr->Selected_Structure;
-	
+	FHitResult Hit;
+	GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
+	AActor * target = Hit.GetActor();
+	ARTSSelectable * ReleaseClick = Cast<ARTSSelectable>(target);
 
-		HudPtr->Selected_Units.Empty();
-		SelectedUnits.Empty();
+
+	HudPtr->SelctionInProcess = false;
+	HudPtr->Selected_Structure.Empty();
+	SelectedStructures.Empty();
+	SelectedUnits = HudPtr->Selected_Units;
+
+	//Thing we released on was what we clicked on and isnt the current view
+	if(ReleaseClick && TempClick == ReleaseClick  && TempClick != CurrentView.Selectable)
+	{
+		CurrentView.set(TempClick);
+		CurrentView.Selectable->SetSelected();
+	}
+	else if (SelectedUnits.Num())
+	{
+		CurrentView.set(SelectedUnits[0]);
+	}
+	else
+	{
+		CurrentView.empty();
 	}
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Units: %d,Structures: %d"), SelectedUnits.Num(), SelectedStructures.Num()));
+
+	TempClick = nullptr;
+
 	Update_UI_Selection();
 }
 

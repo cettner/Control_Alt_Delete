@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "RTSPlayerController.h"
 #include "RTSSelectionComponent.h"
+#include "RTSSelectable.h"
 #include "Resource.generated.h"
 
 
@@ -16,7 +17,7 @@
 #define NUM_SLOTS 4
 
 UCLASS(Blueprintable)
-class RTS_PROJECT_API AResource : public AActor
+class RTS_PROJECT_API AResource : public ARTSSelectable
 {
 	GENERATED_BODY()
 	
@@ -50,12 +51,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = StaticMeshComponents)
-	UStaticMeshComponent* Mesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Selection)
-	URTSSelectionComponent * Selection;
 
 private:
 	Resource_Types mytype = TYPE_ONE;

@@ -10,6 +10,7 @@
 #include "Commander.h"
 #include "RTSAIController.h"
 #include "Components/InputComponent.h"
+#include "RTSSelectable.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -117,4 +118,30 @@ private:
 	TSubclassOf<class ARTSStructure> Mine;
 	TSubclassOf<class ARTSStructure> Spawner;
 	Player_State state;
+
+	ARTSSelectable * TempClick = nullptr;
+
+
+	class ViewActor
+	{
+	public:
+		ARTSSelectable * Selectable;
+		ARTSMinion * Minion;
+		ViewActor()
+		{
+			Selectable = nullptr;
+			Minion = nullptr;
+		}
+		void empty() { Selectable = nullptr; Minion = nullptr; }
+		void set(ARTSSelectable * inselect) {
+			Selectable = inselect;
+			Minion = nullptr;
+		};
+		void set(ARTSMinion * inMinion)
+		{
+			Minion = inMinion;
+			Selectable = nullptr;
+		}
+	};
+	ViewActor CurrentView = ViewActor();
 };

@@ -9,6 +9,11 @@
 
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
+enum SELECTION_TYPE
+{
+	CLICK_AND_CLEAR
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTS_PROJECT_API URTSSelectionComponent : public UActorComponent
 {

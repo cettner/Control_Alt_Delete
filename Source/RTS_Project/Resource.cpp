@@ -11,16 +11,7 @@
 
 AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
 {
-	RootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
 
-	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-	Mesh->AttachTo(RootComponent);
-	//OnClicked.AddUniqueDynamic(this, &AResource::OnRightClick);
-	Selection = ObjectInitializer.CreateDefaultSubobject<URTSSelectionComponent>(this, TEXT("Selection"));
-	AddOwnedComponent(Selection);
-	
-	Selection->SetRoot(RootComponent);
-	Selection->SetDetection(Mesh);
 }
 
 void AResource::SetType(Resource_Types typeset)
