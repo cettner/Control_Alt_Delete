@@ -34,27 +34,6 @@ enum Resource_Types
 	NULL_TYPE
 };
 
-enum Structure_Types
-{
-	STRUCTURELBOUND,
-	MINE,
-	SPAWNER,
-	STRUCTUREUBOUND
-};
-
-enum Unit_Types
-{
-	UNITLBOUND,
-	BUILDER,
-	CATAPULT,
-	UNITUBOUND
-};
-
-enum Player_State {
-	RTS_MODE,
-	FPS_MODE
-};
-
 class ARTSStructure;
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public APlayerController
@@ -74,8 +53,6 @@ public:
 		void Update_UI_Spawn(AActor * NewSpawn);
 
 	ARTSHUD * HudPtr;
-
-
 
 	UFUNCTION(BlueprintCallable, Category = HUD)
 		void Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
@@ -114,10 +91,10 @@ public:
 	void SelectReleased();
 	void MoveSelected();
 
+
 private:
 	TSubclassOf<class ARTSStructure> Mine;
 	TSubclassOf<class ARTSStructure> Spawner;
-	Player_State state;
 
 	ARTSSelectable * TempClick = nullptr;
 

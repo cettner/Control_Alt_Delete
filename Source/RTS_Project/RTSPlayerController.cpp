@@ -37,6 +37,7 @@ ARTSPlayerController::ARTSPlayerController()
 
 void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
 {
+	/*
 	UWorld* const World = GetWorld();
 	if (Structure_index > (int)STRUCTURELBOUND && Structure_index < (int)STRUCTUREUBOUND && World)
 	{
@@ -57,13 +58,13 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 			Update_UI_Spawn(SpawnedSpawner);
 		}
 	}
+	*/
 }
 
 void ARTSPlayerController::PossessCommander(ACommander * commander)
 {
 	bShowMouseCursor = false;
 	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
-	state = FPS_MODE;
 	Possess(commander);
 }
 
@@ -71,7 +72,6 @@ void ARTSPlayerController::PossessRTSCamera(ARTSCamera * camera)
 {
 	bShowMouseCursor = true;
 	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
-	state = RTS_MODE;
 	Possess(camera);
 }
 

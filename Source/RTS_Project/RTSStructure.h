@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RTSSpawnHelper.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "RTSHUD.h"
@@ -86,7 +87,4 @@ private:
 	void SpawnUnit(int unit_index);
 	void CancelSpawn();
 	float GetSpawnTimeByIndex(Unit_Types type);
-
-	TSubclassOf<class ARTSBUILDER> Builder;
-	TSubclassOf<class ARTSCatapult> Catapult;
 };
