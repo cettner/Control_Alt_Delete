@@ -19,7 +19,7 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 	Structure_Types type = (Structure_Types)Structure_index;
 	UWorld* const World = GetWorld();
 	
-	ARTSStructure * BuiltStrucutre = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
+	ARTSStructure * BuiltStructure = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
 	/*
 
 	if (Structure_index > (int)STRUCTURELBOUND && Structure_index < (int)STRUCTUREUBOUND && World)

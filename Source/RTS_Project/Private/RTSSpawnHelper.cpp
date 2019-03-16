@@ -30,7 +30,7 @@ RTSSpawnHelper::~RTSSpawnHelper()
 
 bool RTSSpawnHelper::InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMinion> &asset)
 {
-    static ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(*path);
+    ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(*path);
     if (TargetBlueprint.Object)
 	{
 	    asset = (UClass*)TargetBlueprint.Object->GeneratedClass;
@@ -45,7 +45,7 @@ bool RTSSpawnHelper::InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMini
 
 bool RTSSpawnHelper::InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset)
 {
-    static ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(*path);
+    ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(*path);
     if (TargetBlueprint.Object)
 	{
 		asset = (UClass*)TargetBlueprint.Object->GeneratedClass;
