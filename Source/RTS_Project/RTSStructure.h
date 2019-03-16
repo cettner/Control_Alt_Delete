@@ -76,8 +76,8 @@ public:
 
 
 private:
+	RTSSpawnHelper * SHelper;
 
-	void LoadSpawnableAsset(TSubclassOf<class ARTSMinion> &BP,FString path);
 	void UpdateSpawnQueue();
 	void SpawnUnit(int unit_index);
 	void CancelSpawn();

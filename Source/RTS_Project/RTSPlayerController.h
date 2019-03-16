@@ -90,11 +90,10 @@ public:
 	void SelectReleased();
 	void MoveSelected();
 
+	RTSSpawnHelper SpawnHelper = RTSSpawnHelper();
 
 private:
 	ARTSSelectable * TempClick = nullptr;
-	RTSSpawnHelper SpawnHelper = RTSSpawnHelper();
-
 	class ViewActor
 	{
 	public:

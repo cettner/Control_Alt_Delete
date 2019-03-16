@@ -37,11 +37,6 @@ bool ARTSStructure::IsDropPoint()
 	return (isdroppoint);
 }
 
-void ARTSStructure::LoadSpawnableAsset(TSubclassOf<class ARTSMinion> &BP, FString path)
-{
-
-}
-
 void ARTSStructure::Queue_Minion(int minion_index)
 {
 	if (minion_index > (int)UNITLBOUND && minion_index < (int)UNITUBOUND)
@@ -105,6 +100,9 @@ void ARTSStructure::SpawnUnit(int unit_index)
 	SpawnLocation = GetActorLocation();
 	SpawnLocation.X -= 500;
 	SpawnLocation.Z = 100;
+
+	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
+	PC->SpawnHelper.SpawnMinion(type, SpawnLocation, SpawnRotation, World);
 
 }
 

@@ -20,28 +20,6 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 	UWorld* const World = GetWorld();
 	
 	ARTSStructure * BuiltStructure = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
-	/*
-
-	if (Structure_index > (int)STRUCTURELBOUND && Structure_index < (int)STRUCTUREUBOUND && World)
-	{
-		Structure_Types type = (Structure_Types)Structure_index;
-
-		if (type == MINE)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			ARTSStructure * SpawnedMine = World->SpawnActor<ARTSStructure>(Mine, Location, Rotation, SpawnParams);
-			Update_UI_Spawn(SpawnedMine);
-		}
-		else if(type == SPAWNER)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			ARTSStructure * SpawnedSpawner = World->SpawnActor<ARTSStructure>(Spawner, Location, Rotation, SpawnParams);
-			Update_UI_Spawn(SpawnedSpawner);
-		}
-	}
-	*/
 }
 
 void ARTSPlayerController::PossessCommander(ACommander * commander)
