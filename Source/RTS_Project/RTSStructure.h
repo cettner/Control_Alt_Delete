@@ -6,9 +6,6 @@
 #include "RTSSpawnHelper.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
-#include "RTSHUD.h"
-#include "RTSPlayerController.h"
-#include "Resource.h"
 #include "Engine.h"
 #include "RTSSelectable.h"
 #include "RTSStructure.generated.h"
@@ -79,8 +76,6 @@ public:
 
 
 private:
-	ARTSHUD* HudPtr;
-	ARTSPlayerController* PC;
 
 	void LoadSpawnableAsset(TSubclassOf<class ARTSMinion> &BP,FString path);
 	void UpdateSpawnQueue();

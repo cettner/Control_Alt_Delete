@@ -33,7 +33,7 @@ public:
 	bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMinion> &asset);
 	bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset);
 	ARTSMinion * SpawnMinion(Unit_Types type, FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World);
-	ARTSStructure * SpawnStructure(Structure_Types type, FVector SpawnLocation, FRotator SpawnRotation);
+	ARTSStructure * SpawnStructure(Structure_Types type, FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World);
 
 private:
 	const FString BuilderPath = "Blueprint'/Game/RTSMinion/RTSBUILDER.RTSBUILDER'";

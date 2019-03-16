@@ -3,9 +3,10 @@
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
+#include "RTSPlayerController.h"
 #include "RTSCatapult.h"
 #include "RTSBUILDER.h"
-
+#include "Resource.h"
 
 // Sets default values
 ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
@@ -17,8 +18,6 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Supe
 // Called when the game starts or when spawned
 void ARTSStructure::BeginPlay()
 {
-	PC = (ARTSPlayerController*)GetWorld()->GetFirstPlayerController();
-	HudPtr = Cast<ARTSHUD>(PC->GetHUD());
 	bIsConstructed = false;
 	CurrentIntegrity = 1.0;
 

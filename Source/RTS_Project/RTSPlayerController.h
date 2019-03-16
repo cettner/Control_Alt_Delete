@@ -6,11 +6,10 @@
 #include "RTSHUD.h"
 #include "RTSMinion.h"
 #include "RTSCamera.h"
-#include "RTSBUILDER.h"
-#include "Commander.h"
 #include "RTSAIController.h"
 #include "Components/InputComponent.h"
 #include "RTSSelectable.h"
+#include "RTSSpawnHelper.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -93,11 +92,8 @@ public:
 
 
 private:
-	TSubclassOf<class ARTSStructure> Mine;
-	TSubclassOf<class ARTSStructure> Spawner;
-
 	ARTSSelectable * TempClick = nullptr;
-
+	RTSSpawnHelper SpawnHelper = RTSSpawnHelper();
 
 	class ViewActor
 	{

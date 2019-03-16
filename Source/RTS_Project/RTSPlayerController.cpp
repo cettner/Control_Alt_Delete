@@ -3,6 +3,7 @@
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
 #include "RTSStructure.h"
+#include "Commander.h"
 #include "Engine.h"
 
 ARTSPlayerController::ARTSPlayerController()
@@ -11,34 +12,16 @@ ARTSPlayerController::ARTSPlayerController()
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
-
-	static ConstructorHelpers::FObjectFinder<UBlueprint> MineBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/Structures/MINE_BP.MINE_BP'"));
-	static ConstructorHelpers::FObjectFinder<UBlueprint> SpawnerBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/Structures/Spawner_BP.Spawner_BP'"));
-
-	if (MineBlueprint.Object)
-	{
-		Mine = (UClass*)MineBlueprint.Object->GeneratedClass;
-	}
-	else
-	{
-	
-	}
-
-	if (SpawnerBlueprint.Object)
-	{
-		Spawner = (UClass*)SpawnerBlueprint.Object->GeneratedClass;
-	}
-	else
-	{
-	
-	}
-
 }
 
 void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
 {
-	/*
+	Structure_Types type = (Structure_Types)Structure_index;
 	UWorld* const World = GetWorld();
+	
+	ARTSStructure * BuiltStrucutre = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
+	/*
+
 	if (Structure_index > (int)STRUCTURELBOUND && Structure_index < (int)STRUCTUREUBOUND && World)
 	{
 		Structure_Types type = (Structure_Types)Structure_index;

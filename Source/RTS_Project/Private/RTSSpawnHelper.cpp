@@ -83,3 +83,27 @@ ARTSMinion * RTSSpawnHelper::SpawnMinion(Unit_Types type, FVector SpawnLocation,
 
 	return nullptr;
 }
+
+ARTSStructure * RTSSpawnHelper::SpawnStructure(Structure_Types type, FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World)
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.bNoFail = true;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if (type == MINE  && World)
+	{
+			ARTSStructure * SpawnedMine = World->SpawnActor<ARTSStructure>(Mine, SpawnLocation, SpawnRotation, SpawnParams);
+			return(SpawnedMine);
+	}
+	else if(type == SPAWNER && World)
+	{
+		ARTSStructure * SpawnedSpawner = World->SpawnActor<ARTSStructure>(Spawner, SpawnLocation, SpawnRotation, SpawnParams);
+		return(SpawnedSpawner);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Structure Spawn Requested")));
+	}
+
+	return nullptr;
+}
