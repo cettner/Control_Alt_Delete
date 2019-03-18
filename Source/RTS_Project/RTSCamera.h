@@ -35,27 +35,9 @@ public:
 	void Zoom_In();
 	void Zoom_Out();
 
-	UFUNCTION()
-	FVector GetCameraPanDirection();
-
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* Main_CameraSpringArm;
 	UCameraComponent* Main_Camera;
-	//USceneComponent* Selected_Mesh;  //FIGURE THIS OUT
+
 	float Camera_Speed;
-
-	UPROPERTY()
-	class APlayerController* PC;
-
-	UPROPERTY()
-	float Margin = 15;
-
-	UPROPERTY()
-	int32 ScreenSizeX;
-
-	UPROPERTY()
-	int32 ScreenSizeY;
-
-	UPROPERTY()
-	float CamSpeed = 3;
 };

@@ -10,10 +10,8 @@ ARTSCamera::ARTSCamera()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
 	Main_CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Main_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	
 	
 	Main_CameraSpringArm->TargetArmLength = 350.0;
 	Main_CameraSpringArm->SetWorldRotation(FRotator(0.0, 0.0, 0.0));
@@ -23,25 +21,18 @@ ARTSCamera::ARTSCamera()
 
 	// Controls Camera Movement Speed
 	Camera_Speed = 800.0f;
-
-	//Give control to player 0
-	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
 void ARTSCamera::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	PC = Cast<APlayerController>(GetController());
 }
 
 // Called every frame
 void ARTSCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//AddActorWorldOffset(GetCameraPanDirection() * CamSpeed);
 
 	if (!CameraMove.IsZero())
 	{
@@ -50,7 +41,6 @@ void ARTSCamera::Tick(float DeltaTime)
 		NewLocal += FVector(1.0, 0.0, 0.0) * CameraMove.X * DeltaTime;
 		NewLocal += FVector(0.0, 1.0, 0.0) * CameraMove.Y * DeltaTime;
 		NewLocal += GetActorForwardVector() * CameraMove.Z * DeltaTime;
-
 		SetActorLocation(NewLocal);
 	}
 
@@ -93,34 +83,3 @@ void ARTSCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &ARTSCamera::Zoom_Out);
 }
 
-FVector ARTSCamera::GetCameraPanDirection()
-{
-	float MousePosX, MousePosY;
-	float CamDirectionX = 0;
-	float CamDirectionY = 0;
-
-	PC->GetMousePosition(MousePosX, MousePosY);
-
-	//edit scroll speed
-	if (MousePosX <= Margin && MousePosX >= 0)
-	{
-		CamDirectionY = -1;
-	}
-
-	if (MousePosY <= Margin && MousePosY >= 0)
-	{
-		CamDirectionX = 1;
-	}
-
-	if (MousePosX >= ScreenSizeX - Margin)
-	{
-		CamDirectionY = 1;
-	}
-
-	if (MousePosY >= ScreenSizeY - Margin)
-	{
-		CamDirectionX = -1;
-	}
-
-	return(FVector(CamDirectionX, CamDirectionY, 0));
-}
