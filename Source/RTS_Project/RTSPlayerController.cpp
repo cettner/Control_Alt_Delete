@@ -52,9 +52,9 @@ void ARTSPlayerController::BeginPlay()
 void ARTSPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSPlayerController::SelectPressed);
-	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSPlayerController::SelectReleased);
-	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSPlayerController::MoveSelected);
+	//InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSPlayerController::SelectPressed);
+	//InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSPlayerController::SelectReleased);
+	//InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSPlayerController::MoveSelected);
 	
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
