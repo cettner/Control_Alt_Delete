@@ -24,16 +24,21 @@ EBTNodeResult::Type UBTTask_March_With_Commander::ExecuteTask(UBehaviorTreeCompo
 		/*Same commander, just move to it*/
 		if (Commander == target)
 		{
-			//int marchindex = target->GetMarchingOrder() IMPLEMENT THIS
+			//FVector marchposition = target->GetMarchingOrder();
 			FVector position = target->GetActorLocation() + FVector(300, 300, 0);
 			Controller->MoveToLocation(position, 5.0f, false, true, true, true, 0, false);
 		}
 		/*New Commander*/
 		else if (target)
 		{
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject("OwningCommander", target);
-				FVector position = target->GetActorLocation() + FVector(300, 300, 0);
-				Controller->MoveToLocation(position, 5.0f, false, true, true, true, 0, false);
+				ARTSMinion * minion = Cast<ARTSMinion>(Controller->GetPawn());
+
+				if (minion)
+				{
+					OwnerComp.GetBlackboardComponent()->SetValueAsObject("OwningCommander", target);
+					FVector position = target->GetActorLocation() + FVector(300, 300, 0);
+					Controller->MoveToLocation(position, 5.0f, false, true, true, true, 0, false);
+				}
 		}
 		else
 		{

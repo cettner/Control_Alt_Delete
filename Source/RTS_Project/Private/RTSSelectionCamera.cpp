@@ -90,22 +90,24 @@ void ARTSSelectionCamera::MoveSelected()
 			PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 			AActor * target = Hit.GetActor();
 
-			if (target)
+			if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
 			{
 				SelectedUnits[i]->SetTarget(target);
 			}
-			/*
-			FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
-
-			if (SelectedUnits[i]->HasAssets())
-			{
-				SelectedUnits[i]->ReleaseAssets(MoveLocal);
-			}
 			else
 			{
-				SelectedUnits[i]->RtsMove(MoveLocal);
+				FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
+
+				if (SelectedUnits[i]->HasAssets())
+				{
+					SelectedUnits[i]->ReleaseAssets(MoveLocal);
+				}
+				else
+				{
+					SelectedUnits[i]->RtsMove(MoveLocal);
+				}
 			}
-			*/
+
 		}
 	}
 }

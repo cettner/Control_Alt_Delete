@@ -70,9 +70,21 @@ void ACommander::MoveRight(float Val)
 
 }
 
-int ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
+FVector ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
 {
-	return(Squad.IndexOfByKey(needs_orders));
+	int index = Squad.IndexOfByKey(needs_orders);
+	if (index >= 0)
+	{
+		if (form == SQUARE)
+		{
+			return(GetSquareFormation(index));
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Formation Requested!")));
+		}
+	}
+	return(FVector());
 }
 
 bool ACommander::AddtoSquad(ARTSMinion * squadmate)
@@ -111,6 +123,15 @@ void ACommander::PrimaryFire()
 
 void ACommander::SecondaryFire()
 {
+}
+
+FVector ACommander::GetSquareFormation(int index)
+{
+	FVector mylocation = GetActorLocation();
+	int corner = index % 4;
+
+
+	return FVector();
 }
 
 void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)

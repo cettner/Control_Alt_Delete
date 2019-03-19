@@ -52,97 +52,13 @@ void ARTSPlayerController::BeginPlay()
 void ARTSPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	//InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSPlayerController::SelectPressed);
-	//InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSPlayerController::SelectReleased);
-	//InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSPlayerController::MoveSelected);
 	
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
 
 }
 
-void ARTSPlayerController::SelectPressed()
-{
-	FHitResult Hit;
-	GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-	AActor * target = Hit.GetActor();
 
-	//save the result to check on release
-	TempClick = Cast<ARTSSelectable>(target);
-
-	if (CurrentView.Selectable && CurrentView.Selectable != TempClick)
-	{
-		CurrentView.Selectable->SetDeselected();
-		CurrentView.empty();
-	}
-
-		HudPtr->Initial_select = HudPtr->GetMouseLocation();
-		HudPtr->SelctionInProcess = true;
-}
-
-void ARTSPlayerController::SelectReleased()
-{
-	FHitResult Hit;
-	GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-	AActor * target = Hit.GetActor();
-	ARTSSelectable * ReleaseClick = Cast<ARTSSelectable>(target);
-
-
-	HudPtr->SelctionInProcess = false;
-	HudPtr->Selected_Structure.Empty();
-	SelectedStructures.Empty();
-	SelectedUnits = HudPtr->Selected_Units;
-
-	//Thing we released on was what we clicked on and isnt the current view
-	if(ReleaseClick && TempClick == ReleaseClick  && TempClick != CurrentView.Selectable)
-	{
-		CurrentView.set(TempClick);
-		CurrentView.Selectable->SetSelected();
-	}
-	else if (SelectedUnits.Num())
-	{
-		CurrentView.set(SelectedUnits[0]);
-	}
-	else
-	{
-		CurrentView.empty();
-	}
-
-
-	TempClick = nullptr;
-
-	Update_UI_Selection();
-}
-
-void ARTSPlayerController::MoveSelected()
-{
-	if (SelectedUnits.Num() > 0)
-	{
-		for (int32 i = 0; i < SelectedUnits.Num(); i++)
-		{
-			FHitResult Hit;
-			GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-			AActor * target = Hit.GetActor();
-
-			if (target)
-			{
-				SelectedUnits[i]->SetTarget(target);
-			}
-			/*
-			FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
-
-			if (SelectedUnits[i]->HasAssets())
-			{
-				SelectedUnits[i]->ReleaseAssets(MoveLocal);
-			}
-			else
-			{
-				SelectedUnits[i]->RtsMove(MoveLocal);
-			}
-			*/
-		}
-	}
-}
 
 void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)
 {

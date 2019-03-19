@@ -86,10 +86,6 @@ public:
 	void AddResource(int amount_to_add, Resource_Types type);
 	bool TakeResource(int amount_to_take, Resource_Types type);
 
-	void SelectPressed();
-	void SelectReleased();
-	void MoveSelected();
-
 	RTSSpawnHelper SpawnHelper = RTSSpawnHelper();
 
 private:

@@ -7,9 +7,9 @@
 #include "Camera/CameraComponent.h"
 #include "Commander.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
 class RTS_PROJECT_API ACommander : public ARTSMinion
 {
@@ -31,7 +31,7 @@ public:
 	UFUNCTION()
 	void MoveRight(float Val);
 
-	int GetMarchingOrder(ARTSMinion * needs_orders);
+	FVector GetMarchingOrder(ARTSMinion * needs_orders);
 
 	bool AddtoSquad(ARTSMinion * squadmate);
 	bool LeaveSquad(ARTSMinion * leaver);
@@ -52,5 +52,12 @@ public:
 private:
 	int marching_order = 0;
 	FCollisionQueryParams trace;
+	FVector GetSquareFormation(int index);
 
+	enum FORMATION
+	{
+		SQUARE
+	};
+
+	FORMATION form = SQUARE;
 };
