@@ -51,8 +51,10 @@ public:
 
 private:
 	int marching_order = 0;
+	float marchwidth = 150.0f;
+
 	FCollisionQueryParams trace;
-	FVector GetSquareFormation(int index);
+	FVector GetSquareFormation(int index, float width);
 
 	enum FORMATION
 	{

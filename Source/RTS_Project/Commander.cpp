@@ -77,7 +77,7 @@ FVector ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
 	{
 		if (form == SQUARE)
 		{
-			return(GetSquareFormation(index));
+			return(GetSquareFormation(index,marchwidth));
 		}
 		else
 		{
@@ -125,13 +125,39 @@ void ACommander::SecondaryFire()
 {
 }
 
-FVector ACommander::GetSquareFormation(int index)
+FVector ACommander::GetSquareFormation(int index, float width)
 {
 	FVector mylocation = GetActorLocation();
 	int corner = index % 4;
 
 
-	return FVector();
+	float xcalc;
+	float ycalc;
+
+	if (corner == 0)
+	{
+		xcalc = width + (width)*(index / 4);
+		ycalc = width + (width)*(index / 4);
+	}
+	else if(corner == 1)
+	{
+		xcalc = width + (width)*(index / 4);
+		ycalc = -width - (width)*(index / 4);
+	}
+	else if (corner == 2)
+	{
+		xcalc = -width - (width)*(index / 4);
+		ycalc = width + (width)*(index / 4);
+	}
+	else
+	{
+		xcalc = -width - (width)*(index / 4);
+		ycalc = -width - (width)*(index / 4);
+	}
+
+	FVector RetVal = mylocation + FVector(xcalc, ycalc, 0);
+
+	return (RetVal);
 }
 
 void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
