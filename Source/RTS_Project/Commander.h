@@ -21,12 +21,14 @@ protected:
 
 public:
 	ACommander();
+
 	UPROPERTY(EditDefaultsOnly)
 	UCameraComponent* FPS_Camera;
 
 	//handles moving forward/backward
 	UFUNCTION()
 	void MoveForward(float Val);
+
 	//handles strafing
 	UFUNCTION()
 	void MoveRight(float Val);
@@ -34,7 +36,10 @@ public:
 	FVector GetMarchingOrder(ARTSMinion * needs_orders);
 
 	bool AddtoSquad(ARTSMinion * squadmate);
+
 	bool LeaveSquad(ARTSMinion * leaver);
+
+	virtual ACommander * GetCommander() override;
 
 	UFUNCTION()
 	void Interact();
@@ -45,12 +50,12 @@ public:
 	UFUNCTION()
 	void SecondaryFire();
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
 
 private:
 	int marching_order = 0;
+	
 	float marchwidth = 150.0f;
 
 	FCollisionQueryParams trace;

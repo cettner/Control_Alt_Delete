@@ -4,6 +4,7 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 #include "RTSMinion.h"
+#include "Commander.h"
 #include "RTSStructure.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
 
@@ -165,18 +166,29 @@ void ARTSHUD::GetSelectedUnits()
 
 	if (Selected_Units.Num() > 0)
 	{
-		for (int32 i = 0; i < Selected_Units.Num(); i++)
+		/*Save the size becasue its non static, and add on minions are accounted for in the loop*/
+		int endindex = Selected_Units.Num();
+		for (int32 i = 0; i < endindex; i++)
 		{
-			
+			/*Remove Enemy Minions*/
 			if (Selected_Units[i]->team_index != GetWorld()->GetControllerIterator().GetIndex())
 			{
 				Selected_Units.RemoveAt(i);
+			}
+			/*Unit has Commander, Get their squad and add it in*/
+			else if(Selected_Units[i]->GetCommander())
+			{
+				for(int j = 0; j < Selected_Units[i]->GetCommander()->Squad.Num(); j++)
+				{
+					Selected_Units.AddUnique(Selected_Units[i]->GetCommander()->Squad[j]);
+					Selected_Units[i]->GetCommander()->Squad[j]->SetSelected();
+				}
+				Selected_Units[i]->SetSelected();
 			}
 			else
 			{
 				Selected_Units[i]->SetSelected();
 			}
-
 		}
 	}
 }

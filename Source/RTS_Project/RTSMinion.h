@@ -7,6 +7,9 @@
 #include "RTSSelectionComponent.h"
 #include "RTSMinion.generated.h"
 
+/*Forward Declarations*/
+class ACommander;
+
 UCLASS(Blueprintable)
 class ARTSMinion : public ACharacter
 {
@@ -17,6 +20,7 @@ public:
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
+	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable, Category = UI)
@@ -30,8 +34,9 @@ public:
 	// the location the unit is supposed to be at as instructed by the player controller.
 	FVector TargetLocation;
 
-	AActor* GetTarget();
-	void SetTarget(AActor * NewTarget);
+	virtual AActor* GetTarget();
+
+	virtual void SetTarget(AActor * NewTarget);
 
 	void SetSelected();
 
@@ -44,20 +49,26 @@ public:
 	virtual bool HasAssets();
 
 	virtual void RtsMove(FVector Local);
+	
 	virtual void RtsMoveToActor(AActor * move_to_me);
+
+	virtual ACommander * GetCommander();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float health;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float damage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int team_index;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
-	class UBehaviorTree *RTSBehavior;
+	class UBehaviorTree * RTSBehavior;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
 	URTSSelectionComponent * Selection;
+
 
 private:
 

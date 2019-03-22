@@ -67,6 +67,10 @@ void ARTSSelectionCamera::SelectReleased()
 		}
 		else if (SelectedUnits.Num())
 		{
+			if(CurrentView.GetSelectable())
+			{
+				CurrentView.GetSelectable()->SetDeselected();
+			}
 			CurrentView.set(SelectedUnits[0]);
 		}
 		else

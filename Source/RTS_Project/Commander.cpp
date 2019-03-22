@@ -35,6 +35,9 @@ ACommander::ACommander()
 	trace.bTraceAsyncScene = true;
 	trace.bReturnPhysicalMaterial = false;
 	trace.AddIgnoredActor(this);
+
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
 void ACommander::MoveForward(float Val)
@@ -87,13 +90,18 @@ FVector ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
 	return(FVector());
 }
 
+ACommander * ACommander::GetCommander()
+{
+	return(this);
+}
+
 bool ACommander::AddtoSquad(ARTSMinion * squadmate)
 {
 	if (Squad.Contains(squadmate))
 	{
 		return(false);
 	}
-
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Minion Added to Squad!")));
 	Squad.Add(squadmate);
 	return(true);
 }
@@ -102,6 +110,7 @@ bool ACommander::LeaveSquad(ARTSMinion * leaver)
 {
 	if (Squad.Contains(leaver))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Minion Removed From Squad!")));
 		Squad.Remove(leaver);
 		return(true);
 	}

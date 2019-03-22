@@ -12,6 +12,7 @@
 #include "Materials/Material.h"
 #include "RTSAIController.h"
 #include"Runtime/Engine/Classes/Engine/World.h"
+#include "Commander.h"
 
 ARTSMinion::ARTSMinion()
 {
@@ -33,10 +34,9 @@ ARTSMinion::ARTSMinion()
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-
 	// Activate ticking in order to update the cursor every frame.
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator();
 	team_index = Iterator.GetIndex();
@@ -68,6 +68,11 @@ void ARTSMinion::SetSelected()
 void ARTSMinion::SetDeselected()
 {
 	Selection->SetDeselected();
+}
+
+ACommander * ARTSMinion::GetCommander()
+{
+	return(nullptr);
 }
 
 void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the unit to ignore the PC or dispatch any remaining tasks before enacting the move operation.
