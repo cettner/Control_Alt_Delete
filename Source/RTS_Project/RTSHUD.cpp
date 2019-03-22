@@ -178,6 +178,11 @@ void ARTSHUD::GetSelectedUnits()
 			/*Unit has Commander, Get their squad and add it in*/
 			else if(Selected_Units[i]->GetCommander())
 			{
+				/*Add the Commander*/
+				Selected_Units.AddUnique(Selected_Units[i]->GetCommander());
+				Selected_Units[i]->GetCommander()->SetSelected();
+
+				/*Add His Squad*/
 				for(int j = 0; j < Selected_Units[i]->GetCommander()->Squad.Num(); j++)
 				{
 					Selected_Units.AddUnique(Selected_Units[i]->GetCommander()->Squad[j]);

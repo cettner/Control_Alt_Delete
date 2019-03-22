@@ -17,7 +17,7 @@ class RTS_PROJECT_API ARTSAIController : public AAIController
 		UPROPERTY(transient)
 		class UBlackboardComponent *BlackboardComp;
 
-	UPROPERTY(transient)
+	    UPROPERTY(transient)
 		class UBehaviorTreeComponent *BehaviorComp;
 	
 public:
@@ -27,8 +27,7 @@ public:
 	virtual void Possess(APawn *InPawn) override;
 
 	void SetTarget(AActor* newtarget);
-
-	uint8 RTSKeyID;
+	class ACommander * GetCommander();
 
 	UPROPERTY(EditDefaultsOnly)
 	FName Target = "Target";

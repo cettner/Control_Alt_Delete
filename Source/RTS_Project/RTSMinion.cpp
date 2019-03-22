@@ -12,6 +12,8 @@
 #include "Materials/Material.h"
 #include "RTSAIController.h"
 #include"Runtime/Engine/Classes/Engine/World.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
+#include"Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 #include "Commander.h"
 
 ARTSMinion::ARTSMinion()
@@ -72,7 +74,9 @@ void ARTSMinion::SetDeselected()
 
 ACommander * ARTSMinion::GetCommander()
 {
-	return(nullptr);
+	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+	ACommander * commander = AIC->GetCommander();
+	return(commander);
 }
 
 void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the unit to ignore the PC or dispatch any remaining tasks before enacting the move operation.

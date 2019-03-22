@@ -7,7 +7,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Navigation/CrowdFollowingComponent.h"
 #include "RTSMinion.h"
-
+#include "Commander.h"
 
 ARTSAIController::ARTSAIController()
 {
@@ -24,7 +24,6 @@ void ARTSAIController::Possess(APawn * InPawn)
 	if (Minion != NULL && Minion->RTSBehavior != NULL)
 	{
 		BlackboardComp->InitializeBlackboard(*Minion->RTSBehavior->BlackboardAsset);
-		RTSKeyID = BlackboardComp->GetKeyID("TargetID");
 		BehaviorComp->StartTree(*Minion->RTSBehavior);
 	}
 }
@@ -35,5 +34,10 @@ void ARTSAIController::SetTarget(AActor * newtarget)
 	{
 		BlackboardComp->SetValueAsObject(Target, newtarget);
 	}
+}
+
+ACommander * ARTSAIController::GetCommander()
+{
+	return(Cast<ACommander>(BlackboardComp->GetValueAsObject("OwningCommander")));
 }
 
