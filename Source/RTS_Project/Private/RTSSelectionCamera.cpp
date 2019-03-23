@@ -73,8 +73,16 @@ void ARTSSelectionCamera::SelectReleased()
 			}
 			CurrentView.set(SelectedUnits[0]);
 		}
+		else if(CurrentView.GetSelectable() == ReleaseClick && ReleaseClick == TempClick)
+		{
+			// clicked on already selected object do nothing
+		}
 		else
 		{
+			if(CurrentView.GetSelectable())
+			{
+				CurrentView.GetSelectable()->SetDeselected();
+			}
 			CurrentView.empty();
 		}
 
