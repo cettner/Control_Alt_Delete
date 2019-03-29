@@ -11,17 +11,17 @@ void ACommander::Tick(float DeltaTime)
 	FHitResult hit;
 	FVector fwd = FPS_Camera->GetForwardVector();
 	FVector start = FPS_Camera->GetComponentLocation();
-	FVector end = (fwd * 250.0f) + start;
+	FVector end = (fwd * 500.0f) + start;
 	
 
 	DrawDebugLine(GetWorld(), start, end, FColor(255, 0, 0), false, -1, 0, 12.33);
-
-	if (GetWorld()->LineTraceSingleByChannel(hit, start, end, ECC_Pawn, trace))
+	AActor * hitSelectable = GetSelectableActor();
+	if (hitSelectable)
 	{
-		if (Cast<ARTSMinion>(hit.GetActor()))
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Hit!")));
-		}
+		//if (Cast<ARTSMinion>(hit.GetActor()))
+		//{
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Hit!")));
+		//}
 	}
 }
 
@@ -70,7 +70,28 @@ void ACommander::MoveRight(float Val)
 		// add movement in that direction
 		AddMovementInput(Direction, Val);
 	}
+}
 
+AActor * ACommander::GetSelectableActor()
+{
+	FHitResult hit;
+	FVector fwd = FPS_Camera->GetForwardVector();
+	FVector start = FPS_Camera->GetComponentLocation();
+	FVector end = (fwd * 500.0f) + start;
+
+	if (GetWorld()->LineTraceSingleByChannel(hit, start, end, SELECTION_CHANNEL, trace))
+	{
+			return(hit.GetActor());
+	}
+	else
+	{
+		return(nullptr);
+	}
+}
+
+void ACommander::SetTarget(AActor * newtarget)
+{
+	TargetActor = newtarget;
 }
 
 FVector ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
@@ -95,13 +116,24 @@ ACommander * ACommander::GetCommander()
 	return(this);
 }
 
+void ACommander::ClearCommander()
+{
+	//Do nothing, We are a Commander
+}
+
+void ACommander::SetCommander(ACommander * Commander)
+{
+	//Currently do nothing as Commanders cannot squad other commanders
+}
+
 bool ACommander::AddtoSquad(ARTSMinion * squadmate)
 {
-	if (Squad.Contains(squadmate))
+	if (Squad.Contains(squadmate)  || squadmate->GetCommander())
 	{
 		return(false);
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Minion Added to Squad!")));
+
 	Squad.Add(squadmate);
 	return(true);
 }
@@ -112,26 +144,43 @@ bool ACommander::LeaveSquad(ARTSMinion * leaver)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Minion Removed From Squad!")));
 		Squad.Remove(leaver);
+		leaver->ClearCommander();
 		return(true);
 	}
 	else
 	{
 		return(false);
 	}
-	
 }
 
 void ACommander::Interact()
 {
+	AActor * hittarget = GetSelectableActor();
 
+	ARTSMinion * minion = Cast<ARTSMinion>(hittarget);
+
+	if(minion)
+	{
+		MinionInteractionHandler(minion);
+	} 
+}
+
+void ACommander::MinionInteractionHandler(ARTSMinion * Interacted)
+{
+	if(!AddtoSquad(Interacted))
+	{
+		LeaveSquad(Interacted);
+	}
 }
 
 void ACommander::PrimaryFire()
 {
+
 }
 
 void ACommander::SecondaryFire()
 {
+
 }
 
 FVector ACommander::GetSquareFormation(int index, float width)
@@ -172,11 +221,15 @@ FVector ACommander::GetSquareFormation(int index, float width)
 void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
 {
 	// set up gameplay key bindings
+	/*W*/
 	InputComponent->BindAxis("MoveForward", this, &ACommander::MoveForward);
+	/*D*/
 	InputComponent->BindAxis("MoveRight", this, &ACommander::MoveRight);
+	/*Mouse X*/
 	InputComponent->BindAxis("Turn", this, &ACommander::AddControllerYawInput);
+	/*Mouse Y*/
 	InputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
-	
+	/*E*/
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
 	
 }

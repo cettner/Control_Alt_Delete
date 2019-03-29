@@ -27,7 +27,11 @@ public:
 	virtual void Possess(APawn *InPawn) override;
 
 	void SetTarget(AActor* newtarget);
+
 	class ACommander * GetCommander();
+	void ClearCommander();
+	void SetCommander(ACommander * Commander);
+
 
 	UPROPERTY(EditDefaultsOnly)
 	FName Target = "Target";

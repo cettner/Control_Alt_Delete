@@ -7,7 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Commander.generated.h"
 
-
+#define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
 
 UCLASS()
@@ -41,6 +41,12 @@ public:
 
 	virtual ACommander * GetCommander() override;
 
+	virtual void ClearCommander() override;
+
+	virtual void SetCommander(ACommander * Commander) override;
+    
+    virtual void SetTarget(AActor * newtarget) override;
+
 	UFUNCTION()
 	void Interact();
 
@@ -54,12 +60,15 @@ public:
 	TArray <ARTSMinion*> Squad;
 
 private:
-	int marching_order = 0;
-	
 	float marchwidth = 150.0f;
 
 	FCollisionQueryParams trace;
+
+	AActor * GetSelectableActor();
+
 	FVector GetSquareFormation(int index, float width);
+
+	void MinionInteractionHandler(ARTSMinion * Interacted);
 
 	enum FORMATION
 	{

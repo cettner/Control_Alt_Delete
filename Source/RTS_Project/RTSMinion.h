@@ -54,6 +54,10 @@ public:
 
 	virtual ACommander * GetCommander();
 
+	virtual void ClearCommander();
+
+	virtual void SetCommander(ACommander * Commander);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float health;
 

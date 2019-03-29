@@ -15,40 +15,17 @@
 EBTNodeResult::Type UBTTask_March_With_Commander::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-	ACommander * target = Cast<ACommander>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+	ACommander * Commander = Cast<ACommander>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("OwningCommander"));
 
-	if (target && Controller)
+	if (Controller && Commander)
 	{
-		ACommander * Commander = Cast<ACommander>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("OwningCommander"));
-
-		/*Same commander, just move to it*/
-		if (Commander == target)
-		{
 			ARTSMinion * minion = Cast<ARTSMinion>(Controller->GetPawn());
-			FVector marchposition = target->GetMarchingOrder(minion);
+			FVector marchposition = Commander->GetMarchingOrder(minion);
 			if (marchposition != FVector())
 			{
 				Controller->MoveToLocation(marchposition, 5.0f, false, true, true, true, 0, false);
 			}
-			
-		}
-		/*New Commander*/
-		else if (target)
-		{
-				ARTSMinion * minion = Cast<ARTSMinion>(Controller->GetPawn());
 
-				if (minion)
-				{
-					target->AddtoSquad(minion);
-					OwnerComp.GetBlackboardComponent()->SetValueAsObject("OwningCommander", target);
-					FVector position = target->GetActorLocation() + FVector(300, 300, 0);
-					Controller->MoveToLocation(position, 5.0f, false, true, true, true, 0, false);
-				}
-		}
-		else
-		{
-
-		}
 		return(EBTNodeResult::Succeeded);
 	}
 	else

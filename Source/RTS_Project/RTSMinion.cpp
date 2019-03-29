@@ -59,6 +59,7 @@ void ARTSMinion::SetTarget(AActor * NewTarget)
 	if (rtscontrol)
 	{
 		rtscontrol->SetTarget(NewTarget);
+		TargetActor = NewTarget;
 	}
 }
 
@@ -78,6 +79,19 @@ ACommander * ARTSMinion::GetCommander()
 	ACommander * commander = AIC->GetCommander();
 	return(commander);
 }
+
+void ARTSMinion::ClearCommander()
+{
+	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+	AIC->ClearCommander();
+}
+
+void ARTSMinion::SetCommander(ACommander * Commander)
+{
+	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+	AIC->SetCommander(Commander);
+}
+
 
 void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the unit to ignore the PC or dispatch any remaining tasks before enacting the move operation.
 {
