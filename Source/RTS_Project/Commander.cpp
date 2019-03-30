@@ -94,21 +94,22 @@ void ACommander::SetTarget(AActor * newtarget)
 	TargetActor = newtarget;
 }
 
-FVector ACommander::GetMarchingOrder(ARTSMinion * needs_orders)
+bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
 {
 	int index = Squad.IndexOfByKey(needs_orders);
 	if (index >= 0)
 	{
 		if (form == SQUARE)
 		{
-			return(GetSquareFormation(index,marchwidth));
+			OutVector = GetSquareFormation(index,marchwidth);
+			return(true);
 		}
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Formation Requested!")));
 		}
 	}
-	return(FVector());
+	return(false);
 }
 
 ACommander * ACommander::GetCommander()
@@ -133,8 +134,8 @@ bool ACommander::AddtoSquad(ARTSMinion * squadmate)
 		return(false);
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Minion Added to Squad!")));
-
 	Squad.Add(squadmate);
+	squadmate->SetCommander(this);
 	return(true);
 }
 

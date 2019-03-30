@@ -33,7 +33,7 @@ public:
 	UFUNCTION()
 	void MoveRight(float Val);
 
-	FVector GetMarchingOrder(ARTSMinion * needs_orders);
+	bool GetMarchingOrder(ARTSMinion * needs_orders, FVector &Outvector);
 
 	bool AddtoSquad(ARTSMinion * squadmate);
 

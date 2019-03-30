@@ -11,7 +11,6 @@
 
 
 
-
 EBTNodeResult::Type UBTTask_March_With_Commander::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
@@ -20,13 +19,16 @@ EBTNodeResult::Type UBTTask_March_With_Commander::ExecuteTask(UBehaviorTreeCompo
 	if (Controller && Commander)
 	{
 			ARTSMinion * minion = Cast<ARTSMinion>(Controller->GetPawn());
-			FVector marchposition = Commander->GetMarchingOrder(minion);
-			if (marchposition != FVector())
+			FVector marchposition;
+			if(Commander->GetMarchingOrder(minion, marchposition))
 			{
 				Controller->MoveToLocation(marchposition, 5.0f, false, true, true, true, 0, false);
+				return(EBTNodeResult::Succeeded);
 			}
-
-		return(EBTNodeResult::Succeeded);
+			else
+			{
+				return (EBTNodeResult::Failed);
+			}
 	}
 	else
 	{
