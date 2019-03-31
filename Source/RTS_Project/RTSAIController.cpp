@@ -36,6 +36,16 @@ void ARTSAIController::SetTarget(AActor * newtarget)
 	}
 }
 
+AActor * ARTSAIController::GetTarget()
+{
+	return(Cast<AActor>(BlackboardComp->GetValueAsObject(Target)));
+}
+
+void ARTSAIController::ClearTarget()
+{
+	BlackboardComp->ClearValue(Target);
+}
+
 void ARTSAIController::SetCommander(ACommander * Commander)
 {
 	BlackboardComp->SetValueAsObject("OwningCommander", Commander);

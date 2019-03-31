@@ -50,7 +50,15 @@ ARTSMinion::ARTSMinion()
 
 AActor * ARTSMinion::GetTarget()
 {
-	return(TargetActor);
+	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());
+	if (rtscontrol)
+	{
+		return(rtscontrol->GetTarget());
+	}
+	else
+	{
+		return(nullptr);
+	}
 }
 
 void ARTSMinion::SetTarget(AActor * NewTarget)
@@ -59,7 +67,15 @@ void ARTSMinion::SetTarget(AActor * NewTarget)
 	if (rtscontrol)
 	{
 		rtscontrol->SetTarget(NewTarget);
-		TargetActor = NewTarget;
+	}
+}
+
+void ARTSMinion::ClearTarget()
+{
+	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());
+	if (rtscontrol)
+	{
+		rtscontrol->ClearTarget();
 	}
 }
 

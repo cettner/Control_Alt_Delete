@@ -16,6 +16,7 @@ void ARTSCatapult::Tick(float DeltaSeconds)
 {
 	if (Target_Available)
 	{
+		AActor * TargetActor = GetTarget();
 		if (IsValid(TargetActor) && In_Range.Contains(TargetActor))
 		{
 			if (ShouldTurn(TargetActor))
@@ -161,10 +162,11 @@ void ARTSCatapult::OnMinRangeOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 			{
 				Target_Available = true;
 			}
-			if (!TargetActor)
+		/*	if (!TargetActor)
 			{
 				TargetActor = OtherActor;
 			}
+		*/
 			In_Range.Add(OtherActor);
 		}
 	}
@@ -181,10 +183,11 @@ void ARTSCatapult::OnMaxRangeOverlapBegin(UPrimitiveComponent * OverlappedCompon
 			{
 				Target_Available = true;
 			}
-			if (!TargetActor)
+		/*	if (!TargetActor)
 			{
 				TargetActor = OtherActor;
 			}
+		*/
 			In_Range.Add(OtherActor);
 		}
 	}

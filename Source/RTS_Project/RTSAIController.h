@@ -27,6 +27,8 @@ public:
 	virtual void Possess(APawn *InPawn) override;
 
 	void SetTarget(AActor* newtarget);
+	AActor * GetTarget();
+	void ClearTarget();
 
 	class ACommander * GetCommander();
 	void ClearCommander();

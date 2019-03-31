@@ -38,6 +38,8 @@ public:
 
 	virtual void SetTarget(AActor * NewTarget);
 
+	virtual void ClearTarget();
+
 	void SetSelected();
 
 	void SetDeselected();
@@ -77,9 +79,6 @@ public:
 private:
 
 protected:
-	//Unit or Structure the unit is to interact with
-	UPROPERTY(Transient)
-	AActor* TargetActor;
 
 
 };

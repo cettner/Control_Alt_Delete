@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "RTSMinion.h"
 #include "Camera/CameraComponent.h"
+#include "RTSSelectable.h"
 #include "Commander.generated.h"
 
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
@@ -69,6 +70,8 @@ private:
 	FVector GetSquareFormation(int index, float width);
 
 	void MinionInteractionHandler(ARTSMinion * Interacted);
+	
+	void SelectableInterationHandler(ARTSSelectable * Interacted);
 
 	enum FORMATION
 	{

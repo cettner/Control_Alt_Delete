@@ -91,7 +91,7 @@ AActor * ACommander::GetSelectableActor()
 
 void ACommander::SetTarget(AActor * newtarget)
 {
-	TargetActor = newtarget;
+
 }
 
 bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
@@ -164,6 +164,10 @@ void ACommander::Interact()
 	{
 		MinionInteractionHandler(minion);
 	} 
+	else if(Cast<ARTSSelectable>(hittarget))
+	{
+		SelectableInterationHandler(Cast<ARTSSelectable>(hittarget));
+	}
 }
 
 void ACommander::MinionInteractionHandler(ARTSMinion * Interacted)
@@ -171,6 +175,14 @@ void ACommander::MinionInteractionHandler(ARTSMinion * Interacted)
 	if(!AddtoSquad(Interacted))
 	{
 		LeaveSquad(Interacted);
+	}
+}
+
+void ACommander::SelectableInterationHandler(ARTSSelectable * Interacted)
+{
+	for(int i = 0; i < Squad.Num();  i++)
+	{
+		Squad[i]->SetTarget(Interacted);
 	}
 }
 
