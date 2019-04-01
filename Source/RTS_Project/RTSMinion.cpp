@@ -108,20 +108,6 @@ void ARTSMinion::SetCommander(ACommander * Commander)
 	AIC->SetCommander(Commander);
 }
 
-
-void ARTSMinion::ReleaseAssets(FVector Order_Local)  //This function allows the unit to ignore the PC or dispatch any remaining tasks before enacting the move operation.
-{
-	if (bismovespecial) // we have special instructions from elsewhere so ignore the PC this time.
-	{
-		bismovespecial = false;
-	}
-	else  //unless overloaded this should never be called
-	{
-		RtsMove(Order_Local);
-	}
-	
-}
-
 //interface function for override;
 void ARTSMinion::ReleaseAssets()
 {

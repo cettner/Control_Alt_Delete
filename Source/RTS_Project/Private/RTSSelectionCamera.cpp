@@ -112,12 +112,9 @@ void ARTSSelectionCamera::MoveSelected()
 
 				if (SelectedUnits[i]->HasAssets())
 				{
-					SelectedUnits[i]->ReleaseAssets(MoveLocal);
+					SelectedUnits[i]->ReleaseAssets();
 				}
-				else
-				{
 					SelectedUnits[i]->RtsMove(MoveLocal);
-				}
 			}
 
 		}

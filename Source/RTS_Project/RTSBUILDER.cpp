@@ -167,40 +167,6 @@ bool ARTSBUILDER::HasAssets()
 	return(false);
 }
 
-void ARTSBUILDER::ReleaseAssets(FVector Base_Order)  // This function handles interupts made by the user while they are currently enacting a state.
-{
-	if (bismovespecial)  // we recieved orders from elsewhere so ignore the call the first time
-	{
-		bismovespecial = false;
-	}
-	else if(state == MINING || state == MINE_ON_ROUTE)
-	{
-		if (IsValid(target_node))
-		{
-			target_node->FreeSlot(node_ref);
-		}
-		target_node = NULL;
-		target_struct = NULL;
-		node_ref = -1;
-		state = IDLE;
-		is_state_machine_active = false;
-		RtsMove(Base_Order);
-	}
-	else if (state == DELIVERY_ON_ROUTE)
-	{
-		target_struct = NULL;
-		target_node = NULL;
-		state = IDLE;
-		is_state_machine_active = false;
-		RtsMove(Base_Order);
-	}
-	else
-	{
-		state = IDLE;
-		is_state_machine_active = false;
-		RtsMove(Base_Order);
-	}
-}
 
 void ARTSBUILDER::ReleaseAssets()
 {

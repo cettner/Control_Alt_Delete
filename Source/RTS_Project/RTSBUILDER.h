@@ -34,7 +34,6 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual bool HasAssets() override;
-	virtual void ReleaseAssets(FVector Base_Order) override;
 	virtual void ReleaseAssets() override;
 
 

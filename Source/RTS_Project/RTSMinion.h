@@ -44,8 +44,6 @@ public:
 
 	void SetDeselected();
 
-	virtual void ReleaseAssets(FVector Order_Local);
-
 	virtual void ReleaseAssets();
 
 	virtual bool HasAssets();
