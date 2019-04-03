@@ -34,6 +34,8 @@ public:
 	// the location the unit is supposed to be at as instructed by the player controller.
 	FVector TargetLocation;
 
+	virtual bool CanInteract(AActor * Interactable);
+
 	virtual AActor* GetTarget();
 
 	virtual void SetTarget(AActor * NewTarget);

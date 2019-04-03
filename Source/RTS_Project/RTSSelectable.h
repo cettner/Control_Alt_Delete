@@ -25,7 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = StaticMeshComponents)
-	UStaticMeshComponent* Mesh;
+	UStaticMeshComponent * Mesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Selection)
 	URTSSelectionComponent * Selection;

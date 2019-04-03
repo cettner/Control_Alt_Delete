@@ -93,7 +93,6 @@ void ARTSStructure::UpdateSpawnQueue()
 
 void ARTSStructure::SpawnUnit(int unit_index)
 {
-	UWorld* const World = GetWorld();
 	Unit_Types type = (Unit_Types)unit_index;
 	FRotator SpawnRotation(0, 0, 0);
 
@@ -102,7 +101,7 @@ void ARTSStructure::SpawnUnit(int unit_index)
 	SpawnLocation.Z = 100;
 
 	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
-	PC->SpawnHelper.SpawnMinion(type, SpawnLocation, SpawnRotation, World);
+	PC->Spawn_RTS_Minion(SpawnLocation,SpawnRotation,type);
 
 }
 

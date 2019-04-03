@@ -56,6 +56,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = HUD)
 		void Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
 
+		void Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
 
@@ -86,9 +88,11 @@ public:
 	void AddResource(int amount_to_add, Resource_Types type);
 	bool TakeResource(int amount_to_take, Resource_Types type);
 
-	RTSSpawnHelper SpawnHelper = RTSSpawnHelper();
+	
 
 private:
+
+	RTSSpawnHelper  SpawnHelper;
 	ARTSSelectable * TempClick = nullptr;
 	class ViewActor
 	{

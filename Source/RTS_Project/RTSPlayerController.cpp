@@ -22,6 +22,14 @@ void ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotati
 	ARTSStructure * BuiltStructure = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
 }
 
+void ARTSPlayerController::Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index)
+{
+	Unit_Types type = (Unit_Types)Unit_index;
+	UWorld* const World = GetWorld();
+
+	ARTSMinion * SpawnedMinion = SpawnHelper.SpawnMinion(type,Location,Rotation,World);
+}
+
 void ARTSPlayerController::PossessCommander(ACommander * commander)
 {
 	bShowMouseCursor = false;
@@ -39,7 +47,7 @@ void ARTSPlayerController::PossessRTSCamera(ARTSCamera * camera)
 void ARTSPlayerController::BeginPlay()
 {
 	bShowMouseCursor = true;
-	HudPtr = Cast<ARTSHUD>(GetHUD());  // GetHud only returns AHUD, need to cast to get child type, ARTSHUD
+	HudPtr = Cast<ARTSHUD>(GetHUD());
 
 	Resource_Count.Add(ResourceOnePLayerStart);
 	Resource_Count.Add(ResourceTwoPLayerStart);

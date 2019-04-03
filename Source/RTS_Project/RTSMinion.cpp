@@ -48,6 +48,11 @@ ARTSMinion::ARTSMinion()
 	Selection->SetDetection(GetCapsuleComponent());
 }
 
+bool ARTSMinion::CanInteract(AActor * Interactable)
+{
+	return(false);
+}
+
 AActor * ARTSMinion::GetTarget()
 {
 	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());

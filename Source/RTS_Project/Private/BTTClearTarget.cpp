@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTTClearTarget::ExecuteTask(UBehaviorTreeComponent& OwnerCo
             {   
                 minion->ReleaseAssets();
             }
-            minion->SetTarget(nullptr);
+            minion->ClearTarget();
             return (EBTNodeResult::Succeeded);
         }
         else
