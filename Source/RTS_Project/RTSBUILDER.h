@@ -35,7 +35,7 @@ public:
 
 	virtual bool HasAssets() override;
 	virtual void ReleaseAssets() override;
-
+	virtual bool CanInteract(AActor * Interactable) override;
 
 
 	void Check_Delivery_Status();

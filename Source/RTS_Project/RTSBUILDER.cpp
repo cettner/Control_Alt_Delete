@@ -200,6 +200,18 @@ void ARTSBUILDER::ReleaseAssets()
 	}
 }
 
+bool ARTSBUILDER::CanInteract(AActor * Interactable)
+{
+	if(Cast<AResource>(Interactable))
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
 void ARTSBUILDER::Set_Node(AResource * current_node)   // IsValid in the past has thrown an unrecognizable exception....
 {
 	
