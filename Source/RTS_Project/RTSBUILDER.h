@@ -36,7 +36,7 @@ public:
 	virtual bool HasAssets() override;
 	virtual void ReleaseAssets() override;
 	virtual bool CanInteract(AActor * Interactable) override;
-
+	virtual bool Mine_Resource(AResource * Node);
 
 	void Check_Delivery_Status();
 	ARTSStructure * Get_Nearest_Dropoint();

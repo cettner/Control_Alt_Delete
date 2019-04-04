@@ -85,7 +85,6 @@ void ARTSSelectionCamera::SelectReleased()
 			}
 			CurrentView.empty();
 		}
-
 		TempClick = nullptr;
 		PC->Update_UI_Selection();
 	}
@@ -102,21 +101,27 @@ void ARTSSelectionCamera::MoveSelected()
 			PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 			AActor * target = Hit.GetActor();
 
-			if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
+			if(!SelectedUnits[i]->GetCommander()) //Unit is or has a commander, notify him.
 			{
-				SelectedUnits[i]->SetTarget(target);
-			}
-			else
-			{
-				FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
-
-				if (SelectedUnits[i]->HasAssets())
+				if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
 				{
-					SelectedUnits[i]->ReleaseAssets();
+					SelectedUnits[i]->SetTarget(target);
 				}
-					SelectedUnits[i]->RtsMove(MoveLocal);
-			}
+				else
+				{
+					FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
 
+					if (SelectedUnits[i]->HasAssets())
+					{
+						SelectedUnits[i]->ReleaseAssets();
+					}
+						SelectedUnits[i]->RtsMove(MoveLocal);
+				}
+			}
+			else //Notify the Commander of the new Target
+			{
+
+			}
 		}
 	}
 }

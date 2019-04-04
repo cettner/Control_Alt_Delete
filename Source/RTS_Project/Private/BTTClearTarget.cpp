@@ -29,5 +29,4 @@ EBTNodeResult::Type UBTTClearTarget::ExecuteTask(UBehaviorTreeComponent& OwnerCo
         {
             return (EBTNodeResult::Failed);
         }
-
 }

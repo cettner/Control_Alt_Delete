@@ -8,6 +8,7 @@
 class ARTSStructure;
 class ARTSMinion;
 
+UENUM(BlueprintType)
 enum Structure_Types
 {
 	STRUCTURELBOUND,
@@ -16,6 +17,7 @@ enum Structure_Types
 	STRUCTUREUBOUND
 };
 
+UENUM(BlueprintType)
 enum Unit_Types
 {
 	UNITLBOUND = STRUCTUREUBOUND,

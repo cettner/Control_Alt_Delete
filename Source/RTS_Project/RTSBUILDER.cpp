@@ -232,7 +232,7 @@ void ARTSBUILDER::Set_Node(AResource * current_node)   // IsValid in the past ha
 		{
 			state = IDLE;
 		}
-	}
+}
 
 void ARTSBUILDER::Check_Mine_Status()
 {
@@ -290,6 +290,34 @@ void ARTSBUILDER::Check_Mine_Status()
 			RtsMoveToActor(droppoint);
 		}
 		node_ref = -1;
+	}
+}
+
+bool ARTSBUILDER::Mine_Resource(AResource * Node)
+{
+	if(IsValid(target_node))
+	{
+		int gather_amount = (max_resource - carried_resource);  // determine how much room we have to add.
+		int added_resource = 0;
+		Resource_Types type = NULL_TYPE;
+
+		if (gather_amount < mine_amount)  //ask the node for less if we can only fit that much
+		{	
+			added_resource = target_node->Mine(gather_amount,type);
+		}
+		else    // we can ask for the full value
+		{
+			gather_amount = mine_amount; 
+			added_resource = target_node->Mine(gather_amount,type);
+		}
+		carried_resource += added_resource;
+		type_count[type] += added_resource;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
+		return(true);
+	}
+	else
+	{
+		return(false);
 	}
 }
 
