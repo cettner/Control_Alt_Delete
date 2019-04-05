@@ -36,11 +36,14 @@ public:
 	virtual bool HasAssets() override;
 	virtual void ReleaseAssets() override;
 	virtual bool CanInteract(AActor * Interactable) override;
-	virtual bool Mine_Resource(AResource * Node);
-
+	//virtual bool Mine_Resource(AResource * Node);
+	bool CanCarryMore(); 
+	bool CanMine();
 	void Check_Delivery_Status();
 	ARTSStructure * Get_Nearest_Dropoint();
 	
+	void Mine_Resource(AResource * Node);
+
 	int carried_resource = 0;
 	int max_resource = 50;
 	
@@ -74,9 +77,9 @@ private:
 
 
 	void Check_Mine_Status();
-	void Mine_Resource();
 	void Check_Node_Status();
 	void DeliverResources();
 	bool Drop_Point_Available();
 	bool Node_Nearby(FVector check_local);
+	void Mine_Cooldown_Reset();
 };

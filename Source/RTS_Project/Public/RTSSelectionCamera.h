@@ -45,7 +45,8 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 			Minion = nullptr;
 		}
 		void empty() { Selectable = nullptr; Minion = nullptr; }
-		void set(ARTSSelectable * inselect) {
+		void set(ARTSSelectable * inselect) 
+		{
 			Selectable = inselect;
 			Minion = nullptr;
 		};

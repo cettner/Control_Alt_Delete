@@ -101,7 +101,7 @@ void ARTSSelectionCamera::MoveSelected()
 			PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 			AActor * target = Hit.GetActor();
 
-			if(!SelectedUnits[i]->GetCommander()) //Unit is or has a commander, notify him.
+			if(!SelectedUnits[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
 			{
 				if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
 				{
@@ -111,7 +111,7 @@ void ARTSSelectionCamera::MoveSelected()
 				{
 					FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
 
-					if (SelectedUnits[i]->HasAssets())
+					if (SelectedUnits[i]->HasAssets()) /*Unit might be doing something, if he is, clear internal data*/
 					{
 						SelectedUnits[i]->ReleaseAssets();
 					}

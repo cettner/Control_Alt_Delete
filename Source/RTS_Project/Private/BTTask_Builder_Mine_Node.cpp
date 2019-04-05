@@ -19,9 +19,29 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
     if(Controller && target)
     {
         ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
-        if(minion && minion->Mine_Resource(target))
+        if(minion)
         {
-            return (EBTNodeResult::Succeeded);                
+            bool can_carry = minion->CanCarryMore();
+            if(can_carry && minion->CanMine())  //if we have room to carry and builder mine cooldown is ready
+            {   
+                minion->Mine_Resource(target);
+                if(minion->CanCarryMore()) //check again cause we might have just filled up
+                {
+                    return(EBTNodeResult::InProgress);
+                }
+                else 
+                {
+                    return(EBTNodeResult::Succeeded);
+                }
+            }
+            else if(can_carry) //we can carry more, but mine status isnt off cooldown
+            {
+                return(EBTNodeResult::InProgress);
+            }
+            else // we have aquired all we can, 
+            {
+                return(EBTNodeResult::Succeeded);
+            }               
         }
         else
         {

@@ -116,15 +116,16 @@ void ARTSMinion::SetCommander(ACommander * Commander)
 //interface function for override;
 void ARTSMinion::ReleaseAssets()
 {
-	if (bismovespecial) // we have special instructions from elsewhere so ignore the PC this time.
-	{
-		bismovespecial = false;
-	}
+	ClearTarget();
 }
 
 bool ARTSMinion::HasAssets()
 {
-	return (bismovespecial);
+	if(GetTarget())
+	{
+		return(true);
+	}
+	return (false);
 }
 
 void ARTSMinion::RtsMove(FVector Local)
