@@ -6,6 +6,11 @@
 #include "RTSBUILDER.h"
 #include "Engine.h"
 
+const FString RTSSpawnHelper::BuilderPath = TEXT("Blueprint'/Game/RTSMinion/RTSBUILDER.RTSBUILDER'");
+const FString RTSSpawnHelper::CatapultPath = TEXT("Blueprint'/Game/RTSMinion/RTSCatapult.RTSCatapult'");
+const FString RTSSpawnHelper::MinePath = TEXT("Blueprint'/Game/TopDownBP/Actors/Structures/MINE_BP.MINE_BP'");
+const FString RTSSpawnHelper::SpawnerPath = TEXT("Blueprint'/Game/TopDownBP/Actors/Structures/Spawner_BP.Spawner_BP'");
+
 RTSSpawnHelper::RTSSpawnHelper()
 {
 bool assetsloaded = true;

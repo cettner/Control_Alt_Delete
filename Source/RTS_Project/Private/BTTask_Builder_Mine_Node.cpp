@@ -24,15 +24,12 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
             bool can_carry = minion->CanCarryMore();
             if(can_carry && minion->CanMine())  //if we have room to carry and builder mine cooldown is ready
             {   
-				//const FAIRequestID RequestID = Controller->GetMineRequestId();
-
-				//WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, RequestID);
-
-				return EBTNodeResult::InProgress;
                 minion->Mine_Resource(target);
+                
                 if(minion->CanCarryMore()) //check again cause we might have just filled up
                 {
-					FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
+                    const FAIRequestID RequestID = Controller->GetMineRequestId();
+                    WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, RequestID);
                     return(EBTNodeResult::InProgress);
                 }
                 else 

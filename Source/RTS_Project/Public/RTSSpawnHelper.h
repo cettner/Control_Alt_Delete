@@ -38,16 +38,16 @@ public:
 private:
 	bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMinion> &asset);
 	bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset);
-
-	const FString BuilderPath = "Blueprint'/Game/RTSMinion/RTSBUILDER.RTSBUILDER'";
+	
+	static const FString BuilderPath;
 	TSubclassOf<ARTSMinion> Builder;
 
-	const FString CatapultPath = "Blueprint'/Game/RTSMinion/RTSCatapult.RTSCatapult'";
+	static const FString CatapultPath;
 	TSubclassOf<ARTSMinion> Catapult;
 
-	const FString MinePath = "Blueprint'/Game/TopDownBP/Actors/Structures/MINE_BP.MINE_BP'";
+	static const FString MinePath;
 	TSubclassOf<ARTSStructure> Mine;
 
-	const FString SpawnerPath = "Blueprint'/Game/TopDownBP/Actors/Structures/Spawner_BP.Spawner_BP'";
+	static const FString SpawnerPath;
 	TSubclassOf<ARTSStructure> Spawner;
 };
