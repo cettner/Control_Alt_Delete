@@ -111,11 +111,8 @@ void ARTSSelectionCamera::MoveSelected()
 				{
 					FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
 
-					if (SelectedUnits[i]->HasAssets()) /*Unit might be doing something, if he is, clear internal data*/
-					{
-						SelectedUnits[i]->ReleaseAssets();
-					}
-						SelectedUnits[i]->RtsMove(MoveLocal);
+					SelectedUnits[i]->ClearTarget(); /*Unit might be doing something, if he is, clear internal data*/
+					SelectedUnits[i]->RtsMove(MoveLocal);
 				}
 			}
 			else //Notify the Commander of the new Target

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BTTask_Builder_Mine_Node.h"
-#include "RTSAIController.h"
+#include "BuilderAIController.h"
 #include "RTSBUILDER.h"
 #include "Resource.h"
 #include "BehaviorTree/BehaviorTree.h"
@@ -13,7 +13,7 @@
 
 EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+    ABuilderAIController * Controller = Cast<ABuilderAIController>(OwnerComp.GetAIOwner());
     AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
 
     if(Controller && target)
@@ -24,9 +24,15 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
             bool can_carry = minion->CanCarryMore();
             if(can_carry && minion->CanMine())  //if we have room to carry and builder mine cooldown is ready
             {   
+				//const FAIRequestID RequestID = Controller->GetMineRequestId();
+
+				//WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, RequestID);
+
+				return EBTNodeResult::InProgress;
                 minion->Mine_Resource(target);
                 if(minion->CanCarryMore()) //check again cause we might have just filled up
                 {
+					FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
                     return(EBTNodeResult::InProgress);
                 }
                 else 
@@ -52,4 +58,9 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
     {
         return (EBTNodeResult::Failed);
     }
+}
+
+void UBTTask_Builder_Mine_Node::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
+{
+	int hit = 7;
 }
