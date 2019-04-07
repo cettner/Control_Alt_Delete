@@ -4,13 +4,14 @@
 #include "Components/DecalComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Materials/Material.h"
+#include "GameAssets.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 URTSSelectionComponent::URTSSelectionComponent()
 {
 	CursorToWorld = CreateDefaultSubobject<UDecalComponent>("CursorToWorld");
-	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT("Material'/Game/Decals/Selection_Decal.Selection_Decal'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT(SELECTION_DECAL_PATH));
 	if (DecalMaterialAsset.Succeeded())
 	{
 		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);

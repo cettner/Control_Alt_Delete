@@ -14,6 +14,7 @@
 #include"Runtime/Engine/Classes/Engine/World.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include"Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
+#include "GameAssets.h"
 #include "Commander.h"
 
 ARTSMinion::ARTSMinion()
@@ -27,7 +28,7 @@ ARTSMinion::ARTSMinion()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
-	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/UI_Thumbnails/Builder_PNG.Builder_PNG'"));
+	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT(BUILDER_THUMBNAIL_PATH));
 	if (ThumbnailAsset.Succeeded())
 	{
 		Thumbnail = ThumbnailAsset.Object;

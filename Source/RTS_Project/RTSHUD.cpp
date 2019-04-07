@@ -6,12 +6,13 @@
 #include "RTSMinion.h"
 #include "Commander.h"
 #include "RTSStructure.h"
+#include "GameAssets.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
 
 ARTSHUD::ARTSHUD()
 {
 	// Set the crosshair texture
-	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT("Texture2D'/Game/Pictures/MouseCursors/FirstPersonCrosshair.FirstPersonCrosshair'"));
+	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT(FPS_CROSSHAIR_PATH));
 	CrosshairTex = CrosshairTexObj.Object;
 
 	state = RTS_SELECT_AND_MOVE;
