@@ -5,6 +5,7 @@
 #include "RTSAIController.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "ConstructorHelpers.h"
+#include "GameAssets.h"
 #include "Engine.h"
 
 void ARTSCatapult::BeginPlay()
@@ -90,7 +91,7 @@ void ARTSCatapult::Reload()
 ARTSCatapult::ARTSCatapult()
 {
 
-	static ConstructorHelpers::FObjectFinder<UBlueprint> ProjectileBlueprint(TEXT("Blueprint'/Game/TopDownBP/Actors/SiegeProjectile_BP.SiegeProjectile_BP'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> ProjectileBlueprint(TEXT(SIEGE_PROJECTILE_BP_PATH));
 
 	if (ProjectileBlueprint.Object)
 	{
@@ -102,7 +103,7 @@ ARTSCatapult::ARTSCatapult()
 	}
 
 
-	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT("Texture2D'/Game/Pictures/UI_Thumbnails/Catapult_PNG.Catapult_PNG'"));
+	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT(CATAPULT_THUMBNAIL_PATH));
 	if (ThumbnailAsset.Succeeded())
 	{
 		Thumbnail = ThumbnailAsset.Object;

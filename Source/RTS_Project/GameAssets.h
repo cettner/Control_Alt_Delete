@@ -5,8 +5,10 @@
 
 /*Used in RTSMinion*/
 #define BUILDER_THUMBNAIL_PATH "Texture2D'/Game/Assets/Pictures/UI_Thumbnails/Builder_PNG.Builder_PNG'"
+
 /*Used RTSCatapult*/
 #define CATAPULT_THUMBNAIL_PATH "Texture2D'/Game/Assets/Pictures/UI_Thumbnails/Catapult_PNG.Catapult_PNG'"
+#define SIEGE_PROJECTILE_BP_PATH "Blueprint'/Game/TopDownBP/Actors/Projectiles/SiegeProjectile_BP.SiegeProjectile_BP'"
 
 /*Used in RTSHUD*/
 #define FPS_CROSSHAIR_PATH "Texture2D'/Game/Assets/Pictures/MouseCursors/FirstPersonCrosshair.FirstPersonCrosshair'"
