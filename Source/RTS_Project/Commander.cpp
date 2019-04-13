@@ -14,7 +14,7 @@ void ACommander::Tick(float DeltaTime)
 	FVector end = (fwd * 500.0f) + start;
 	
 
-	DrawDebugLine(GetWorld(), start, end, FColor(255, 0, 0), false, -1, 0, 12.33);
+	//DrawDebugLine(GetWorld(), start, end, FColor(255, 0, 0), false, -1, 0, 12.33);
 	AActor * hitSelectable = GetSelectableActor();
 	if (hitSelectable)
 	{
@@ -28,8 +28,7 @@ void ACommander::Tick(float DeltaTime)
 ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	FPS_Camera->SetupAttachment(GetMesh(), TEXT("Head"));
-
+	FPS_Camera->SetupAttachment(GetMesh(), TEXT("FPPCamera_socket"));
 	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
 	trace.bTraceComplex = true;
 	trace.bTraceAsyncScene = true;
