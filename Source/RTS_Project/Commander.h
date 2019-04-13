@@ -52,13 +52,25 @@ public:
 	void Interact();
 
 	UFUNCTION()
-	void PrimaryFire();
+	void PrimaryPressed();
 
 	UFUNCTION()
-	void SecondaryFire();
+	void PrimaryReleased();
+
+	UFUNCTION()
+	void SecondaryPressed();
+
+	UFUNCTION() 
+	void SecondaryReleased();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool Swing_Weapon = false;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool blocking = false;
 
 private:
 	float marchwidth = 150.0f;

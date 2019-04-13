@@ -186,14 +186,24 @@ void ACommander::SelectableInterationHandler(ARTSSelectable * Interacted)
 	}
 }
 
-void ACommander::PrimaryFire()
+void ACommander::PrimaryPressed()
 {
-
+	Swing_Weapon = true;
 }
 
-void ACommander::SecondaryFire()
+void ACommander::PrimaryReleased()
 {
+	Swing_Weapon = false;
+}
 
+void ACommander::SecondaryPressed()
+{
+	blocking = true;
+}
+
+void ACommander::SecondaryReleased()
+{
+	blocking = false;
 }
 
 FVector ACommander::GetSquareFormation(int index, float width)
@@ -244,5 +254,13 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
 	InputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
 	/*E*/
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
+
+	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ACommander::SecondaryPressed);
+
+	InputComponent->BindAction("RightMouse", IE_Released, this, &ACommander::SecondaryReleased);  
+
+	InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ACommander::PrimaryPressed);
+
+	InputComponent->BindAction("LeftMouse", IE_Released, this, &ACommander::PrimaryReleased);
 	
 }

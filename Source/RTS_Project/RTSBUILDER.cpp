@@ -302,14 +302,12 @@ void ARTSBUILDER::Check_Mine_Status()
 	}
 }
 
-void ARTSBUILDER::Mine_Cooldown_Reset()
+void ARTSBUILDER::StartMining(AResource * Node)
 {
-	node_timer_set = false;
-	ABuilderAIController * AIC = Cast<ABuilderAIController>(GetController());
-	if(AIC)
-	{
-		AIC->SendMineUpdateMessage();
-	}
+	/*Start the cooldown based off of current cooldown rate*/	
+	target_node = Node;
+	GetWorldTimerManager().SetTimer(Mine_Handler, this, &ARTSBUILDER::Mine_Resource, 1.0, false, mine_interval);
+	node_timer_set = true;
 }
 
 bool ARTSBUILDER::CanMine()
@@ -317,9 +315,10 @@ bool ARTSBUILDER::CanMine()
 	return(!node_timer_set);
 }
 
-void ARTSBUILDER::Mine_Resource(AResource * Node)
+void ARTSBUILDER::Mine_Resource()
 {
-	if(IsValid(Node))
+	AResource * Node = Cast<AResource>(GetTarget());
+	if(IsValid(Node) && Node == target_node) //verify that the current target and the target specified at start of mine operation are the same
 	{
 		int gather_amount = (max_resource - carried_resource);  // determine how much room we have to add.
 		int added_resource = 0;
@@ -339,12 +338,16 @@ void ARTSBUILDER::Mine_Resource(AResource * Node)
 		type_count[type] += added_resource;
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
-		/*Start the cooldown based off of current cooldown rate*/
-	
-		GetWorldTimerManager().SetTimer(Mine_Handler, this, &ARTSBUILDER::Mine_Cooldown_Reset, 1.0, false, mine_interval);
-		node_timer_set = true;
+
 		
+	    ABuilderAIController * AIC = Cast<ABuilderAIController>(GetController());
+	    if(AIC)
+	    {
+		    AIC->SendMineUpdateMessage();
+	    }
 	}
+	node_timer_set = false;
+	target_node =nullptr;
 }
 /*
 void ARTSBUILDER::Mine_Resource()

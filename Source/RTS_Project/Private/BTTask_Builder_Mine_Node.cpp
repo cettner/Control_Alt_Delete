@@ -10,7 +10,6 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
 
-
 EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     ABuilderAIController * Controller = Cast<ABuilderAIController>(OwnerComp.GetAIOwner());
@@ -24,20 +23,13 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
             bool can_carry = minion->CanCarryMore();
             if(can_carry && minion->CanMine())  //if we have room to carry and builder mine cooldown is ready
             {   
-                minion->Mine_Resource(target);
-				
-                if(minion->CanCarryMore()) //check again cause we might have just filled up
-                {
-                    WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, Controller->GetMineRequestId());
-                    return(EBTNodeResult::InProgress);
-                }
-                else 
-                {
-                    return(EBTNodeResult::Succeeded);
-                }
+                minion->StartMining(target);
+                WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, Controller->GetMineRequestId());
+                return(EBTNodeResult::InProgress);
             }
             else // we have aquired all we can, 
             {
+                FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
                 return(EBTNodeResult::Succeeded);
             }               
         }

@@ -42,7 +42,8 @@ public:
 	void Check_Delivery_Status();
 	ARTSStructure * Get_Nearest_Dropoint();
 	
-	void Mine_Resource(AResource * Node);
+	void StartMining(AResource * Node);
+
 
 	int carried_resource = 0;
 	int max_resource = 50;
@@ -75,11 +76,10 @@ private:
 	int node_ref = -1;
 	TArray<int> type_count;
 
-
+	void Mine_Resource();
 	void Check_Mine_Status();
 	void Check_Node_Status();
 	void DeliverResources();
 	bool Drop_Point_Available();
 	bool Node_Nearby(FVector check_local);
-	void Mine_Cooldown_Reset();
 };
