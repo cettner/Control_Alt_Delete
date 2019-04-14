@@ -8,6 +8,9 @@ RTS_Project.sln
 Content/GameData/Maps/TestMap_BuiltData.uasset
 Content/FPPMeleeAnimset/
 Content/AnimStarterPack/
+Content/ModularWeapons/
+Content/MovementAnimsetPro/
+Content/Weapon_Pack/
 <<<<<<< HEAD
 =======
 *.log

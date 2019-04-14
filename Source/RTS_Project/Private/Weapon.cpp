@@ -25,3 +25,13 @@ void AWeapon::Tick(float DeltaTime)
 
 }
 
+bool AWeapon::Equipped()
+{
+	return false;
+}
+
+bool AWeapon::UnEquipped()
+{
+	return false;
+}
+

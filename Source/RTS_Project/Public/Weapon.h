@@ -6,6 +6,13 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
+UENUM(BlueprintType)
+enum Socket_Types
+{
+	LEFTHAND,
+	RIGHTHAND
+};
+
 UCLASS()
 class RTS_PROJECT_API AWeapon : public AActor
 {
@@ -22,7 +29,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual bool Equipped();
+	virtual bool UnEquipped();
 
-	
-	
+	static const FString Equipped_Socket_Name;
+
+	static const FString UnEquipped_Socket_Name;
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMeshComponent * Mesh;
 };
