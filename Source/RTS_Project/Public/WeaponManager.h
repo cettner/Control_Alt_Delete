@@ -12,4 +12,6 @@ class RTS_PROJECT_API WeaponManager
 public:
 	WeaponManager();
 	~WeaponManager();
+
+	void AddEquipped();
 };

@@ -6,11 +6,17 @@
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
+/*Specifies Attatchment Location on Mesh*/
 UENUM(BlueprintType)
-enum Socket_Types
+enum Weapon_Types
 {
-	LEFTHAND,
-	RIGHTHAND
+	NULL_TYPE,
+	SHIELD,
+	SPEAR,
+	ONE_HANDED,
+	TWO_HANDED,
+	HALBERD,
+	DAGGER
 };
 
 UCLASS()
@@ -31,12 +37,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual bool Equipped();
 	virtual bool UnEquipped();
-
-	static const FString Equipped_Socket_Name;
-
-	static const FString UnEquipped_Socket_Name;
-
+	Weapon_Types GetType();
 public:
 	UPROPERTY(EditDefaultsOnly)
-	UStaticMeshComponent * Mesh;
+	USkeletalMeshComponent * Mesh;
+
+private:
+	Weapon_Types Type = NULL_TYPE;
 };

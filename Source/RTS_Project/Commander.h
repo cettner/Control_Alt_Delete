@@ -49,7 +49,7 @@ public:
     virtual void SetTarget(AActor * newtarget) override;
 
 	UFUNCTION()
-	void Interact();
+	virtual void Interact();
 
 	UFUNCTION()
 	void PrimaryPressed();
