@@ -7,6 +7,7 @@
 /*Forward Declarations*/
 class ARTSStructure;
 class ARTSMinion;
+class AWeapon;
 
 UENUM(BlueprintType)
 enum Structure_Types
@@ -26,6 +27,14 @@ enum Unit_Types
 	UNITUBOUND
 };
 
+UENUM(BlueprintType)
+enum Weapon_Types
+{
+	WEAPONLBOUND = UNITUBOUND,
+	EMPTY,
+	SHIELD,
+	WEAPONUBOUND
+};
 
 class RTS_PROJECT_API RTSSpawnHelper
 {

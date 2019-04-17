@@ -4,34 +4,40 @@
 
 
 // Sets default values
-AWeapon::AWeapon()
+AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+ 	CollisionComp =  CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
+	RootComponent = CollisionComp;
 
+	PrimaryActorTick.bCanEverTick = true;
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	Mesh->AttachTo(RootComponent);
 }
 
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	Super::BeginPlay();	
+}
+
+Weapon_Grip_Type AWeapon::GetType()
+{
+	return(Grip_Type);
 }
 
 // Called every frame
 void AWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AWeapon::Equipped(USkeletalMeshComponent * Character, FName Socketname)
+{
 
 }
 
-bool AWeapon::Equipped()
+void AWeapon::UnEquipped()
 {
-	return false;
-}
-
-bool AWeapon::UnEquipped()
-{
-	return false;
+	Destroy();
 }
 

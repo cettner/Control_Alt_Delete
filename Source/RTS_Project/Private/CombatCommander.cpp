@@ -2,10 +2,23 @@
 
 #include "CombatCommander.h"
 
-bool ACombatCommander::AddWeapon(AWeapon * Added_Weapon)
+ACombatCommander::ACombatCommander()
 {
 
+}
 
+void ACombatCommander::BeginPlay()
+{
+	Super::BeginPlay();
+	if(	WManager.Initialize(Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController()), GetMesh()))
+	{
+
+	}
+	
+}
+
+bool ACombatCommander::AddWeapon(AWeapon * Added_Weapon)
+{
 	return(false);
 }
 

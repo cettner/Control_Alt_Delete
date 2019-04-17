@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "Weapon.generated.h"
 
 /*Specifies Attatchment Location on Mesh*/
 UENUM(BlueprintType)
-enum Weapon_Types
+enum Weapon_Grip_Type
 {
-	NULL_TYPE,
-	SHIELD,
-	SPEAR,
-	ONE_HANDED,
-	TWO_HANDED,
-	HALBERD,
-	DAGGER
+	EMPTY_GRIP,
+	DAGGER_GRIP,
+	ONE_HANDED_GRIP,
+	SPEAR_GRIP,
+	SHIELD_GRIP,
+	TWO_HANDED_GRIP,
+	HALBERD_GRIP
 };
 
 UCLASS()
@@ -26,7 +27,7 @@ class RTS_PROJECT_API AWeapon : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	AWeapon();
+	AWeapon(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	// Called when the game starts or when spawned
@@ -35,13 +36,20 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual bool Equipped();
-	virtual bool UnEquipped();
-	Weapon_Types GetType();
+	virtual void Equipped(USkeletalMeshComponent * Character, FName Socketname);
+	virtual void UnEquipped();
+	Weapon_Grip_Type GetType();
+
 public:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
 	USkeletalMeshComponent * Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
+	UBoxComponent * CollisionComp;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
+	bool bhassecondary = false;
+
 private:
-	Weapon_Types Type = NULL_TYPE;
+	Weapon_Grip_Type Grip_Type = EMPTY_GRIP;
 };
