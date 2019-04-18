@@ -31,7 +31,8 @@ UENUM(BlueprintType)
 enum Weapon_Types
 {
 	WEAPONLBOUND = UNITUBOUND,
-	EMPTY,
+	NO_WEAPON,
+	ONE_H_AXE_BASIC,
 	SHIELD,
 	WEAPONUBOUND
 };
@@ -45,8 +46,8 @@ public:
 	ARTSStructure * SpawnStructure(Structure_Types type, FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World);
 
 private:
-	bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMinion> &asset);
-	bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset);
+	static bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMinion> &asset);
+	static bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset);
 	
 	static const FString BuilderPath;
 	TSubclassOf<ARTSMinion> Builder;

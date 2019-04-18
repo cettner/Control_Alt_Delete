@@ -12,13 +12,6 @@
  * 
  */
 
-UENUM(BlueprintType)
-enum Combat_Stance
-{
-	NO_WEAPON,
-	SWORD_AND_SHIELD,
-	TWOHANDED	
-};
 
 UCLASS()
 class RTS_PROJECT_API ACombatCommander : public ACommander
@@ -26,13 +19,20 @@ class RTS_PROJECT_API ACombatCommander : public ACommander
 	GENERATED_BODY()
 	
 public:
-	bool AddWeapon(AWeapon * Added_Weapon);
-	void SwitchWeapon();
 	ACombatCommander();
+	
+	bool AddWeapon(AWeapon * Added_Weapon);
+	void SwitchWeaponUp();
+	void SwitchWeaponDown();
+	
 	virtual void BeginPlay() override;
+	Combat_Stance Stance = NO_WEAPON_STANCE;
 
-	Combat_Stance Stance = NO_WEAPON;
+protected:
+	WeaponLoadOut EmptyLoadout;
+	WeaponLoadOut S_and_S;
 
 private:
+	void SetWeaponStance();
 	WeaponManager WManager;
 };
