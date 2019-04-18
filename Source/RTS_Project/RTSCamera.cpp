@@ -79,7 +79,7 @@ void ARTSCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAxis("MoveForward", this, &ARTSCamera::Translate_Cam_Up_Down);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ARTSCamera::Translate_Cam_LeftRight);
-	PlayerInputComponent->BindAction("ZoomIn", IE_Pressed, this, &ARTSCamera::Zoom_In);
-	PlayerInputComponent->BindAction("ZoomOut", IE_Pressed, this, &ARTSCamera::Zoom_Out);
+	PlayerInputComponent->BindAction("ScrollUp", IE_Pressed, this, &ARTSCamera::Zoom_In);
+	PlayerInputComponent->BindAction("ScrollDown", IE_Pressed, this, &ARTSCamera::Zoom_Out);
 }
 

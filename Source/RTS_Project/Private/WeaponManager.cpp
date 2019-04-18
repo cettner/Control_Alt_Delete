@@ -28,7 +28,7 @@ bool WeaponManager::AddLoadout(WeaponLoadOut Added_Set)
 
 WeaponLoadOut WeaponManager::GetCurrentLoadOut()
 {
-    if(initialized && loadout_index != -1)
+    if(initialized && loadout_index > -1)
     {
         return(Arsenal[loadout_index]);
     }
@@ -37,6 +37,42 @@ WeaponLoadOut WeaponManager::GetCurrentLoadOut()
         WeaponLoadOut emptyloadout;
         return(emptyloadout);
     }
+}
+
+WeaponLoadOut WeaponManager::GetNextLoadOut()
+{
+	if (initialized && loadout_index > -1 && Arsenal.Num())
+	{
+		if (loadout_index == Arsenal.Num() -1)
+		{
+			loadout_index = 0;
+			return(Arsenal[loadout_index]);
+		}
+		else
+		{
+			loadout_index++;
+			return(Arsenal[loadout_index]);
+		}
+	}
+	return WeaponLoadOut();
+}
+
+WeaponLoadOut WeaponManager::GetPreviousLoadOut()
+{
+	if (initialized && loadout_index > -1 && Arsenal.Num())
+	{
+		if (loadout_index == 0)
+		{
+			loadout_index = Arsenal.Num() - 1;
+			return(Arsenal[loadout_index]);
+		}
+		else
+		{
+			loadout_index--;
+			return(Arsenal[loadout_index]);
+		}
+	}
+	return WeaponLoadOut();
 }
 
 bool WeaponManager::Initialize(ARTSPlayerController * controller, USkeletalMeshComponent * character_mesh)

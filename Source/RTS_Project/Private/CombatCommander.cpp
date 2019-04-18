@@ -25,6 +25,13 @@ void ACombatCommander::BeginPlay()
 	
 }
 
+void ACombatCommander::SetupPlayerInputComponent(UInputComponent * InputComponent)
+{
+	InputComponent->BindAction("ScrollUp", IE_Pressed, this, &ACombatCommander::SwitchWeaponUp);
+	InputComponent->BindAction("ScrollDown", IE_Pressed, this, &ACombatCommander::SwitchWeaponDown);
+
+}
+
 bool ACombatCommander::AddWeapon(AWeapon * Added_Weapon)
 {
 	return(false);
@@ -32,8 +39,12 @@ bool ACombatCommander::AddWeapon(AWeapon * Added_Weapon)
 
 void ACombatCommander::SwitchWeaponUp()
 {
+	WeaponLoadOut loadout = WManager.GetNextLoadOut();
+	Stance = loadout.Stance;
 }
 
 void ACombatCommander::SwitchWeaponDown()
 {
+	WeaponLoadOut loadout = WManager.GetPreviousLoadOut();
+	Stance = loadout.Stance;
 }

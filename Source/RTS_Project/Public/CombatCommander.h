@@ -6,6 +6,7 @@
 #include "Commander.h"
 #include "Weapon.h"
 #include "WeaponManager.h"
+#include "Runtime/Core/Public/Containers/EnumAsByte.h"
 #include "CombatCommander.generated.h"
 
 /**
@@ -26,7 +27,12 @@ public:
 	void SwitchWeaponDown();
 	
 	virtual void BeginPlay() override;
-	Combat_Stance Stance = NO_WEAPON_STANCE;
+
+	UPROPERTY(BlueprintReadOnly)
+	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
+
+protected:
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 protected:
 	WeaponLoadOut EmptyLoadout;

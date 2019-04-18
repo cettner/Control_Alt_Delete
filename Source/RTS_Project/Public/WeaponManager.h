@@ -34,6 +34,8 @@ public:
 	bool AddLoadout(WeaponLoadOut Added_Set);
 	bool Initialize(ARTSPlayerController * Controller, USkeletalMeshComponent * character_mesh);
 	WeaponLoadOut GetCurrentLoadOut();
+	WeaponLoadOut GetNextLoadOut();
+	WeaponLoadOut GetPreviousLoadOut();
 
 private:
 	UPROPERTY(transient)
