@@ -27,6 +27,8 @@ void ACombatCommander::BeginPlay()
 
 void ACombatCommander::SetupPlayerInputComponent(UInputComponent * InputComponent)
 {
+	Super::SetupPlayerInputComponent(InputComponent);
+
 	InputComponent->BindAction("ScrollUp", IE_Pressed, this, &ACombatCommander::SwitchWeaponUp);
 	InputComponent->BindAction("ScrollDown", IE_Pressed, this, &ACombatCommander::SwitchWeaponDown);
 
