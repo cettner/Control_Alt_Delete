@@ -29,6 +29,8 @@ ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	FPS_Camera->SetupAttachment(GetMesh(), TEXT("FPPCamera_socket"));
+	FPS_Camera->bUsePawnControlRotation = true;
+
 	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
 	trace.bTraceComplex = true;
 	trace.bTraceAsyncScene = true;

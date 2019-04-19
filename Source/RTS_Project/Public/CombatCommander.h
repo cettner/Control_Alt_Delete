@@ -25,11 +25,18 @@ public:
 	bool AddWeapon(AWeapon * Added_Weapon);
 	void SwitchWeaponUp();
 	void SwitchWeaponDown();
+
+	void SetWeaponEquippedTimer();
+
+	void WeaponSwitchComplete();
 	
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool Switch_Weapon = false;
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -41,4 +48,6 @@ protected:
 private:
 	void SetWeaponStance();
 	WeaponManager WManager;
+	FTimerHandle SwitchWeaponDelayHandler;
+	const float SwitchWeaponDelayTime = 3.0;
 };

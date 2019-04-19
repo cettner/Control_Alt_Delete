@@ -41,7 +41,7 @@ WeaponLoadOut WeaponManager::GetCurrentLoadOut()
 
 WeaponLoadOut WeaponManager::GetNextLoadOut()
 {
-	if (initialized && loadout_index > -1 && Arsenal.Num())
+	if (loadout_index > -1 && Arsenal.Num())
 	{
 		if (loadout_index == Arsenal.Num() -1)
 		{
@@ -59,7 +59,7 @@ WeaponLoadOut WeaponManager::GetNextLoadOut()
 
 WeaponLoadOut WeaponManager::GetPreviousLoadOut()
 {
-	if (initialized && loadout_index > -1 && Arsenal.Num())
+	if (loadout_index > -1 && Arsenal.Num())
 	{
 		if (loadout_index == 0)
 		{
