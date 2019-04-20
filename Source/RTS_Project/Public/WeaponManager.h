@@ -33,9 +33,15 @@ public:
 	~WeaponManager();
 	bool AddLoadout(WeaponLoadOut Added_Set);
 	bool Initialize(ARTSPlayerController * Controller, USkeletalMeshComponent * character_mesh);
+	bool SpawnCurrentLoadOut();
+	bool DeSpawnCurrentLoadout();
+
 	WeaponLoadOut GetCurrentLoadOut();
 	WeaponLoadOut GetNextLoadOut();
 	WeaponLoadOut GetPreviousLoadOut();
+
+	AWeapon * GetPrimaryWeapon(){return(PrimaryHand);}
+	AWeapon * GetSecondaryWeapon(){return(SecondaryHand);}
 
 private:
 	UPROPERTY(transient)

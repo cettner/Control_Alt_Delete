@@ -30,8 +30,7 @@ enum Unit_Types
 UENUM(BlueprintType)
 enum Weapon_Types
 {
-	WEAPONLBOUND = UNITUBOUND,
-	NO_WEAPON,
+	NO_WEAPON = UNITUBOUND,
 	ONE_H_AXE_BASIC,
 	SHIELD,
 	WEAPONUBOUND
@@ -44,10 +43,12 @@ public:
 	~RTSSpawnHelper();
 	ARTSMinion * SpawnMinion(Unit_Types type, FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World);
 	ARTSStructure * SpawnStructure(Structure_Types type, FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World);
+	AWeapon * SpawnWeapon(Weapon_Types type,FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World);
 
 private:
 	static bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMinion> &asset);
 	static bool InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset);
+	static bool InitializeSpawnableAsset(FString path, TSubclassOf<AWeapon> &asset);
 	
 	static const FString BuilderPath;
 	TSubclassOf<ARTSMinion> Builder;
@@ -60,4 +61,7 @@ private:
 
 	static const FString SpawnerPath;
 	TSubclassOf<ARTSStructure> Spawner;
+
+	static const FString ShieldPath;
+	TSubclassOf<AWeapon> Shield;
 };

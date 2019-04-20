@@ -34,6 +34,8 @@ enum Resource_Types
 };
 
 class ARTSStructure;
+class AWeapon;
+
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public APlayerController
 {
@@ -53,10 +55,14 @@ public:
 
 	ARTSHUD * HudPtr;
 
-	UFUNCTION(BlueprintCallable, Category = HUD)
-		void Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
+	UFUNCTION(BlueprintCallable, Category = Spawn)
+	ARTSStructure * Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
 
-		void Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index);
+	UFUNCTION(BlueprintCallable, Category = Spawn)
+	ARTSMinion * Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index);
+
+	UFUNCTION(BlueprintCallable, Category = Spawn)
+	AWeapon * Spawn_Weapon(FVector Location, FRotator Rotation, int Weapon_index);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;

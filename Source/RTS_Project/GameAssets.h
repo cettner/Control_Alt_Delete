@@ -20,3 +20,5 @@
 
 #define MINE_BP_PATH "Blueprint'/Game/TopDownBP/Actors/Structures/MINE_BP.MINE_BP'"
 #define SPAWNER_BP_PATH "Blueprint'/Game/TopDownBP/Actors/Structures/Spawner_BP.Spawner_BP'"
+
+#define SHIELD_BP_PATH "Blueprint'/Game/TopDownBP/Actors/Weapons/Shield_BP.Shield_BP'"

@@ -11,6 +11,24 @@ WeaponManager::~WeaponManager()
 {
 }
 
+bool WeaponManager::SpawnCurrentLoadOut()
+{
+    bool spawncomplete = false;
+
+    if(initialized && loadout_index > -1)
+    {
+        if(Arsenal[loadout_index].PrimaryHand > NO_WEAPON)
+        {
+            if(Arsenal[loadout_index].SecondaryHand > NO_WEAPON)
+            {
+
+            }
+        }
+    }
+
+    return(spawncomplete);
+}
+
 bool WeaponManager::AddLoadout(WeaponLoadOut Added_Set)
 {
     if(Arsenal.Num() < max_inventory_size)

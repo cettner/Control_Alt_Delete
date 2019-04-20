@@ -4,6 +4,7 @@
 #include "RTSMinion.h"
 #include "RTSCatapult.h"
 #include "RTSBUILDER.h"
+#include "Weapon.h"
 #include "GameAssets.h"
 #include "Engine.h"
 
@@ -11,6 +12,7 @@ const FString RTSSpawnHelper::BuilderPath = TEXT(BUILDER_BP_PATH);
 const FString RTSSpawnHelper::CatapultPath = TEXT(CATAPULT_BP_PATH);
 const FString RTSSpawnHelper::MinePath = TEXT(MINE_BP_PATH);
 const FString RTSSpawnHelper::SpawnerPath = TEXT(SPAWNER_BP_PATH);
+const FString RTSSpawnHelper::ShieldPath = TEXT(SHIELD_BP_PATH);
 
 RTSSpawnHelper::RTSSpawnHelper()
 {
@@ -22,6 +24,8 @@ assetsloaded &= InitializeSpawnableAsset(CatapultPath, Catapult);
 assetsloaded &= InitializeSpawnableAsset(MinePath, Mine);
 
 assetsloaded &= InitializeSpawnableAsset(SpawnerPath, Spawner);
+
+assetsloaded &= InitializeSpawnableAsset(ShieldPath, Shield);
 
 	if (!assetsloaded)
 	{
@@ -50,6 +54,21 @@ bool RTSSpawnHelper::InitializeSpawnableAsset(FString path, TSubclassOf<ARTSMini
 }
 
 bool RTSSpawnHelper::InitializeSpawnableAsset(FString path, TSubclassOf<ARTSStructure> &asset)
+{
+    ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(*path);
+    if (TargetBlueprint.Object)
+	{
+		asset = (UClass*)TargetBlueprint.Object->GeneratedClass;
+        return true;
+	}
+    else
+    {
+        return false;
+    }
+   
+}
+
+bool RTSSpawnHelper::InitializeSpawnableAsset(FString path, TSubclassOf<AWeapon> &asset)
 {
     ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(*path);
     if (TargetBlueprint.Object)
@@ -111,5 +130,23 @@ ARTSStructure * RTSSpawnHelper::SpawnStructure(Structure_Types type, FVector Spa
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Structure Spawn Requested")));
 	}
 
+	return nullptr;
+}
+
+AWeapon * RTSSpawnHelper::SpawnWeapon(Weapon_Types type,  FVector SpawnLocation, FRotator SpawnRotation, UWorld *const World)
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.bNoFail = true;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if(type == SHIELD && World)
+	{
+		AWeapon * SpawnedWeapon = World->SpawnActor<AWeapon>(Spawner, SpawnLocation, SpawnRotation, SpawnParams);
+		return(SpawnedWeapon);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Structure Spawn Requested")));
+	}
 	return nullptr;
 }
