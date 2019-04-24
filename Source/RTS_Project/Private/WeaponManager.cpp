@@ -19,8 +19,8 @@ AWeapon * WeaponManager::SpawnWeapon(Weapon_Types wep_type)
 
     if(Weapon_Socket)
     {
-       AWeapon * spawned_wep = PC->Spawn_Weapon(Weapon_Socket->RelativeLocation, Weapon_Socket->RelativeRotation,(int)Arsenal[loadout_index].PrimaryHand);
-       //Weapon_Socket->AttachActor(spawned_wep,Character);
+		AWeapon * spawned_wep = PC->Spawn_Weapon(Weapon_Socket->GetSocketLocation(Character), Weapon_Socket->RelativeRotation, (int)wep_type);
+       Weapon_Socket->AttachActor(spawned_wep,Character);
        return(spawned_wep);
     }
     

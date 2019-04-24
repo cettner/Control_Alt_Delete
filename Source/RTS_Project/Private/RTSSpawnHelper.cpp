@@ -141,7 +141,7 @@ AWeapon * RTSSpawnHelper::SpawnWeapon(Weapon_Types type,  FVector SpawnLocation,
 
 	if(type == SHIELD && World)
 	{
-		AWeapon * SpawnedWeapon = World->SpawnActor<AWeapon>(Spawner, SpawnLocation, SpawnRotation, SpawnParams);
+		AWeapon * SpawnedWeapon = World->SpawnActor<AWeapon>(Shield, SpawnLocation, SpawnRotation, SpawnParams);
 		return(SpawnedWeapon);
 	}
 	else
