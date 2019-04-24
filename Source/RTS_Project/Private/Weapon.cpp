@@ -11,7 +11,7 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 	PrimaryActorTick.bCanEverTick = true;
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->AttachTo(RootComponent);
+	Mesh->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -33,7 +33,7 @@ void AWeapon::Tick(float DeltaTime)
 
 void AWeapon::Equipped(USkeletalMeshComponent * Character, FName Socketname)
 {
-
+	RootComponent->SetupAttachment(Character,Socketname);
 }
 
 void AWeapon::UnEquipped()

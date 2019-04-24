@@ -41,7 +41,7 @@ void URTSSelectionComponent::SetDeselected()
 
 void URTSSelectionComponent::SetRoot(USceneComponent * RootComponent)
 {
-	CursorToWorld->AttachTo(RootComponent);
+	CursorToWorld->SetupAttachment(RootComponent);
 }
 
 void URTSSelectionComponent::SetDetection(UPrimitiveComponent * Collision)

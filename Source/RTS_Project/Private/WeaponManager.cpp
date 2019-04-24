@@ -11,6 +11,22 @@ WeaponManager::~WeaponManager()
 {
 }
 
+
+AWeapon * WeaponManager::SpawnWeapon(Weapon_Types wep_type)
+{
+    FName socketname = GetSocketName(wep_type);
+    const USkeletalMeshSocket * Weapon_Socket = Character->GetSocketByName(socketname);
+
+    if(Weapon_Socket)
+    {
+       AWeapon * spawned_wep = PC->Spawn_Weapon(Weapon_Socket->RelativeLocation, Weapon_Socket->RelativeRotation,(int)Arsenal[loadout_index].PrimaryHand);
+       //Weapon_Socket->AttachActor(spawned_wep,Character);
+       return(spawned_wep);
+    }
+    
+    return(nullptr);
+}
+
 bool WeaponManager::SpawnCurrentLoadOut()
 {
     bool spawncomplete = false;
@@ -19,10 +35,28 @@ bool WeaponManager::SpawnCurrentLoadOut()
     {
         if(Arsenal[loadout_index].PrimaryHand > NO_WEAPON)
         {
-            if(Arsenal[loadout_index].SecondaryHand > NO_WEAPON)
+            PrimaryHand = SpawnWeapon(Arsenal[loadout_index].PrimaryHand);
+            if(PrimaryHand)
             {
-
+                spawncomplete = true;
             }
+        }
+        else
+        {
+            PrimaryHand = nullptr;
+        }
+
+        if(Arsenal[loadout_index].SecondaryHand > NO_WEAPON)
+        {
+            SecondaryHand = SpawnWeapon(Arsenal[loadout_index].SecondaryHand);
+            if(SecondaryHand)
+            {
+                spawncomplete = true;
+            }
+        }
+        else
+        {
+            SecondaryHand = nullptr;
         }
     }
 
@@ -109,4 +143,9 @@ bool WeaponManager::Initialize(ARTSPlayerController * controller, USkeletalMeshC
 	    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("WeaponManager Failed to Initialize!")));
     }
     return (initialized);
+}
+
+FName WeaponManager::GetSocketName(const Weapon_Types type)
+{
+    return (SHIELD_SOCKET);
 }

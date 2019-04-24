@@ -17,7 +17,7 @@ ASiegeProjectile::ASiegeProjectile(const FObjectInitializer& ObjectInitializer )
 	RootComponent = CollisionSphere;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->AttachTo(RootComponent);
+	Mesh->SetupAttachment(RootComponent);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionSphere;

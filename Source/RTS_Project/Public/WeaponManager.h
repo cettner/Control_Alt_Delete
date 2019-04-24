@@ -2,8 +2,8 @@
 
 #pragma once
 #include "Weapon.h"
-#include "RTSSpawnHelper.h"
 #include "RTSPlayerController.h"
+#include "MeshSockets.h"
 #include "CoreMinimal.h"
 
 /**
@@ -52,6 +52,8 @@ private:
 
 	static const int max_inventory_size = 3;
 
+
+
 	int loadout_index;
 
 	TArray<WeaponLoadOut> Arsenal;
@@ -61,4 +63,9 @@ private:
 	USkeletalMeshComponent * Character;	
 
 	bool initialized = false;
+
+private:
+	FName GetSocketName(const Weapon_Types type);
+
+	AWeapon * SpawnWeapon(Weapon_Types wep_type);
 };

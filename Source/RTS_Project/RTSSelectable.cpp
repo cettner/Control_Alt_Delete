@@ -11,7 +11,7 @@ ARTSSelectable::ARTSSelectable(const FObjectInitializer& ObjectInitializer)
 	RootComponent = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Root"));
 
 	Mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("Mesh"));
-	Mesh->AttachTo(RootComponent);
+	Mesh->SetupAttachment(RootComponent);
 
 	Selection = ObjectInitializer.CreateDefaultSubobject<URTSSelectionComponent>(this, TEXT("Selection"));
 	AddOwnedComponent(Selection);
