@@ -146,7 +146,7 @@ AWeapon * RTSSpawnHelper::SpawnWeapon(Weapon_Types type,  FVector SpawnLocation,
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Structure Spawn Requested")));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Weapon Spawn Requested")));
 	}
 	return nullptr;
 }

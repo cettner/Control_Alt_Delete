@@ -50,6 +50,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
 	bool bhassecondary = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
+	FVector SocketLocationOffset = FVector(0,0,0);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
+	FRotator SocketRotationOffset = FRotator(0,0,0);  
+
 private:
 	Weapon_Grip_Type Grip_Type = EMPTY_GRIP;
 };

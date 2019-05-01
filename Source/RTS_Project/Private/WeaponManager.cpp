@@ -19,8 +19,10 @@ AWeapon * WeaponManager::SpawnWeapon(Weapon_Types wep_type)
 
     if(Weapon_Socket)
     {
-		AWeapon * spawned_wep = PC->Spawn_Weapon(Weapon_Socket->GetSocketLocation(Character), Weapon_Socket->RelativeRotation, (int)wep_type);
+	   AWeapon * spawned_wep = PC->Spawn_Weapon(Weapon_Socket->GetSocketLocation(Character), FRotator(0,0,0), (int)wep_type);
        Weapon_Socket->AttachActor(spawned_wep,Character);
+       spawned_wep->SetActorRelativeLocation(spawned_wep->SocketLocationOffset);
+       spawned_wep->SetActorRelativeRotation(spawned_wep->SocketRotationOffset);
        return(spawned_wep);
     }
     
