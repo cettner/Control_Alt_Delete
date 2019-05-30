@@ -35,11 +35,13 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
         }
         else
         {
+            FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
             return (EBTNodeResult::Failed);
         }
     }
     else
     {
+        FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
         return (EBTNodeResult::Failed);
     }
 }
