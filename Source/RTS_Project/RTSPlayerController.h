@@ -83,10 +83,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay)
 		int ResourceThreePLayerStart = 0;
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION(Server, unreliable,  WithValidation)
 	void PossessCommander(ACommander * commander);
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION( Server, unreliable, WithValidation)
 	void PossessRTSCamera(ARTSCamera * camera);
 
 	virtual void BeginPlay() override;

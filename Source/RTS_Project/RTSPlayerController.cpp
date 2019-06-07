@@ -43,19 +43,47 @@ AWeapon * ARTSPlayerController::Spawn_Weapon(FVector Location, FRotator Rotation
 }
 
 
-void ARTSPlayerController::PossessCommander(ACommander * commander)
+bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
+{
+	if (commander && HudPtr)
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
+
+void ARTSPlayerController::PossessCommander_Implementation(ACommander * commander)
 {
 	bShowMouseCursor = false;
 	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
 	Possess(commander);
 }
 
-void ARTSPlayerController::PossessRTSCamera(ARTSCamera * camera)
+
+
+bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
+{
+	if (camera && HudPtr)
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
+void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
 {
 	bShowMouseCursor = true;
 	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
 	Possess(camera);
 }
+
 
 void ARTSPlayerController::BeginPlay()
 {
