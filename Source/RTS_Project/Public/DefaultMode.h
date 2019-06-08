@@ -13,8 +13,9 @@ UCLASS()
 class RTS_PROJECT_API ADefaultMode : public AGameMode
 {
 	GENERATED_BODY()
-	
-	
-	
+public:
+	ADefaultMode(const FObjectInitializer& ObjectInitializer);
+	virtual void PostLogin(APlayerController * NewPlayer) override;
+	virtual void Logout(AController * Exiting) override;
 	
 };

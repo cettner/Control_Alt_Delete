@@ -15,6 +15,7 @@
 
 /*Used in Spawner Helper*/
 #define COMMANDER_BP_PATH "Blueprint'/Game/RTSMinion/CommanderBP.CommanderBP'"
+#define COMBAT_COMMANDER_BP_PATH "Blueprint'/Game/RTSMinion/CombatCommander_BP.CombatCommander_BP'"
 #define BUILDER_BP_PATH "Blueprint'/Game/RTSMinion/RTSBUILDER.RTSBUILDER'"
 #define CATAPULT_BP_PATH "Blueprint'/Game/RTSMinion/RTSCatapult.RTSCatapult'"
 
