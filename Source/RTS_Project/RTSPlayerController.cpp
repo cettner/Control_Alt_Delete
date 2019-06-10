@@ -94,17 +94,15 @@ void ARTSPlayerController::BeginPlay()
 	Resource_Count.Add(ResourceTwoPLayerStart);
 	Resource_Count.Add(ResourceThreePLayerStart);
 	Update_UI_Resource();
+	
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Resources starting out at 0:%d, 1:%d, and 2:%d!"),ResourceOnePLayerStart,ResourceTwoPLayerStart,ResourceThreePLayerStart));
-
 }
 
 void ARTSPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
-
 }
 
 
@@ -132,5 +130,27 @@ bool ARTSPlayerController::TakeResource(int amount_to_take, Resource_Types type)
 		Resource_Count[type] -= amount_to_take;
 		Update_UI_Resource();
 		return true;
+	}
+}
+
+bool ARTSPlayerController::FinishPlayerLogin_Validate()
+{
+	return(true);
+}
+
+void ARTSPlayerController::FinishPlayerLogin_Implementation()
+{
+	if (Cast<ACommander>(GetPawn()) && HudPtr)
+	{
+		bShowMouseCursor = false;
+		HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+	}
+	else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
+	{
+		HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
 	}
 }

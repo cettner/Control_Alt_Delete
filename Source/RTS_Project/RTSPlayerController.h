@@ -94,6 +94,8 @@ public:
 	void AddResource(int amount_to_add, Resource_Types type);
 	bool TakeResource(int amount_to_take, Resource_Types type);
 
+	UFUNCTION(Server, unreliable, WithValidation)
+	void FinishPlayerLogin();
 	
 
 private:

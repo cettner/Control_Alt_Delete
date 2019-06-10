@@ -4,34 +4,26 @@
 #include "DefaultGameState.h"
 #include "RTSPlayerController.h"
 #include "GameAssets.h"
+#include "Engine.h"
 #include "CombatCommander.h"
 
 ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
 {
-	GameStateClass = ADefaultGameState::StaticClass();
-	PlayerControllerClass = ARTSPlayerController::StaticClass();
-
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT(COMBAT_COMMANDER_BP_PATH));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
 }
 
 void ADefaultMode::PostLogin(APlayerController * NewPlayer)
 {
+	Super::PostLogin(NewPlayer);
 	ARTSPlayerController * PC =  Cast<ARTSPlayerController>(NewPlayer);
 	if (PC)
 	{
-
+		PC->FinishPlayerLogin();
 	}
-	else
-	{
 
-	}
 }
 
 void ADefaultMode::Logout(AController * Exiting)
 {
+	Super::Logout(Exiting);
 }

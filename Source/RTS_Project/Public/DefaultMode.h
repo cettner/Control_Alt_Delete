@@ -17,5 +17,6 @@ public:
 	ADefaultMode(const FObjectInitializer& ObjectInitializer);
 	virtual void PostLogin(APlayerController * NewPlayer) override;
 	virtual void Logout(AController * Exiting) override;
-	
+private:
+	bool bRTSPlayerloggedin = false;
 };
