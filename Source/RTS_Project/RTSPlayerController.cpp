@@ -94,7 +94,22 @@ void ARTSPlayerController::BeginPlay()
 	Resource_Count.Add(ResourceTwoPLayerStart);
 	Resource_Count.Add(ResourceThreePLayerStart);
 	Update_UI_Resource();
-	
+	if (!HasAuthority())
+	{
+		if (Cast<ACommander>(GetPawn()) && HudPtr)
+		{
+			bShowMouseCursor = false;
+			HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+		}
+		else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
+		{
+			HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
+		}
+	}
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Resources starting out at 0:%d, 1:%d, and 2:%d!"),ResourceOnePLayerStart,ResourceTwoPLayerStart,ResourceThreePLayerStart));
 }
 
@@ -140,17 +155,5 @@ bool ARTSPlayerController::FinishPlayerLogin_Validate()
 
 void ARTSPlayerController::FinishPlayerLogin_Implementation()
 {
-	if (Cast<ACommander>(GetPawn()) && HudPtr)
-	{
-		bShowMouseCursor = false;
-		HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
-	}
-	else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
-	{
-		HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
-	}
+
 }
