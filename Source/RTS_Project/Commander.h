@@ -48,6 +48,12 @@ public:
     
     virtual void SetTarget(AActor * newtarget) override;
 
+	virtual bool CanInteract(AActor * Interactable) override;
+
+	void MinionInteractionHandler(ARTSMinion * Interacted);
+
+	void SelectableInterationHandler(ARTSSelectable * Interacted);
+
 	UFUNCTION()
 	virtual void Interact();
 
@@ -80,10 +86,6 @@ private:
 	AActor * GetSelectableActor();
 
 	FVector GetSquareFormation(int index, float width);
-
-	void MinionInteractionHandler(ARTSMinion * Interacted);
-	
-	void SelectableInterationHandler(ARTSSelectable * Interacted);
 
 	enum FORMATION
 	{

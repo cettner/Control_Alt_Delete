@@ -4,6 +4,7 @@
 #include "Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 #include "Engine.h"
+#include "FPSServerController.h"
 
 
 void ACommander::Tick(float DeltaTime)
@@ -95,6 +96,21 @@ void ACommander::SetTarget(AActor * newtarget)
 
 }
 
+bool ACommander::CanInteract(AActor * Interactable)
+{
+	bool retval = false;
+	if (Cast<ARTSMinion>(Interactable))
+	{
+		retval = true;
+	}
+	else if (Cast<ARTSSelectable>(Interactable))
+	{
+		retval = true;
+	}
+
+	return(retval);
+}
+
 bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
 {
 	int index = Squad.IndexOfByKey(needs_orders);
@@ -159,16 +175,14 @@ void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
 
-	ARTSMinion * minion = Cast<ARTSMinion>(hittarget);
-
-	if(minion)
+	if(CanInteract(hittarget))
 	{
-		MinionInteractionHandler(minion);
+		AFPSServerController * Server = Cast<AFPSServerController>(GetController());
+		if (Server && Server->Server_Request_Interact_Validate(this,hittarget))
+		{
+			Server->Server_Request_Interact_Implementation(this, hittarget);
+		}
 	} 
-	else if(Cast<ARTSSelectable>(hittarget))
-	{
-		SelectableInterationHandler(Cast<ARTSSelectable>(hittarget));
-	}
 }
 
 void ACommander::MinionInteractionHandler(ARTSMinion * Interacted)

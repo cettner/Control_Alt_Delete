@@ -16,4 +16,16 @@ bool AFPSServerController::Server_Request_Interact_Validate(ACommander * Control
 
 void AFPSServerController::Server_Request_Interact_Implementation(ACommander * Controlled_Cmdr, AActor * Interacted)
 {
+	if(Cast<ARTSMinion>(Interacted))
+	{
+		Controlled_Cmdr->MinionInteractionHandler(Cast<ARTSMinion>(Interacted));
+	}
+	else if(Cast<ARTSSelectable>(Interacted))
+	{
+
+	}
+	else
+	{
+
+	}
 }
