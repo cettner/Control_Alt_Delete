@@ -22,7 +22,7 @@ void AFPSServerController::Server_Request_Interact_Implementation(ACommander * C
 	}
 	else if(Cast<ARTSSelectable>(Interacted))
 	{
-
+		Controlled_Cmdr->SelectableInterationHandler(Cast<ARTSSelectable>(Interacted));
 	}
 	else
 	{

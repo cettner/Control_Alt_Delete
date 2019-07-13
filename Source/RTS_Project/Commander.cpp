@@ -171,6 +171,15 @@ bool ACommander::LeaveSquad(ARTSMinion * leaver)
 	}
 }
 
+bool ACommander::SelectableInterationHandler_Validate(ARTSSelectable * Interacted)
+{
+	if (Interacted)
+	{
+		return(true);
+	}
+	return(false);
+}
+
 void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
@@ -185,15 +194,27 @@ void ACommander::Interact()
 	} 
 }
 
-void ACommander::MinionInteractionHandler(ARTSMinion * Interacted)
+bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)
 {
-	if(!AddtoSquad(Interacted))
+	if (Interacted)
 	{
-		LeaveSquad(Interacted);
+		return(true);
+	}
+	else
+	{
+		return(false);
 	}
 }
 
-void ACommander::SelectableInterationHandler(ARTSSelectable * Interacted)
+void ACommander::MinionInteractionHandler_Implementation(ARTSMinion * Interacted)
+{
+		if (!AddtoSquad(Interacted))
+		{
+			LeaveSquad(Interacted);
+		}
+}
+
+void ACommander::SelectableInterationHandler_Implementation(ARTSSelectable * Interacted)
 {
 	for(int i = 0; i < Squad.Num();  i++)
 	{

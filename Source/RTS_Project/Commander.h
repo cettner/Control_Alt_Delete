@@ -50,8 +50,10 @@ public:
 
 	virtual bool CanInteract(AActor * Interactable) override;
 
+	UFUNCTION(Server, reliable, WithValidation)
 	void MinionInteractionHandler(ARTSMinion * Interacted);
 
+	UFUNCTION(Server, reliable, WithValidation)
 	void SelectableInterationHandler(ARTSSelectable * Interacted);
 
 	UFUNCTION()

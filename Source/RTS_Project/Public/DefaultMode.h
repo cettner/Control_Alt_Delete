@@ -9,6 +9,10 @@
 /**
  * 
  */
+/*Foward Declarations*/
+class ARTSCamera;
+class ACommander;
+
 UCLASS()
 class RTS_PROJECT_API ADefaultMode : public AGameMode
 {
@@ -17,6 +21,21 @@ public:
 	ADefaultMode(const FObjectInitializer& ObjectInitializer);
 	virtual void PostLogin(APlayerController * NewPlayer) override;
 	virtual void Logout(AController * Exiting) override;
+	int GetNumTeams() { return (num_teams); }
+	int GetTeamSize() { return(team_size);  }
+
+	/** The default pawn class used by RTS players. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	TSubclassOf<ARTSCamera> DefaultRTSClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	TSubclassOf<ACommander> DefaultFPSClass;
+
+protected:
+	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
+
 private:
-	bool bRTSPlayerloggedin = false;
+	int MaxRTSPlayersPerTeam = 1;
+	int num_teams = 2;
+	int team_size = 2;
 };
