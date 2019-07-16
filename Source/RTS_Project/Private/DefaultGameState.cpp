@@ -57,7 +57,7 @@ int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
 
 void ADefaultGameState::OnRep_MatchState()
 {
-
+	Super::OnRep_MatchState();
 }
 
 

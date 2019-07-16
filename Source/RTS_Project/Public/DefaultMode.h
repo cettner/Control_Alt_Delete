@@ -26,10 +26,10 @@ public:
 
 	/** The default pawn class used by RTS players. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-	TSubclassOf<ARTSCamera> DefaultRTSClass;
+	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-	TSubclassOf<ACommander> DefaultFPSClass;
+	TSubclassOf<ACommander> DefaultFPSClass = nullptr;
 
 protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;

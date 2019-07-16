@@ -2,16 +2,27 @@
 
 #include "DefaultMode.h"
 #include "DefaultGameState.h"
-#include "RTSPlayerController.h"
+#include "FPSServerController.h"
 #include "GameAssets.h"
 #include "Engine.h"
+#include "RTSSelectionCamera.h"
 #include "CombatCommander.h"
 
 ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
 {
-	DefaultFPSClass = ACommander::StaticClass();
-	DefaultRTSClass = ARTSCamera::StaticClass();
+	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(COMBAT_COMMANDER_BP_PATH));
+	if (TargetBlueprint.Object)
+	{
+		DefaultFPSClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
+	}
+
+	DefaultRTSClass = ARTSSelectionCamera::StaticClass();
+	GameStateClass = ADefaultGameState::StaticClass();
+	PlayerControllerClass = AFPSServerController::StaticClass();
+	HUDClass = ARTSHUD::StaticClass();
+	PlayerStateClass = ADefaultPlayerState::StaticClass();
+	DefaultPawnClass = nullptr;
 }
 
 void ADefaultMode::PostLogin(APlayerController * NewPlayer)
@@ -34,13 +45,30 @@ void ADefaultMode::Logout(AController * Exiting)
 
 UClass * ADefaultMode::GetDefaultPawnClassForController_Implementation(AController * InController)
 {
-	if (Cast<ARTSPlayerController>(InController))
+	ARTSPlayerController * PC = Cast<ARTSPlayerController>(InController);
+	if (PC)
 	{
-		return(nullptr);
+		ADefaultPlayerState * PlayerState = Cast<ADefaultPlayerState>(PC->PlayerState);
+		if (PlayerState)
+		{
+			if (PlayerState->isRtsPlayer)
+			{
+				return(DefaultRTSClass);
+			}
+			else
+			{
+				return(DefaultFPSClass);
+			}
+		}
+		else
+		{
+			return(nullptr);
+		}
+
 	}
 	else
 	{
-		return(Super::GetDefaultPawnClassForController_Implementation(InController));
+		return(nullptr);
 	}
 }
 

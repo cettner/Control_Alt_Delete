@@ -90,10 +90,6 @@ void ARTSPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	HudPtr = Cast<ARTSHUD>(GetHUD());
 
-	Resource_Count.Add(ResourceOnePLayerStart);
-	Resource_Count.Add(ResourceTwoPLayerStart);
-	Resource_Count.Add(ResourceThreePLayerStart);
-	Update_UI_Resource();
 	if (!HasAuthority())
 	{
 		if (Cast<ACommander>(GetPawn()) && HudPtr)
@@ -110,7 +106,7 @@ void ARTSPlayerController::BeginPlay()
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
 		}
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Resources starting out at 0:%d, 1:%d, and 2:%d!"),ResourceOnePLayerStart,ResourceTwoPLayerStart,ResourceThreePLayerStart));
+
 }
 
 void ARTSPlayerController::SetupInputComponent()
