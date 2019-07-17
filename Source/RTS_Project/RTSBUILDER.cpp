@@ -338,14 +338,14 @@ void ARTSBUILDER::Mine_Resource()
 		type_count[type] += added_resource;
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
-
-		
-	    ABuilderAIController * AIC = Cast<ABuilderAIController>(GetController());
-	    if(AIC)
-	    {
-		    AIC->SendMineUpdateMessage();
-	    }
 	}
+
+	ABuilderAIController * AIC = Cast<ABuilderAIController>(GetController());
+	if (AIC)
+	{
+		AIC->SendMineUpdateMessage();
+	}
+
 	node_timer_set = false;
 	target_node =nullptr;
 }
