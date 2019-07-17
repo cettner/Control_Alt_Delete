@@ -77,6 +77,8 @@ public:
 
 
 private:
+	UPROPERTY(Replicated)
+	ACommander * Cmdr;
 
 protected:
 

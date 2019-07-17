@@ -5,7 +5,7 @@
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
 #include "Engine.h"
 #include "FPSServerController.h"
-
+#include "UnrealNetwork.h"
 
 void ACommander::Tick(float DeltaTime)
 {
@@ -299,4 +299,12 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
 
 	InputComponent->BindAction("LeftMouse", IE_Released, this, &ACommander::PrimaryReleased);
 	
+}
+
+
+void ACommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACommander, Squad);
 }

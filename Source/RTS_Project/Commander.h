@@ -71,7 +71,7 @@ public:
 	UFUNCTION() 
 	void SecondaryReleased();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
 
 	UPROPERTY(BlueprintReadOnly)

@@ -34,9 +34,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	//UFUNCTION(Category = Default)
-	//void OnRightClick(AActor* Target, FKey ButtonPressed);
-
 	TArray <bool> Slot_Available;
 	TArray <FVector> Slots;
 
@@ -49,11 +46,8 @@ protected:
 	virtual void SetType(Resource_Types typeset);
 	ARTSHUD * HudPtr;
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 private:
 	Resource_Types mytype = TYPE_ONE;
-	
-	
+
 };

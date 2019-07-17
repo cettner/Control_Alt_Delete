@@ -11,18 +11,13 @@
 
 AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
 {
-
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
 void AResource::SetType(Resource_Types typeset)
 {
 	mytype = typeset;
-}
-
-// Called every frame
-void AResource::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 // Called when the game starts or when spawned
@@ -52,23 +47,7 @@ void AResource::BeginPlay()
 		Slot_Available.Add(true);
 	}
 }
-/*
-void AResource::OnRightClick(AActor* Target, FKey ButtonPressed)
-{
-	if (ButtonPressed == EKeys::RightMouseButton)
-	{
-		ARTSPlayerController * PC =	(ARTSPlayerController*)GetWorld()->GetFirstPlayerController();
 
-		for (int i = 0; i < PC->SelectedUnits.Num(); i++)
-		{
-			if (Cast<ARTSBUILDER>(PC->SelectedUnits[i]))
-			{
-				Cast<ARTSBUILDER>(PC->SelectedUnits[i])->Set_Node(this);
-			}
-		}	
-	}
-}
-*/
 int AResource::Mine(UINT amount_to_mine, Resource_Types& type )
 {
 	type = mytype;

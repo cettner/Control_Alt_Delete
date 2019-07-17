@@ -16,6 +16,7 @@
 #include"Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 #include "GameAssets.h"
 #include "Commander.h"
+#include "UnrealNetwork.h"
 
 ARTSMinion::ARTSMinion()
 {
@@ -97,21 +98,38 @@ void ARTSMinion::SetDeselected()
 
 ACommander * ARTSMinion::GetCommander()
 {
-	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
-	ACommander * commander = AIC->GetCommander();
-	return(commander);
+	if (Role == ROLE_Authority)
+	{
+		ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+		ACommander * commander = AIC->GetCommander();
+
+		//Do a double check to make sure replicated commander and blackboard are in sync, should never happen
+		if (Cmdr != commander)
+		{
+			Cmdr = commander;
+		}
+
+		return(commander);
+	}
+	else
+	{
+		return(Cmdr);
+	}
+
 }
 
 void ARTSMinion::ClearCommander()
 {
 	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
 	AIC->ClearCommander();
+	Cmdr = nullptr;
 }
 
 void ARTSMinion::SetCommander(ACommander * Commander)
 {
 	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
 	AIC->SetCommander(Commander);
+	Cmdr = Commander;
 }
 
 //interface function for override;
@@ -161,4 +179,12 @@ void ARTSMinion::BeginPlay()
 UTexture * ARTSMinion::GetThumbnail()
 {
 	return Thumbnail;
+}
+
+
+void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(ARTSMinion, Cmdr);
 }
