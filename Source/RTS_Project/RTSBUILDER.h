@@ -29,17 +29,13 @@ class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion
 
 public:
 	ARTSBUILDER();
-	void Set_Node(AResource * current_node);
-	void Set_Structure(ARTSStructure * current_struct);
-	virtual void Tick(float DeltaSeconds) override;
-
 	virtual bool HasAssets() override;
 	virtual void ReleaseAssets() override;
 	virtual bool CanInteract(AActor * Interactable) override;
-	//virtual bool Mine_Resource(AResource * Node);
+
 	bool CanCarryMore(); 
 	bool CanMine();
-	void Check_Delivery_Status();
+
 	ARTSStructure * Get_Nearest_Dropoint();
 	
 	void StartMining(AResource * Node);
@@ -77,8 +73,6 @@ private:
 	TArray<int> type_count;
 
 	void Mine_Resource();
-	void Check_Mine_Status();
-	void Check_Node_Status();
 	void DeliverResources();
 	bool Drop_Point_Available();
 	bool Node_Nearby(FVector check_local);
