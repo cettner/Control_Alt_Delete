@@ -17,3 +17,5 @@ Content/Weapon_Pack/
 
 >>>>>>> master
 Content/GameData/Maps/TestMap_BuiltData.uasset
+*.db
+*.sln
