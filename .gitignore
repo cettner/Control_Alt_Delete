@@ -20,3 +20,4 @@ Content/GameData/Maps/TestMap_BuiltData.uasset
 *.db
 *.sln
 RTS_Project.sln
+*.opendb
