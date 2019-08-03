@@ -116,34 +116,6 @@ void ARTSPlayerController::SetupInputComponent()
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
 }
 
-
-
-void ARTSPlayerController::AddResource(int amount_to_add, Resource_Types type)
-{
-	Resource_Count[type] += amount_to_add;
-
-	if (Resource_Count[type] > MAX_RESOURCES)
-	{
-		Resource_Count[type] = MAX_RESOURCES;
-	}
-	Update_UI_Resource();
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Added %d of resource type %d totals now: 1: %d, 2: %d, and 3: %d!"),amount_to_add,(int)type+1,Resource_Count[Resource_Types::TYPE_ONE],Resource_Count[Resource_Types::TYPE_TWO], Resource_Count[Resource_Types::TYPE_THREE]));
-}
-
-bool ARTSPlayerController::TakeResource(int amount_to_take, Resource_Types type)
-{
-	if (amount_to_take > Resource_Count[type])
-	{
-		return false;
-	}
-	else
-	{
-		Resource_Count[type] -= amount_to_take;
-		Update_UI_Resource();
-		return true;
-	}
-}
-
 bool ARTSPlayerController::FinishPlayerLogin_Validate()
 {
 	return(true);

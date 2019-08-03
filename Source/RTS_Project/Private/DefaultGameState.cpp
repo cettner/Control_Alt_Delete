@@ -5,11 +5,13 @@
 
 bool ADefaultGameState::TeamInitialize()
 {
-	for (int i = 0; i < PlayerArray.Num(); i++)
+	for (int i = 0; i < GM->GetNumTeams(); i++)
 	{
-
+		TArray<APlayerState *> newteam;
+		Teams.Emplace(newteam);
 	}
-	return(false);
+
+	return(GM->GetNumTeams() == Teams.Num());
 }
 
 int ADefaultGameState::HasTeam(APlayerState * Player)
@@ -28,36 +30,81 @@ int ADefaultGameState::HasTeam(APlayerState * Player)
 	return (retval);
 }
 
+bool ADefaultGameState::IsTeamFull(int Team_Index)
+{
+	bool retval = false;
+
+	if (Team_Index < GM->GetTeamSize() && Team_Index > -1 && initialized)
+	{
+		retval = Teams[Team_Index].Num() == GM->GetTeamSize();
+	}
+
+	return (retval);
+}
+
 ADefaultGameState::ADefaultGameState(const FObjectInitializer & ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	/*GM = Cast<ADefaultMode>(GetWorld()->GetAuthGameMode());
-	initialized = TeamInitialize() && GM;
-
-	FName State = "Lobby";
-	SetMatchState(State);
-	*/
+	GM = Cast<ADefaultMode>(GetWorld()->GetAuthGameMode());
+	if (GM)
+	{
+		initialized = TeamInitialize();
+	}
 }
 
 int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
 {
-	for (int i = 0; i < GM->GetNumTeams(); i++)
+	int retval = HasTeam(New_Player);
+
+	if (retval > -1)
 	{
-		for (int k = 0; k < GM->GetTeamSize(); k++)
+
+	}
+	else
+	{
+		for (int i = 0; i < GM->GetNumTeams(); i++)
 		{
-			if (Teams[i][k] == nullptr)
+			if (Teams[i].Num() < GM->GetTeamSize())
 			{
-				Teams[i][k] = New_Player;
-				return(i);
+				Teams[i].AddUnique(New_Player);
+				retval = i;
+				break;
 			}
 		}
 	}
-	return(-1);
+
+	return(retval);
 }
 
-void ADefaultGameState::OnRep_MatchState()
+int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
 {
-	Super::OnRep_MatchState();
+	int retval = HasTeam(New_Player);
+
+	if(retval > -1)
+	{
+
+	}
+	else
+	{
+		int smallest_team_index = -1;
+		int smallest_team_size = GM->GetTeamSize();
+
+		for (int i = 0; i < GM->GetNumTeams(); i++)
+		{
+			if (Teams[i].Num() < smallest_team_size)
+			{
+				smallest_team_index = i;
+				smallest_team_size = Teams[i].Num();
+			}
+		}
+
+		if (smallest_team_size < GM->GetTeamSize())
+		{
+			Teams[smallest_team_index].AddUnique(New_Player);
+		}
+	}
+	
+	return retval;
 }
 
 

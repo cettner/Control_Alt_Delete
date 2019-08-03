@@ -36,6 +36,7 @@ protected:
 
 private:
 	int MaxRTSPlayersPerTeam = 1;
+	int MinRTSPlatersPerTeam = 1;
 	int num_teams = 2;
 	int team_size = 2;
 };

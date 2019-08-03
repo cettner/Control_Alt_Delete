@@ -73,16 +73,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <int> Resource_Count;
 
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay)
-		int ResourceOnePLayerStart = 200;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay)
-		int ResourceTwoPLayerStart = 150;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay)
-		int ResourceThreePLayerStart = 0;
-
 	UFUNCTION(Server, unreliable,  WithValidation)
 	void PossessCommander(ACommander * commander);
 
@@ -90,9 +80,8 @@ public:
 	void PossessRTSCamera(ARTSCamera * camera);
 
 	virtual void BeginPlay() override;
+
 	virtual void SetupInputComponent() override;
-	void AddResource(int amount_to_add, Resource_Types type);
-	bool TakeResource(int amount_to_take, Resource_Types type);
 
 	UFUNCTION(Server, unreliable, WithValidation)
 	void FinishPlayerLogin();

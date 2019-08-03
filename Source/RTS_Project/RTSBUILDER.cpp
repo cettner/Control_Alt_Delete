@@ -50,17 +50,6 @@ ARTSStructure * ARTSBUILDER::Get_Nearest_Dropoint()
 
 void ARTSBUILDER::DeliverResources()
 {
-	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
-
-	for (int i = 0; i < NUM_RESOURCES; i++)
-	{
-		if (type_count[i] > 0)
-		{
-			PC->AddResource(type_count[i], (Resource_Types)i);
-			type_count[i] = 0;
-		}
-	}
-
 	carried_resource = 0;
 }
 

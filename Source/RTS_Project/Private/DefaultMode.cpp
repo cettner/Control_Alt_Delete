@@ -30,9 +30,12 @@ void ADefaultMode::PostLogin(APlayerController * NewPlayer)
 	Super::PostLogin(NewPlayer);
 	ARTSPlayerController * PC =  Cast<ARTSPlayerController>(NewPlayer);
 	ADefaultGameState * GS =  GetGameState<ADefaultGameState>();
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(NewPlayer->PlayerState);
 
-	if (PC && GS)
+	
+	if (PC && GS && PS)
 	{
+		PS->Team_ID = GS->AssignBalancedTeam(PS);
 		PC->FinishPlayerLogin();
 	}
 }
