@@ -29,13 +29,11 @@ void ADefaultMode::PostLogin(APlayerController * NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	ARTSPlayerController * PC =  Cast<ARTSPlayerController>(NewPlayer);
-	ADefaultGameState * GS =  GetGameState<ADefaultGameState>();
-	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(NewPlayer->PlayerState);
 
-	
-	if (PC && GS && PS)
+
+
+	if (PC)
 	{
-		PS->Team_ID = GS->AssignBalancedTeam(PS);
 		PC->FinishPlayerLogin();
 	}
 }
@@ -49,11 +47,13 @@ void ADefaultMode::Logout(AController * Exiting)
 UClass * ADefaultMode::GetDefaultPawnClassForController_Implementation(AController * InController)
 {
 	ARTSPlayerController * PC = Cast<ARTSPlayerController>(InController);
-	if (PC)
+	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
+	if (PC && GS)
 	{
 		ADefaultPlayerState * PlayerState = Cast<ADefaultPlayerState>(PC->PlayerState);
 		if (PlayerState)
 		{
+			PlayerState->Team_ID = GS->AssignBalancedTeam(PlayerState);
 			if (PlayerState->isRtsPlayer)
 			{
 				return(DefaultRTSClass);

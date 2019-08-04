@@ -27,7 +27,8 @@ private:
 	bool IsTeamFull(int Team_Index);
 	bool LeaveTeam(APlayerState * Player);
 
-
+protected:
+	virtual void BeginPlay() override;
 
 public:
 	ADefaultGameState(const FObjectInitializer& ObjectInitializer);

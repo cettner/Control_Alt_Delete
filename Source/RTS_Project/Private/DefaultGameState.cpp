@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DefaultGameState.h"
-
+#include "Engine/World.h"
 
 bool ADefaultGameState::TeamInitialize()
 {
@@ -10,7 +10,6 @@ bool ADefaultGameState::TeamInitialize()
 		TArray<APlayerState *> newteam;
 		Teams.Emplace(newteam);
 	}
-
 	return(GM->GetNumTeams() == Teams.Num());
 }
 
@@ -20,13 +19,19 @@ int ADefaultGameState::HasTeam(APlayerState * Player)
 	int retval = -1;
 	for (int i = 0; i < GM->GetNumTeams(); i++)
 	{
-		found |= Teams[i].Find(Player, retval);
-	}
+		found = Teams[i].Find(Player, retval);
 
+		if (found)
+		{
+			break;
+		}
+	}
+	
 	if (!found)
 	{
 		retval = -1;
 	}
+
 	return (retval);
 }
 
@@ -42,14 +47,22 @@ bool ADefaultGameState::IsTeamFull(int Team_Index)
 	return (retval);
 }
 
+void ADefaultGameState::BeginPlay()
+{
+	Super::BeginPlay();
+	if (HasAuthority())
+	{
+		GM = Cast<ADefaultMode>(GetWorld()->GetAuthGameMode());
+		if (GM)
+		{
+			initialized = TeamInitialize();
+		}
+	}
+}
+
 ADefaultGameState::ADefaultGameState(const FObjectInitializer & ObjectInitializer)
 : Super(ObjectInitializer)
 {
-	GM = Cast<ADefaultMode>(GetWorld()->GetAuthGameMode());
-	if (GM)
-	{
-		initialized = TeamInitialize();
-	}
 }
 
 int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
@@ -101,6 +114,7 @@ int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
 		if (smallest_team_size < GM->GetTeamSize())
 		{
 			Teams[smallest_team_index].AddUnique(New_Player);
+			retval = smallest_team_index;
 		}
 	}
 	
