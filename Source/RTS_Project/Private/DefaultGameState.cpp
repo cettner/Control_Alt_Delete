@@ -3,30 +3,42 @@
 #include "DefaultGameState.h"
 #include "Engine/World.h"
 
-bool ADefaultGameState::TeamInitialize()
+bool ADefaultGameState::TeamInitialize(AGameMode * GameMode)
 {
-	for (int i = 0; i < GM->GetNumTeams(); i++)
+	if (HasAuthority())
 	{
-		TArray<APlayerState *> newteam;
-		Teams.Emplace(newteam);
+		GM = Cast<ADefaultMode>(GameMode);
+		if (GM)
+		{
+			for (int i = 0; i < GM->GetNumTeams(); i++)
+			{
+				TArray<APlayerState *> newteam;
+				Teams.Emplace(newteam);
+			}
+			initialized = GM->GetNumTeams() == Teams.Num();
+		}	
 	}
-	return(GM->GetNumTeams() == Teams.Num());
+	return(initialized);
 }
 
 int ADefaultGameState::HasTeam(APlayerState * Player)
 {
 	bool found = false;
 	int retval = -1;
-	for (int i = 0; i < GM->GetNumTeams(); i++)
-	{
-		found = Teams[i].Find(Player, retval);
 
-		if (found)
+	if (initialized)
+	{
+		for (int i = 0; i < GM->GetNumTeams(); i++)
 		{
-			break;
+			found = Teams[i].Find(Player, retval);
+
+			if (found)
+			{
+				break;
+			}
 		}
 	}
-	
+
 	if (!found)
 	{
 		retval = -1;
@@ -50,14 +62,11 @@ bool ADefaultGameState::IsTeamFull(int Team_Index)
 void ADefaultGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	if (HasAuthority())
-	{
-		GM = Cast<ADefaultMode>(GetWorld()->GetAuthGameMode());
-		if (GM)
-		{
-			initialized = TeamInitialize();
-		}
-	}
+}
+
+void ADefaultGameState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 ADefaultGameState::ADefaultGameState(const FObjectInitializer & ObjectInitializer)

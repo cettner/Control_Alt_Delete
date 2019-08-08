@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "FPSServerController.h"
 #include "UnrealNetwork.h"
+#include "DefaultPlayerState.h"
 
 void ACommander::Tick(float DeltaTime)
 {
@@ -183,6 +184,9 @@ bool ACommander::SelectableInterationHandler_Validate(ARTSSelectable * Interacte
 void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
+	int id = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("MY team is %d"),id));
+
 
 	if(CanInteract(hittarget))
 	{

@@ -22,18 +22,20 @@ private:
 	TArray<TArray<APlayerState *>> Teams;
 	
 private:
-	bool TeamInitialize();
 	int HasTeam(APlayerState * Player);
 	bool IsTeamFull(int Team_Index);
 	bool LeaveTeam(APlayerState * Player);
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 public:
 	ADefaultGameState(const FObjectInitializer& ObjectInitializer);
+	bool TeamInitialize(AGameMode * GameMode);
 	int AssignAvailableTeam(APlayerState * New_Player);
 	int AssignBalancedTeam(APlayerState * New_Player);
 	bool SwapTeam(APlayerState * Player, int New_Team);
+
 	
 };

@@ -13,8 +13,8 @@ UCLASS()
 class RTS_PROJECT_API ATeamPlayerStart : public APlayerStart
 {
 	GENERATED_BODY()
-	
-	
-	
+public:
+		UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+		int teamid = -1; /*Will be used by Anyone*/
 	
 };

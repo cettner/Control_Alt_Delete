@@ -19,11 +19,10 @@ class RTS_PROJECT_API ADefaultMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ADefaultMode(const FObjectInitializer& ObjectInitializer);
-	virtual void PostLogin(APlayerController * NewPlayer) override;
-	virtual void Logout(AController * Exiting) override;
 	int GetNumTeams() { return (num_teams); }
 	int GetTeamSize() { return(team_size);  }
 
+public:
 	/** The default pawn class used by RTS players. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
 	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
@@ -33,6 +32,12 @@ public:
 
 protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
+	virtual void PostLogin(APlayerController * NewPlayer) override;
+	virtual void Logout(AController * Exiting) override;
+	virtual AActor * ChoosePlayerStart_Implementation(AController* Player) override;
+	virtual AActor * FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override;
+	virtual void InitGame(const FString & MapName,const FString & Options, FString & ErrorMessage) override;
+	virtual void InitGameState() override;
 
 private:
 	int MaxRTSPlayersPerTeam = 1;

@@ -13,9 +13,22 @@ UCLASS()
 class RTS_PROJECT_API ADefaultPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void PostInitializeComponents() override;
+protected:
+	/** Used to tell UE which variables to replicate */
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void BeginPlay() override;
+
 public:
+	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
+
+public:
+	UPROPERTY(Replicated)
 	bool isRtsPlayer = false;
+	
+	UPROPERTY(Replicated)
 	int Team_ID = -1;
 	
 };
