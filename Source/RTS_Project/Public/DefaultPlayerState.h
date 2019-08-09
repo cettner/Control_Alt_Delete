@@ -17,18 +17,15 @@ class RTS_PROJECT_API ADefaultPlayerState : public APlayerState
 protected:
 	virtual void PostInitializeComponents() override;
 protected:
-	/** Used to tell UE which variables to replicate */
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void BeginPlay() override;
+	virtual void ClientInitialize(AController * C) override;
 
 public:
 	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
 
 public:
-	UPROPERTY(Replicated)
+
 	bool isRtsPlayer = false;
-	
-	UPROPERTY(Replicated)
 	int Team_ID = -1;
 	
 };

@@ -17,27 +17,18 @@ void ADefaultPlayerState::BeginPlay()
 		UWorld * World = GetWorld();
 		if (World && World->GetGameState<ADefaultGameState>())
 		{
-			World->GetGameState<ADefaultGameState>()->AssignBalancedTeam(this);
+			Team_ID = World->GetGameState<ADefaultGameState>()->AssignBalancedTeam(this);
 		}
 	}
+}
+
+void ADefaultPlayerState::ClientInitialize(AController * C)
+{
+	Super::ClientInitialize(C);
 }
 
 ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	if (HasAuthority())
-	{
-		UWorld * World = GetWorld();
-		if (World && World->GetGameState<ADefaultGameState>())
-		{
-			//World->GetGameState<ADefaultGameState>()->AssignBalancedTeam(this);
-		}
-	}
-}
 
-void ADefaultPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ADefaultPlayerState, Team_ID);
 }
