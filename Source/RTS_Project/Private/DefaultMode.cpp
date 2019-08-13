@@ -2,38 +2,55 @@
 
 #include "DefaultMode.h"
 #include "DefaultGameState.h"
-#include "FPSServerController.h"
-#include "GameAssets.h"
 #include "Engine.h"
-#include "RTSSelectionCamera.h"
-#include "CombatCommander.h"
+
+#include "DefaultPlayerState.h"
 
 ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer) 
 : Super(ObjectInitializer)
 {
-	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(COMBAT_COMMANDER_BP_PATH));
-	if (TargetBlueprint.Object)
+	GameStateClass = ADefaultGameState::StaticClass();
+	PlayerStateClass = ADefaultPlayerState::StaticClass();
+
+	for (int i = 0; i < num_teams; i++)
 	{
-		DefaultFPSClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
+		TeamSpawnSelector newteam;
+		TeamStartingPoints.Emplace(newteam);
+	}
+}
+
+bool ADefaultMode::IsValidTeam(AActor * TeamMember)
+{
+	int teamnum = -1;
+
+	if (Cast<ADefaultPlayerState>(TeamMember))
+	{
+		teamnum = Cast<ADefaultPlayerState>(TeamMember)->Team_ID;
+	}
+	else if (Cast<ATeamPlayerStart>(TeamMember))
+	{
+		teamnum = Cast<ATeamPlayerStart>(TeamMember)->teamid;
 	}
 
-	DefaultRTSClass = ARTSSelectionCamera::StaticClass();
-	GameStateClass = ADefaultGameState::StaticClass();
-	PlayerControllerClass = AFPSServerController::StaticClass();
-	HUDClass = ARTSHUD::StaticClass();
-	PlayerStateClass = ADefaultPlayerState::StaticClass();
-	DefaultPawnClass = nullptr;
+	return ((teamnum > -1 && teamnum < num_teams));
+}
+
+void ADefaultMode::BeginPlay()
+{
+	UWorld* World = GetWorld();
+	for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
+	{
+		ATeamPlayerStart* Start = *It;
+		if (IsValidTeam(Start))
+		{
+			TeamStartingPoints[Start->teamid].Add(Start);
+		}
+	}
 }
 
 void ADefaultMode::PostLogin(APlayerController * NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	ARTSPlayerController * PC =  Cast<ARTSPlayerController>(NewPlayer);
-
-	if (PC)
-	{
-		PC->FinishPlayerLogin();
-	}
 }
 
 void ADefaultMode::Logout(AController * Exiting)
@@ -90,46 +107,20 @@ AActor * ADefaultMode::ChoosePlayerStart_Implementation(AController * Player)
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
 	UWorld* World = GetWorld();
-
-	// If incoming start is specified, then just use it
-	if (!IncomingName.IsEmpty())
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(Player->PlayerState);
+	if (PS)
 	{
-		const FName IncomingPlayerStartTag = FName(*IncomingName);
-		for (TActorIterator<APlayerStart> It(World); It; ++It)
+		if (IsValidTeam(PS) && TeamStartingPoints.Num())
 		{
-			APlayerStart* Start = *It;
-			if (Start && Start->PlayerStartTag == IncomingPlayerStartTag)
+			ATeamPlayerStart * retval = TeamStartingPoints[PS->Team_ID].GetNextSpawn();
+			if (retval)
 			{
-				return Start;
+				return(retval);
 			}
 		}
 	}
 
-	// Always pick StartSpot at start of match
-	if (ShouldSpawnAtStartSpot(Player))
-	{
-		if (AActor* PlayerStartSpot = Player->StartSpot.Get())
-		{
-			return PlayerStartSpot;
-		}
-		else
-		{
-			UE_LOG(LogGameMode, Error, TEXT("FindPlayerStart: ShouldSpawnAtStartSpot returned true but the Player StartSpot was null."));
-		}
-	}
-
-	AActor* BestStart = ChoosePlayerStart(Player);
-	if (BestStart == nullptr)
-	{
-		// No player start found
-		UE_LOG(LogGameMode, Log, TEXT("FindPlayerStart: PATHS NOT DEFINED or NO PLAYERSTART with positive rating"));
-
-		// This is a bit odd, but there was a complex chunk of code that in the end always resulted in this, so we may as well just 
-		// short cut it down to this.  Basically we are saying spawn at 0,0,0 if we didn't find a proper player start
-		BestStart = World->GetWorldSettings();
-	}
-
-	return BestStart;
+	return (Super::FindPlayerStart_Implementation(Player,IncomingName));
 }
 
 void ADefaultMode::InitGame(const FString & MapName, const FString & Options, FString & ErrorMessage)
@@ -148,34 +139,4 @@ void ADefaultMode::InitGameState()
 	}
 }
 
-UClass * ADefaultMode::GetDefaultPawnClassForController_Implementation(AController * InController)
-{
-	ARTSPlayerController * PC = Cast<ARTSPlayerController>(InController);
-	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
-	if (PC && GS)
-	{
-		ADefaultPlayerState * PlayerState = Cast<ADefaultPlayerState>(PC->PlayerState);
-
-		if (PlayerState)
-		{
-			if (PlayerState->isRtsPlayer)
-			{
-				return(DefaultRTSClass);
-			}
-			else
-			{
-				return(DefaultFPSClass);
-			}
-		}
-		else
-		{
-			return(nullptr);
-		}
-
-	}
-	else
-	{
-		return(nullptr);
-	}
-}
 

@@ -25,7 +25,7 @@ public:
 
 public:
 
-	bool isRtsPlayer = false;
+
 	int Team_ID = -1;
 	
 };
