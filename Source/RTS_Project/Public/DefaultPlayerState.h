@@ -19,13 +19,14 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 	virtual void ClientInitialize(AController * C) override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 public:
 	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
 
 public:
 
-
+	UPROPERTY(Replicated)
 	int Team_ID = -1;
 	
 };

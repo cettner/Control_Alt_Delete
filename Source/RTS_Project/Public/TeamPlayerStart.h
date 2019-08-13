@@ -14,7 +14,7 @@ class RTS_PROJECT_API ATeamPlayerStart : public APlayerStart
 {
 	GENERATED_BODY()
 public:
-		UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawn)
 		int teamid = -1; /*Will be used by Anyone*/
 	
 };

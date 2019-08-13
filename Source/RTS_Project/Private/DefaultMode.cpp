@@ -106,6 +106,11 @@ AActor * ADefaultMode::ChoosePlayerStart_Implementation(AController * Player)
 
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
+	if (Cast<APlayerStart>(Player->StartSpot))
+	{
+		return(Cast<APlayerStart>(Player->StartSpot));
+	}
+
 	UWorld* World = GetWorld();
 	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(Player->PlayerState);
 	if (PS)
@@ -120,7 +125,7 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 		}
 	}
 
-	return (Super::FindPlayerStart_Implementation(Player,IncomingName));
+	return (ChoosePlayerStart(Player));
 }
 
 void ADefaultMode::InitGame(const FString & MapName, const FString & Options, FString & ErrorMessage)

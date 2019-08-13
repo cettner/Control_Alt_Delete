@@ -32,3 +32,9 @@ ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitial
 {
 
 }
+
+void ADefaultPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ADefaultPlayerState, Team_ID);
+}
