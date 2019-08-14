@@ -49,14 +49,19 @@ int ADefaultGameState::HasTeam(APlayerState * Player)
 
 bool ADefaultGameState::IsTeamFull(int Team_Index)
 {
-	bool retval = false;
+	bool retval = true;
 
-	if (Team_Index < GM->GetTeamSize() && Team_Index > -1 && initialized)
+	if (IsTeamValid(Team_Index) && initialized)
 	{
-		retval = Teams[Team_Index].Num() == GM->GetTeamSize();
+		retval = Teams[Team_Index].Num() >= GM->GetTeamSize();
 	}
 
 	return (retval);
+}
+
+bool ADefaultGameState::IsTeamValid(int Team_Index)
+{
+	return(-1 > Team_Index && Team_Index < GM->GetNumTeams());
 }
 
 void ADefaultGameState::BeginPlay()

@@ -19,29 +19,16 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	}
 }
 
-bool ADefaultMode::IsValidTeam(AActor * TeamMember)
-{
-	int teamnum = -1;
-
-	if (Cast<ADefaultPlayerState>(TeamMember))
-	{
-		teamnum = Cast<ADefaultPlayerState>(TeamMember)->Team_ID;
-	}
-	else if (Cast<ATeamPlayerStart>(TeamMember))
-	{
-		teamnum = Cast<ATeamPlayerStart>(TeamMember)->teamid;
-	}
-
-	return ((teamnum > -1 && teamnum < num_teams));
-}
-
 void ADefaultMode::BeginPlay()
 {
+	Super::BeginPlay();
 	UWorld* World = GetWorld();
+	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
+
 	for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
 	{
 		ATeamPlayerStart* Start = *It;
-		if (IsValidTeam(Start))
+		if (GS && GS->IsTeamValid(Start->teamid))
 		{
 			TeamStartingPoints[Start->teamid].Add(Start);
 		}
@@ -58,52 +45,6 @@ void ADefaultMode::Logout(AController * Exiting)
 	Super::Logout(Exiting);
 }
 
-AActor * ADefaultMode::ChoosePlayerStart_Implementation(AController * Player)
-{
-	// Choose a player start
-	APlayerStart* FoundPlayerStart = nullptr;
-	UClass* PawnClass = GetDefaultPawnClassForController(Player);
-	APawn* PawnToFit = PawnClass ? PawnClass->GetDefaultObject<APawn>() : nullptr;
-	TArray<APlayerStart*> UnOccupiedStartPoints;
-	TArray<APlayerStart*> OccupiedStartPoints;
-	for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
-	{
-		APlayerStart* PlayerStart = *It;
-
-		if (PlayerStart->IsA<APlayerStartPIE>())
-		{
-			// Always prefer the first "Play from Here" PlayerStart, if we find one while in PIE mode
-			FoundPlayerStart = PlayerStart;
-			break;
-		}
-		else
-		{
-			FVector ActorLocation = PlayerStart->GetActorLocation();
-			const FRotator ActorRotation = PlayerStart->GetActorRotation();
-			if (!GetWorld()->EncroachingBlockingGeometry(PawnToFit, ActorLocation, ActorRotation))
-			{
-				UnOccupiedStartPoints.Add(PlayerStart);
-			}
-			else if (GetWorld()->FindTeleportSpot(PawnToFit, ActorLocation, ActorRotation))
-			{
-				OccupiedStartPoints.Add(PlayerStart);
-			}
-		}
-	}
-	if (FoundPlayerStart == nullptr)
-	{
-		if (UnOccupiedStartPoints.Num() > 0)
-		{
-			FoundPlayerStart = UnOccupiedStartPoints[FMath::RandRange(0, UnOccupiedStartPoints.Num() - 1)];
-		}
-		else if (OccupiedStartPoints.Num() > 0)
-		{
-			FoundPlayerStart = OccupiedStartPoints[FMath::RandRange(0, OccupiedStartPoints.Num() - 1)];
-		}
-	}
-	return FoundPlayerStart;
-}
-
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
 	if (Cast<APlayerStart>(Player->StartSpot))
@@ -113,9 +54,11 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 
 	UWorld* World = GetWorld();
 	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(Player->PlayerState);
-	if (PS)
+	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
+
+	if (PS && GS)
 	{
-		if (IsValidTeam(PS) && TeamStartingPoints.Num())
+		if (GS->IsTeamValid(PS->Team_ID) && TeamStartingPoints.Num())
 		{
 			ATeamPlayerStart * retval = TeamStartingPoints[PS->Team_ID].GetNextSpawn();
 			if (retval)

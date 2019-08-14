@@ -55,7 +55,6 @@ public:
 	ADefaultMode(const FObjectInitializer& ObjectInitializer);
 	int GetNumTeams() { return (num_teams); }
 	int GetTeamSize() { return(team_size);  }
-	virtual bool IsValidTeam(AActor * TeamMember);
 
 public:
 
@@ -64,7 +63,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController * NewPlayer) override;
 	virtual void Logout(AController * Exiting) override;
-	virtual AActor * ChoosePlayerStart_Implementation(AController* Player) override;
 	virtual AActor * FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override;
 	virtual void InitGame(const FString & MapName,const FString & Options, FString & ErrorMessage) override;
 	virtual void InitGameState() override;

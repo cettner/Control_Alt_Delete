@@ -13,8 +13,9 @@ UCLASS()
 class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 {
 	GENERATED_BODY()
-	
-	
+
+	public:
+		int NumRTSPlayers(int Team_Index);
 	
 	
 };

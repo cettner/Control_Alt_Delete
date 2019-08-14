@@ -16,6 +16,8 @@ class RTS_PROJECT_API ARTFPSPlayerState : public ADefaultPlayerState
 	
 public:
 	bool isRtsPlayer = false;
-	
+
+protected:
+	virtual void BeginPlay() override;
 	
 };

@@ -16,15 +16,11 @@ class RTS_PROJECT_API ADefaultGameState : public AGameState
 {
 	GENERATED_BODY()
 	
-private:
+protected:
 	bool initialized = false;
 	ADefaultMode * GM = nullptr;
 	TArray<TArray<APlayerState *>> Teams;
 	
-private:
-	int HasTeam(APlayerState * Player);
-	bool IsTeamFull(int Team_Index);
-	bool LeaveTeam(APlayerState * Player);
 
 protected:
 	virtual void BeginPlay() override;
@@ -36,6 +32,9 @@ public:
 	int AssignAvailableTeam(APlayerState * New_Player);
 	int AssignBalancedTeam(APlayerState * New_Player);
 	bool SwapTeam(APlayerState * Player, int New_Team);
-
+	int HasTeam(APlayerState * Player);
+	bool IsTeamValid(int team_id);
+	bool IsTeamFull(int Team_Index);
+	bool LeaveTeam(APlayerState * Player);
 	
 };
