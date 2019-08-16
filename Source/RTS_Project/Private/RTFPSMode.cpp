@@ -73,11 +73,11 @@ AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const 
 
 	if (PS && GS)
 	{
-		if (PS->isRtsPlayer && GS->IsTeamValid(PS->Team_ID) && TeamStartingPoints.Num())
+		if (PS->isRtsPlayer && GS->IsTeamValid(PS->Team_ID) && RTSStartingPoints[PS->Team_ID].Num())
 		{
 			return(RTSStartingPoints[PS->Team_ID].GetNextSpawn());
 		}
-		else if (GS->IsTeamValid(PS->Team_ID) && TeamStartingPoints.Num())
+		else if (GS->IsTeamValid(PS->Team_ID) && TeamStartingPoints[PS->Team_ID].Num())
 		{
 			return(TeamStartingPoints[PS->Team_ID].GetNextSpawn());
 		}

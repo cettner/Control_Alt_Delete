@@ -61,7 +61,7 @@ bool ADefaultGameState::IsTeamFull(int Team_Index)
 
 bool ADefaultGameState::IsTeamValid(int Team_Index)
 {
-	return(-1 > Team_Index && Team_Index < GM->GetNumTeams());
+	return(-1 < Team_Index && Team_Index < GM->GetNumTeams());
 }
 
 void ADefaultGameState::BeginPlay()

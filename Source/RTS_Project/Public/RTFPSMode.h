@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "DefaultMode.h"
+#include "Commander.h"
+#include "RTSCamera.h"
 #include "RTFPSMode.generated.h"
 
 /**
