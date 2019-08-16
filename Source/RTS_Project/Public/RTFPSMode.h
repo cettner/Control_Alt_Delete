@@ -27,6 +27,11 @@ public:
 
 protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
+	virtual AActor * FindPlayerStart_Implementation(AController * Player, const FString & IncomingName) override;
+	virtual void BeginPlay();
+
+protected:
+	TArray<TeamSpawnSelector> RTSStartingPoints;
 
 private:
 	int MaxRTSPlayersPerTeam = 1;

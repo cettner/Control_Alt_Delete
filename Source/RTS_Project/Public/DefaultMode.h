@@ -14,6 +14,7 @@
 /*Helper Struct*/
 struct TeamSpawnSelector
 {
+public:
 	void Add(ATeamPlayerStart * Add) 
 	{
 		if (Add && LastSpawn < 0)
@@ -22,7 +23,6 @@ struct TeamSpawnSelector
 		}
 		TeamStart.AddUnique(Add);
 	}
-
 	ATeamPlayerStart * GetNextSpawn()
 	{
 		ATeamPlayerStart * retval = nullptr;
@@ -41,8 +41,12 @@ struct TeamSpawnSelector
 		}
 		return(retval);
 	}
+	int Num() 
+	{
+		return(TeamStart.Num());
+	}
 
-private:
+protected:
 	int LastSpawn = -1;
 	TArray<ATeamPlayerStart *> TeamStart;
 };
@@ -56,9 +60,6 @@ public:
 	int GetNumTeams() { return (num_teams); }
 	int GetTeamSize() { return(team_size);  }
 
-public:
-
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController * NewPlayer) override;
@@ -67,7 +68,7 @@ protected:
 	virtual void InitGame(const FString & MapName,const FString & Options, FString & ErrorMessage) override;
 	virtual void InitGameState() override;
 
-private:
+protected:
 	int num_teams = 2;
 	int team_size = 2;
 	TArray<TeamSpawnSelector> TeamStartingPoints;
