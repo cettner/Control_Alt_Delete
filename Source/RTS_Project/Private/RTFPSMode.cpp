@@ -94,12 +94,13 @@ void ARTFPSMode::BeginPlay()
 
 	for (int i = 0; i < TeamStartingPoints.Num(); i++)
 	{
-		ARTFPSPlayerStart * Start = Cast<ARTFPSPlayerStart>(TeamStartingPoints[i].GetNextSpawn());
-		if(Start && Start->isRTSStart && GS->IsTeamValid(Start->teamid))
+		for (int k = 0; k < TeamStartingPoints[i].Num(); k++)
 		{
-			RTSStartingPoints[Start->teamid].Add(Start);
-			TeamStartingPoints.RemoveAt(i);
-			i--;
+			ARTFPSPlayerStart * Start = Cast<ARTFPSPlayerStart>(TeamStartingPoints[i].GetNextSpawn());
+			if (Start && Start->isRTSStart && GS->IsTeamValid(Start->teamid))
+			{
+				RTSStartingPoints[Start->teamid].Add(Start);
+			}
 		}
 	}
 			
