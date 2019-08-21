@@ -16,13 +16,15 @@ ARTSHUD::ARTSHUD()
 	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT(FPS_CROSSHAIR_PATH));
 	CrosshairTex = CrosshairTexObj.Object;
 
-	state = RTS_SELECT_AND_MOVE;
+	state = GAME_INIT;
 }
 
 void ARTSHUD::DrawHUD() //similiar to "tick" of actor class overridden
 {
 	switch (state)
 	{
+	case ARTSHUD::GAME_INIT:
+		break;
 	case ARTSHUD::RTS_SELECT_AND_MOVE:
 		RTSSelectAndMoveHandler();
 		AddPostRenderActors();
@@ -204,19 +206,22 @@ void ARTSHUD::GetSelectedUnits()
 
 void ARTSHUD::AddPostRenderActors()
 {
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
+
 	for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 	{
-		if (Itr->WasRecentlyRendered(.2F))
+		if (Itr->WasRecentlyRendered(.2F) && PS)
 		{
-			AddPostRenderedActor(*Itr);
+			ARTSMinion * Unselectable = *Itr;
+			if (Unselectable->team_index != PS->Team_ID)
+			{
+				Unselectable->SetSelectable();
+			}
+			else
+			{
+				Unselectable->SetUnselectable();
+			}
 		}
-	}
-	if (PostRenderedActors.Num())
-	{
-		FVector Location;
-		FRotator Rotation;
-		GetOwningPlayerController()->GetPlayerViewPoint(Location, Rotation);
-		DrawActorOverlays(Location, Rotation);
 	}
 }
 

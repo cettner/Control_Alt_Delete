@@ -30,12 +30,14 @@ ARTSMinion::ARTSMinion()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
+	/*
+	Thumbnail = CreateDefaultSubobject<UTexture>(TEXT("ThumbNail"));
 	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT(BUILDER_THUMBNAIL_PATH));
 	if (ThumbnailAsset.Succeeded())
 	{
 		Thumbnail = ThumbnailAsset.Object;
 	}
-
+	*/
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -92,6 +94,16 @@ void ARTSMinion::SetSelected()
 void ARTSMinion::SetDeselected()
 {
 	Selection->SetDeselected();
+}
+
+void ARTSMinion::SetUnselectable()
+{
+	Selection->EnableSecondary();
+}
+
+void ARTSMinion::SetSelectable()
+{
+	Selection->DisableSecondary();
 }
 
 ACommander * ARTSMinion::GetCommander()
@@ -172,16 +184,6 @@ void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
 	TargetLocation = GetActorLocation();
-}
-
-void ARTSMinion::PostRenderFor(APlayerController * PC, UCanvas * Canvas, FVector CameraPosition, FVector CameraDir)
-{
-	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PC->PlayerState);
-	if (PS && PS->Team_ID != team_index)
-	{
-		/*We are an enemy of the viewing controller*/
-		Selection->EnableSecondary();
-	}
 }
 
 UTexture * ARTSMinion::GetThumbnail()

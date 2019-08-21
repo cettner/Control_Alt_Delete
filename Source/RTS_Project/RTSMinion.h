@@ -22,8 +22,6 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void BeginPlay() override;
-
-	virtual void PostRenderFor(class APlayerController* PC, class UCanvas* Canvas, FVector CameraPosition, FVector CameraDir) override;
 	
 	UFUNCTION(BlueprintCallable, Category = UI)
 	UTexture* GetThumbnail();
@@ -47,6 +45,10 @@ public:
 	void SetSelected();
 
 	void SetDeselected();
+
+	void SetUnselectable();
+
+	void SetSelectable();
 
 	virtual void ReleaseAssets();
 
