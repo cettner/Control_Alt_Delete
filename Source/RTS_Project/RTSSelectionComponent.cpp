@@ -10,17 +10,29 @@
 // Sets default values for this component's properties
 URTSSelectionComponent::URTSSelectionComponent()
 {
-	CursorToWorld = CreateDefaultSubobject<UDecalComponent>("CursorToWorld");
-	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT(SELECTION_DECAL_PATH));
-	if (DecalMaterialAsset.Succeeded())
+	PrimarySelectionRing = CreateDefaultSubobject<UDecalComponent>("PrimarySelectionRing");
+	static ConstructorHelpers::FObjectFinder<UMaterial> PrimaryDecalMaterialAsset(TEXT(SELECTION_DECAL_PATH));
+	if (PrimaryDecalMaterialAsset.Succeeded())
 	{
-		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
+		PrimarySelectionRing->SetDecalMaterial(PrimaryDecalMaterialAsset.Object);
 	}
-	CursorToWorld->DecalSize = FVector(300.0f, 300.0f, 300.0f);
-	CursorToWorld->RelativeScale3D = FVector(1.0f,.25f,.25f);
-	CursorToWorld->SetRelativeLocation(FVector(0, 0, -100.0f));
-	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-	CursorToWorld->SetVisibility(false);
+	PrimarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
+	PrimarySelectionRing->RelativeScale3D = FVector(1.0f,.25f,.25f);
+	PrimarySelectionRing->SetRelativeLocation(FVector(0, 0, -100.0f));
+	PrimarySelectionRing->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
+	PrimarySelectionRing->SetVisibility(false);
+	
+	SecondarySelectionRing = CreateDefaultSubobject<UDecalComponent>("SecondarySelectionRing");
+	static ConstructorHelpers::FObjectFinder<UMaterial> SecondaryDecalMaterialAsset(TEXT(ENEMY_DECAL_PATH));
+	if (SecondaryDecalMaterialAsset.Succeeded())
+	{
+		SecondarySelectionRing->SetDecalMaterial(SecondaryDecalMaterialAsset.Object);
+	}
+	SecondarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
+	SecondarySelectionRing->RelativeScale3D = FVector(1.0f, .25f, .25f);
+	SecondarySelectionRing->SetRelativeLocation(FVector(0, 0, -100.0f));
+	SecondarySelectionRing->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
+	SecondarySelectionRing->SetVisibility(false);
 }
 
 // Called when the game starts
@@ -31,17 +43,28 @@ void URTSSelectionComponent::BeginPlay()
 
 void URTSSelectionComponent::SetSelected()
 {
-	CursorToWorld->SetVisibility(true);
+	PrimarySelectionRing->SetVisibility(true);
 }
 
 void URTSSelectionComponent::SetDeselected()
 {
-	CursorToWorld->SetVisibility(false);
+	PrimarySelectionRing->SetVisibility(false);
+}
+
+void URTSSelectionComponent::EnableSecondary()
+{
+	SecondarySelectionRing->SetVisibility(true);
+}
+
+void URTSSelectionComponent::DisableSecondary()
+{
+	SecondarySelectionRing->SetVisibility(false);
 }
 
 void URTSSelectionComponent::SetRoot(USceneComponent * RootComponent)
 {
-	CursorToWorld->SetupAttachment(RootComponent);
+	PrimarySelectionRing->SetupAttachment(RootComponent);
+	SecondarySelectionRing->SetupAttachment(RootComponent);
 }
 
 void URTSSelectionComponent::SetDetection(UPrimitiveComponent * Collision)

@@ -17,6 +17,7 @@
 #include "GameAssets.h"
 #include "Commander.h"
 #include "UnrealNetwork.h"
+#include "DefaultPlayerState.h"
 
 ARTSMinion::ARTSMinion()
 {
@@ -41,9 +42,6 @@ ARTSMinion::ARTSMinion()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
-
-	FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator();
-	team_index = Iterator.GetIndex();
 
 	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("Selection"));
 	Selection->SetRoot(RootComponent);
@@ -174,6 +172,16 @@ void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
 	TargetLocation = GetActorLocation();
+}
+
+void ARTSMinion::PostRenderFor(APlayerController * PC, UCanvas * Canvas, FVector CameraPosition, FVector CameraDir)
+{
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PC->PlayerState);
+	if (PS && PS->Team_ID != team_index)
+	{
+		/*We are an enemy of the viewing controller*/
+		Selection->EnableSecondary();
+	}
 }
 
 UTexture * ARTSMinion::GetThumbnail()

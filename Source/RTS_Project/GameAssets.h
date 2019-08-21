@@ -2,6 +2,7 @@
 
 /*Used in RTSSelection Component*/
 #define SELECTION_DECAL_PATH "Material'/Game/Assets/Decals/Selection_Decal.Selection_Decal'"
+#define ENEMY_DECAL_PATH "Material'/Game/Assets/Decals/Enemy_Decal.Enemy_Decal'"
 
 /*Used in RTSMinion*/
 #define BUILDER_THUMBNAIL_PATH "Texture2D'/Game/Assets/Pictures/UI_Thumbnails/Builder_PNG.Builder_PNG'"

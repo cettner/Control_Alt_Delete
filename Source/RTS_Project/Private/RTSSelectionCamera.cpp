@@ -95,30 +95,8 @@ void ARTSSelectionCamera::MoveSelected()
 	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
 	if (SelectedUnits.Num() > 0  && PC)
 	{
-		for (int32 i = 0; i < SelectedUnits.Num(); i++)
-		{
-			FHitResult Hit;
-			PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-			AActor * target = Hit.GetActor();
-
-			if(!SelectedUnits[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
-			{
-				if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
-				{
-					SelectedUnits[i]->SetTarget(target);
-				}
-				else
-				{
-					FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
-
-					SelectedUnits[i]->ClearTarget(); /*Unit might be doing something, if he is, clear internal data*/
-					SelectedUnits[i]->RtsMove(MoveLocal);
-				}
-			}
-			else //Notify the Commander of the new Target
-			{
-
-			}
-		}
+		FHitResult Hit;
+		PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
+		PC->MoveMinions(PC, SelectedUnits, Hit);
 	}
 }

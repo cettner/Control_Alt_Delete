@@ -22,12 +22,11 @@ class RTS_PROJECT_API URTSSelectionComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	URTSSelectionComponent();
-	
-	/** Returns CursorToWorld subobject **/
-	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
 	void SetSelected();
 	void SetDeselected();
+	void EnableSecondary();
+	void DisableSecondary();
 	void SetRoot(USceneComponent* RootComponent);
 	void SetDetection(UPrimitiveComponent * Collision);
 protected:
@@ -35,8 +34,12 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	bool bcanclearselection = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UDecalComponent* CursorToWorld;
+	/*Used for normal togglable selection*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
+	class UDecalComponent* PrimarySelectionRing;
+
+	/*Used to designate permanent designatable objects, like enemies, or teammates*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
+	class UDecalComponent* SecondarySelectionRing;
 };

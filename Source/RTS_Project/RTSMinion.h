@@ -22,6 +22,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	virtual void BeginPlay() override;
+
+	virtual void PostRenderFor(class APlayerController* PC, class UCanvas* Canvas, FVector CameraPosition, FVector CameraDir) override;
 	
 	UFUNCTION(BlueprintCallable, Category = UI)
 	UTexture* GetThumbnail();
@@ -67,7 +69,7 @@ public:
 	float damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	int team_index;
+	int team_index = -1;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	class UBehaviorTree * RTSBehavior;

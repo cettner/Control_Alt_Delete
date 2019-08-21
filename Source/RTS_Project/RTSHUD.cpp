@@ -5,6 +5,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "RTSMinion.h"
 #include "Commander.h"
+#include "DefaultPlayerState.h"
 #include "RTSStructure.h"
 #include "GameAssets.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
@@ -24,6 +25,7 @@ void ARTSHUD::DrawHUD() //similiar to "tick" of actor class overridden
 	{
 	case ARTSHUD::RTS_SELECT_AND_MOVE:
 		RTSSelectAndMoveHandler();
+		AddPostRenderActors();
 		break;
 	case ARTSHUD::FPS_AIM_AND_SHOOT:
 		FPSAimAndShootHandler();
@@ -160,21 +162,22 @@ void ARTSHUD::GetSelectedUnits()
 	End_Select = GetMouseLocation();
 	Selected_Units.Empty();
 	Selected_Structure.Empty();
-	DrawRect(FLinearColor(0, 0, 1, selection_transparency), Initial_select.X, Initial_select.Y,
-		End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
 
+	DrawRect(FLinearColor(0, 0, 1, selection_transparency), Initial_select.X, Initial_select.Y, End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
 	GetActorsInSelectionRectangle<ARTSMinion>(Initial_select, End_Select, Selected_Units, false, false);
 
-	if (Selected_Units.Num() > 0)
+	if (Selected_Units.Num() > 0 && PS)
 	{
 		/*Save the size becasue its non static, and add on minions are accounted for in the loop*/
 		int endindex = Selected_Units.Num();
 		for (int32 i = 0; i < endindex; i++)
 		{
 			/*Remove Enemy Minions*/
-			if (Selected_Units[i]->team_index != GetWorld()->GetControllerIterator().GetIndex())
+			if (Selected_Units[i]->team_index != PS->Team_ID)
 			{
 				Selected_Units.RemoveAt(i);
+				endindex--;
 			}
 			/*Unit has Commander, Get their squad and add it in*/
 			else if(Selected_Units[i]->GetCommander())
@@ -196,6 +199,24 @@ void ARTSHUD::GetSelectedUnits()
 				Selected_Units[i]->SetSelected();
 			}
 		}
+	}
+}
+
+void ARTSHUD::AddPostRenderActors()
+{
+	for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+	{
+		if (Itr->WasRecentlyRendered(.2F))
+		{
+			AddPostRenderedActor(*Itr);
+		}
+	}
+	if (PostRenderedActors.Num())
+	{
+		FVector Location;
+		FRotator Rotation;
+		GetOwningPlayerController()->GetPlayerViewPoint(Location, Rotation);
+		DrawActorOverlays(Location, Rotation);
 	}
 }
 

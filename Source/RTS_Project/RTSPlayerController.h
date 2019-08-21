@@ -76,8 +76,11 @@ public:
 	UFUNCTION(Server, unreliable,  WithValidation)
 	void PossessCommander(ACommander * commander);
 
-	UFUNCTION( Server, unreliable, WithValidation)
+	UFUNCTION(Server, reliable, WithValidation)
 	void PossessRTSCamera(ARTSCamera * camera);
+
+	UFUNCTION(Server, unreliable, WithValidation)
+	void MoveMinions(ARTSPlayerController * PC, const TArray<ARTSMinion *>& Units, FHitResult Hit);
 
 	virtual void BeginPlay() override;
 
@@ -90,27 +93,4 @@ public:
 private:
 
 	RTSSpawnHelper  SpawnHelper;
-	ARTSSelectable * TempClick = nullptr;
-	class ViewActor
-	{
-	public:
-		ARTSSelectable * Selectable;
-		ARTSMinion * Minion;
-		ViewActor()
-		{
-			Selectable = nullptr;
-			Minion = nullptr;
-		}
-		void empty() { Selectable = nullptr; Minion = nullptr; }
-		void set(ARTSSelectable * inselect) {
-			Selectable = inselect;
-			Minion = nullptr;
-		};
-		void set(ARTSMinion * inMinion)
-		{
-			Minion = inMinion;
-			Selectable = nullptr;
-		}
-	};
-	ViewActor CurrentView = ViewActor();
 };

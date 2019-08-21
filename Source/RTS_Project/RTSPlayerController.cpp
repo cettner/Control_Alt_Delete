@@ -15,76 +15,6 @@ ARTSPlayerController::ARTSPlayerController()
 	this->bEnableAutoLODGeneration = true;
 }
 
-ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
-{
-	Structure_Types type = (Structure_Types)Structure_index;
-	UWorld* const World = GetWorld();
-	
-	ARTSStructure * BuiltStructure = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
-	return(BuiltStructure);
-}
-
-ARTSMinion * ARTSPlayerController::Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index)
-{
-	Unit_Types type = (Unit_Types)Unit_index;
-	UWorld* const World = GetWorld();
-
-	ARTSMinion * SpawnedMinion = SpawnHelper.SpawnMinion(type,Location,Rotation,World);
-	return(SpawnedMinion);
-}
-
-AWeapon * ARTSPlayerController::Spawn_Weapon(FVector Location, FRotator Rotation, int Weapon_index)
-{
-	Weapon_Types type = (Weapon_Types)Weapon_index;
-	UWorld* const World = GetWorld();
-
-	AWeapon * SpawnedWeapon = SpawnHelper.SpawnWeapon(type,Location,Rotation,World);
-	return(SpawnedWeapon);
-}
-
-
-bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
-{
-	if (commander && HudPtr)
-	{
-		return(true);
-	}
-	else
-	{
-		return(false);
-	}
-}
-
-
-void ARTSPlayerController::PossessCommander_Implementation(ACommander * commander)
-{
-	bShowMouseCursor = false;
-	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
-	Possess(commander);
-}
-
-
-
-bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
-{
-	if (camera && HudPtr)
-	{
-		return(true);
-	}
-	else
-	{
-		return(false);
-	}
-}
-
-void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
-{
-	bShowMouseCursor = true;
-	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
-	Possess(camera);
-}
-
-
 void ARTSPlayerController::BeginPlay()
 {
 	bShowMouseCursor = true;
@@ -115,6 +45,106 @@ void ARTSPlayerController::SetupInputComponent()
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
 }
+
+ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
+{
+	Structure_Types type = (Structure_Types)Structure_index;
+	UWorld* const World = GetWorld();
+	
+	ARTSStructure * BuiltStructure = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
+	return(BuiltStructure);
+}
+
+ARTSMinion * ARTSPlayerController::Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index)
+{
+	Unit_Types type = (Unit_Types)Unit_index;
+	UWorld* const World = GetWorld();
+
+	ARTSMinion * SpawnedMinion = SpawnHelper.SpawnMinion(type,Location,Rotation,World);
+	return(SpawnedMinion);
+}
+
+AWeapon * ARTSPlayerController::Spawn_Weapon(FVector Location, FRotator Rotation, int Weapon_index)
+{
+	Weapon_Types type = (Weapon_Types)Weapon_index;
+	UWorld* const World = GetWorld();
+
+	AWeapon * SpawnedWeapon = SpawnHelper.SpawnWeapon(type,Location,Rotation,World);
+	return(SpawnedWeapon);
+}
+
+
+bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
+{
+	return (true);
+}
+
+void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
+{
+	AActor * target = Hit.GetActor();
+	for (int i = 0; i < Units.Num(); i++)
+	{
+		if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
+		{
+			if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
+			{
+				Units[i]->SetTarget(target);
+			}
+			else
+			{
+				FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
+
+				Units[i]->ClearTarget(); /*Unit might be doing something, if he is, clear internal data*/
+				Units[i]->RtsMove(MoveLocal);
+			}
+		}
+		else //Notify the Commander of the new Target
+		{
+
+		}
+	}
+}
+
+
+bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
+{
+	if (commander && HudPtr)
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
+void ARTSPlayerController::PossessCommander_Implementation(ACommander * commander)
+{
+	bShowMouseCursor = false;
+	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+	Possess(commander);
+}
+
+
+bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
+{
+	if (camera && HudPtr)
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
+void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
+{
+	bShowMouseCursor = true;
+	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+	Possess(camera);
+}
+
 
 bool ARTSPlayerController::FinishPlayerLogin_Validate()
 {
