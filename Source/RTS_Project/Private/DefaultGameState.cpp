@@ -3,11 +3,11 @@
 #include "DefaultGameState.h"
 #include "Engine/World.h"
 
-bool ADefaultGameState::TeamInitialize(AGameMode * GameMode)
+bool ADefaultGameState::TeamInitialize(ADefaultMode * GameMode)
 {
 	if (HasAuthority())
 	{
-		GM = Cast<ADefaultMode>(GameMode);
+		GM = GameMode;
 		if (GM)
 		{
 			for (int i = 0; i < GM->GetNumTeams(); i++)

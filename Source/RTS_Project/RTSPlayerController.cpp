@@ -23,9 +23,8 @@ void ARTSPlayerController::BeginPlay()
 
 	if (!HasAuthority())
 	{
-		if (Cast<ACommander>(GetPawn()) && HudPtr && Cast<ADefaultPlayerState>(PlayerState))
+		if (Cast<ACommander>(GetPawn()) && HudPtr)
 		{
-			Cast<ACommander>(GetPawn())->team_index = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
 			bShowMouseCursor = false;
 			HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
 		}
@@ -46,6 +45,17 @@ void ARTSPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
+}
+
+void ARTSPlayerController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	
+	if (Cast<ADefaultPlayerState>(PlayerState) && Cast<ACommander>(InPawn))
+	{
+		Cast<ACommander>(InPawn)->team_index = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
+	}
+	
 }
 
 ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)

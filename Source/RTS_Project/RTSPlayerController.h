@@ -86,6 +86,8 @@ public:
 
 	virtual void SetupInputComponent() override;
 
+	virtual void SetPawn(APawn* InPawn) override;
+
 	UFUNCTION(Server, unreliable, WithValidation)
 	void FinishPlayerLogin();
 	

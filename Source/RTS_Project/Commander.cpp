@@ -185,7 +185,7 @@ void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
 	int id = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("MY team is %d"),id));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("MY team is %d and index is %d"),id,team_index));
 
 
 	if(CanInteract(hittarget))

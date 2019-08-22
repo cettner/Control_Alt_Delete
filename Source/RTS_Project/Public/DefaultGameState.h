@@ -28,7 +28,7 @@ protected:
 
 public:
 	ADefaultGameState(const FObjectInitializer& ObjectInitializer);
-	bool TeamInitialize(AGameMode * GameMode);
+	bool TeamInitialize(ADefaultMode * GameMode);
 	int AssignAvailableTeam(APlayerState * New_Player);
 	int AssignBalancedTeam(APlayerState * New_Player);
 	bool SwapTeam(APlayerState * Player, int New_Team);
