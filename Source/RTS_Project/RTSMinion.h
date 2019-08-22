@@ -70,7 +70,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float damage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int team_index = -1;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)

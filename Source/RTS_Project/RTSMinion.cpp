@@ -197,4 +197,5 @@ void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ARTSMinion, Cmdr);
+	DOREPLIFETIME(ARTSMinion, team_index)
 }

@@ -3,6 +3,7 @@
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
 #include "RTSStructure.h"
+#include "DefaultPlayerState.h"
 #include "Weapon.h"
 #include "Commander.h"
 #include "Engine.h"
@@ -22,8 +23,9 @@ void ARTSPlayerController::BeginPlay()
 
 	if (!HasAuthority())
 	{
-		if (Cast<ACommander>(GetPawn()) && HudPtr)
+		if (Cast<ACommander>(GetPawn()) && HudPtr && Cast<ADefaultPlayerState>(PlayerState))
 		{
+			Cast<ACommander>(GetPawn())->team_index = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
 			bShowMouseCursor = false;
 			HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
 		}
@@ -86,6 +88,8 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 	{
 		if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
 		{
+			 ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Moving %d, Im team %d"),Units[i]->team_index, PS->Team_ID));
 			if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
 			{
 				Units[i]->SetTarget(target);
