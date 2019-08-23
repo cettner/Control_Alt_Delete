@@ -180,6 +180,7 @@ void ARTSHUD::GetSelectedUnits()
 			{
 				Selected_Units.RemoveAt(i);
 				endindex--;
+				i--;
 			}
 			/*Unit has Commander, Get their squad and add it in*/
 			else if(Selected_Units[i]->GetCommander())
