@@ -2,6 +2,19 @@
 
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
+#include "ConstructorHelpers.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
+#include "GameAssets.h"
+#include "Engine.h"
+
+ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
+{
+	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(FOW_MANAGER_PATH));
+	if (TargetBlueprint.Object && HasAuthority())
+	{
+		FOWManagerClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
+	}
+}
 
 int ARTFPSGameState::NumRTSPlayers(int Team_Index)
 {
@@ -19,3 +32,4 @@ int ARTFPSGameState::NumRTSPlayers(int Team_Index)
 	}
 	return(retval);
 }
+

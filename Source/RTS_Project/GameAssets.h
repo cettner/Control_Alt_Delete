@@ -24,3 +24,6 @@
 #define SPAWNER_BP_PATH "Blueprint'/Game/TopDownBP/Actors/Structures/Spawner_BP.Spawner_BP'"
 
 #define SHIELD_BP_PATH "Blueprint'/Game/TopDownBP/Actors/Weapons/Shield_BP.Shield_BP'"
+
+/*Used By RTFPSGameState*/
+#define FOW_MANAGER_PATH "Blueprint'/Game/TopDownBP/GameManagement/FOWManager_BP.FOWManager_BP'"

@@ -4,6 +4,7 @@
 #include "ConstructorHelpers.h"
 #include "RTSStructure.h"
 #include "DefaultPlayerState.h"
+#include "RTFPSGameState.h"
 #include "Weapon.h"
 #include "Commander.h"
 #include "Engine.h"
@@ -35,6 +36,27 @@ void ARTSPlayerController::BeginPlay()
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
+		}
+
+		
+		if (GetWorld() && GetWorld()->GetGameState<ARTFPSGameState>())
+		{
+			ARTFPSGameState * GS = GetWorld()->GetGameState<ARTFPSGameState>();
+			ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
+
+			if (GS->GetFogOfWar())
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("FOG OF WAR!")));
+			}
+
+			for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+			{
+				ARTSMinion * freeminion = *Itr;
+				if (freeminion->team_index == PS->Team_ID)
+				{
+					//GS->GetFogOfWar()->RegisterFowActor(freeminion);
+				}
+			}
 		}
 	}
 
