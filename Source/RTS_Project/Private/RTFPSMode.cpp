@@ -32,8 +32,7 @@ ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 
 UClass * ARTFPSMode::GetDefaultPawnClassForController_Implementation(AController * InController)
 {
-	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
-	if (InController && GS)
+	if (InController)
 	{
 		ARTFPSPlayerState * PlayerState = Cast<ARTFPSPlayerState>(InController->PlayerState);
 
@@ -89,7 +88,6 @@ AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const 
 void ARTFPSMode::BeginPlay()
 {
 	Super::BeginPlay();
-	UWorld * World = GetWorld();
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
 	for (int i = 0; i < TeamStartingPoints.Num(); i++)

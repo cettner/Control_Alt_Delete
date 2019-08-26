@@ -5,6 +5,7 @@
 #include "ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "GameAssets.h"
+#include "UnrealNetwork.h"
 #include "Engine.h"
 
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
@@ -31,5 +32,29 @@ int ARTFPSGameState::NumRTSPlayers(int Team_Index)
 		}
 	}
 	return(retval);
+}
+
+void ARTFPSGameState::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+AFogOfWarManager * ARTFPSGameState::InitFOW()
+{
+	FActorSpawnParameters SpawnParams;
+	UWorld * World = GetWorld();
+	if (World && FOWManagerClass)
+	{
+		return(World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams));
+	}
+
+	return(nullptr);
+}
+
+void ARTFPSGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ARTFPSGameState, FOWManager, COND_InitialOnly);
 }
 
