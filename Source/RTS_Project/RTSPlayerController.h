@@ -10,6 +10,7 @@
 #include "Components/InputComponent.h"
 #include "RTSSelectable.h"
 #include "RTSSpawnHelper.h"
+#include "FogOfWarManager.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -91,8 +92,12 @@ public:
 	UFUNCTION(Server, unreliable, WithValidation)
 	void FinishPlayerLogin();
 	
+protected:
+	virtual AFogOfWarManager * InitFOW();
 
 private:
 
+	TSubclassOf<AFogOfWarManager> FOWManagerClass;
+	AFogOfWarManager * FOWManager;
 	RTSSpawnHelper  SpawnHelper;
 };

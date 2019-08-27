@@ -22,25 +22,21 @@ class RTS_PROJECT_API AFogOfWarManager : public AActor
 	virtual void Tick(float DeltaSeconds) override;
 public:
 
-	
 	//Triggers a update in the blueprint
 	UFUNCTION(BlueprintNativeEvent)
-		void OnFowTextureUpdated(UTexture2D* currentTexture, UTexture2D* lastTexture);
+	void OnFowTextureUpdated(UTexture2D* currentTexture, UTexture2D* lastTexture);
 
 	//Register an actor to influence the FOW-texture
 	void RegisterFowActor(AActor* Actor);
 
 	//Stolen from https://wiki.unrealengine.com/Dynamic_Textures
-	void UpdateTextureRegions(
-		UTexture2D* Texture,
-		int32 MipIndex,
-		uint32 NumRegions,
-		FUpdateTextureRegion2D* Regions,
-		uint32 SrcPitch,
-		uint32 SrcBpp,
-		uint8* SrcData,
-		bool bFreeData);
+	void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions, FUpdateTextureRegion2D* Regions, 
+		uint32 SrcPitch, uint32 SrcBpp, uint8* SrcData, bool bFreeData);
 
+	void EnableFOW();
+	void DisableFOW();
+
+public:
 	//How far will an actor be able to see
 	//CONSIDER: Place it on the actors to allow for individual sight-radius
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FogOfWar)

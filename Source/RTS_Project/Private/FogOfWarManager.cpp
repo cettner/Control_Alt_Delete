@@ -7,9 +7,12 @@
 
 
 AFogOfWarManager::AFogOfWarManager(const FObjectInitializer &FOI) : Super(FOI) {
-	PrimaryActorTick.bCanEverTick = Role != ROLE_Authority;
+	
+	PrimaryActorTick.bStartWithTickEnabled = false;
+	PrimaryActorTick.bCanEverTick = false;
+	bReplicates = false;
+
 	textureRegions = new FUpdateTextureRegion2D(0, 0, 0, 0, TextureSize, TextureSize);
-	bReplicates = true;
 	//15 Gaussian samples. Sigma is 2.0.
 	//CONSIDER: Calculate the kernel instead, more flexibility...
 	blurKernel.Init(0.0f, blurKernelSize);
@@ -38,12 +41,6 @@ AFogOfWarManager::~AFogOfWarManager() {
 
 void AFogOfWarManager::BeginPlay() {
 	Super::BeginPlay();
-	if (!HasAuthority())
-	{
-		bIsDoneBlending = true;
-		AFogOfWarManager::StartFOWTextureUpdate();
-	}
-
 }
 
 void AFogOfWarManager::Tick(float DeltaSeconds) {
@@ -78,7 +75,7 @@ void AFogOfWarManager::OnFowTextureUpdated_Implementation(UTexture2D* currentTex
 }
 
 void AFogOfWarManager::RegisterFowActor(AActor* Actor) {
-	FowActors.Add(Actor);
+	FowActors.AddUnique(Actor);
 }
 
 bool AFogOfWarManager::GetIsBlurEnabled() {
@@ -141,3 +138,9 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 	}
 }
 
+void AFogOfWarManager::EnableFOW()
+{
+	bIsDoneBlending = true;
+	StartFOWTextureUpdate();
+	PrimaryActorTick.bCanEverTick = true;
+}

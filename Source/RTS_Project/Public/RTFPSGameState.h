@@ -18,19 +18,9 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 	public:
 		ARTFPSGameState(const FObjectInitializer & FOI);
 		int NumRTSPlayers(int Team_Index);
-		FORCEINLINE AFogOfWarManager * GetFogOfWar() {return(FOWManager);}
 
 	protected:
 		virtual void BeginPlay() override;
-		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
-	protected:
-		virtual AFogOfWarManager * InitFOW();
-	
-	private:
-		TSubclassOf<AFogOfWarManager> FOWManagerClass;
-		UPROPERTY(Replicated)
-		AFogOfWarManager * FOWManager;
 
 
 

@@ -7,6 +7,8 @@
 #include "RTFPSGameState.h"
 #include "Weapon.h"
 #include "Commander.h"
+#include "GameAssets.h"
+#include "ConstructorHelpers.h"
 #include "Engine.h"
 
 ARTSPlayerController::ARTSPlayerController()
@@ -15,6 +17,12 @@ ARTSPlayerController::ARTSPlayerController()
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
+
+	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(FOW_MANAGER_PATH));
+	if (TargetBlueprint.Object && HasAuthority())
+	{
+		FOWManagerClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
+	}
 }
 
 void ARTSPlayerController::BeginPlay()
@@ -32,31 +40,11 @@ void ARTSPlayerController::BeginPlay()
 		else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
 		{
 			HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+			InitFOW();
 		}
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
-		}
-
-		
-		if (GetWorld() && GetWorld()->GetGameState<ARTFPSGameState>())
-		{
-			ARTFPSGameState * GS = GetWorld()->GetGameState<ARTFPSGameState>();
-			ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
-
-			if (GS->GetFogOfWar())
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("FOG OF WAR!")));
-			}
-
-			for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
-			{
-				ARTSMinion * freeminion = *Itr;
-				if (freeminion->team_index == PS->Team_ID)
-				{
-					//GS->GetFogOfWar()->RegisterFowActor(freeminion);
-				}
-			}
 		}
 	}
 
@@ -79,6 +67,35 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 	}
 	
 }
+
+AFogOfWarManager * ARTSPlayerController::InitFOW()
+{
+	FActorSpawnParameters SpawnParams;
+	UWorld * World = GetWorld();
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
+
+	if (World && FOWManagerClass)
+	{
+		FOWManager = World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams);
+	}
+
+	if (FOWManager && PS)
+	{
+		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+		{
+			ARTSMinion * freeminion = *Itr;
+			if (freeminion->team_index == PS->Team_ID)
+			{
+				FOWManager->RegisterFowActor(freeminion); 
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(freeminion->GetName())));
+			}
+		}
+		FOWManager->EnableFOW();
+	}
+
+	return(FOWManager);
+}
+
 
 ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
 {

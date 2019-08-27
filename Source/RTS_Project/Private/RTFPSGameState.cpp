@@ -10,11 +10,6 @@
 
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
 {
-	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(FOW_MANAGER_PATH));
-	if (TargetBlueprint.Object && HasAuthority())
-	{
-		FOWManagerClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
-	}
 }
 
 int ARTFPSGameState::NumRTSPlayers(int Team_Index)
@@ -39,22 +34,4 @@ void ARTFPSGameState::BeginPlay()
 	Super::BeginPlay();
 }
 
-AFogOfWarManager * ARTFPSGameState::InitFOW()
-{
-	FActorSpawnParameters SpawnParams;
-	UWorld * World = GetWorld();
-	if (World && FOWManagerClass)
-	{
-		return(World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams));
-	}
-
-	return(nullptr);
-}
-
-void ARTFPSGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME_CONDITION(ARTFPSGameState, FOWManager, COND_InitialOnly);
-}
 
