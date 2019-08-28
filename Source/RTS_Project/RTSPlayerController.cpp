@@ -70,28 +70,28 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 
 AFogOfWarManager * ARTSPlayerController::InitFOW()
 {
-	FActorSpawnParameters SpawnParams;
-	UWorld * World = GetWorld();
-	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
+		FActorSpawnParameters SpawnParams;
+		UWorld * World = GetWorld();
+		ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
 
-	if (World && FOWManagerClass)
-	{
-		FOWManager = World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams);
-	}
-
-	if (FOWManager && PS)
-	{
-		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+		if (World && FOWManagerClass)
 		{
-			ARTSMinion * freeminion = *Itr;
-			if (freeminion->team_index == PS->Team_ID)
-			{
-				FOWManager->RegisterFowActor(freeminion); 
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(freeminion->GetName())));
-			}
+			FOWManager = World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams);
 		}
-		FOWManager->EnableFOW();
-	}
+
+		if (FOWManager && PS)
+		{
+			for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+			{
+				ARTSMinion * freeminion = *Itr;
+				if (freeminion->team_index == PS->Team_ID)
+				{
+					FOWManager->RegisterFowActor(freeminion); 
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(freeminion->GetName())));
+				}
+			}
+			FOWManager->EnableFOW();
+		}
 
 	return(FOWManager);
 }

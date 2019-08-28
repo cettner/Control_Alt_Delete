@@ -4,6 +4,7 @@
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
 #include "FogOfWarWorker.h"
 #include "RenderingThread.h"
+#include "Engine.h"
 
 
 AFogOfWarManager::AFogOfWarManager(const FObjectInitializer &FOI) : Super(FOI) {
@@ -142,5 +143,6 @@ void AFogOfWarManager::EnableFOW()
 {
 	bIsDoneBlending = true;
 	StartFOWTextureUpdate();
-	PrimaryActorTick.bCanEverTick = true;
+	SetActorTickEnabled(true);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(this->GetName())));
 }
