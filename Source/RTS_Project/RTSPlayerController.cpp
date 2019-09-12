@@ -3,14 +3,14 @@
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
 #include "RTSStructure.h"
-#include "DefaultPlayerState.h"
+#include "RTFPSPlayerState.h"
 #include "RTFPSGameState.h"
 #include "Weapon.h"
 #include "Commander.h"
 #include "GameAssets.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
-
+ 
 ARTSPlayerController::ARTSPlayerController()
 {
 	bShowMouseCursor = true;
@@ -40,12 +40,15 @@ void ARTSPlayerController::BeginPlay()
 		else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
 		{
 			HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
-			InitFOW();
 		}
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
 		}
+	}
+	else
+	{
+		FOWManager = InitFOW();
 	}
 
 }
@@ -68,34 +71,56 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 	
 }
 
+void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
+{
+	TArray<AActor *> Units;
+	if (PS->isRtsPlayer && FOWManager)
+	{
+		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+		{
+			ARTSMinion * freeminion = *Itr;
+			if (freeminion->team_index == PS->Team_ID)
+			{
+				Units.AddUnique(freeminion);
+			}
+		}
+		FOWManager->EnableFOW(Units);
+	}
+}
+
 AFogOfWarManager * ARTSPlayerController::InitFOW()
 {
+	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
+
+	/*Server Will spawn the FOWManager*/
+	if (!FOWManager)
+	{
 		FActorSpawnParameters SpawnParams;
 		UWorld * World = GetWorld();
-		ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
 
 		if (World && FOWManagerClass)
 		{
 			FOWManager = World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams);
 		}
-
-		if (FOWManager && PS)
+	}
+	/*
+	if (FOWManager && PS)
+	{
+		//Get the Units that are spawned in the world at game start
+		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 		{
-			for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+			ARTSMinion * freeminion = *Itr;
+			if (freeminion->team_index == PS->Team_ID)
 			{
-				ARTSMinion * freeminion = *Itr;
-				if (freeminion->team_index == PS->Team_ID)
-				{
-					FOWManager->RegisterFowActor(freeminion); 
-					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(freeminion->GetName())));
-				}
-			}
-			FOWManager->EnableFOW();
+				FOWManager->RegisterFowActor(freeminion); 
+				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(freeminion->GetName())));
+			}	
 		}
+	}
+   */
 
 	return(FOWManager);
 }
-
 
 ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
 {

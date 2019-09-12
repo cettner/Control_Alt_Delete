@@ -33,7 +33,7 @@ public:
 	void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions, FUpdateTextureRegion2D* Regions, 
 		uint32 SrcPitch, uint32 SrcBpp, uint8* SrcData, bool bFreeData);
 
-	void EnableFOW();
+	void EnableFOW(TArray<AActor *> StartActors);
 	void DisableFOW();
 
 public:
@@ -93,6 +93,8 @@ public:
 	//Getter for the working thread
 	bool GetIsBlurEnabled();
 
+
+	FORCEINLINE bool IsEnabled() { return(IsFoWEnabled); }
 private:
 	//void UpdateFowTexture();
 
@@ -112,4 +114,7 @@ private:
 
 	//Our fowupdatethread		
 	AFogOfWarWorker* FowThread;
+
+	//Return if actor is ticking locally
+	bool IsFoWEnabled = false;
 };

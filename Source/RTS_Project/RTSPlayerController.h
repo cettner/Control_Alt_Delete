@@ -11,6 +11,7 @@
 #include "RTSSelectable.h"
 #include "RTSSpawnHelper.h"
 #include "FogOfWarManager.h"
+#include "RTFPSPlayerState.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -91,13 +92,18 @@ public:
 
 	UFUNCTION(Server, unreliable, WithValidation)
 	void FinishPlayerLogin();
+
+	void FinishLocalPlayerSetup(ARTFPSPlayerState * PS);
 	
-protected:
 	virtual AFogOfWarManager * InitFOW();
+	
+
+public:
+	AFogOfWarManager * FOWManager;
 
 private:
 
 	TSubclassOf<AFogOfWarManager> FOWManagerClass;
-	AFogOfWarManager * FOWManager;
+
 	RTSSpawnHelper  SpawnHelper;
 };

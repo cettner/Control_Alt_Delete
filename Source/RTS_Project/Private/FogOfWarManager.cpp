@@ -4,14 +4,16 @@
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
 #include "FogOfWarWorker.h"
 #include "RenderingThread.h"
+#include "RTSPlayerController.h"
+#include "RTFPSPlayerState.h"
 #include "Engine.h"
 
 
 AFogOfWarManager::AFogOfWarManager(const FObjectInitializer &FOI) : Super(FOI) {
 	
 	PrimaryActorTick.bStartWithTickEnabled = false;
-	PrimaryActorTick.bCanEverTick = false;
-	bReplicates = false;
+	PrimaryActorTick.bCanEverTick = !HasAuthority();
+	bReplicates = true;
 
 	textureRegions = new FUpdateTextureRegion2D(0, 0, 0, 0, TextureSize, TextureSize);
 	//15 Gaussian samples. Sigma is 2.0.
@@ -42,6 +44,16 @@ AFogOfWarManager::~AFogOfWarManager() {
 
 void AFogOfWarManager::BeginPlay() {
 	Super::BeginPlay();
+	if (!HasAuthority() && GetWorld())
+	{
+		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC)
+		{
+			PC->FOWManager = this;
+			PC->InitFOW();
+		}
+
+	}
 }
 
 void AFogOfWarManager::Tick(float DeltaSeconds) {
@@ -139,10 +151,18 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 	}
 }
 
-void AFogOfWarManager::EnableFOW()
+void AFogOfWarManager::EnableFOW(TArray<AActor *> StartActors)
 {
-	bIsDoneBlending = true;
-	StartFOWTextureUpdate();
-	SetActorTickEnabled(true);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(this->GetName())));
+	if (!IsEnabled())
+	{
+		for (int i = 0; i < StartActors.Num(); i++)
+		{
+			RegisterFowActor(StartActors[i]);
+		}
+		IsFoWEnabled = true;
+		bIsDoneBlending = true;
+		StartFOWTextureUpdate();
+		SetActorTickEnabled(true);
+	}
+
 }

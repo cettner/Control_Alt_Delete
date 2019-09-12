@@ -216,11 +216,11 @@ void ARTSHUD::AddPostRenderActors()
 			ARTSMinion * Unselectable = *Itr;
 			if (Unselectable->team_index != PS->Team_ID)
 			{
-				Unselectable->SetSelectable();
+				Unselectable->SetUnselectable();
 			}
 			else
 			{
-				Unselectable->SetUnselectable();
+				Unselectable->SetSelectable();
 			}
 		}
 	}
