@@ -102,6 +102,7 @@ public:
 	AFogOfWarManager * FOWManager;
 
 private:
+	void DebugEvent();
 
 	TSubclassOf<AFogOfWarManager> FOWManagerClass;
 

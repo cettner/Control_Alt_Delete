@@ -5,14 +5,13 @@
 #include "FogOfWarWorker.h"
 #include "RenderingThread.h"
 #include "RTSPlayerController.h"
-#include "RTFPSPlayerState.h"
 #include "Engine.h"
 
 
 AFogOfWarManager::AFogOfWarManager(const FObjectInitializer &FOI) : Super(FOI) {
 	
 	PrimaryActorTick.bStartWithTickEnabled = false;
-	PrimaryActorTick.bCanEverTick = !HasAuthority();
+	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
 
 	textureRegions = new FUpdateTextureRegion2D(0, 0, 0, 0, TextureSize, TextureSize);
@@ -44,13 +43,12 @@ AFogOfWarManager::~AFogOfWarManager() {
 
 void AFogOfWarManager::BeginPlay() {
 	Super::BeginPlay();
-	if (!HasAuthority() && GetWorld())
+	if (Role != ROLE_Authority && GetWorld())
 	{
 		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
 		if (PC)
 		{
 			PC->FOWManager = this;
-			PC->InitFOW();
 		}
 
 	}
@@ -88,7 +86,10 @@ void AFogOfWarManager::OnFowTextureUpdated_Implementation(UTexture2D* currentTex
 }
 
 void AFogOfWarManager::RegisterFowActor(AActor* Actor) {
-	FowActors.AddUnique(Actor);
+	if (Actor->Role != ROLE_Authority)
+	{
+		FowActors.AddUnique(Actor);
+	}
 }
 
 bool AFogOfWarManager::GetIsBlurEnabled() {
@@ -153,7 +154,7 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 
 void AFogOfWarManager::EnableFOW(TArray<AActor *> StartActors)
 {
-	if (!IsEnabled())
+	if (!IsEnabled() && Role != ROLE_Authority)
 	{
 		for (int i = 0; i < StartActors.Num(); i++)
 		{

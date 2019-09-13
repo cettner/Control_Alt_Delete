@@ -208,19 +208,21 @@ void ARTSHUD::GetSelectedUnits()
 void ARTSHUD::AddPostRenderActors()
 {
 	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
-
-	for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+	if (PS)
 	{
-		if (Itr->WasRecentlyRendered(.2F) && PS)
+		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 		{
-			ARTSMinion * Unselectable = *Itr;
-			if (Unselectable->team_index != PS->Team_ID)
+			if (Itr->WasRecentlyRendered(.2F))
 			{
-				Unselectable->SetUnselectable();
-			}
-			else
-			{
-				Unselectable->SetSelectable();
+				ARTSMinion * Unselectable = *Itr;
+				if (Unselectable->team_index != PS->Team_ID && Unselectable->Role != ROLE_Authority)
+				{
+					Unselectable->SetUnselectable();
+				}
+				else
+				{
+					Unselectable->SetSelectable();
+				}
 			}
 		}
 	}

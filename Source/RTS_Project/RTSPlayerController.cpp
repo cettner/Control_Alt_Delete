@@ -58,6 +58,7 @@ void ARTSPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
+	InputComponent->BindAction("Debug", IE_Pressed, this, &ARTSPlayerController::DebugEvent);
 }
 
 void ARTSPlayerController::SetPawn(APawn * InPawn)
@@ -79,7 +80,7 @@ void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 		{
 			ARTSMinion * freeminion = *Itr;
-			if (freeminion->team_index == PS->Team_ID)
+			if (freeminion->team_index == PS->Team_ID && freeminion->Role != ROLE_Authority)
 			{
 				Units.AddUnique(freeminion);
 			}
@@ -103,23 +104,12 @@ AFogOfWarManager * ARTSPlayerController::InitFOW()
 			FOWManager = World->SpawnActor<AFogOfWarManager>(FOWManagerClass, SpawnParams);
 		}
 	}
-	/*
-	if (FOWManager && PS)
-	{
-		//Get the Units that are spawned in the world at game start
-		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
-		{
-			ARTSMinion * freeminion = *Itr;
-			if (freeminion->team_index == PS->Team_ID)
-			{
-				FOWManager->RegisterFowActor(freeminion); 
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*FString(freeminion->GetName())));
-			}	
-		}
-	}
-   */
 
 	return(FOWManager);
+}
+
+void ARTSPlayerController::DebugEvent()
+{
 }
 
 ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
