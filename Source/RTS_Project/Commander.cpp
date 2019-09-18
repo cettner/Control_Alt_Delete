@@ -30,8 +30,17 @@ void ACommander::Tick(float DeltaTime)
 ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	FPS_Camera->SetupAttachment(GetMesh(), TEXT("FPPCamera_socket"));
+	FPS_Camera->SetupAttachment(GetCapsuleComponent());
+	FPS_Camera->RelativeLocation = FVector(-39.56f, 1.75f, 64.f);
 	FPS_Camera->bUsePawnControlRotation = true;
+
+	FPS_Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPS_Mesh"));
+	FPS_Mesh->SetOnlyOwnerSee(true);
+	FPS_Mesh->SetupAttachment(FPS_Camera);
+	FPS_Mesh->bCastDynamicShadow = false;
+	FPS_Mesh->CastShadow = false;
+	FPS_Mesh->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
+	FPS_Mesh->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
 
 	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
 	trace.bTraceComplex = true;

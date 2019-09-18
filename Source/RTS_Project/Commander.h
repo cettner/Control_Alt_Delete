@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UCameraComponent* FPS_Camera;
 
+	UPROPERTY(EditDefaultsOnly)
+	USkeletalMeshComponent* FPS_Mesh;
+
 	//handles moving forward/backward
 	UFUNCTION()
 	void MoveForward(float Val);
