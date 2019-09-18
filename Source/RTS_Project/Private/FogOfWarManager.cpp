@@ -49,6 +49,7 @@ void AFogOfWarManager::BeginPlay() {
 		if (PC)
 		{
 			PC->FOWManager = this;
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*this->GetName()));
 		}
 
 	}
@@ -154,8 +155,6 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 
 void AFogOfWarManager::EnableFOW(TArray<AActor *> StartActors)
 {
-	if (!IsEnabled() && Role != ROLE_Authority)
-	{
 		for (int i = 0; i < StartActors.Num(); i++)
 		{
 			RegisterFowActor(StartActors[i]);
@@ -164,6 +163,4 @@ void AFogOfWarManager::EnableFOW(TArray<AActor *> StartActors)
 		bIsDoneBlending = true;
 		StartFOWTextureUpdate();
 		SetActorTickEnabled(true);
-	}
-
 }

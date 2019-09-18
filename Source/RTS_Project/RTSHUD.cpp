@@ -215,7 +215,7 @@ void ARTSHUD::AddPostRenderActors()
 			if (Itr->WasRecentlyRendered(.2F))
 			{
 				ARTSMinion * Unselectable = *Itr;
-				if (Unselectable->team_index != PS->Team_ID && Unselectable->Role != ROLE_Authority)
+				if (Unselectable->team_index != PS->Team_ID)
 				{
 					Unselectable->SetUnselectable();
 				}
