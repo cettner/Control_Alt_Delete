@@ -44,7 +44,6 @@ ACommander::ACommander()
 
 	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
 	trace.bTraceComplex = true;
-	trace.bTraceAsyncScene = true;
 	trace.bReturnPhysicalMaterial = false;
 	trace.AddIgnoredActor(this);
 
@@ -193,9 +192,6 @@ bool ACommander::SelectableInterationHandler_Validate(ARTSSelectable * Interacte
 void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
-	int id = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("MY team is %d and index is %d"),id,team_index));
-
 
 	if(CanInteract(hittarget))
 	{
@@ -290,27 +286,27 @@ FVector ACommander::GetSquareFormation(int index, float width)
 	return (RetVal);
 }
 
-void ACommander::SetupPlayerInputComponent(UInputComponent* InputComponent)
+void ACommander::SetupPlayerInputComponent(UInputComponent* ActorInputComponent)
 {
 	// set up gameplay key bindings
 	/*W*/
-	InputComponent->BindAxis("MoveForward", this, &ACommander::MoveForward);
+	ActorInputComponent->BindAxis("MoveForward", this, &ACommander::MoveForward);
 	/*D*/
-	InputComponent->BindAxis("MoveRight", this, &ACommander::MoveRight);
+	ActorInputComponent->BindAxis("MoveRight", this, &ACommander::MoveRight);
 	/*Mouse X*/
-	InputComponent->BindAxis("Turn", this, &ACommander::AddControllerYawInput);
+	ActorInputComponent->BindAxis("Turn", this, &ACommander::AddControllerYawInput);
 	/*Mouse Y*/
-	InputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
+	ActorInputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
 	/*E*/
-	InputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
+	ActorInputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
 
-	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ACommander::SecondaryPressed);
+	ActorInputComponent->BindAction("RightMouse", IE_Pressed, this, &ACommander::SecondaryPressed);
 
-	InputComponent->BindAction("RightMouse", IE_Released, this, &ACommander::SecondaryReleased);  
+	ActorInputComponent->BindAction("RightMouse", IE_Released, this, &ACommander::SecondaryReleased);  
 
-	InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ACommander::PrimaryPressed);
+	ActorInputComponent->BindAction("LeftMouse", IE_Pressed, this, &ACommander::PrimaryPressed);
 
-	InputComponent->BindAction("LeftMouse", IE_Released, this, &ACommander::PrimaryReleased);
+	ActorInputComponent->BindAction("LeftMouse", IE_Released, this, &ACommander::PrimaryReleased);
 	
 }
 

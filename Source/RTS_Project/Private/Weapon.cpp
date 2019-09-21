@@ -27,7 +27,10 @@ void AWeapon::Equipped(USkeletalMeshComponent * Character, FName Socketname)
 
 void AWeapon::UnEquipped()
 {
-	RootComponent->DetachFromParent();
+	//Calls Modify Function on Root Component if set tot true
+	bool bInCallModify = false;
+	FDetachmentTransformRules detach(EDetachmentRule::KeepRelative, bInCallModify);
+	RootComponent->DetachFromComponent(detach);
 	Destroy();
 }
 

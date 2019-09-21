@@ -17,7 +17,7 @@ class RTS_PROJECT_API ACommander : public ARTSMinion
 	GENERATED_BODY()
 
 protected:
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
 	virtual void Tick(float DeltaTime) override;
 
 public:

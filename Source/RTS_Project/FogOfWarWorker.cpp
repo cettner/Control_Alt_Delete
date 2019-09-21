@@ -36,13 +36,11 @@ bool AFogOfWarWorker::Init() {
 uint32 AFogOfWarWorker::Run() {
 	FPlatformProcess::Sleep(0.03f);
 	while (StopTaskCounter.GetValue() == 0) {
-		float time;
-		if (Manager && Manager->GetWorld()) {
-			time = Manager->GetWorld()->TimeSeconds;
-		}
-		if (!Manager->bHasFOWTextureUpdate) {
+
+		if (Manager && !Manager->bHasFOWTextureUpdate) {
 			UpdateFowTexture();
 			if (Manager && Manager->GetWorld()) {
+				float time = Manager->GetWorld()->TimeSeconds;
 				Manager->fowUpdateTime = Manager->GetWorld()->TimeSince(time);
 			}
 		}

@@ -24,7 +24,7 @@ public:
 
 	ARTSAIController();
 
-	virtual void Possess(APawn *InPawn) override;
+	virtual void OnPossess(APawn *InPawn) override;
 
 	void SetTarget(AActor* newtarget);
 	AActor * GetTarget();

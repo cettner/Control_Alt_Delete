@@ -39,7 +39,7 @@ public:
 	bool Switch_Weapon = false;
 
 protected:
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
 
 protected:
 	WeaponLoadOut EmptyLoadout;

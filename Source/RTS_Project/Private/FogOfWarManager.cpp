@@ -49,7 +49,7 @@ void AFogOfWarManager::BeginPlay() {
 		if (PC)
 		{
 			PC->FOWManager = this;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(*this->GetName()));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%s"), *this->GetName()));
 		}
 
 	}
@@ -58,10 +58,15 @@ void AFogOfWarManager::BeginPlay() {
 void AFogOfWarManager::Tick(float DeltaSeconds) {
 	Super::Tick(DeltaSeconds);
 	if (FOWTexture && LastFOWTexture && bHasFOWTextureUpdate && bIsDoneBlending) {
+		
 		LastFOWTexture->UpdateResource();
-		UpdateTextureRegions(LastFOWTexture, (int32)0, (uint32)1, textureRegions, (uint32)(4 * TextureSize), (uint32)4, (uint8*)LastFrameTextureData.GetData(), false);
+		//LastFOWTexture->UpdateTextureRegions((int32)0, (uint32)1, textureRegions, (uint32)(4 * TextureSize), (uint32)4, (uint8*)LastFrameTextureData.GetData(), false);
+		//UpdateTextureRegions(LastFOWTexture, (int32)0, (uint32)1, textureRegions, (uint32)(4 * TextureSize), (uint32)4, (uint8*)LastFrameTextureData.GetData(), false);
+
 		FOWTexture->UpdateResource();
-		UpdateTextureRegions(FOWTexture, (int32)0, (uint32)1, textureRegions, (uint32)(4 * TextureSize), (uint32)4, (uint8*)TextureData.GetData(), false);
+		//FOWTexture->UpdateTextureRegions((int32)0, (uint32)1, textureRegions, (uint32)(4 * TextureSize), (uint32)4, (uint8*)LastFrameTextureData.GetData(), false);
+		//FOWTexture->UpdateTextureRegions((int32)0, (uint32)1, textureRegions, (uint32)(4 * TextureSize), (uint32)4, (uint8*)LastFrameTextureData.GetData(), false);
+
 		bHasFOWTextureUpdate = false;
 		bIsDoneBlending = false;
 		//Trigger the blueprint update
@@ -110,6 +115,7 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 			uint32 SrcPitch;
 			uint32 SrcBpp;
 			uint8* SrcData;
+			bool bFreeData;
 		};
 
 		FUpdateTextureRegionsData* RegionData = new FUpdateTextureRegionsData;
@@ -121,34 +127,37 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 		RegionData->SrcPitch = SrcPitch;
 		RegionData->SrcBpp = SrcBpp;
 		RegionData->SrcData = SrcData;
+		RegionData->bFreeData = bFreeData;
 
-		ENQUEUE_UNIQUE_RENDER_COMMAND_TWOPARAMETER(
-			UpdateTextureRegionsData,
-			FUpdateTextureRegionsData*, RegionData, RegionData,
-			bool, bFreeData, bFreeData,
+
+		ENQUEUE_RENDER_COMMAND(UpdateTextureRegionsData)(
+			[RegionData](FRHICommandListImmediate& RHICmdList)
 			{
-				for (uint32 RegionIndex = 0; RegionIndex < RegionData->NumRegions; ++RegionIndex)
+				if (RegionData)
 				{
-					int32 CurrentFirstMip = RegionData->Texture2DResource->GetCurrentFirstMip();
-					if (RegionData->MipIndex >= CurrentFirstMip)
+					for (uint32 RegionIndex = 0; RegionIndex < RegionData->NumRegions; ++RegionIndex)
 					{
-						RHIUpdateTexture2D(
-							RegionData->Texture2DResource->GetTexture2DRHI(),
-							RegionData->MipIndex - CurrentFirstMip,
-							RegionData->Regions[RegionIndex],
-							RegionData->SrcPitch,
-							RegionData->SrcData
-							+ RegionData->Regions[RegionIndex].SrcY * RegionData->SrcPitch
-							+ RegionData->Regions[RegionIndex].SrcX * RegionData->SrcBpp
-						);
+						int32 CurrentFirstMip = RegionData->Texture2DResource->GetCurrentFirstMip();
+						if (RegionData->MipIndex >= CurrentFirstMip)
+						{
+							RHIUpdateTexture2D(
+								RegionData->Texture2DResource->GetTexture2DRHI(),
+								RegionData->MipIndex - CurrentFirstMip,
+								RegionData->Regions[RegionIndex],
+								RegionData->SrcPitch,
+								RegionData->SrcData
+								+ RegionData->Regions[RegionIndex].SrcY * RegionData->SrcPitch
+								+ RegionData->Regions[RegionIndex].SrcX * RegionData->SrcBpp
+							);
+						}
 					}
+					if (RegionData->bFreeData)
+					{
+						FMemory::Free(RegionData->Regions);
+						FMemory::Free(RegionData->SrcData);
+					}
+					delete RegionData;
 				}
-		if (bFreeData)
-		{
-			FMemory::Free(RegionData->Regions);
-			FMemory::Free(RegionData->SrcData);
-		}
-		delete RegionData;
 			});
 	}
 }

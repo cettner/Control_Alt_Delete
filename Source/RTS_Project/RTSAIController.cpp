@@ -15,9 +15,9 @@ ARTSAIController::ARTSAIController()
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 }
 
-void ARTSAIController::Possess(APawn * InPawn)
+void ARTSAIController::OnPossess(APawn * InPawn)
 {
-	Super::Possess(InPawn);
+	Super::OnPossess(InPawn);
 
 	ARTSMinion *Minion = Cast<ARTSMinion>(InPawn);
 
