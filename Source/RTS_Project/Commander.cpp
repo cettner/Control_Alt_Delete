@@ -47,8 +47,8 @@ ACommander::ACommander()
 	trace.bReturnPhysicalMaterial = false;
 	trace.AddIgnoredActor(this);
 
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bCanEverTick = Role != ROLE_Authority;
+	PrimaryActorTick.bStartWithTickEnabled = Role != ROLE_Authority;
 }
 
 void ACommander::MoveForward(float Val)

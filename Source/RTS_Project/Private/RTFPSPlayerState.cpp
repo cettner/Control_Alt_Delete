@@ -6,6 +6,8 @@
 #include "Engine/World.h"
 #include "UnrealNetwork.h"
 
+#define FPSONLY
+
 void ARTFPSPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
@@ -14,11 +16,12 @@ void ARTFPSPlayerState::BeginPlay()
 	if (HasAuthority() && World && World->GetGameState<ARTFPSGameState>())
 	{
 		ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
-
+	#ifndef FPSONLY
 		if (!GS->NumRTSPlayers(Team_ID))
 		{
 			isRtsPlayer = true;
 		}
+	#endif // Define if debugging FPS Players
 	}
 	else if (!HasAuthority() && World && World->GetFirstPlayerController())
 	{

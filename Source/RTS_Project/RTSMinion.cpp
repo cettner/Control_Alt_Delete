@@ -22,7 +22,7 @@
 ARTSMinion::ARTSMinion()
 {
 	// Set size for player capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Rotate character to moving direction
@@ -30,14 +30,6 @@ ARTSMinion::ARTSMinion()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
-	/*
-	Thumbnail = CreateDefaultSubobject<UTexture>(TEXT("ThumbNail"));
-	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT(BUILDER_THUMBNAIL_PATH));
-	if (ThumbnailAsset.Succeeded())
-	{
-		Thumbnail = ThumbnailAsset.Object;
-	}
-	*/
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
