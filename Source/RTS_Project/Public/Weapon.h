@@ -37,7 +37,7 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
-	USkeletalMeshComponent * Mesh;
+	USkeletalMeshComponent * ThirdPersonMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
 	UBoxComponent * CollisionComp;

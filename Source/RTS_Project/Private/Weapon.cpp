@@ -10,8 +10,8 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 	RootComponent = CollisionComp;
 
 	PrimaryActorTick.bCanEverTick = false;
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
+	ThirdPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	ThirdPersonMesh->SetupAttachment(RootComponent);
 }
 
 
