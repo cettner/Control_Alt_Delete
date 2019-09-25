@@ -38,12 +38,39 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool Switch_Weapon = false;
 
+	FName GetWeaponAttatchPoint(AWeapon * Weapon);
+
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
+
 
 protected:
 	WeaponLoadOut EmptyLoadout;
 	WeaponLoadOut S_and_S;
+
+	/** socket or bone name for attaching weapon mesh */
+	UPROPERTY(EditDefaultsOnly, Category = Inventory)
+	FName WeaponAttachPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category = Inventory)
+	TArray<TSubclassOf<AWeapon> > DefaultInventoryClasses;
+
+	/** weapons in inventory */
+	UPROPERTY(Transient, Replicated)
+	TArray<AWeapon*> Inventory;
+
+	/** currently equipped weapon */
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
+	AWeapon* CurrentWeapon;
+
+protected:
+
+
+
+	/** current weapon rep handler */
+	UFUNCTION()
+	void OnRep_CurrentWeapon(AWeapon* LastWeapon);
+
 
 private:
 	void SetWeaponStance();
