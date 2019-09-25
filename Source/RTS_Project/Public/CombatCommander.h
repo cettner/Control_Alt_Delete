@@ -21,17 +21,22 @@ class RTS_PROJECT_API ACombatCommander : public ACommander
 	
 public:
 	ACombatCommander();
+
+	virtual void BeginPlay() override;
+
 	
-	bool AddWeapon(AWeapon * Added_Weapon);
+	void AddWeapon(AWeapon * Added_Weapon);
+
+	void RemoveWeapon(class AShooterWeapon* Weapon);
+
 	void SwitchWeaponUp();
+
 	void SwitchWeaponDown();
 
 	void SetWeaponEquippedTimer();
 
 	void WeaponSwitchComplete();
 	
-	virtual void BeginPlay() override;
-
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
 
@@ -42,12 +47,10 @@ public:
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) override;
 
 
 protected:
-	WeaponLoadOut EmptyLoadout;
-	WeaponLoadOut S_and_S;
-
 	/** socket or bone name for attaching weapon mesh */
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
 	FName WeaponAttachPoint;
@@ -64,9 +67,6 @@ protected:
 	AWeapon* CurrentWeapon;
 
 protected:
-
-
-
 	/** current weapon rep handler */
 	UFUNCTION()
 	void OnRep_CurrentWeapon(AWeapon* LastWeapon);
@@ -74,7 +74,6 @@ protected:
 
 private:
 	void SetWeaponStance();
-	WeaponManager WManager;
 	FTimerHandle SwitchWeaponDelayHandler;
 	const float SwitchWeaponDelayTime = 3.0;
 };
