@@ -143,6 +143,11 @@ ACommander * ACommander::GetCommander()
 	return(this);
 }
 
+USkeletalMeshComponent * ACommander::GetSpecifcPawnMesh(bool WantFirstPerson) const
+{
+	return WantFirstPerson == true ? FPS_Mesh : GetMesh();
+}
+
 void ACommander::ClearCommander()
 {
 	//Do nothing, We are a Commander

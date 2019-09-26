@@ -5,7 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
+#include "Animation/AnimMontage.h"
 #include "Weapon.generated.h"
+
+
+/*Forward Declarations*/
+class ACombatCommander;
 
 /*Specifies Attatchment Location on Mesh*/
 UENUM(BlueprintType)
@@ -20,7 +25,22 @@ enum Weapon_Grip_Type
 	HALBERD_GRIP
 };
 
-UCLASS()
+
+USTRUCT()
+struct FWeaponAnim
+{
+	GENERATED_USTRUCT_BODY()
+
+	/** animation played on pawn (1st person view) */
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UAnimMontage* AnimFirstPerson;
+
+	/** animation played on pawn (3rd person view) */
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UAnimMontage* AnimThirdPerson;
+};
+
+UCLASS(Abstract, Blueprintable)
 class RTS_PROJECT_API AWeapon : public AActor
 {
 	GENERATED_BODY()
@@ -36,6 +56,9 @@ public:
 	Weapon_Grip_Type GetType();
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
+	USkeletalMeshComponent * FirstPersonMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
 	USkeletalMeshComponent * ThirdPersonMesh;
 
@@ -50,6 +73,50 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
 	FRotator SocketRotationOffset = FRotator(0,0,0);  
+
+public:
+
+	/** weapon is being equipped by owner pawn */
+	virtual void OnEquip(const AWeapon* LastWeapon);
+	
+	/** weapon is now equipped by owner pawn */
+	virtual void OnEquipFinished();
+
+	/** weapon is holstered by owner pawn */
+	virtual void OnUnEquip();
+
+	/** [server] weapon was added to pawn's inventory */
+	virtual void OnEnterInventory(ACombatCommander* NewOwner);
+
+	/** [server] weapon was removed from pawn's inventory */
+	virtual void OnLeaveInventory();
+
+protected:
+	/** Attaches weapon mesh to pawn's mesh */
+	void AttachMeshToPawn();
+
+	/** Detaches weapon mesh from pawn */
+	void DetachMeshFromPawn();
+
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
+	ACombatCommander* MyPawn;
+
+
+public:
+
+	/** get weapon mesh (needs pawn owner to determine variant) */
+	UFUNCTION(BlueprintCallable)
+	USkeletalMeshComponent* GetWeaponMesh() const;
+
+	/** get pawn owner */
+	UFUNCTION(BlueprintCallable, Category = "Game|Weapon")
+	ACombatCommander* GetPawnOwner() const;
+
+protected:
+	UFUNCTION()
+	void OnRep_MyPawn();
+
+	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
 
 private:
 	Weapon_Grip_Type Grip_Type = EMPTY_GRIP;

@@ -43,11 +43,17 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool Switch_Weapon = false;
 
-	FName GetWeaponAttatchPoint(AWeapon * Weapon);
+	FName GetWeaponAttachPoint(AWeapon * Weapon);
+
+	USkeletalMeshComponent* GetPawnMesh();
+
+	bool IsFirstPerson();
+
+	bool IsAlive();
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 
 protected:
@@ -65,6 +71,24 @@ protected:
 	/** currently equipped weapon */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
 	AWeapon* CurrentWeapon;
+
+protected:
+	/** [server] spawns default inventory */
+	void SpawnDefaultInventory();
+
+	/** updates current weapon */
+	void SetCurrentWeapon(AWeapon* NewWeapon, AWeapon* LastWeapon = NULL);
+
+	/**
+	* [server + local] equips weapon from inventory
+	*
+	* @param Weapon	Weapon to equip
+	*/
+	void EquipWeapon(AWeapon* Weapon);
+
+	/** equip weapon */
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerEquipWeapon(AWeapon* NewWeapon);
 
 protected:
 	/** current weapon rep handler */

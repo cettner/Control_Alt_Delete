@@ -59,6 +59,8 @@ public:
 	UFUNCTION(Server, reliable, WithValidation)
 	void SelectableInterationHandler(ARTSSelectable * Interacted);
 
+	USkeletalMeshComponent * GetSpecifcPawnMesh(bool WantFirstPerson) const;
+
 	UFUNCTION()
 	virtual void Interact();
 
@@ -82,6 +84,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool blocking = false;
+
+
 
 private:
 	float marchwidth = 150.0f;
