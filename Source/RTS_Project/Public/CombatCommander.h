@@ -27,7 +27,7 @@ public:
 	
 	void AddWeapon(AWeapon * Added_Weapon);
 
-	void RemoveWeapon(class AShooterWeapon* Weapon);
+	void RemoveWeapon(AWeapon* Weapon);
 
 	void SwitchWeaponUp();
 

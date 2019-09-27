@@ -43,9 +43,9 @@ struct FWeaponData
 {
 	GENERATED_USTRUCT_BODY()
 
-		/** inifite ammo for reloads */
-		UPROPERTY(EditDefaultsOnly, Category = Ammo)
-		bool bInfiniteAmmo;
+	/** inifite ammo for reloads */
+	UPROPERTY(EditDefaultsOnly, Category = Ammo)
+	bool bInfiniteAmmo;
 
 	/** infinite ammo in clip, no reload required */
 	UPROPERTY(EditDefaultsOnly, Category = Ammo)
@@ -160,6 +160,12 @@ protected:
 
 	/** update weapon state */
 	void SetWeaponState(EWeaponState::Type NewState);
+
+	/**Assign Net Owner*/
+	void SetOwningPawn(ACombatCommander* NewOwner);
+
+	/*Determine Attatchment State*/
+	bool IsAttachedToPawn() const;
 
 	/* Helper Functions */
 	UAudioComponent* PlayWeaponSound(USoundCue* Sound);

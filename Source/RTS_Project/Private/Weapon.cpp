@@ -5,6 +5,7 @@
 #include "UnrealNetwork.h"
 #include "CombatCommander.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -77,18 +78,66 @@ void AWeapon::OnEquip(const AWeapon * LastWeapon)
 
 void AWeapon::OnEquipFinished()
 {
+	AttachMeshToPawn();
+
+	bIsEquipped = true;
+
+	bPendingEquip = false;
+
+	// Determine the state so that the can reload checks will work
+	DetermineWeaponState();
 }
 
 void AWeapon::OnUnEquip()
 {
+	DetachMeshFromPawn();
+	bIsEquipped = false;
+
+	if (bPendingEquip)
+	{
+		StopWeaponAnimation(EquipAnim);
+		bPendingEquip = false;
+		GetWorldTimerManager().ClearTimer(TimerHandle_OnEquipFinished);
+	}
+
+	DetermineWeaponState();
 }
 
 void AWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 {
+	SetOwningPawn(NewOwner);
 }
 
 void AWeapon::OnLeaveInventory()
 {
+	if (Role == ROLE_Authority)
+	{
+		SetOwningPawn(NULL);
+	}
+
+	if (IsAttachedToPawn())
+	{
+		OnUnEquip();
+	}
+}
+
+
+void AWeapon::SetOwningPawn(ACombatCommander* NewOwner)
+{
+	if (MyPawn != NewOwner)
+	{
+		Instigator = NewOwner;
+		MyPawn = NewOwner;
+		
+		// net owner for RPC calls
+		SetOwner(NewOwner);
+	}
+}
+
+
+bool AWeapon::IsAttachedToPawn() const
+{
+	return(bIsEquipped || bPendingEquip);
 }
 
 void AWeapon::AttachMeshToPawn()
