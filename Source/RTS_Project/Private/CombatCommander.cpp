@@ -89,7 +89,6 @@ void ACombatCommander::EquipWeapon(AWeapon* Weapon)
 		}
 
 		else
-
 		{
 			ServerEquipWeapon(Weapon);
 		}

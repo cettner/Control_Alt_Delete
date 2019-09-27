@@ -8,6 +8,7 @@
 
 
 
+
 // Sets default values
 AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -38,7 +39,6 @@ AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInit
 
 }
 
-
 Weapon_Grip_Type AWeapon::GetType()
 {
 	return(Grip_Type);
@@ -46,6 +46,33 @@ Weapon_Grip_Type AWeapon::GetType()
 
 void AWeapon::OnEquip(const AWeapon * LastWeapon)
 {
+	AttachMeshToPawn();
+	bPendingEquip = true;
+	DetermineWeaponState();
+
+	// Only play animation if last weapon is valid
+	if (LastWeapon)
+	{
+		float Duration = PlayWeaponAnimation(EquipAnim);
+		if (Duration <= 0.0f)
+		{
+			// failsafe
+			Duration = 0.5f;
+		}
+		EquipStartedTime = GetWorld()->GetTimeSeconds();
+		EquipDuration = Duration;
+
+		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration, false);
+	}
+	else
+	{
+		OnEquipFinished();
+	}
+
+	if (MyPawn && MyPawn->IsLocallyControlled())
+	{
+		PlayWeaponSound(EquipSound);
+	}
 }
 
 void AWeapon::OnEquipFinished()
@@ -103,6 +130,63 @@ void AWeapon::DetachMeshFromPawn()
 	ThirdPersonMesh->SetHiddenInGame(true);
 }
 
+UAudioComponent* AWeapon::PlayWeaponSound(USoundCue* Sound)
+{
+	UAudioComponent* AC = NULL;
+	if (Sound && MyPawn)
+	{
+		AC = UGameplayStatics::SpawnSoundAttached(Sound, MyPawn->GetRootComponent());
+	}
+
+	return AC;
+}
+
+float AWeapon::PlayWeaponAnimation(const FWeaponAnim& Animation)
+{
+	float Duration = 0.0f;
+	if (MyPawn)
+	{
+		UAnimMontage* UseAnim = MyPawn->IsFirstPerson() ? Animation.AnimFirstPerson : Animation.AnimThirdPerson;
+		if (UseAnim)
+		{
+			Duration = MyPawn->PlayAnimMontage(UseAnim);
+		}
+	}
+
+	return Duration;
+}
+
+void AWeapon::StopWeaponAnimation(const FWeaponAnim& Animation)
+{
+	if (MyPawn)
+	{
+		UAnimMontage* UseAnim = MyPawn->IsFirstPerson() ? Animation.AnimFirstPerson : Animation.AnimThirdPerson;
+		if (UseAnim)
+		{
+			MyPawn->StopAnimMontage(UseAnim);
+		}
+	}
+}
+
+void AWeapon::DetermineWeaponState()
+{
+	EWeaponState::Type NewState = EWeaponState::Idle;
+	if (bIsEquipped)
+	{
+	}
+	else if (bPendingEquip)
+	{
+		NewState = EWeaponState::Equipping;
+	}
+	SetWeaponState(NewState);
+}
+
+void AWeapon::SetWeaponState(EWeaponState::Type NewState)
+{
+	const EWeaponState::Type PrevState = CurrentState;
+	CurrentState = NewState;
+}
+
 USkeletalMeshComponent * AWeapon::GetWeaponMesh() const
 {
 	return (MyPawn != NULL && MyPawn->IsFirstPerson()) ? FirstPersonMesh : ThirdPersonMesh;
@@ -124,21 +208,6 @@ void AWeapon::OnRep_MyPawn()
 		OnLeaveInventory();
 	}
 }
-
-void AWeapon::Equipped(USkeletalMeshComponent * Character, FName Socketname)
-{
-	RootComponent->SetupAttachment(Character,Socketname);
-}
-
-void AWeapon::UnEquipped()
-{
-	//Calls Modify Function on Root Component if set tot true
-	bool bInCallModify = false;
-	FDetachmentTransformRules detach(EDetachmentRule::KeepRelative, bInCallModify);
-	RootComponent->DetachFromComponent(detach);
-	Destroy();
-}
-
 
 void AWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
