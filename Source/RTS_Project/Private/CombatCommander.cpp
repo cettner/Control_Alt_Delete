@@ -20,7 +20,7 @@ FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon)
 
 void ACombatCommander::SetWeaponStance()
 {
-	if (CurrentWeapon)
+	if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
 	{
 		Stance = CurrentWeapon->Stance;
 	}
@@ -44,6 +44,10 @@ void ACombatCommander::SetupPlayerInputComponent(UInputComponent * ActorInputCom
 void ACombatCommander::WeaponSwitchComplete()
 {
 	Switch_Weapon = false;
+	EquipWeapon(NextWeapon);
+	SetWeaponStance();
+	NextWeapon = NULL;
+
 }
 
 void ACombatCommander::SetWeaponEquippedTimer()
@@ -72,13 +76,11 @@ void ACombatCommander::EquipWeapon(AWeapon* Weapon)
 		{
 			SetCurrentWeapon(Weapon, CurrentWeapon);
 		}
-
 		else
 		{
 			ServerEquipWeapon(Weapon);
 		}
 	}
-	SetWeaponStance();
 }
 
 void ACombatCommander::RemoveWeapon(AWeapon* Weapon)
@@ -102,21 +104,25 @@ void ACombatCommander::ServerEquipWeapon_Implementation(AWeapon* Weapon)
 
 void ACombatCommander::SwitchWeaponUp()
 {
-	if (Inventory.Num() >= 2 && (CurrentWeapon == NULL || CurrentWeapon->GetCurrentState() != EWeaponState::Equipping))
+	Switch_Weapon = true;
+	if (Inventory.Num() >= 2)
 	{
 		const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-		AWeapon* PrevWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
-		EquipWeapon(PrevWeapon);
+		NextWeapon = Inventory[(CurrentWeaponIdx + 1) % Inventory.Num()];
+		CurrentWeapon->OnUnEquip();
+		SetWeaponStance();
 	}
 }
 
 void ACombatCommander::SwitchWeaponDown()
 {
-	if (Inventory.Num() >= 2 && (CurrentWeapon == NULL || CurrentWeapon->GetCurrentState() != EWeaponState::Equipping))
+	Switch_Weapon = true;
+	if (Inventory.Num() >= 2)
 	{
 		const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-		AWeapon* NextWeapon = Inventory[(CurrentWeaponIdx + 1) % Inventory.Num()];
-		EquipWeapon(NextWeapon);
+		NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
+		CurrentWeapon->OnUnEquip();
+		SetWeaponStance();
 	}
 }
 
@@ -173,7 +179,6 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapo
 	{
 		LocalLastWeapon = LastWeapon;
 	}
-
 	else if (NewWeapon != CurrentWeapon)
 	{
 		LocalLastWeapon = CurrentWeapon;
@@ -204,4 +209,5 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapo
 void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 {
 	SetCurrentWeapon(CurrentWeapon, LastWeapon);
+	SetWeaponStance();
 }

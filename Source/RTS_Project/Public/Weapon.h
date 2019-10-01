@@ -137,6 +137,7 @@ protected:
 	/* Helper Functions */
 	UAudioComponent* PlayWeaponSound(USoundCue* Sound);
 	float PlayWeaponAnimation(const FWeaponAnim& Animation);
+	float GetAnimationTime(const FWeaponAnim& Animation);
 	void StopWeaponAnimation(const FWeaponAnim& Animation);
 
 protected:
@@ -147,6 +148,10 @@ protected:
 	/** unequip animations */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
 	FWeaponAnim UnEquipAnim;
+
+	/*Adds Time Between Weapon Swaps*/
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	float UnEquipDelay = 1.0;
 	
 	/** Handle for efficient management of OnEquipFinished timer */
 	FTimerHandle TimerHandle_OnEquipFinished;

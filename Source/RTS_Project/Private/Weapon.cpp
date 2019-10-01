@@ -95,10 +95,15 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 		GetWorldTimerManager().ClearTimer(TimerHandle_OnEquipFinished);
 	}
 
-	if (!bPendingUnEquip && bIsEquipped)
+	if (bPendingUnEquip)
+	{
+		float Duration = GetAnimationTime(UnEquipAnim) + UnEquipDelay;
+		GetWorldTimerManager().SetTimer(TimerHandle_OnUnEquipFinished, this, &AWeapon::OnUnEquipFinished, Duration, false);
+	}
+	else if (!bPendingUnEquip && bIsEquipped)
 	{
 		bPendingUnEquip = true;
-		float Duration = PlayWeaponAnimation(UnEquipAnim);
+		float Duration = PlayWeaponAnimation(UnEquipAnim) + UnEquipDelay;
 		if (Duration <= 0.0f)
 		{
 			// failsafe
@@ -112,6 +117,10 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 
 void AWeapon::OnUnEquipFinished()
 {
+	if(MyPawn)
+	{
+		MyPawn->WeaponSwitchComplete();
+	}
 	DetachMeshFromPawn();
 	bIsEquipped = false;
 	bPendingUnEquip = false;
@@ -215,6 +224,20 @@ float AWeapon::PlayWeaponAnimation(const FWeaponAnim& Animation)
 		}
 	}
 
+	return Duration;
+}
+
+float AWeapon::GetAnimationTime(const FWeaponAnim & Animation)
+{
+	float Duration = 0.0f;
+	if (MyPawn)
+	{
+		UAnimMontage* UseAnim = MyPawn->IsFirstPerson() ? Animation.AnimFirstPerson : Animation.AnimThirdPerson;
+		if (UseAnim)
+		{
+			Duration = UseAnim->GetPlayLength();
+		}
+	}
 	return Duration;
 }
 

@@ -62,8 +62,6 @@ protected:
 	UPROPERTY(Transient, Replicated)
 	TArray<AWeapon*> Inventory;
 
-
-
 protected:
 	/** [server] spawns default inventory */
 	void SpawnDefaultInventory();
@@ -92,6 +90,10 @@ private:
 	/** currently equipped weapon */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
 	AWeapon* CurrentWeapon;
+
+	UPROPERTY(Transient)
+	/*Weapon selected to be equipped*/
+	AWeapon * NextWeapon;
 
 	FTimerHandle SwitchWeaponDelayHandler;
 	const float SwitchWeaponDelayTime = 3.0;
