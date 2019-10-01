@@ -60,8 +60,6 @@ void AWeapon::OnEquip(const AWeapon * LastWeapon)
 			// failsafe
 			Duration = 0.5f;
 		}
-		EquipStartedTime = GetWorld()->GetTimeSeconds();
-		EquipDuration = Duration;
 
 		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration, false);
 	}
@@ -88,11 +86,8 @@ void AWeapon::OnEquipFinished()
 	DetermineWeaponState();
 }
 
-void AWeapon::OnUnEquip()
+void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 {
-	DetachMeshFromPawn();
-	bIsEquipped = false;
-
 	if (bPendingEquip)
 	{
 		StopWeaponAnimation(EquipAnim);
@@ -100,6 +95,26 @@ void AWeapon::OnUnEquip()
 		GetWorldTimerManager().ClearTimer(TimerHandle_OnEquipFinished);
 	}
 
+	if (!bPendingUnEquip && bIsEquipped)
+	{
+		bPendingUnEquip = true;
+		float Duration = PlayWeaponAnimation(UnEquipAnim);
+		if (Duration <= 0.0f)
+		{
+			// failsafe
+			Duration = 0.5f;
+		}
+		GetWorldTimerManager().SetTimer(TimerHandle_OnUnEquipFinished, this, &AWeapon::OnUnEquipFinished, Duration, false);
+	}
+
+	DetermineWeaponState();
+}
+
+void AWeapon::OnUnEquipFinished()
+{
+	DetachMeshFromPawn();
+	bIsEquipped = false;
+	bPendingUnEquip = false;
 	DetermineWeaponState();
 }
 
@@ -121,7 +136,6 @@ void AWeapon::OnLeaveInventory()
 	}
 }
 
-
 void AWeapon::SetOwningPawn(ACombatCommander* NewOwner)
 {
 	if (MyPawn != NewOwner)
@@ -133,7 +147,6 @@ void AWeapon::SetOwningPawn(ACombatCommander* NewOwner)
 		SetOwner(NewOwner);
 	}
 }
-
 
 bool AWeapon::IsAttachedToPawn() const
 {
@@ -220,12 +233,18 @@ void AWeapon::StopWeaponAnimation(const FWeaponAnim& Animation)
 void AWeapon::DetermineWeaponState()
 {
 	EWeaponState::Type NewState = EWeaponState::Idle;
-	if (bIsEquipped)
+
+	if (bPendingUnEquip)
 	{
+		NewState = EWeaponState::Unequipping;
 	}
 	else if (bPendingEquip)
 	{
 		NewState = EWeaponState::Equipping;
+	}
+	else
+	{
+		//Idle
 	}
 	SetWeaponState(NewState);
 }
@@ -244,6 +263,11 @@ USkeletalMeshComponent * AWeapon::GetWeaponMesh() const
 ACombatCommander * AWeapon::GetPawnOwner() const
 {
 	return(MyPawn);
+}
+
+EWeaponState::Type AWeapon::GetCurrentState() const
+{
+	return CurrentState;
 }
 
 void AWeapon::OnRep_MyPawn()

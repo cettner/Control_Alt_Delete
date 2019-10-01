@@ -9,9 +9,7 @@
 #include "Runtime/Core/Public/Containers/EnumAsByte.h"
 #include "CombatCommander.generated.h"
 
-/**
- * 
- */
+
 
 
 UCLASS()
@@ -45,16 +43,12 @@ public:
 
 	FName GetWeaponAttachPoint(AWeapon * Weapon);
 
-	USkeletalMeshComponent* GetPawnMesh();
-
-	bool IsFirstPerson();
-
-	bool IsAlive();
+	void SetWeaponStance();
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-
+	virtual void PostInitializeComponents() override;
 
 protected:
 	/** socket or bone name for attaching weapon mesh */
@@ -68,9 +62,7 @@ protected:
 	UPROPERTY(Transient, Replicated)
 	TArray<AWeapon*> Inventory;
 
-	/** currently equipped weapon */
-	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
-	AWeapon* CurrentWeapon;
+
 
 protected:
 	/** [server] spawns default inventory */
@@ -97,7 +89,10 @@ protected:
 
 
 private:
-	void SetWeaponStance();
+	/** currently equipped weapon */
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
+	AWeapon* CurrentWeapon;
+
 	FTimerHandle SwitchWeaponDelayHandler;
 	const float SwitchWeaponDelayTime = 3.0;
 };

@@ -36,6 +36,8 @@ public:
 
 	virtual bool CanInteract(AActor * Interactable);
 
+	virtual bool IsAlive();
+
 	virtual AActor* GetTarget();
 
 	virtual void SetTarget(AActor * NewTarget);

@@ -9,19 +9,12 @@
 /**
  * 
  */
-UENUM(BlueprintType)
-enum Combat_Stance
-{
-	NO_WEAPON_STANCE,
-	SWORD_AND_SHIELD_STANCE,
-	TWO_HANDED_STANCE	
-};
 
 struct WeaponLoadOut
 {
 	Weapon_Types PrimaryHand = NO_WEAPON;
 	Weapon_Types SecondaryHand = NO_WEAPON;
-	Combat_Stance Stance = NO_WEAPON_STANCE;
+	//Combat_Stance Stance = NO_WEAPON_STANCE;
 };
 
 

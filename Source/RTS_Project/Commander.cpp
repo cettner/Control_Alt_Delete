@@ -8,6 +8,27 @@
 #include "UnrealNetwork.h"
 #include "DefaultPlayerState.h"
 
+float ACommander::PlayAnimMontage(UAnimMontage* AnimMontage, float InPlayRate, FName StartSectionName)
+{
+	USkeletalMeshComponent* UseMesh = GetPawnMesh();
+	if (AnimMontage && UseMesh && UseMesh->AnimScriptInstance)
+	{
+		return UseMesh->AnimScriptInstance->Montage_Play(AnimMontage, InPlayRate);
+	}
+
+	return 0.0f;
+}
+
+void ACommander::StopAnimMontage(UAnimMontage* AnimMontage)
+{
+	USkeletalMeshComponent* UseMesh = GetPawnMesh();
+	if (AnimMontage && UseMesh && UseMesh->AnimScriptInstance &&
+		UseMesh->AnimScriptInstance->Montage_IsPlaying(AnimMontage))
+	{
+		UseMesh->AnimScriptInstance->Montage_Stop(AnimMontage->BlendOut.GetBlendTime(), AnimMontage);
+	}
+}
+
 void ACommander::Tick(float DeltaTime)
 {
 	FHitResult hit;
@@ -100,6 +121,11 @@ AActor * ACommander::GetSelectableActor()
 	}
 }
 
+bool ACommander::IsFirstPerson()
+{
+	return IsAlive() && Controller && Controller->IsLocalPlayerController();
+}
+
 void ACommander::SetTarget(AActor * newtarget)
 {
 
@@ -146,6 +172,11 @@ ACommander * ACommander::GetCommander()
 USkeletalMeshComponent * ACommander::GetSpecifcPawnMesh(bool WantFirstPerson) const
 {
 	return WantFirstPerson == true ? FPS_Mesh : GetMesh();
+}
+
+USkeletalMeshComponent* ACommander::GetPawnMesh()
+{
+	return IsFirstPerson() ? FPS_Mesh : GetMesh();
 }
 
 void ACommander::ClearCommander()
@@ -236,26 +267,6 @@ void ACommander::SelectableInterationHandler_Implementation(ARTSSelectable * Int
 	}
 }
 
-void ACommander::PrimaryPressed()
-{
-	Swing_Weapon = true;
-}
-
-void ACommander::PrimaryReleased()
-{
-	Swing_Weapon = false;
-}
-
-void ACommander::SecondaryPressed()
-{
-	blocking = true;
-}
-
-void ACommander::SecondaryReleased()
-{
-	blocking = false;
-}
-
 FVector ACommander::GetSquareFormation(int index, float width)
 {
 	FVector mylocation = GetActorLocation();
@@ -304,17 +315,8 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* ActorInputComponent)
 	ActorInputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
 	/*E*/
 	ActorInputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
-
-	ActorInputComponent->BindAction("RightMouse", IE_Pressed, this, &ACommander::SecondaryPressed);
-
-	ActorInputComponent->BindAction("RightMouse", IE_Released, this, &ACommander::SecondaryReleased);  
-
-	ActorInputComponent->BindAction("LeftMouse", IE_Pressed, this, &ACommander::PrimaryPressed);
-
-	ActorInputComponent->BindAction("LeftMouse", IE_Released, this, &ACommander::PrimaryReleased);
 	
 }
-
 
 void ACommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {

@@ -21,6 +21,13 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	/*Override to allow selection of which mesh should play the animation*/
+	virtual float PlayAnimMontage(class UAnimMontage* AnimMontage, float InPlayRate = 1.f, FName StartSectionName = NAME_None) override;
+
+	/*Stop playing montage*/
+	virtual void StopAnimMontage(class UAnimMontage* AnimMontage) override;
+
+public:
 	ACommander();
 
 	UPROPERTY(EditDefaultsOnly)
@@ -43,6 +50,8 @@ public:
 
 	bool LeaveSquad(ARTSMinion * leaver);
 
+	bool IsFirstPerson();
+
 	virtual ACommander * GetCommander() override;
 
 	virtual void ClearCommander() override;
@@ -61,31 +70,13 @@ public:
 
 	USkeletalMeshComponent * GetSpecifcPawnMesh(bool WantFirstPerson) const;
 
+	USkeletalMeshComponent* GetPawnMesh();
+
 	UFUNCTION()
 	virtual void Interact();
 
-	UFUNCTION()
-	void PrimaryPressed();
-
-	UFUNCTION()
-	void PrimaryReleased();
-
-	UFUNCTION()
-	void SecondaryPressed();
-
-	UFUNCTION() 
-	void SecondaryReleased();
-
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool Swing_Weapon = false;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool blocking = false;
-
-
 
 private:
 	float marchwidth = 150.0f;

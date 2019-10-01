@@ -40,11 +40,18 @@ ARTSMinion::ARTSMinion()
 	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("Selection"));
 	Selection->SetRoot(RootComponent);
 	Selection->SetDetection(GetCapsuleComponent());
+
+	health = 100.0;
 }
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
 {
 	return(false);
+}
+
+bool ARTSMinion::IsAlive()
+{
+	return (health > 0);
 }
 
 AActor * ARTSMinion::GetTarget()
@@ -182,7 +189,6 @@ UTexture * ARTSMinion::GetThumbnail()
 {
 	return Thumbnail;
 }
-
 
 void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {

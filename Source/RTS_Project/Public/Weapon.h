@@ -19,12 +19,17 @@ UENUM(BlueprintType)
 enum Weapon_Grip_Type
 {
 	EMPTY_GRIP,
-	DAGGER_GRIP,
-	ONE_HANDED_GRIP,
-	SPEAR_GRIP,
-	SHIELD_GRIP,
-	TWO_HANDED_GRIP,
-	HALBERD_GRIP
+	RIFLE_GRIP,
+};
+
+/**
+ *
+ */
+UENUM(BlueprintType)
+enum Combat_Stance
+{
+	NO_WEAPON_STANCE,
+	MAGE_STANCE,
 };
 
 namespace EWeaponState
@@ -35,54 +40,10 @@ namespace EWeaponState
 		Firing,
 		Reloading,
 		Equipping,
+		Unequipping
 	};
 }
 
-USTRUCT()
-struct FWeaponData
-{
-	GENERATED_USTRUCT_BODY()
-
-	/** inifite ammo for reloads */
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-	bool bInfiniteAmmo;
-
-	/** infinite ammo in clip, no reload required */
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-		bool bInfiniteClip;
-
-	/** max ammo */
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-		int32 MaxAmmo;
-
-	/** clip size */
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-		int32 AmmoPerClip;
-
-	/** initial clips */
-	UPROPERTY(EditDefaultsOnly, Category = Ammo)
-		int32 InitialClips;
-
-	/** time between two consecutive shots */
-	UPROPERTY(EditDefaultsOnly, Category = WeaponStat)
-		float TimeBetweenShots;
-
-	/** failsafe reload duration if weapon doesn't have any animation for it */
-	UPROPERTY(EditDefaultsOnly, Category = WeaponStat)
-		float NoAnimReloadDuration;
-
-	/** defaults */
-	FWeaponData()
-	{
-		bInfiniteAmmo = false;
-		bInfiniteClip = false;
-		MaxAmmo = 100;
-		AmmoPerClip = 20;
-		InitialClips = 4;
-		TimeBetweenShots = 0.2f;
-		NoAnimReloadDuration = 1.0f;
-	}
-};
 
 USTRUCT()
 struct FWeaponAnim
@@ -107,7 +68,6 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon(const FObjectInitializer& ObjectInitializer);
 
-
 public:	
 	Weapon_Grip_Type GetType();
 
@@ -131,6 +91,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
 	FRotator SocketRotationOffset = FRotator(0,0,0);  
 
+	/*Animation State Machine to Use when holding this Weapon*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
+	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
+
 public:
 
 	/** weapon is being equipped by owner pawn */
@@ -139,14 +103,20 @@ public:
 	/** weapon is now equipped by owner pawn */
 	virtual void OnEquipFinished();
 
-	/** weapon is holstered by owner pawn */
-	virtual void OnUnEquip();
+	/** weapon is being unequipped by owner pawn */
+	virtual void OnUnEquip(const AWeapon* NextWeapon = NULL);
+
+	/** weapon is now unequipped by owner pawn */
+	virtual void OnUnEquipFinished();
 
 	/** [server] weapon was added to pawn's inventory */
 	virtual void OnEnterInventory(ACombatCommander* NewOwner);
 
 	/** [server] weapon was removed from pawn's inventory */
 	virtual void OnLeaveInventory();
+
+	/**Assign Net Owner*/
+	void SetOwningPawn(ACombatCommander* NewOwner);
 
 protected:
 	/** Attaches weapon mesh to pawn's mesh */
@@ -156,13 +126,10 @@ protected:
 	void DetachMeshFromPawn();
 
 	/** determine current weapon state */
-	void DetermineWeaponState();
+	virtual void DetermineWeaponState();
 
 	/** update weapon state */
 	void SetWeaponState(EWeaponState::Type NewState);
-
-	/**Assign Net Owner*/
-	void SetOwningPawn(ACombatCommander* NewOwner);
 
 	/*Determine Attatchment State*/
 	bool IsAttachedToPawn() const;
@@ -177,18 +144,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
 	FWeaponAnim EquipAnim;
 
-	/** fire animations */
+	/** unequip animations */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	FWeaponAnim FireAnim;
-
-	/** last time when this weapon was switched to */
-	float EquipStartedTime;
-
-	/** how much time weapon needs to be equipped */
-	float EquipDuration;
+	FWeaponAnim UnEquipAnim;
 	
 	/** Handle for efficient management of OnEquipFinished timer */
 	FTimerHandle TimerHandle_OnEquipFinished;
+
+	/** Handle for efficient management of OnUnEquipFinished timer */
+	FTimerHandle TimerHandle_OnUnEquipFinished;
 
 	/** equip sound */
 	UPROPERTY(EditDefaultsOnly, Category = Sound)
@@ -196,6 +160,9 @@ protected:
 
 	/** is equip animation playing? */
 	bool bPendingEquip = false;
+
+	/**is unequip animation playing?*/
+	bool bPendingUnEquip = false;
 
 	/** is weapon currently equipped? */
 	bool bIsEquipped = false;
@@ -217,11 +184,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Game|Weapon")
 	ACombatCommander* GetPawnOwner() const;
 
+	EWeaponState::Type GetCurrentState() const;
+
 protected:
 	UFUNCTION()
 	void OnRep_MyPawn();
 
-	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 private:
 	Weapon_Grip_Type Grip_Type = EMPTY_GRIP;
