@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ShooterWeapon.h"
+#include "CombatCommander.h"
 
 
 void AShooterWeapon::StartFire()
@@ -321,7 +321,19 @@ void AShooterWeapon::DetermineWeaponState()
 {
 	EWeaponState::Type NewState = EWeaponState::Idle;
 
-	if (bIsEquipped)
+	if (bPendingUnEquip)
+	{
+		NewState = EWeaponState::Unequipping;
+	}
+	else if (bPendingEquip)
+	{
+		NewState = EWeaponState::Equipping;
+	}
+	else if (!bIsEquipped)
+	{
+		NewState = EWeaponState::Unequipped;
+	}
+	else if (bIsEquipped)
 	{
 		if (bPendingReload)
 		{
@@ -338,10 +350,6 @@ void AShooterWeapon::DetermineWeaponState()
 		{
 			NewState = EWeaponState::Firing;
 		}
-	}
-	else if (bPendingEquip)
-	{
-		NewState = EWeaponState::Equipping;
 	}
 
 	SetWeaponState(NewState);
