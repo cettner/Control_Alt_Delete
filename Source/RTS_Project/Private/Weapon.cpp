@@ -6,6 +6,7 @@
 #include "CombatCommander.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine.h"
 
 
 
@@ -47,13 +48,16 @@ Weapon_Grip_Type AWeapon::GetType()
 
 void AWeapon::OnEquip(const AWeapon * LastWeapon)
 {
+	if (!HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Equipping %s..."), *this->GetName()));
+	}
+	
 	AttachMeshToPawn();
 	bPendingEquip = true;
 	DetermineWeaponState();
 
-	// Only play animation if last weapon is valid
-	if (LastWeapon)
-	{
+
 		float Duration = PlayWeaponAnimation(EquipAnim);
 		if (Duration <= 0.0f)
 		{
@@ -62,11 +66,7 @@ void AWeapon::OnEquip(const AWeapon * LastWeapon)
 		}
 
 		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration, false);
-	}
-	else
-	{
-		OnEquipFinished();
-	}
+
 
 	if (MyPawn && MyPawn->IsLocallyControlled())
 	{
@@ -76,10 +76,14 @@ void AWeapon::OnEquip(const AWeapon * LastWeapon)
 
 void AWeapon::OnEquipFinished()
 {
+	if (!HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Finished Equipping %s!"), *this->GetName()));
+	}
+	
 	AttachMeshToPawn();
 
 	bIsEquipped = true;
-
 	bPendingEquip = false;
 
 	// Determine the state so that the can reload checks will work
@@ -88,6 +92,7 @@ void AWeapon::OnEquipFinished()
 
 void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Unequipping %s..."), *this->GetName()));
 	if (bPendingEquip)
 	{
 		StopWeaponAnimation(EquipAnim);
@@ -95,15 +100,10 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 		GetWorldTimerManager().ClearTimer(TimerHandle_OnEquipFinished);
 	}
 
-	if (bPendingUnEquip)
-	{
-		float Duration = GetAnimationTime(UnEquipAnim) + UnEquipDelay;
-		GetWorldTimerManager().SetTimer(TimerHandle_OnUnEquipFinished, this, &AWeapon::OnUnEquipFinished, Duration, false);
-	}
-	else if (!bPendingUnEquip && bIsEquipped)
+	if (!bPendingUnEquip && bIsEquipped)
 	{
 		bPendingUnEquip = true;
-		float Duration = PlayWeaponAnimation(UnEquipAnim) + UnEquipDelay;
+		float Duration = PlayWeaponAnimation(UnEquipAnim);
 		if (Duration <= 0.0f)
 		{
 			// failsafe
@@ -117,14 +117,15 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 
 void AWeapon::OnUnEquipFinished()
 {
-	if(MyPawn)
-	{
-		MyPawn->WeaponSwitchComplete();
-	}
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Unequip %s Finished"), *this->GetName()));
 	DetachMeshFromPawn();
 	bIsEquipped = false;
 	bPendingUnEquip = false;
 	DetermineWeaponState();
+	if (MyPawn)
+	{
+		MyPawn->UnEquipComplete();
+	}
 }
 
 void AWeapon::OnEnterInventory(ACombatCommander * NewOwner)
@@ -264,6 +265,10 @@ void AWeapon::DetermineWeaponState()
 	else if (bPendingEquip)
 	{
 		NewState = EWeaponState::Equipping;
+	}
+	else if (!bIsEquipped)
+	{
+		NewState = EWeaponState::Unequipped;
 	}
 	else
 	{

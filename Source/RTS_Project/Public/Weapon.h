@@ -40,7 +40,8 @@ namespace EWeaponState
 		Firing,
 		Reloading,
 		Equipping,
-		Unequipping
+		Unequipping,
+		Unequipped
 	};
 }
 

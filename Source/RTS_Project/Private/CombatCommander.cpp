@@ -20,7 +20,7 @@ FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon)
 
 void ACombatCommander::SetWeaponStance()
 {
-	if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
+	if (CurrentWeapon && CurrentWeapon->GetCurrentState() < EWeaponState::Unequipping)
 	{
 		Stance = CurrentWeapon->Stance;
 	}
@@ -43,16 +43,16 @@ void ACombatCommander::SetupPlayerInputComponent(UInputComponent * ActorInputCom
 
 void ACombatCommander::WeaponSwitchComplete()
 {
-	Switch_Weapon = false;
-	EquipWeapon(NextWeapon);
-	SetWeaponStance();
-	NextWeapon = NULL;
-
+	bIsSwitching_Weapon = false;
+	if (!bIsWeaponEquipped)
+	{
+		EquipWeapon(NextWeapon);
+	}
 }
 
 void ACombatCommander::SetWeaponEquippedTimer()
 {
-	GetWorldTimerManager().SetTimer(SwitchWeaponDelayHandler, this, &ACombatCommander::WeaponSwitchComplete, 1.0, false, SwitchWeaponDelayTime);
+	GetWorldTimerManager().SetTimer(SwitchWeaponDelayHandler, this, &ACombatCommander::WeaponSwitchComplete, SwitchWeaponDelayTime, false);
 }
 
 void ACombatCommander::AddWeapon(AWeapon * Added_Weapon)
@@ -83,6 +83,21 @@ void ACombatCommander::EquipWeapon(AWeapon* Weapon)
 	}
 }
 
+void ACombatCommander::UnEquipWeapon()
+{
+	CurrentWeapon->OnUnEquip();
+}
+
+void ACombatCommander::UnEquipComplete()
+{
+	SetWeaponStance();
+	bIsWeaponEquipped = false;
+	if (!bIsSwitching_Weapon)
+	{
+		WeaponSwitchComplete();
+	}
+}
+
 void ACombatCommander::RemoveWeapon(AWeapon* Weapon)
 {
 	if (Weapon && Role == ROLE_Authority)
@@ -102,27 +117,56 @@ void ACombatCommander::ServerEquipWeapon_Implementation(AWeapon* Weapon)
 	EquipWeapon(Weapon);
 }
 
+
+bool ACombatCommander::ServerUnEquipWeapon_Validate()
+{
+	return(true);
+}
+
+void ACombatCommander::ServerUnEquipWeapon_Implementation()
+{
+	UnEquipWeapon();
+}
+
+
 void ACombatCommander::SwitchWeaponUp()
 {
-	Switch_Weapon = true;
+
 	if (Inventory.Num() >= 2)
 	{
 		const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-		NextWeapon = Inventory[(CurrentWeaponIdx + 1) % Inventory.Num()];
-		CurrentWeapon->OnUnEquip();
-		SetWeaponStance();
+		NextWeapon = Inventory[(CurrentWeaponIdx + 1 + Inventory.Num()) % Inventory.Num()];
+
+		if (bIsSwitching_Weapon)
+		{
+			SetWeaponEquippedTimer();
+		}
+		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() != EWeaponState::Equipping && !bIsSwitching_Weapon)
+		{
+			bIsSwitching_Weapon = true;
+			UnEquipWeapon();
+			SetWeaponEquippedTimer();
+		}
 	}
 }
 
 void ACombatCommander::SwitchWeaponDown()
 {
-	Switch_Weapon = true;
-	if (Inventory.Num() >= 2)
+	if (Inventory.Num() >= 2 )
 	{
 		const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
 		NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
-		CurrentWeapon->OnUnEquip();
-		SetWeaponStance();
+
+		if (bIsSwitching_Weapon)
+		{
+			SetWeaponEquippedTimer();
+		}
+		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() != EWeaponState::Equipping)
+		{
+			bIsSwitching_Weapon = true;
+			UnEquipWeapon();
+			SetWeaponEquippedTimer();
+		}
 	}
 }
 
@@ -171,12 +215,14 @@ void ACombatCommander::SpawnDefaultInventory()
 
 void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapon)
 {
-
 	AWeapon* LocalLastWeapon = NULL;
-
 
 	if (LastWeapon != NULL)
 	{
+		if (LastWeapon->GetCurrentState() != EWeaponState::Unequipped)
+		{
+
+		}
 		LocalLastWeapon = LastWeapon;
 	}
 	else if (NewWeapon != CurrentWeapon)
@@ -184,23 +230,16 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapo
 		LocalLastWeapon = CurrentWeapon;
 	}
 
-	// unequip previous
+		CurrentWeapon = NewWeapon;
 
-	if (LocalLastWeapon)
-	{
-		LocalLastWeapon->OnUnEquip();
-	}
+		// equip new one
 
-	CurrentWeapon = NewWeapon;
+		if (NewWeapon)
+		{
+			NewWeapon->SetOwningPawn(this);	// Make sure weapon's MyPawn is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
 
-	// equip new one
-
-	if (NewWeapon)
-	{
-		NewWeapon->SetOwningPawn(this);	// Make sure weapon's MyPawn is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
-
-		NewWeapon->OnEquip(LastWeapon);
-	}
+			NewWeapon->OnEquip(LastWeapon);
+		}
 
 	// Change How we are holding the weapon in animation blueprint.
 	SetWeaponStance();
@@ -210,4 +249,5 @@ void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 {
 	SetCurrentWeapon(CurrentWeapon, LastWeapon);
 	SetWeaponStance();
+	bIsWeaponEquipped = true;
 }

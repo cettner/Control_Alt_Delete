@@ -34,12 +34,14 @@ public:
 	void SetWeaponEquippedTimer();
 
 	void WeaponSwitchComplete();
+
+	/*Notifier From Weapon that Animation has completed*/
+	void UnEquipComplete();
 	
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
 
-	UPROPERTY(BlueprintReadOnly)
-	bool Switch_Weapon = false;
+	bool bIsSwitching_Weapon = false;
 
 	FName GetWeaponAttachPoint(AWeapon * Weapon);
 
@@ -76,17 +78,27 @@ protected:
 	*/
 	void EquipWeapon(AWeapon* Weapon);
 
+	/**
+	* [server + local] equips weapon from inventory
+	*
+	* @param Weapon	Weapon to equip
+	*/
+	void UnEquipWeapon();
+
 	/** equip weapon */
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerEquipWeapon(AWeapon* NewWeapon);
+
+	/** Unequip weapon */
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerUnEquipWeapon();
 
 protected:
 	/** current weapon rep handler */
 	UFUNCTION()
 	void OnRep_CurrentWeapon(AWeapon* LastWeapon);
 
-
-private:
+protected:
 	/** currently equipped weapon */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
 	AWeapon* CurrentWeapon;
@@ -97,4 +109,6 @@ private:
 
 	FTimerHandle SwitchWeaponDelayHandler;
 	const float SwitchWeaponDelayTime = 3.0;
+
+	bool bIsWeaponEquipped = false;
 };
