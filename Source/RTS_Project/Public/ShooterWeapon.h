@@ -146,6 +146,8 @@ protected:
 
 	virtual void DetermineWeaponState() override;
 
+	virtual void SetWeaponState(EWeaponState::Type NewState) override;
+
 protected:
 
 	void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const;

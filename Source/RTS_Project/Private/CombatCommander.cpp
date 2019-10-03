@@ -39,6 +39,12 @@ void ACombatCommander::SetupPlayerInputComponent(UInputComponent * ActorInputCom
 
 	ActorInputComponent->BindAction("ScrollUp", IE_Released, this, &ACombatCommander::SetWeaponEquippedTimer);
 	ActorInputComponent->BindAction("ScrollDown", IE_Released, this, &ACombatCommander::SetWeaponEquippedTimer);
+
+	ActorInputComponent->BindAction("LeftMouse", IE_Pressed, this, &ACombatCommander::OnPrimaryFireStart);
+	ActorInputComponent->BindAction("LeftMouse", IE_Released, this, &ACombatCommander::OnPrimaryFireEnd);
+
+	ActorInputComponent->BindAction("RightMouse", IE_Pressed, this, &ACombatCommander::OnSecondaryFireStart);
+	ActorInputComponent->BindAction("RightMouse", IE_Released, this, &ACombatCommander::OnSecondaryFireEnd);
 }
 
 void ACombatCommander::WeaponSwitchComplete()
@@ -173,10 +179,12 @@ void ACombatCommander::SwitchWeaponDown()
 
 void ACombatCommander::OnPrimaryFireStart()
 {
+	StartWeaponFire();
 }
 
 void ACombatCommander::OnPrimaryFireEnd()
 {
+	StopWeaponFire();
 }
 
 void ACombatCommander::OnSecondaryFireStart()
@@ -189,10 +197,26 @@ void ACombatCommander::OnSecondaryFireEnd()
 
 void ACombatCommander::StartWeaponFire()
 {
+	if (!bWantsToFire)
+	{
+		bWantsToFire = true;
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->StartFire();
+		}
+	}
 }
 
 void ACombatCommander::StopWeaponFire()
 {
+	if (bWantsToFire)
+	{
+		bWantsToFire = false;
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->StopFire();
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

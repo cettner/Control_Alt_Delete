@@ -355,6 +355,23 @@ void AShooterWeapon::DetermineWeaponState()
 	SetWeaponState(NewState);
 }
 
+void AShooterWeapon::SetWeaponState(EWeaponState::Type NewState)
+{
+	const EWeaponState::Type PrevState = CurrentState;
+
+	if (PrevState == EWeaponState::Firing && NewState != EWeaponState::Firing)
+	{
+		OnBurstFinished();
+	}
+
+	CurrentState = NewState;
+
+	if (PrevState != EWeaponState::Firing && NewState == EWeaponState::Firing)
+	{
+		OnBurstStarted();
+	}
+}
+
 int32 AShooterWeapon::GetCurrentAmmo() const
 {
 	return CurrentAmmo;

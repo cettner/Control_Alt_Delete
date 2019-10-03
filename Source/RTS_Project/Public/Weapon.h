@@ -141,7 +141,7 @@ protected:
 	virtual void DetermineWeaponState();
 
 	/** update weapon state */
-	void SetWeaponState(EWeaponState::Type NewState);
+	virtual void SetWeaponState(EWeaponState::Type NewState);
 
 	/*Determine Attatchment State*/
 	bool IsAttachedToPawn() const;
