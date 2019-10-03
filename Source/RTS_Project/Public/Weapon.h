@@ -73,6 +73,17 @@ public:
 	Weapon_Grip_Type GetType();
 
 public:
+//////////////////////////////////////////////
+//PURE VIRTUAL FUNCTIONS FOR CHILD CLASSES ///
+	virtual void StartFire();
+
+	virtual void StopFire();
+
+	virtual void StartReload(bool bFromReplication = false);
+
+	virtual void StopReload();
+
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
 	USkeletalMeshComponent * FirstPersonMesh;
 

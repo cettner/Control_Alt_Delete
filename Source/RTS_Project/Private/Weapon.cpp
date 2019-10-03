@@ -46,6 +46,22 @@ Weapon_Grip_Type AWeapon::GetType()
 	return(Grip_Type);
 }
 
+void AWeapon::StartFire()
+{
+}
+
+void AWeapon::StopFire()
+{
+}
+
+void AWeapon::StartReload(bool bFromReplication)
+{
+}
+
+void AWeapon::StopReload()
+{
+}
+
 void AWeapon::OnEquip(const AWeapon * LastWeapon)
 {
 	if (!HasAuthority())

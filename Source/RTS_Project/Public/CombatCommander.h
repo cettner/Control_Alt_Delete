@@ -22,30 +22,54 @@ public:
 
 	virtual void BeginPlay() override;
 
-	
+public:
+	/*Add Weapon to Inventory*/
 	void AddWeapon(AWeapon * Added_Weapon);
 
+	/*Remove Weapon From Inventory*/
 	void RemoveWeapon(AWeapon* Weapon);
 
+	/*Get Socket Name, TODO:(based on griptype)*/
+	FName GetWeaponAttachPoint(AWeapon* Weapon);
+
+	/*Notifier From Weapon that Unequip Animation has Completed*/
+	void UnEquipComplete();
+
+
+
+protected:
+/////////////////////////////////////////////////
+//INPUT
+
+	/*Starts Weapon  Selection Process, Selection is done Client Side, with final result being replicated to server*/
+	UFUNCTION()
 	void SwitchWeaponUp();
 
+	UFUNCTION()
 	void SwitchWeaponDown();
 
-	void SetWeaponEquippedTimer();
+	UFUNCTION()
+	void OnPrimaryFireStart();
 
-	void WeaponSwitchComplete();
+	UFUNCTION()
+	void OnPrimaryFireEnd();
 
-	/*Notifier From Weapon that Animation has completed*/
-	void UnEquipComplete();
-	
+	UFUNCTION()
+	void OnSecondaryFireStart();
+
+	UFUNCTION()
+	void OnSecondaryFireEnd();
+
+	/*Fire Weapon After Character Status Checks Have been Performed*/
+	void StartWeaponFire();
+
+	/*Stop Weapon Fire*/
+	void StopWeaponFire();
+
+public:
+	/*Read by Animation Blueprint to determine which state machine to use*/
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
-
-	bool bIsSwitching_Weapon = false;
-
-	FName GetWeaponAttachPoint(AWeapon * Weapon);
-
-	void SetWeaponStance();
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
@@ -57,6 +81,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
 	FName WeaponAttachPoint;
 
+	/*Inital Array Containing All Starter Weapons*/
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
 	TArray<TSubclassOf<AWeapon> > DefaultInventoryClasses;
 
@@ -85,6 +110,12 @@ protected:
 	*/
 	void UnEquipWeapon();
 
+	/*Set Delay Timer for Selecting Weapon*/
+	void SetWeaponEquippedTimer();
+
+	/*Notifer That User has completed Weapon Selection*/
+	void WeaponSwitchComplete();
+
 	/** equip weapon */
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerEquipWeapon(AWeapon* NewWeapon);
@@ -92,6 +123,9 @@ protected:
 	/** Unequip weapon */
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerUnEquipWeapon();
+
+	/*Sets Variables Used in Animation Blueprint*/
+	void SetWeaponStance();
 
 protected:
 	/** current weapon rep handler */
@@ -103,12 +137,22 @@ protected:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
 	AWeapon* CurrentWeapon;
 
+	/*Weapon selected to be equipped switched by Client during selection process then passed to server*/
 	UPROPERTY(Transient)
-	/*Weapon selected to be equipped*/
 	AWeapon * NextWeapon;
-
+	
+	/*Delay Time for Weapon Selection, Toggling a new weapon will reset countdown*/
 	FTimerHandle SwitchWeaponDelayHandler;
+
+	/*Number of seconds Of inactivity before a weapon will begin equipping when cycling weapons*/
 	const float SwitchWeaponDelayTime = 3.0;
 
+	/*True If User is currently cycling through available weapons*/
+	bool bIsSwitching_Weapon = false;
+
+	/*Is a weapon Currently Equipped*/
 	bool bIsWeaponEquipped = false;
+
+	/** current firing state */
+	bool bWantsToFire = false;
 };

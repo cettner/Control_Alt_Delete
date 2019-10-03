@@ -128,7 +128,8 @@ void ACombatCommander::ServerUnEquipWeapon_Implementation()
 	UnEquipWeapon();
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
+//INPUT
 void ACombatCommander::SwitchWeaponUp()
 {
 
@@ -169,6 +170,33 @@ void ACombatCommander::SwitchWeaponDown()
 		}
 	}
 }
+
+void ACombatCommander::OnPrimaryFireStart()
+{
+}
+
+void ACombatCommander::OnPrimaryFireEnd()
+{
+}
+
+void ACombatCommander::OnSecondaryFireStart()
+{
+}
+
+void ACombatCommander::OnSecondaryFireEnd()
+{
+}
+
+void ACombatCommander::StartWeaponFire()
+{
+}
+
+void ACombatCommander::StopWeaponFire()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//Replication
 
 void ACombatCommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {

@@ -77,16 +77,16 @@ public:
 	
 public:
 	/** [local + server] start weapon fire */
-	virtual void StartFire();
+	virtual void StartFire() override;
 
 	/** [local + server] stop weapon fire */
-	virtual void StopFire();
+	virtual void StopFire() override;
 
 	/** [all] start weapon reload */
-	virtual void StartReload(bool bFromReplication = false);
+	virtual void StartReload(bool bFromReplication = false) override;
 
 	/** [local + server] interrupt weapon reload */
-	virtual void StopReload();
+	virtual void StopReload() override;
 
 	/** [server] performs actual reload */
 	virtual void ReloadWeapon();

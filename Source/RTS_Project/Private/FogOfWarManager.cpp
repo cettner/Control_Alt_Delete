@@ -49,7 +49,7 @@ void AFogOfWarManager::BeginPlay() {
 		if (PC)
 		{
 			PC->FOWManager = this;
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%s"), *this->GetName()));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%s Spawned!"), *this->GetName()));
 		}
 
 	}
