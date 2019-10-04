@@ -2,7 +2,7 @@
 
 #include "ShooterWeapon.h"
 #include "CombatCommander.h"
-
+#define DEBUG_WEAPON
 
 void AShooterWeapon::StartFire()
 {
@@ -413,20 +413,26 @@ FHitResult AShooterWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& 
 	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), true, Instigator);
 	TraceParams.bReturnPhysicalMaterial = true;
 
+#ifdef DEBUG_WEAPON
+	const FName TraceTag("DebugShooterTag");
+	GetWorld()->DebugDrawTraceTag = TraceTag;
+	TraceParams.TraceTag = TraceTag;
+#endif // Define to view weapon trace
+	
 	FHitResult Hit(ForceInit);
 	GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
 
-	return Hit;
+	return(Hit);
 }
 
 int32 AShooterWeapon::GetCurrentAmmo() const
 {
-	return CurrentAmmo;
+	return(CurrentAmmo);
 }
 
 int32 AShooterWeapon::GetCurrentAmmoInClip() const
 {
-	return CurrentAmmoInClip;
+	return(CurrentAmmoInClip);
 }
 
 int32 AShooterWeapon::GetAmmoPerClip() const
@@ -490,11 +496,11 @@ void AShooterWeapon::OnRep_BurstCounter()
 {
 	if (BurstCounter > 0)
 	{
-		//SimulateWeaponFire();
+		SimulateWeaponFire();
 	}
 	else
 	{
-		//StopSimulatingWeaponFire();
+		StopSimulatingWeaponFire();
 	}
 }
 

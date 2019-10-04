@@ -268,6 +268,7 @@ FVector AWeapon::GetAdjustedAim() const
 		FVector CamLoc;
 		FRotator CamRot;
 		PC->GetPlayerViewPoint(CamLoc, CamRot);
+		FinalAim = CamRot.Vector();
 	}
 	else if(Instigator)
 	{
