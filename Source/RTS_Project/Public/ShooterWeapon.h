@@ -116,7 +116,7 @@ protected:
 // Weapon usage
 
 /** [local] weapon specific fire implementation */
-	virtual void FireWeapon() PURE_VIRTUAL(AShooterWeapon::FireWeapon, );
+	virtual void FireWeapon() PURE_VIRTUAL(AShooterWeapon::FireWeapon,);
 
 	/** [server] fire & update ammo */
 	UFUNCTION(reliable, server, WithValidation)
@@ -147,6 +147,18 @@ protected:
 	virtual void DetermineWeaponState() override;
 
 	virtual void SetWeaponState(EWeaponState::Type NewState) override;
+
+	/** get the originating location for camera damage */
+	FVector GetCameraDamageStartLocation(const FVector& AimDir) const;
+
+	/** get the muzzle location of the weapon */
+	FVector GetMuzzleLocation() const;
+
+	/** get direction of weapon's muzzle */
+	FVector GetMuzzleDirection() const;
+
+	/** find hit */
+	FHitResult WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const;
 
 protected:
 
@@ -197,6 +209,10 @@ public:
 	bool CanReload() const;
 
 protected:
+	/** name of bone/socket for muzzle in weapon mesh */
+	UPROPERTY(EditDefaultsOnly, Category = Effects)
+	FName MuzzleAttachPoint;
+
 	/** weapon data */
 	UPROPERTY(EditDefaultsOnly, Category = Config)
 	FWeaponData WeaponConfig;

@@ -14,6 +14,8 @@
 /*Forward Declarations*/
 class ACombatCommander;
 
+#define COLLISION_WEAPON ECC_GameTraceChannel2
+
 /*Specifies Attatchment Location on Mesh*/
 UENUM(BlueprintType)
 enum Weapon_Grip_Type
@@ -75,13 +77,13 @@ public:
 public:
 //////////////////////////////////////////////
 //PURE VIRTUAL FUNCTIONS FOR CHILD CLASSES ///
-	virtual void StartFire();
+	virtual void StartFire() PURE_VIRTUAL(AWeapon::StartFire,);
 
-	virtual void StopFire();
+	virtual void StopFire() PURE_VIRTUAL(AWeapon::StopFire,);
 
-	virtual void StartReload(bool bFromReplication = false);
+	virtual void StartReload(bool bFromReplication = false) PURE_VIRTUAL(AWeapon::StartReload,);
 
-	virtual void StopReload();
+	virtual void StopReload() PURE_VIRTUAL(AWeapon::StopFire,);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
@@ -132,10 +134,10 @@ public:
 
 protected:
 	/** Attaches weapon mesh to pawn's mesh */
-	void AttachMeshToPawn();
+	virtual void AttachMeshToPawn();
 
 	/** Detaches weapon mesh from pawn */
-	void DetachMeshFromPawn();
+	virtual void DetachMeshFromPawn();
 
 	/** determine current weapon state */
 	virtual void DetermineWeaponState();
@@ -152,6 +154,9 @@ protected:
 	float GetAnimationTime(const FWeaponAnim& Animation);
 	void StopWeaponAnimation(const FWeaponAnim& Animation);
 
+	/** Get the aim of the weapon, allowing for adjustments to be made by the weapon */
+	virtual FVector GetAdjustedAim() const;
+
 protected:
 	/** equip animations */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
@@ -160,10 +165,6 @@ protected:
 	/** unequip animations */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
 	FWeaponAnim UnEquipAnim;
-
-	/*Adds Time Between Weapon Swaps*/
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	float UnEquipDelay = 1.0;
 	
 	/** Handle for efficient management of OnEquipFinished timer */
 	FTimerHandle TimerHandle_OnEquipFinished;
@@ -195,7 +196,7 @@ public:
 
 	/** get weapon mesh (needs pawn owner to determine variant) */
 	UFUNCTION(BlueprintCallable)
-	USkeletalMeshComponent* GetWeaponMesh() const;
+	virtual USkeletalMeshComponent* GetWeaponMesh() const;
 
 	/** get pawn owner */
 	UFUNCTION(BlueprintCallable, Category = "Game|Weapon")

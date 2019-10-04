@@ -372,6 +372,53 @@ void AShooterWeapon::SetWeaponState(EWeaponState::Type NewState)
 	}
 }
 
+FVector AShooterWeapon::GetCameraDamageStartLocation(const FVector& AimDir) const
+{
+	APlayerController * PC = MyPawn ? Cast<APlayerController>(MyPawn->Controller) : NULL;
+	AAIController* AIPC = MyPawn ? Cast<AAIController>(MyPawn->Controller) : NULL;
+	FVector OutStartTrace = this->GetActorLocation();
+
+	if (PC)
+	{
+		// use player's camera
+		FRotator UnusedRot;
+		PC->GetPlayerViewPoint(OutStartTrace, UnusedRot);
+
+		// Adjust trace so there is nothing blocking the ray between the camera and the pawn, and calculate distance from adjusted start
+		OutStartTrace = OutStartTrace + AimDir * ((Instigator->GetActorLocation() - OutStartTrace) | AimDir);
+	}
+	else if (AIPC)
+	{
+		OutStartTrace = GetMuzzleLocation();
+	}
+	
+	return(OutStartTrace);
+}
+
+FVector AShooterWeapon::GetMuzzleLocation() const
+{
+	USkeletalMeshComponent* UseMesh = GetWeaponMesh();
+	return(UseMesh->GetSocketLocation(MuzzleAttachPoint));
+}
+
+FVector AShooterWeapon::GetMuzzleDirection() const
+{
+	USkeletalMeshComponent* UseMesh = GetWeaponMesh();
+	return(UseMesh->GetSocketRotation(MuzzleAttachPoint).Vector());
+}
+
+FHitResult AShooterWeapon::WeaponTrace(const FVector& TraceFrom, const FVector& TraceTo) const
+{
+	// Perform trace to retrieve hit info
+	FCollisionQueryParams TraceParams(SCENE_QUERY_STAT(WeaponTrace), true, Instigator);
+	TraceParams.bReturnPhysicalMaterial = true;
+
+	FHitResult Hit(ForceInit);
+	GetWorld()->LineTraceSingleByChannel(Hit, TraceFrom, TraceTo, COLLISION_WEAPON, TraceParams);
+
+	return Hit;
+}
+
 int32 AShooterWeapon::GetCurrentAmmo() const
 {
 	return CurrentAmmo;

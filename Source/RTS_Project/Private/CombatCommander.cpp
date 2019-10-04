@@ -6,6 +6,8 @@
 
 ACombatCommander::ACombatCommander()
 {
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Block);
 }
 
 void ACombatCommander::BeginPlay()

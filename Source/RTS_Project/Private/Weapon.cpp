@@ -46,22 +46,6 @@ Weapon_Grip_Type AWeapon::GetType()
 	return(Grip_Type);
 }
 
-void AWeapon::StartFire()
-{
-}
-
-void AWeapon::StopFire()
-{
-}
-
-void AWeapon::StartReload(bool bFromReplication)
-{
-}
-
-void AWeapon::StopReload()
-{
-}
-
 void AWeapon::OnEquip(const AWeapon * LastWeapon)
 {
 	if (!HasAuthority())
@@ -108,7 +92,11 @@ void AWeapon::OnEquipFinished()
 
 void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Unequipping %s..."), *this->GetName()));
+	if (!HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Unequipping %s..."), *this->GetName()));
+	}
+
 	if (bPendingEquip)
 	{
 		StopWeaponAnimation(EquipAnim);
@@ -268,6 +256,34 @@ void AWeapon::StopWeaponAnimation(const FWeaponAnim& Animation)
 			MyPawn->StopAnimMontage(UseAnim);
 		}
 	}
+}
+
+FVector AWeapon::GetAdjustedAim() const
+{
+	APlayerController* const PC = Instigator ? Cast<APlayerController>(Instigator->Controller) : NULL;
+	FVector FinalAim = FVector::ZeroVector;
+
+	if (PC)
+	{
+		FVector CamLoc;
+		FRotator CamRot;
+		PC->GetPlayerViewPoint(CamLoc, CamRot);
+	}
+	else if(Instigator)
+	{
+		AAIController* AIC = MyPawn ? Cast<AAIController>(MyPawn->Controller) : NULL;
+
+		if (AIC)
+		{
+			FinalAim = AIC->GetControlRotation().Vector();
+		}
+		else
+		{
+			FinalAim = Instigator->GetBaseAimRotation().Vector();
+		}
+	}
+
+	return(FinalAim);
 }
 
 void AWeapon::DetermineWeaponState()
