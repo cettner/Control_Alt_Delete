@@ -32,6 +32,7 @@ enum Combat_Stance
 {
 	NO_WEAPON_STANCE,
 	MAGE_STANCE,
+	RIFLE_STANCE,
 };
 
 namespace EWeaponState
@@ -86,24 +87,18 @@ public:
 	virtual void StopReload() PURE_VIRTUAL(AWeapon::StopFire,);
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Assets")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
 	USkeletalMeshComponent * FirstPersonMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Meshes")
 	USkeletalMeshComponent * ThirdPersonMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Assets")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Meshes")
 	UBoxComponent * CollisionComp;
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
-	bool bhassecondary = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
-	FVector SocketLocationOffset = FVector(0,0,0);
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Assets")
-	FRotator SocketRotationOffset = FRotator(0,0,0);  
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Gameplay")
+	bool bhassecondary = false;  
 
 	/*Animation State Machine to Use when holding this Weapon*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")

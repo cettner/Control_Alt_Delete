@@ -112,34 +112,6 @@ void ARTSPlayerController::DebugEvent()
 {
 }
 
-ARTSStructure * ARTSPlayerController::Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index)
-{
-	Structure_Types type = (Structure_Types)Structure_index;
-	UWorld* const World = GetWorld();
-	
-	ARTSStructure * BuiltStructure = SpawnHelper.SpawnStructure(type,Location,Rotation,World);
-	return(BuiltStructure);
-}
-
-ARTSMinion * ARTSPlayerController::Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index)
-{
-	Unit_Types type = (Unit_Types)Unit_index;
-	UWorld* const World = GetWorld();
-
-	ARTSMinion * SpawnedMinion = SpawnHelper.SpawnMinion(type,Location,Rotation,World);
-	return(SpawnedMinion);
-}
-
-AWeapon * ARTSPlayerController::Spawn_Weapon(FVector Location, FRotator Rotation, int Weapon_index)
-{
-	Weapon_Types type = (Weapon_Types)Weapon_index;
-	UWorld* const World = GetWorld();
-
-	AWeapon * SpawnedWeapon = SpawnHelper.SpawnWeapon(type,Location,Rotation,World);
-	return(SpawnedWeapon);
-}
-
-
 bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
 {
 	return (true);

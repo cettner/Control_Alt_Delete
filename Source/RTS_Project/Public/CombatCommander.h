@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Commander.h"
 #include "Weapon.h"
-#include "WeaponManager.h"
 #include "Runtime/Core/Public/Containers/EnumAsByte.h"
 #include "CombatCommander.generated.h"
 
@@ -145,7 +144,7 @@ protected:
 	FTimerHandle SwitchWeaponDelayHandler;
 
 	/*Number of seconds Of inactivity before a weapon will begin equipping when cycling weapons*/
-	const float SwitchWeaponDelayTime = 3.0;
+	const float SwitchWeaponDelayTime = 2.0;
 
 	/*True If User is currently cycling through available weapons*/
 	bool bIsSwitching_Weapon = false;

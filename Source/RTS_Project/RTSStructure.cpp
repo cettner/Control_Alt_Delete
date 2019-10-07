@@ -101,7 +101,7 @@ void ARTSStructure::SpawnUnit(int unit_index)
 	SpawnLocation.Z = 100;
 
 	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
-	PC->Spawn_RTS_Minion(SpawnLocation,SpawnRotation,type);
+//	PC->Spawn_RTS_Minion(SpawnLocation,SpawnRotation,type);
 
 }
 

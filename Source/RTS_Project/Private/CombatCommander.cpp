@@ -3,6 +3,7 @@
 #include "CombatCommander.h"
 #include "UnrealNetwork.h"
 #include "Engine/EngineTypes.h"
+#include "Components/CapsuleComponent.h"
 
 ACombatCommander::ACombatCommander()
 {

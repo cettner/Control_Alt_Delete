@@ -63,6 +63,8 @@ ACommander::ACommander()
 	FPS_Mesh->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
 	FPS_Mesh->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
 
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
 	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
 	trace.bTraceComplex = true;
 	trace.bReturnPhysicalMaterial = false;

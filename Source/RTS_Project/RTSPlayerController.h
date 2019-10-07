@@ -57,6 +57,7 @@ public:
 
 	ARTSHUD * HudPtr;
 
+	/*
 	UFUNCTION(BlueprintCallable, Category = Spawn)
 	ARTSStructure * Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
 
@@ -65,6 +66,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Spawn)
 	AWeapon * Spawn_Weapon(FVector Location, FRotator Rotation, int Weapon_index);
+	*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
@@ -106,5 +108,5 @@ private:
 
 	TSubclassOf<AFogOfWarManager> FOWManagerClass;
 
-	RTSSpawnHelper  SpawnHelper;
+//	RTSSpawnHelper  SpawnHelper;
 };
