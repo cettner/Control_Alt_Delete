@@ -56,6 +56,7 @@ void ACombatCommander::WeaponSwitchComplete()
 	if (!bIsWeaponEquipped)
 	{
 		EquipWeapon(NextWeapon);
+		NextWeapon = nullptr;
 	}
 }
 
@@ -144,8 +145,17 @@ void ACombatCommander::SwitchWeaponUp()
 
 	if (Inventory.Num() >= 2)
 	{
-		const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-		NextWeapon = Inventory[(CurrentWeaponIdx + 1 + Inventory.Num()) % Inventory.Num()];
+		/*If we're already Cycling Weapons */
+		if (NextWeapon)
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx + 1 + Inventory.Num()) % Inventory.Num()];
+		}
+		else if(CurrentWeapon) // Get the nextweapon based on the current
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx + 1 + Inventory.Num()) % Inventory.Num()];
+		}
 
 		if (bIsSwitching_Weapon)
 		{
@@ -164,8 +174,17 @@ void ACombatCommander::SwitchWeaponDown()
 {
 	if (Inventory.Num() >= 2 )
 	{
-		const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-		NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
+		/*If we're already Cycling Weapons */
+		if (NextWeapon)
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
+		}
+		else if (CurrentWeapon) // Get the nextweapon based on the current
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
+		}
 
 		if (bIsSwitching_Weapon)
 		{
@@ -270,21 +289,6 @@ void ACombatCommander::SpawnDefaultInventory()
 
 void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapon)
 {
-	AWeapon* LocalLastWeapon = NULL;
-
-	if (LastWeapon != NULL)
-	{
-		if (LastWeapon->GetCurrentState() != EWeaponState::Unequipped)
-		{
-
-		}
-		LocalLastWeapon = LastWeapon;
-	}
-	else if (NewWeapon != CurrentWeapon)
-	{
-		LocalLastWeapon = CurrentWeapon;
-	}
-
 		CurrentWeapon = NewWeapon;
 
 		// equip new one
@@ -303,6 +307,5 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapo
 void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 {
 	SetCurrentWeapon(CurrentWeapon, LastWeapon);
-	SetWeaponStance();
 	bIsWeaponEquipped = true;
 }

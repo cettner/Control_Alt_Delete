@@ -82,9 +82,6 @@ public:
 	UPROPERTY(EditAnywhere)
 		float selection_transparency = 0.15f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		bool bIsRTSCharacter = true;
-
 private:
 	/** Crosshair asset pointer */
 	class UTexture2D* CrosshairTex;
