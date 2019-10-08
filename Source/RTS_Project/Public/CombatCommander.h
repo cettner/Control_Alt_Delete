@@ -59,6 +59,9 @@ protected:
 	UFUNCTION()
 	void OnSecondaryFireEnd();
 
+	UFUNCTION()
+	void OnReload();
+
 	/*Fire Weapon After Character Status Checks Have been Performed*/
 	void StartWeaponFire();
 
