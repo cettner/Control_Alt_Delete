@@ -154,4 +154,7 @@ protected:
 
 	/** current firing state */
 	bool bWantsToFire = false;
+
+private:
+	void HandleSwitchWeapon(int direction);
 };

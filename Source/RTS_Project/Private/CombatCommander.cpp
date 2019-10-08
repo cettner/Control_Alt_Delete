@@ -56,7 +56,42 @@ void ACombatCommander::WeaponSwitchComplete()
 	if (!bIsWeaponEquipped)
 	{
 		EquipWeapon(NextWeapon);
+		//Replication wont occur if we switched to our old weapon since nothing actually changed, so we kick off equipped locally
+		if (CurrentWeapon == NextWeapon && Role != ROLE_Authority)
+		{
+			OnRep_CurrentWeapon(CurrentWeapon);
+		}
+
 		NextWeapon = nullptr;
+	}
+}
+
+void ACombatCommander::HandleSwitchWeapon(int direction)
+{
+	if (Inventory.Num() >= 2)
+	{
+		/*If we're already Cycling Weapons */
+		if (NextWeapon && bIsSwitching_Weapon)
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
+		}
+		else if (CurrentWeapon) // Get the nextweapon based on the current
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
+		}
+
+		if (bIsSwitching_Weapon)
+		{
+			SetWeaponEquippedTimer();
+		}
+		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
+		{
+			bIsSwitching_Weapon = true;
+			UnEquipWeapon();
+			SetWeaponEquippedTimer();
+		}
 	}
 }
 
@@ -142,61 +177,12 @@ void ACombatCommander::ServerUnEquipWeapon_Implementation()
 //INPUT
 void ACombatCommander::SwitchWeaponUp()
 {
-
-	if (Inventory.Num() >= 2)
-	{
-		/*If we're already Cycling Weapons */
-		if (NextWeapon)
-		{
-			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
-			NextWeapon = Inventory[(CurrentWeaponIdx + 1 + Inventory.Num()) % Inventory.Num()];
-		}
-		else if(CurrentWeapon) // Get the nextweapon based on the current
-		{
-			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-			NextWeapon = Inventory[(CurrentWeaponIdx + 1 + Inventory.Num()) % Inventory.Num()];
-		}
-
-		if (bIsSwitching_Weapon)
-		{
-			SetWeaponEquippedTimer();
-		}
-		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() != EWeaponState::Equipping && !bIsSwitching_Weapon)
-		{
-			bIsSwitching_Weapon = true;
-			UnEquipWeapon();
-			SetWeaponEquippedTimer();
-		}
-	}
+	HandleSwitchWeapon(1);
 }
 
 void ACombatCommander::SwitchWeaponDown()
 {
-	if (Inventory.Num() >= 2 )
-	{
-		/*If we're already Cycling Weapons */
-		if (NextWeapon)
-		{
-			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
-			NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
-		}
-		else if (CurrentWeapon) // Get the nextweapon based on the current
-		{
-			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-			NextWeapon = Inventory[(CurrentWeaponIdx - 1 + Inventory.Num()) % Inventory.Num()];
-		}
-
-		if (bIsSwitching_Weapon)
-		{
-			SetWeaponEquippedTimer();
-		}
-		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() != EWeaponState::Equipping)
-		{
-			bIsSwitching_Weapon = true;
-			UnEquipWeapon();
-			SetWeaponEquippedTimer();
-		}
-	}
+	HandleSwitchWeapon(-1);
 }
 
 void ACombatCommander::OnPrimaryFireStart()
@@ -309,3 +295,5 @@ void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 	SetCurrentWeapon(CurrentWeapon, LastWeapon);
 	bIsWeaponEquipped = true;
 }
+
+
