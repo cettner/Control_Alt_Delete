@@ -176,7 +176,7 @@ void ARTSHUD::GetSelectedUnits()
 		for (int32 i = 0; i < endindex; i++)
 		{
 			/*Remove Enemy Minions*/
-			if (Selected_Units[i]->team_index != PS->Team_ID)
+			if (Selected_Units[i]->GetTeam() != PS->Team_ID)
 			{
 				Selected_Units.RemoveAt(i);
 				endindex--;
@@ -215,7 +215,7 @@ void ARTSHUD::AddPostRenderActors()
 			if (Itr->WasRecentlyRendered(.2F))
 			{
 				ARTSMinion * Unselectable = *Itr;
-				if (Unselectable->team_index != PS->Team_ID)
+				if (Unselectable->GetTeam() != PS->Team_ID)
 				{
 					Unselectable->SetUnselectable();
 				}

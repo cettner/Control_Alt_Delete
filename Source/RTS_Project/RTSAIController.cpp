@@ -21,10 +21,10 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 
 	ARTSMinion *Minion = Cast<ARTSMinion>(InPawn);
 
-	if (Minion != NULL && Minion->RTSBehavior != NULL)
+	if (Minion != NULL && Minion->GetBehavior() != NULL)
 	{
-		BlackboardComp->InitializeBlackboard(*Minion->RTSBehavior->BlackboardAsset);
-		BehaviorComp->StartTree(*Minion->RTSBehavior);
+		BlackboardComp->InitializeBlackboard(*Minion->GetBehavior()->BlackboardAsset);
+		BehaviorComp->StartTree(*Minion->GetBehavior());
 	}
 }
 

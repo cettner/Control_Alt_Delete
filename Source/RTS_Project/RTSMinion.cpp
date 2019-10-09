@@ -141,6 +141,21 @@ void ARTSMinion::SetCommander(ACommander * Commander)
 	Cmdr = Commander;
 }
 
+void ARTSMinion::SetTeam(int team_id)
+{
+	team_index = team_id;
+}
+
+int ARTSMinion::GetTeam()
+{
+	return team_index;
+}
+
+UBehaviorTree* ARTSMinion::GetBehavior()
+{
+	return(RTSBehavior);
+}
+
 //interface function for override;
 void ARTSMinion::ReleaseAssets()
 {
@@ -170,19 +185,13 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
 	if (AIC != NULL)
 	{
-		AIC->MoveToActor(move_to_me, 5.0f, true, false, false, 0, false);
+		AIC->MoveToActor(move_to_me, 5.0f, true, true, false, 0, false);
 	}
-}
-
-void ARTSMinion::Tick(float DeltaSeconds)
-{
-    Super::Tick(DeltaSeconds);
 }
 
 void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
-	TargetLocation = GetActorLocation();
 }
 
 UTexture * ARTSMinion::GetThumbnail()

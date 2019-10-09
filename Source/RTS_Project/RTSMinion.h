@@ -18,9 +18,6 @@ class ARTSMinion : public ACharacter
 public:
 	ARTSMinion();
 
-	// Called every frame.
-	virtual void Tick(float DeltaSeconds) override;
-	
 	virtual void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable, Category = UI)
@@ -28,11 +25,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,Category = UI)
 	UTexture* Thumbnail;
-	
-	bool bismovespecial = false;
-
-	// the location the unit is supposed to be at as instructed by the player controller.
-	FVector TargetLocation;
 
 	virtual bool CanInteract(AActor * Interactable);
 
@@ -66,20 +58,29 @@ public:
 
 	virtual void SetCommander(ACommander * Commander);
 
+	//TODO: Make this a Server Call
+	virtual void SetTeam(int team_id);
+
+	virtual int GetTeam();
+
+	virtual UBehaviorTree* GetBehavior();
+
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float health;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float damage;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int team_index = -1;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
-	class UBehaviorTree * RTSBehavior;
+	UBehaviorTree * RTSBehavior;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
 	URTSSelectionComponent * Selection;
+
 
 
 private:

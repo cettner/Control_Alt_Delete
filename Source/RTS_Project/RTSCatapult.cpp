@@ -141,6 +141,7 @@ bool ARTSCatapult::ShouldTurn(AActor * TurnTo)
 
 void ARTSCatapult::OnMinRangeOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	/*
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy too close to fire!")));
@@ -149,11 +150,12 @@ void ARTSCatapult::OnMinRangeOverlapBegin(UPrimitiveComponent * OverlappedCompon
 			In_Range.Remove(OtherActor);
 		}
 	}
-
+	*/
 }
 
 void ARTSCatapult::OnMinRangeOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	/*
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy in range!")));
@@ -163,18 +165,20 @@ void ARTSCatapult::OnMinRangeOverlapEnd(UPrimitiveComponent* OverlappedComp, AAc
 			{
 				Target_Available = true;
 			}
-		/*	if (!TargetActor)
+			if (!TargetActor)
 			{
 				TargetActor = OtherActor;
 			}
-		*/
+		
 			In_Range.Add(OtherActor);
 		}
 	}
+	*/
 }
 
 void ARTSCatapult::OnMaxRangeOverlapBegin(UPrimitiveComponent * OverlappedComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	/*
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy in range!")));
@@ -184,18 +188,19 @@ void ARTSCatapult::OnMaxRangeOverlapBegin(UPrimitiveComponent * OverlappedCompon
 			{
 				Target_Available = true;
 			}
-		/*	if (!TargetActor)
+			if (!TargetActor)
 			{
 				TargetActor = OtherActor;
 			}
-		*/
 			In_Range.Add(OtherActor);
 		}
 	}
+	*/
 }
 
 void ARTSCatapult::OnMaxRangeOverlapEnd(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
+	/*
 	if (Cast<ARTSMinion>(OtherActor) && Cast<ARTSMinion>(OtherActor)->team_index != team_index)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Enemy has left max range!")));
@@ -204,4 +209,5 @@ void ARTSCatapult::OnMaxRangeOverlapEnd(UPrimitiveComponent * OverlappedComp, AA
 			In_Range.Remove(OtherActor);
 		}
 	}
+	*/
 }
