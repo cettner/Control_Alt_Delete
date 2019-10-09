@@ -2,7 +2,13 @@
 
 #include "ShooterWeapon.h"
 #include "CombatCommander.h"
+#include "AIController.h"
 #define DEBUG_WEAPON
+
+AShooterWeapon::AShooterWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+	CurrentAmmo = WeaponConfig.InitialClips * WeaponConfig.AmmoPerClip;
+}
 
 void AShooterWeapon::StartFire()
 {
@@ -100,7 +106,7 @@ AShooterWeapon::EAmmoType AShooterWeapon::GetAmmoType() const
 
 void AShooterWeapon::UseAmmo()
 {
-	if (!HasInfiniteAmmo())
+	if (!HasInfiniteClip())
 	{
 		CurrentAmmoInClip--;
 	}
@@ -455,7 +461,7 @@ bool AShooterWeapon::CanFire() const
 bool AShooterWeapon::CanReload() const
 {
 	//bool bCanReload = (!MyPawn || MyPawn->CanReload());
-	bool bGotAmmo = (CurrentAmmoInClip < WeaponConfig.AmmoPerClip) && (CurrentAmmo - CurrentAmmoInClip > 0 || HasInfiniteClip());
+	bool bGotAmmo = ((CurrentAmmoInClip < WeaponConfig.AmmoPerClip) && (CurrentAmmo - CurrentAmmoInClip > 0) && !HasInfiniteClip());
 	bool bStateOKToReload = ((CurrentState == EWeaponState::Idle) || (CurrentState == EWeaponState::Firing));
 	return(bGotAmmo && bStateOKToReload);
 }

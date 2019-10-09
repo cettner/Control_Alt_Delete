@@ -73,6 +73,9 @@ public:
 		EMax,
 	};
 
+public:
+	AShooterWeapon(const FObjectInitializer& ObjectInitializer);
+
 /////////////// Input
 	
 public:

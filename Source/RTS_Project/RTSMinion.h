@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "RTSSelectionComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "RTSMinion.generated.h"
 
 /*Forward Declarations*/
