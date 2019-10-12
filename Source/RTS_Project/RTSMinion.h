@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "RTSSelectionComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "HealthComponent.h"
 #include "RTSMinion.generated.h"
+
 
 /*Forward Declarations*/
 class ACommander;
@@ -71,7 +73,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float health;
+	UHealthComponent * Health;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int team_index = -1;

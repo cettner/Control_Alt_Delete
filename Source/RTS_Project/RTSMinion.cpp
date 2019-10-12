@@ -41,7 +41,7 @@ ARTSMinion::ARTSMinion()
 	Selection->SetRoot(RootComponent);
 	Selection->SetDetection(GetCapsuleComponent());
 
-	health = 100.0;
+	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 }
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
@@ -51,7 +51,7 @@ bool ARTSMinion::CanInteract(AActor * Interactable)
 
 bool ARTSMinion::IsAlive()
 {
-	return (health > 0);
+	return (Health->IsAlive());
 }
 
 AActor * ARTSMinion::GetTarget()

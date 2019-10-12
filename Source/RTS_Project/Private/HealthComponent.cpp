@@ -13,6 +13,47 @@ UHealthComponent::UHealthComponent()
 
 }
 
+void UHealthComponent::SetMaxHealth(float healthval)
+{
+	MaxHealth = healthval;
+}
+
+bool UHealthComponent::IsAlive()
+{
+	return (Current_Health > 0.0F);
+}
+
+float UHealthComponent::HandleDamageEvent(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	if (Current_Health <= 0.f)
+	{
+		return 0.f;
+	}
+	Current_Health -= Damage;
+
+	return (Current_Health);
+}
+
+bool UHealthComponent::CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const
+{
+	AActor * Owner = GetOwner();
+	if (bIsDying 
+		|| (Owner && Owner->IsPendingKill()) 
+		|| (Owner && Owner->Role != ROLE_Authority))
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+	
+}
+
+bool UHealthComponent::Die(float KillingDamage, FDamageEvent const & DamageEvent, AController * Killer, AActor * DamageCauser)
+{
+	return false;
+}
 
 // Called when the game starts
 void UHealthComponent::BeginPlay()
