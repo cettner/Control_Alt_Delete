@@ -27,7 +27,6 @@ void ARTSHUD::DrawHUD() //similiar to "tick" of actor class overridden
 		break;
 	case ARTSHUD::RTS_SELECT_AND_MOVE:
 		RTSSelectAndMoveHandler();
-		AddPostRenderActors();
 		break;
 	case ARTSHUD::FPS_AIM_AND_SHOOT:
 		FPSAimAndShootHandler();
@@ -200,29 +199,6 @@ void ARTSHUD::GetSelectedUnits()
 			else
 			{
 				Selected_Units[i]->SetSelected();
-			}
-		}
-	}
-}
-
-void ARTSHUD::AddPostRenderActors()
-{
-	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
-	if (PS)
-	{
-		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
-		{
-			if (Itr->WasRecentlyRendered(.2F))
-			{
-				ARTSMinion * Unselectable = *Itr;
-				if (Unselectable->GetTeam() != PS->Team_ID)
-				{
-					Unselectable->SetUnselectable();
-				}
-				else
-				{
-					Unselectable->SetSelectable();
-				}
 			}
 		}
 	}
