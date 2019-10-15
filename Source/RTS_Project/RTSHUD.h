@@ -86,7 +86,6 @@ private:
 	/** Crosshair asset pointer */
 	class UTexture2D* CrosshairTex;
 	void GetSelectedUnits();
-	void AddPostRenderActors();
 	void GetSelectedStructures();
 	void CleanSelectedActors();
 	void RTSSelectAndMoveHandler();

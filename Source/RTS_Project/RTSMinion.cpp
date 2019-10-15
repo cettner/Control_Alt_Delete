@@ -192,6 +192,22 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
+	if (Role != ROLE_Authority && GetWorld())
+	{
+		/*Set Enemy Selection Rings For Local Player*/
+		APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+		if (PC && Cast<ADefaultPlayerState>(PC->PlayerState))
+		{
+			if (GetTeam() != Cast<ADefaultPlayerState>(PC->PlayerState)->Team_ID)
+			{
+				SetUnselectable();
+			}
+			else
+			{
+				SetSelectable();
+			}
+		}
+	}
 }
 
 UTexture * ARTSMinion::GetThumbnail()
