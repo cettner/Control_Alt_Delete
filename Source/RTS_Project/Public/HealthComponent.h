@@ -58,6 +58,11 @@ protected:
 
 protected:
 	/////////////////////////////////////////////////
+	//Components
+	UPROPERTY(Transient,BlueprintReadWrite)
+	AActor * CompOwner;
+
+	/////////////////////////////////////////////////
 	//Life
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
 	float Current_Health;
@@ -83,6 +88,4 @@ protected:
 
 	/*If death effects are currently playing*/
 	bool bIsDying = false;
-
-
 };

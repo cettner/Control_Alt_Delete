@@ -3,6 +3,7 @@
 
 #include "HealthComponent.h"
 #include "UnrealNetwork.h"
+#include "Engine.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -25,21 +26,32 @@ bool UHealthComponent::IsAlive()
 
 float UHealthComponent::HandleDamageEvent(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
-	if (Current_Health <= 0.f)
+	if (Damage > 0.0f)
 	{
-		return 0.f;
+		Current_Health -= Damage;
+		if (Current_Health <= 0.0f)
+		{
+			Die(Damage, DamageEvent, EventInstigator, DamageCauser);
+		}
+		
+		// Make Some Noise if the owner happens to be a Pawn
+		if (Cast<APawn>(CompOwner))
+		{
+			APawn * NoiseMaker = Cast<APawn>(CompOwner);
+			float NoiseRange = 300.0f;
+			CompOwner->MakeNoise(1.0f, EventInstigator ? EventInstigator->GetPawn() : NoiseMaker);
+		}
+
 	}
-	Current_Health -= Damage;
 
 	return (Current_Health);
 }
 
 bool UHealthComponent::CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const
 {
-	AActor * Owner = GetOwner();
 	if (bIsDying 
-		|| (Owner && Owner->IsPendingKill()) 
-		|| (Owner && Owner->Role != ROLE_Authority))
+		|| (CompOwner && CompOwner->IsPendingKill()) 
+		|| (CompOwner && CompOwner->Role != ROLE_Authority))
 	{
 		return false;
 	}
@@ -52,16 +64,19 @@ bool UHealthComponent::CanDie(float KillingDamage, FDamageEvent const& DamageEve
 
 bool UHealthComponent::Die(float KillingDamage, FDamageEvent const & DamageEvent, AController * Killer, AActor * DamageCauser)
 {
-	return false;
+	Current_Health = FMath::Min(0.0f, Current_Health);
+	return (true);
 }
 
 // Called when the game starts
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	CompOwner = GetOwner();
+	if (!CompOwner)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("HealthComponent Initialization Failed!")));
+	}
 }
 
 void UHealthComponent::OnRep_CurrentHealth()
