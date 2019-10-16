@@ -33,7 +33,7 @@ ARTSMinion::ARTSMinion()
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-	// Activate ticking in order to update the cursor every frame.
+	// No Ticking on Minions
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 

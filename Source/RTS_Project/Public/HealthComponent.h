@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Sound/SoundCue.h"
+#include "GameFramework/MovementComponent.h"
 #include "HealthComponent.generated.h"
 
 /** replicated information on a hit we've taken */
@@ -68,6 +69,9 @@ public:
 
 	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
+	///////////////////////////////////////////////////////////////
+	//Death
+
 	virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
 
 	/*Starts Death Process, can only be invoked on the server*/
@@ -78,6 +82,10 @@ public:
 
 	virtual void SetRagDollPhysics(USkeletalMeshComponent * Mesh = nullptr, UMovementComponent * Movement = nullptr);
 
+	/** sets up the replication for taking a hit */
+	void ReplicateHit(float Damage, struct FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser, bool bKilled);
+
+/////////////////////////////////////////////////////
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -115,6 +123,12 @@ protected:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_LastTakeHitInfo)
 	struct FTakeHitInfo LastTakeHitInfo;
 
+	/*Unreplicated Type of Damage hit previously used to catch Redundant damage in the same frame*/
+	UClass* LastHitTypeClass;
+
+	/** Time at which point the last take hit info for the actor times out and won't be replicated;*/
+	float LastTakeHitTimeTimeout;
+
 
 	//////////////////////////////////////////////////
 	//Death
@@ -135,4 +149,10 @@ protected:
 
 	/*If death effects are currently playing*/
 	bool bIsDying = false;
+
+private:
+	/*Prepares Owner Comp for Ragdoll Physics*/
+	void HandleRagDoll(USkeletalMeshComponent * Mesh, const float DeathAnimDuration = 0.0F);
+	/*Wrapper Delegate for SetRagdollPhysics*/
+	void RagDollTimerHandler();
 };
