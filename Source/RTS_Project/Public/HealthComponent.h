@@ -5,23 +5,51 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Animation/AnimMontage.h"
+#include "Sound/SoundCue.h"
 #include "HealthComponent.generated.h"
 
+/** replicated information on a hit we've taken */
 USTRUCT()
-struct FHealthData
-{
-	GENERATED_USTRUCT_BODY()
-		
-};
-
-USTRUCT()
-struct FDeathData
+struct FTakeHitInfo
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly)
-	bool ShouldRagdoll;
+	/** The amount of damage actually applied */
+	UPROPERTY()
+	float ActualDamage;
 
+	/** The damage type we were hit with. */
+	UPROPERTY()
+	UClass* DamageTypeClass;
+
+	/** Who hit us */
+	UPROPERTY()
+	TWeakObjectPtr<APawn> PawnInstigator;
+
+	/** Who actually caused the damage */
+	UPROPERTY()
+	TWeakObjectPtr<AActor> DamageCauser;
+
+	/** Specifies which DamageEvent below describes the damage received. */
+	UPROPERTY()
+	int32 DamageEventClassID;
+
+	/** Whether this was a kill */
+	UPROPERTY()
+	bool bKilled;
+
+private:
+	/** A rolling counter used to ensure the struct is dirty and will replicate. */
+	UPROPERTY()
+	uint8 EnsureReplicationByte;
+
+public:
+	void EnsureReplication() { EnsureReplicationByte++; }
+	/** defaults */
+	FTakeHitInfo()
+	{
+
+	}
 };
 
 
@@ -38,24 +66,31 @@ public:
 
 	virtual bool IsAlive();
 
-	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser);
-
-
+	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 	virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
 
-	virtual bool Die(float KillingDamage, struct FDamageEvent const& DamageEvent, class AController* Killer, class AActor* DamageCauser);
+	/*Starts Death Process, can only be invoked on the server*/
+	virtual bool Die(float KillingDamage, struct FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser);
+
+	/**Play Death Effects on Server + Client*/
+	virtual void OnDeath(float KillingDamage, struct FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser);
+
+	virtual void SetRagDollPhysics(USkeletalMeshComponent * Mesh = nullptr, UMovementComponent * Movement = nullptr);
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 protected:
+	virtual float ModifyDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+
+protected:
 	UFUNCTION()
-	void OnRep_CurrentHealth();
+	virtual void  OnRep_LastTakeHitInfo();
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
+	
 protected:
 	/////////////////////////////////////////////////
 	//Components
@@ -64,14 +99,22 @@ protected:
 
 	/////////////////////////////////////////////////
 	//Life
-	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
+	UPROPERTY(Replicated)
 	float Current_Health;
 
 	UPROPERTY(EditDefaultsOnly, Category="Health")
 	float MaxHealth;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Modifiers")
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
 	TMap<TSubclassOf<UDamageType>, float> Mitigation;
+
+	//////////////////////////////////////////////////
+	//Damage
+
+	/** Replicate where this pawn was last hit and damaged */
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_LastTakeHitInfo)
+	struct FTakeHitInfo LastTakeHitInfo;
+
 
 	//////////////////////////////////////////////////
 	//Death
@@ -83,8 +126,12 @@ protected:
 	float TimeRagdoll;
 
 	/** Animation Played On Pawn Mesh Before Destruction/RagDoll*/
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	UPROPERTY(EditDefaultsOnly, Category = "Death")
 	UAnimMontage* DeathAnim;
+
+	/** Sound played on death, local player only */
+	UPROPERTY(EditDefaultsOnly, Category = "Death")
+	USoundCue* DeathSound;
 
 	/*If death effects are currently playing*/
 	bool bIsDying = false;
