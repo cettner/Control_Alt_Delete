@@ -49,7 +49,12 @@ public:
 	/** defaults */
 	FTakeHitInfo()
 	{
-
+		ActualDamage = 0;
+		DamageTypeClass = NULL;
+		PawnInstigator = NULL;
+		DamageCauser = NULL;
+		DamageEventClassID = 0;
+		bKilled = false;
 	}
 };
 
