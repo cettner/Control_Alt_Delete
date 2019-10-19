@@ -127,6 +127,10 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 	{
 		HandleRagDoll(CharacterOwner->GetMesh(), DeathAnimDuration);
 	}
+	else
+	{
+		DestroyOwner(DeathAnimDuration);
+	}
 
 }
 
@@ -146,16 +150,12 @@ void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovement
 		}
 	}
 
-	bool bInRagdoll = false;
-
 	//Enable Ragdoll Physics
 	if (CompOwner->IsPendingKill() || !Mesh || !Mesh->GetPhysicsAsset())
 	{
 		Mesh->SetSimulatePhysics(true);
 		Mesh->WakeAllRigidBodies();
 		Mesh->bBlendPhysics = true;
-
-		bInRagdoll = true;
 	}
 
 	//Shut down Movement Component functionality
@@ -167,23 +167,24 @@ void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovement
 			Cast<UCharacterMovementComponent>(Movement)->DisableMovement();
 		}
 		Movement->SetComponentTickEnabled(false);
-		
-		bInRagdoll = true;
 	}
 
-	if (!bInRagdoll)
+	if (DestroyAfterRagdoll)
 	{
-		// hide and set short lifespan
-		if (Cast<APawn>(CompOwner))
-		{
-			Cast<APawn>(CompOwner)->TurnOff();
-		}
-		CompOwner->SetActorHiddenInGame(true);
-		CompOwner->SetLifeSpan(1.0f);
+		//Ragdoll Enabled, set time till Actor Destruction
+		DestroyOwner(TimeRagdoll);
+	}
+}
+
+void UHealthComponent::DestroyOwner(float timetilldestruction)
+{
+	if (timetilldestruction > 0.0F)
+	{
+		CompOwner->SetLifeSpan(timetilldestruction);
 	}
 	else
 	{
-		CompOwner->SetLifeSpan(TimeRagdoll);
+		CompOwner->Destroy();
 	}
 }
 
@@ -191,7 +192,7 @@ void UHealthComponent::ReplicateHit(float Damage, FDamageEvent const & DamageEve
 {
 	const float TimeoutTime = GetWorld()->GetTimeSeconds() + 0.5f;
 
-	if ((InstigatingPawn == LastTakeHitInfo.PawnInstigator.Get()) && (LastHitTypeClass == LastTakeHitInfo.DamageTypeClass) && (LastTakeHitTimeTimeout == TimeoutTime))
+	if ((InstigatingPawn == LastTakeHitInfo.PawnInstigator.Get()) && (DamageEvent.DamageTypeClass == LastTakeHitInfo.DamageTypeClass) && (LastTakeHitTimeTimeout == TimeoutTime))
 	{
 		// same frame damage
 		if (bKilled && LastTakeHitInfo.bKilled)
@@ -208,10 +209,18 @@ void UHealthComponent::ReplicateHit(float Damage, FDamageEvent const & DamageEve
 	LastTakeHitInfo.PawnInstigator = InstigatingPawn;
 	LastTakeHitInfo.DamageCauser = DamageCauser;
 	LastTakeHitInfo.bKilled = bKilled;
+	LastTakeHitInfo.DamageTypeClass = DamageEvent.DamageTypeClass;
 	LastTakeHitInfo.EnsureReplication();
 
 	LastTakeHitTimeTimeout = TimeoutTime;
-	LastHitTypeClass = LastTakeHitInfo.DamageTypeClass;
+}
+
+void UHealthComponent::PlayLocalHit(float Damage, FDamageEvent const& DamageEvent, APawn* InstigatingPawn, AActor* DamageCauser)
+{
+	if (CompOwner->Role == ROLE_Authority)
+	{
+		ReplicateHit(Damage, DamageEvent, InstigatingPawn, DamageCauser, false);
+	}
 }
 
 // Called when the game starts
@@ -230,8 +239,28 @@ float UHealthComponent::ModifyDamage(float Damage, FDamageEvent const& DamageEve
 	return(Damage);
 }
 
+USkeletalMeshComponent* UHealthComponent::GetOwnerMesh()
+{
+	return nullptr;
+}
+
+UMovementComponent* UHealthComponent::GetOwnerMovement()
+{
+	return nullptr;
+}
+
 void UHealthComponent::OnRep_LastTakeHitInfo()
 {
+	FDamageEvent Classtype;
+	Classtype.DamageTypeClass = LastTakeHitInfo.DamageTypeClass;
+	if (LastTakeHitInfo.bKilled)
+	{
+		OnDeath(LastTakeHitInfo.ActualDamage, Classtype, LastTakeHitInfo.PawnInstigator.Get(), LastTakeHitInfo.DamageCauser.Get());
+	}
+	else
+	{
+		PlayLocalHit(LastTakeHitInfo.ActualDamage, Classtype, LastTakeHitInfo.PawnInstigator.Get(), LastTakeHitInfo.DamageCauser.Get());
+	}
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -242,7 +271,7 @@ void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 void UHealthComponent::HandleRagDoll(USkeletalMeshComponent * Mesh, const float DeathAnimDuration)
 {
 	// Ragdoll
-	if (DeathAnimDuration > 0.f && ShouldRagdoll && GetWorld())
+	if (DeathAnimDuration > 0.f && GetWorld())
 	{
 		// Trigger ragdoll a little before the animation early so the character doesn't
 		// blend back to its normal position.
@@ -251,17 +280,14 @@ void UHealthComponent::HandleRagDoll(USkeletalMeshComponent * Mesh, const float 
 		// Enable blend physics so the bones are properly blending against the montage.
 		Mesh->bBlendPhysics = true;
 
-		// Set a Timer to to Enable ragdoll
+		// Set a Timer to to Enable ragdoll after death animation has just about completed;
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UHealthComponent::RagDollTimerHandler, FMath::Max(0.1f, TriggerRagdollTime), false);
 	}
-	else if(ShouldRagdoll)
-	{
-		SetRagDollPhysics();
-	}
 	else
 	{
-
+		//Go straight to Ragdoll
+		SetRagDollPhysics();
 	}
 }
 

@@ -87,10 +87,17 @@ public:
 
 	virtual void SetRagDollPhysics(USkeletalMeshComponent * Mesh = nullptr, UMovementComponent * Movement = nullptr);
 
+	virtual void DestroyOwner(float timetilldestruction = 0.0F);
+
+public:
+	//////////////////////////////////////////////////
+    //Damage
 	/** sets up the replication for taking a hit */
 	void ReplicateHit(float Damage, struct FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser, bool bKilled);
 
-/////////////////////////////////////////////////////
+	/* Play on hit effects on the client*/
+	void PlayLocalHit(float Damage, FDamageEvent const& DamageEvent, APawn* InstigatingPawn, AActor* DamageCauser);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -98,6 +105,9 @@ protected:
 protected:
 	virtual float ModifyDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
+	virtual USkeletalMeshComponent * GetOwnerMesh();
+	
+	virtual UMovementComponent * GetOwnerMovement();
 protected:
 	UFUNCTION()
 	virtual void  OnRep_LastTakeHitInfo();
@@ -128,9 +138,6 @@ protected:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_LastTakeHitInfo)
 	struct FTakeHitInfo LastTakeHitInfo;
 
-	/*Unreplicated Type of Damage hit previously used to catch Redundant damage in the same frame*/
-	UClass* LastHitTypeClass;
-
 	/** Time at which point the last take hit info for the actor times out and won't be replicated;*/
 	float LastTakeHitTimeTimeout;
 
@@ -139,10 +146,13 @@ protected:
 	//Death
 
 	UPROPERTY(EditDefaultsOnly, Category = "Death")
-	bool ShouldRagdoll;
+	bool ShouldRagdoll = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Death")
-	float TimeRagdoll;
+	bool DestroyAfterRagdoll = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Death")
+	float TimeRagdoll = 5.0F;
 
 	/** Animation Played On Pawn Mesh Before Destruction/RagDoll*/
 	UPROPERTY(EditDefaultsOnly, Category = "Death")

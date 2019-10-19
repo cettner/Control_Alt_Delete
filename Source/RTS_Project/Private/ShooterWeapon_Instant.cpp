@@ -62,7 +62,7 @@ void AShooterWeapon_Instant::ProcessInstantHit_Confirmed(const FHitResult& Impac
 	// handle damage
 	if (ShouldDealDamage(Impact.GetActor()))
 	{
-//		DealDamage(Impact, ShootDir);
+		DealDamage(Impact, ShootDir);
 	}
 
 	/*
