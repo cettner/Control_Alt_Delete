@@ -23,6 +23,8 @@ public:
 
 	virtual void BeginPlay() override;
 	
+	virtual float TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
+
 	UFUNCTION(BlueprintCallable, Category = UI)
 	UTexture* GetThumbnail();
 

@@ -112,6 +112,8 @@ protected:
 	UFUNCTION()
 	virtual void  OnRep_LastTakeHitInfo();
 
+	virtual void PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker) override;
+
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 	
 protected:
@@ -168,6 +170,7 @@ protected:
 private:
 	/*Prepares Owner Comp for Ragdoll Physics*/
 	void HandleRagDoll(USkeletalMeshComponent * Mesh, const float DeathAnimDuration = 0.0F);
+
 	/*Wrapper Delegate for SetRagdollPhysics*/
 	void RagDollTimerHandler();
 };

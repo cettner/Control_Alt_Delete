@@ -210,6 +210,15 @@ void ARTSMinion::BeginPlay()
 	}
 }
 
+float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+ 	float ProcessedDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
+
+	return (ProcessedDamage);
+}
+
 UTexture * ARTSMinion::GetThumbnail()
 {
 	return Thumbnail;

@@ -12,12 +12,13 @@ UHealthComponent::UHealthComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
+	SetIsReplicated(true);
 
 	if (MaxHealth > 0.0F)
 	{
 		Current_Health = MaxHealth;
 	}
-	else
+	else 
 	{
 		//Make it so the component is "Alive"
 		Current_Health = 1.0F;
@@ -37,7 +38,7 @@ bool UHealthComponent::IsAlive()
 float UHealthComponent::HandleDamageEvent(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
 {
 	float ActualDamage = Damage;
-	if (Damage > 0.0f)
+	if (Damage > 0.0f && !bIsDying)
 	{
 		ActualDamage = ModifyDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 		Current_Health -= ActualDamage;
@@ -100,20 +101,21 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 		return;
 	}
 
+	bIsDying = true;
+	
+	if (CompOwner->Role == ROLE_Authority)
+	{
+		ReplicateHit(KillingDamage, DamageEvent, InstigatingPawn, DamageCauser, true);
+	}
+
 	if (CharacterOwner)
 	{
 		//Initial Character Tear Down
+		CharacterOwner->DetachFromControllerPendingDestroy();
 		CharacterOwner->bReplicateMovement = false;
 		CharacterOwner->TearOff();
 		CharacterOwner->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CharacterOwner->GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
-	}
-
-	bIsDying = true;
-
-	if (CompOwner->Role == ROLE_Authority)
-	{
-		ReplicateHit(KillingDamage, DamageEvent, InstigatingPawn, DamageCauser, true);
 	}
 
 	// Death anim
@@ -131,7 +133,6 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 	{
 		DestroyOwner(DeathAnimDuration);
 	}
-
 }
 
 void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovementComponent* Movement)
@@ -150,14 +151,6 @@ void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovement
 		}
 	}
 
-	//Enable Ragdoll Physics
-	if (CompOwner->IsPendingKill() || !Mesh || !Mesh->GetPhysicsAsset())
-	{
-		Mesh->SetSimulatePhysics(true);
-		Mesh->WakeAllRigidBodies();
-		Mesh->bBlendPhysics = true;
-	}
-
 	//Shut down Movement Component functionality
 	if (Movement)
 	{
@@ -169,6 +162,16 @@ void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovement
 		Movement->SetComponentTickEnabled(false);
 	}
 
+	//Enable Ragdoll Physics
+	if (Mesh && Mesh->GetPhysicsAsset())
+	{
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Mesh->SetSimulatePhysics(true);
+		Mesh->WakeAllRigidBodies();
+		Mesh->bBlendPhysics = true;
+	}
+
+
 	if (DestroyAfterRagdoll)
 	{
 		//Ragdoll Enabled, set time till Actor Destruction
@@ -178,41 +181,44 @@ void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovement
 
 void UHealthComponent::DestroyOwner(float timetilldestruction)
 {
-	if (timetilldestruction > 0.0F)
-	{
-		CompOwner->SetLifeSpan(timetilldestruction);
-	}
-	else
-	{
-		CompOwner->Destroy();
-	}
+		if (timetilldestruction > 0.0F)
+		{
+			CompOwner->SetLifeSpan(timetilldestruction);
+		}
+		else
+		{
+			CompOwner->Destroy();
+		}
 }
 
 void UHealthComponent::ReplicateHit(float Damage, FDamageEvent const & DamageEvent, APawn * InstigatingPawn, AActor * DamageCauser, bool bKilled)
 {
-	const float TimeoutTime = GetWorld()->GetTimeSeconds() + 0.5f;
-
-	if ((InstigatingPawn == LastTakeHitInfo.PawnInstigator.Get()) && (DamageEvent.DamageTypeClass == LastTakeHitInfo.DamageTypeClass) && (LastTakeHitTimeTimeout == TimeoutTime))
+	if (CompOwner->Role == ROLE_Authority)
 	{
-		// same frame damage
-		if (bKilled && LastTakeHitInfo.bKilled)
+		const float TimeoutTime = GetWorld()->GetTimeSeconds() + 0.5f;
+
+		if ((InstigatingPawn == LastTakeHitInfo.PawnInstigator.Get()) && (DamageEvent.DamageTypeClass == LastTakeHitInfo.DamageTypeClass) && (LastTakeHitTimeTimeout == TimeoutTime))
 		{
-			// Redundant death take hit, just ignore it
-			return;
+			// same frame damage
+			if (bKilled && LastTakeHitInfo.bKilled)
+			{
+				// Redundant death take hit, just ignore it
+				return;
+			}
+
+			// otherwise, accumulate damage done this frame
+			Damage += LastTakeHitInfo.ActualDamage;
 		}
 
-		// otherwise, accumulate damage done this frame
-		Damage += LastTakeHitInfo.ActualDamage;
+		LastTakeHitInfo.ActualDamage = Damage;
+		LastTakeHitInfo.PawnInstigator = InstigatingPawn;
+		LastTakeHitInfo.DamageCauser = DamageCauser;
+		LastTakeHitInfo.bKilled = bKilled;
+		LastTakeHitInfo.DamageTypeClass = DamageEvent.DamageTypeClass;
+		LastTakeHitInfo.EnsureReplication();
+
+		LastTakeHitTimeTimeout = TimeoutTime;
 	}
-
-	LastTakeHitInfo.ActualDamage = Damage;
-	LastTakeHitInfo.PawnInstigator = InstigatingPawn;
-	LastTakeHitInfo.DamageCauser = DamageCauser;
-	LastTakeHitInfo.bKilled = bKilled;
-	LastTakeHitInfo.DamageTypeClass = DamageEvent.DamageTypeClass;
-	LastTakeHitInfo.EnsureReplication();
-
-	LastTakeHitTimeTimeout = TimeoutTime;
 }
 
 void UHealthComponent::PlayLocalHit(float Damage, FDamageEvent const& DamageEvent, APawn* InstigatingPawn, AActor* DamageCauser)
@@ -263,9 +269,18 @@ void UHealthComponent::OnRep_LastTakeHitInfo()
 	}
 }
 
+void UHealthComponent::PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker)
+{
+	Super::PreReplication(ChangedPropertyTracker);
+	// Only replicate this property for a short duration after it changes so join in progress players don't get spammed with fx when joining late
+	DOREPLIFETIME_ACTIVE_OVERRIDE(UHealthComponent, LastTakeHitInfo, GetWorld() && GetWorld()->GetTimeSeconds() < LastTakeHitTimeTimeout);
+}
+
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	DOREPLIFETIME(UHealthComponent,Current_Health)
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UHealthComponent,Current_Health) 
+	DOREPLIFETIME_CONDITION(UHealthComponent, LastTakeHitInfo, COND_Custom)
 }
 
 void UHealthComponent::HandleRagDoll(USkeletalMeshComponent * Mesh, const float DeathAnimDuration)
