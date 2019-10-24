@@ -7,6 +7,7 @@
 #include "RTSSelectionComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "HealthComponent.h"
+#include "RTSStructure.h"
 #include "RTSMinion.generated.h"
 
 
@@ -33,7 +34,13 @@ public:
 
 	virtual bool CanInteract(AActor * Interactable);
 
+	virtual bool CanAttack(AActor * AttackMe);
+
+	virtual void StartAttack(AActor * AttackMe);
+
 	virtual bool IsAlive();
+
+	virtual bool IsEnemy(AActor *  InMinion);
 
 	virtual AActor* GetTarget();
 
@@ -86,14 +93,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
 	URTSSelectionComponent * Selection;
 
-
-
-private:
 	UPROPERTY(Replicated)
 	ACommander * Cmdr;
-
-protected:
-
 
 };
 

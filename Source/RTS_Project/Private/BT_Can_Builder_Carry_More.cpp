@@ -12,6 +12,7 @@
 
 bool UBT_Can_Builder_Carry_More::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
+	bool result = false;
     ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
     AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
 
@@ -20,22 +21,9 @@ bool UBT_Can_Builder_Carry_More::CalculateRawConditionValue(UBehaviorTreeCompone
         ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
         if(minion)
         {
-            if(minion->carried_resource < minion->max_resource)
-            {
-                return(true);
-            }
-            else
-            {
-                return(false);
-            }
-        }
-        else
-        {
-            return(false);
+			result = minion->CanCarryMore();
         }
     }
-    else
-    {
-        return(false);
-    }
+
+	return(result);
 }

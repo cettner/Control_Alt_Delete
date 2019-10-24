@@ -46,12 +46,40 @@ ARTSMinion::ARTSMinion()
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
 {
-	return(false);
+	//By Default Can Only Interact with Minions and Structures
+	return(Cast<ARTSMinion>(Interactable) || Cast<ARTSStructure>(Interactable));
+}
+
+bool ARTSMinion::CanAttack(AActor * AttackMe)
+{
+	return (false);
+}
+
+void ARTSMinion::StartAttack(AActor* AttackMe)
+{
 }
 
 bool ARTSMinion::IsAlive()
 {
 	return (Health->IsAlive());
+}
+
+bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
+{
+	bool Enemy = false;
+	ARTSMinion * InMinion = Cast<ARTSMinion>(FriendOrFoe);
+	ARTSStructure* InStructure = Cast<ARTSStructure>(FriendOrFoe);
+
+	if (InMinion && InMinion->team_index != this->team_index && InMinion->team_index >= 0)
+	{
+		Enemy = true;
+	}
+	else if(InStructure && InStructure->teamindex != this->GetTeam() && InStructure->teamindex >= 0)
+	{
+		Enemy = true;
+	}
+
+	return(Enemy);
 }
 
 AActor * ARTSMinion::GetTarget()
