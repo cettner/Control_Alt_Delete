@@ -14,7 +14,7 @@ UHealthComponent::UHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
 	//Make it so the component is "Alive"
-	Current_Health = 1.0F;
+	Current_Health = 1000.0F;
 }
 
 void UHealthComponent::SetMaxHealth(float healthval)
