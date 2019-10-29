@@ -255,10 +255,20 @@ bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)
 
 void ACommander::MinionInteractionHandler_Implementation(ARTSMinion * Interacted)
 {
+	if (!IsEnemy(Interacted))
+	{
 		if (!AddtoSquad(Interacted))
 		{
 			LeaveSquad(Interacted);
 		}
+	}
+	else
+	{
+		for (int i = 0; i < Squad.Num(); i++)
+		{
+			Squad[i]->SetTarget(Interacted);
+		}
+	}
 }
 
 void ACommander::SelectableInterationHandler_Implementation(ARTSSelectable * Interacted)

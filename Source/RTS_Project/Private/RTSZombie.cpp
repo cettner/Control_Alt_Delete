@@ -2,4 +2,171 @@
 
 
 #include "RTSZombie.h"
+#include "RTSAIController.h"
+#include "UnrealNetwork.h"
 
+ARTSZombie::ARTSZombie() : Super()
+{
+	bReplicates = true;
+}
+
+bool ARTSZombie::CanAttack(AActor* AttackMe)
+{
+	bool attack = false;
+	if (AttackMe && CanDoDamage(AttackMe))
+	{
+		bool distcheck = false;
+		float distance = GetDistanceTo(AttackMe);
+		distcheck = distance <= HitRange;
+
+		bool dircheck = IsFacingActor(AttackMe, 15.0F);
+		attack = (distcheck && dircheck);
+	}
+
+	return(attack);
+}
+
+void ARTSZombie::StartAttack(AActor* AttackMe)
+{
+	
+	if (AttackVarients.Num() && !bAttackAnimPlaying && GetWorld())
+	{
+		FAttackAnim Attack = DecideAttack(AttackMe);
+
+		if (Attack.AttackAnim)
+		{
+			bAttackAnimPlaying = true;
+			CurrentAttack = Attack;
+			float EndAnimTime = PlayAnimMontage(Attack.AttackAnim);
+
+			if (Attack.DamageEventTimes.Num())
+			{
+				float FirstEvent = Attack.DamageEventTimes[0];
+				ActorDelegate.BindUFunction(this, FName("DoDamage"), AttackMe, (int)0, Attack);
+				GetWorldTimerManager().SetTimer(DamageEventHandler, ActorDelegate, FirstEvent, false);
+			}
+
+			GetWorldTimerManager().SetTimer(AttackEndHandler, this, &ARTSZombie::OnAttackFinish, EndAnimTime, false);
+		}
+	}
+
+	if (!AttackEndHandler.IsValid())
+	{
+		ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
+		if (AIC)
+		{
+			AIC->SendAIMessage(ARTSAIController::AIMessage_Finished, FAIMessage::EStatus::Failure);
+		}
+	}
+}
+
+bool ARTSZombie::CanDoDamage(AActor* AttackMe)
+{
+	return(IsEnemy(AttackMe) && (AttackVarients.Num() > 0));
+}
+
+void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)
+{
+	if (CanAttack(AttackMe))
+	{	
+		FDamageEvent DE;
+		AttackMe->TakeDamage(GetDamage(), DE, GetController(), this);
+	}
+
+	if (ComboCount < Attack.DamageEventTimes.Num() && AttackMe)
+	{
+		ActorDelegate.BindUFunction(this, FName("DoDamage"), AttackMe, ComboCount++, Attack);
+		float NextEvent = Attack.DamageEventTimes[ComboCount++];
+		GetWorldTimerManager().SetTimer(DamageEventHandler, ActorDelegate, NextEvent, false);
+	}
+}
+
+FAttackAnim ARTSZombie::DecideAttack(AActor* AttackMe)
+{
+	FAttackAnim Attack;
+	if (AttackVarients.Num())
+	{
+		int attack_index = FMath::Rand() % AttackVarients.Num();
+		Attack = AttackVarients[attack_index];
+		AnimInfo.AnimID = attack_index;
+		ReplicateAnim();
+	}
+	return(Attack);
+}
+
+float ARTSZombie::GetDamage()
+{
+	return(10.0F);
+}
+
+void ARTSZombie::PlayClientAnimEvent(int CommboCount)
+{
+
+}
+
+void ARTSZombie::PlayClientAnimEnd()
+{
+
+}
+
+void ARTSZombie::OnRep_AnimID()
+{
+	if (AnimInfo.AnimID > -1 && AnimInfo.AnimID < AttackVarients.Num())
+	{
+		CurrentAttack = AttackVarients[AnimInfo.AnimID];
+
+		if (CurrentAttack.AttackAnim)
+		{
+			float EndAnimTime;
+			EndAnimTime = PlayAnimMontage(CurrentAttack.AttackAnim);
+			GetWorldTimerManager().SetTimer(AttackEndHandler, this, &ARTSZombie::OnAttackFinish, EndAnimTime, false);
+		}
+
+		if (CurrentAttack.DamageEventTimes.Num())
+		{
+			float FirstEvent = CurrentAttack.DamageEventTimes[0];
+			ActorDelegate.BindUFunction(this, FName("PlayClientAnimEvent"), (int)0);
+			GetWorldTimerManager().SetTimer(DamageEventHandler, ActorDelegate, FirstEvent, false);
+		}
+	}
+}
+
+void ARTSZombie::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ARTSZombie, AnimInfo)
+}
+
+void ARTSZombie::ReplicateAnim()
+{
+		AnimInfo.EnsureReplication();
+}
+
+void ARTSZombie::OnAttackFinish()
+{
+	bAttackAnimPlaying = false;
+	if (CurrentAttack.PlayDamageOnEnd)
+	{
+		DoDamage(GetTarget());
+	}
+	CurrentAttack = FAttackAnim();
+
+	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
+	if (AIC)
+	{
+		AIC->SendAIMessage(ARTSAIController::AIMessage_Finished, FAIMessage::EStatus::Success);
+	}
+}
+
+bool ARTSZombie::IsFacingActor(AActor* OtherActor, float tolerance)
+{
+	FVector FV = GetActorForwardVector(); 
+	FVector Diff =  OtherActor->GetActorLocation() - GetActorLocation();
+
+	Diff = Diff.GetSafeNormal();
+
+	float dot = Diff.DotProduct(FV, Diff);
+	float angle = FMath::Acos(dot);
+
+	return (FMath::IsNearlyEqual(0.0F, angle, tolerance));
+}

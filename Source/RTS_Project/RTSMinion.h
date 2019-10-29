@@ -36,6 +36,8 @@ public:
 
 	virtual bool CanAttack(AActor * AttackMe);
 
+	virtual bool CanDoDamage(AActor * AttackMe);
+
 	virtual void StartAttack(AActor * AttackMe);
 
 	virtual bool IsAlive();

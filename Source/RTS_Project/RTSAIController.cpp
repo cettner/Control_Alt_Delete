@@ -9,10 +9,13 @@
 #include "RTSMinion.h"
 #include "Commander.h"
 
+const FName ARTSAIController::AIMessage_Finished = TEXT("Task Complete");
+
 ARTSAIController::ARTSAIController()
 {
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
+	AIRequestId = 1U;
 }
 
 void ARTSAIController::OnPossess(APawn * InPawn)
@@ -49,6 +52,13 @@ void ARTSAIController::ClearTarget()
 void ARTSAIController::SetCommander(ACommander * Commander)
 {
 	BlackboardComp->SetValueAsObject("OwningCommander", Commander);
+}
+
+void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status)
+{
+	FAIMessage Msg(AIMessage, this, AIRequestId, Status);
+	FAIMessage::Send(this, Msg);
+	StoreAIRequestId();
 }
 
 ACommander * ARTSAIController::GetCommander()

@@ -33,8 +33,22 @@ public:
 	class ACommander * GetCommander();
 	void ClearCommander();
 	void SetCommander(ACommander * Commander);
+	FORCEINLINE FAIRequestID GetAIRequestId() const { return AIRequestId; }
+	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status);
+
+public:
+	static const FName AIMessage_Finished;
 
 
+
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	FName Target = "Target";
+
+private:
+
+	//static uint32 NextRequestId;
+	FAIRequestID AIRequestId;
+	FORCEINLINE void StoreAIRequestId() { AIRequestId = AIRequestId + 1; }
+
 };
