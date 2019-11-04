@@ -26,6 +26,11 @@ struct FAttackAnim
 		/*Play Damage on Animation Completion*/
 		UPROPERTY(EditDefaultsOnly, Category = Animation)
 		bool PlayDamageOnEnd;
+
+		bool operator==(const FAttackAnim& Other) const
+		{
+			return AttackAnim == Other.AttackAnim && DamageEventTimes == Other.DamageEventTimes && PlayDamageOnEnd == Other.PlayDamageOnEnd;
+		}
 };
 
 USTRUCT()
@@ -49,7 +54,7 @@ class RTS_PROJECT_API ARTSZombie : public ARTSMinion
 	GENERATED_BODY()
 
 public:
-	ARTSZombie();
+	ARTSZombie(); 
 
 public:
 	virtual bool CanAttack(AActor * AttackMe) override;
@@ -63,7 +68,8 @@ protected:
 	virtual void OnAttackFinish();
 	virtual FAttackAnim DecideAttack(AActor* AttackMe);
 	virtual float GetDamage();
-	virtual void PlayClientAnimEvent(int CommboCount);
+	UFUNCTION()
+	virtual void PlayClientAnimEvent(int ComboCount, FAttackAnim Attack = FAttackAnim());
 	virtual void PlayClientAnimEnd();
 
 protected:
@@ -80,6 +86,9 @@ protected:
 	float HitRange = 200.0F;
 
 	bool bAttackAnimPlaying = false;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	bool bPlaysOnHitEffects = false;
 
 	FAttackAnim CurrentAttack;
 

@@ -55,12 +55,12 @@ bool ARTSMinion::CanAttack(AActor * AttackMe)
 	return (false);
 }
 
-bool ARTSMinion::CanDoDamage(AActor* AttackMe)
+bool ARTSMinion::CanDoDamage(AActor * AttackMe)
 {
 	return (false);
 }
 
-void ARTSMinion::StartAttack(AActor* AttackMe)
+void ARTSMinion::StartAttack(AActor * AttackMe)
 {
 }
 

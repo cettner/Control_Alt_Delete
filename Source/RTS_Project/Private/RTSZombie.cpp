@@ -37,7 +37,9 @@ void ARTSZombie::StartAttack(AActor* AttackMe)
 		{
 			bAttackAnimPlaying = true;
 			CurrentAttack = Attack;
+
 			float EndAnimTime = PlayAnimMontage(Attack.AttackAnim);
+			ReplicateAnim();
 
 			if (Attack.DamageEventTimes.Num())
 			{
@@ -88,8 +90,6 @@ FAttackAnim ARTSZombie::DecideAttack(AActor* AttackMe)
 	{
 		int attack_index = FMath::Rand() % AttackVarients.Num();
 		Attack = AttackVarients[attack_index];
-		AnimInfo.AnimID = attack_index;
-		ReplicateAnim();
 	}
 	return(Attack);
 }
@@ -99,14 +99,19 @@ float ARTSZombie::GetDamage()
 	return(10.0F);
 }
 
-void ARTSZombie::PlayClientAnimEvent(int CommboCount)
+void ARTSZombie::PlayClientAnimEvent(int ComboCount, FAttackAnim Attack)
 {
-
+	if (ComboCount < Attack.DamageEventTimes.Num())
+	{
+		float NextEvent = Attack.DamageEventTimes[ComboCount];
+		ActorDelegate.BindUFunction(this, FName("PlayClientAnimEvent"), ComboCount++, Attack);
+		GetWorldTimerManager().SetTimer(DamageEventHandler, ActorDelegate, NextEvent, false);
+	}
 }
 
 void ARTSZombie::PlayClientAnimEnd()
 {
-
+	CurrentAttack = FAttackAnim();
 }
 
 void ARTSZombie::OnRep_AnimID()
@@ -114,7 +119,6 @@ void ARTSZombie::OnRep_AnimID()
 	if (AnimInfo.AnimID > -1 && AnimInfo.AnimID < AttackVarients.Num())
 	{
 		CurrentAttack = AttackVarients[AnimInfo.AnimID];
-
 		if (CurrentAttack.AttackAnim)
 		{
 			float EndAnimTime;
@@ -122,10 +126,10 @@ void ARTSZombie::OnRep_AnimID()
 			GetWorldTimerManager().SetTimer(AttackEndHandler, this, &ARTSZombie::OnAttackFinish, EndAnimTime, false);
 		}
 
-		if (CurrentAttack.DamageEventTimes.Num())
+		if (CurrentAttack.DamageEventTimes.Num() && bPlaysOnHitEffects)
 		{
 			float FirstEvent = CurrentAttack.DamageEventTimes[0];
-			ActorDelegate.BindUFunction(this, FName("PlayClientAnimEvent"), (int)0);
+			ActorDelegate.BindUFunction(this, FName("PlayClientAnimEvent"), (int)0, AttackVarients[AnimInfo.AnimID]);
 			GetWorldTimerManager().SetTimer(DamageEventHandler, ActorDelegate, FirstEvent, false);
 		}
 	}
@@ -139,6 +143,7 @@ void ARTSZombie::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 
 void ARTSZombie::ReplicateAnim()
 {
+	    AnimInfo.AnimID = AttackVarients.Find(CurrentAttack);
 		AnimInfo.EnsureReplication();
 }
 
