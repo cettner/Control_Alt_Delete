@@ -43,6 +43,7 @@ AFogOfWarManager::~AFogOfWarManager() {
 
 void AFogOfWarManager::BeginPlay() {
 	Super::BeginPlay();
+	/*
 	if (Role != ROLE_Authority && GetWorld())
 	{
 		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -51,8 +52,8 @@ void AFogOfWarManager::BeginPlay() {
 			PC->FOWManager = this;
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("%s Spawned!"), *this->GetName()));
 		}
-
 	}
+	*/
 }
 
 void AFogOfWarManager::Tick(float DeltaSeconds) {

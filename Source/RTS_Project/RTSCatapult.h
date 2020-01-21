@@ -28,16 +28,20 @@ public:
 	ARTSCatapult();
 	
 	UPROPERTY(EditAnywhere, Category = Gameplay)
-		float Min_Range = 500.0;
+	float Min_Range = 500.0;
 
 	UPROPERTY(VisibleAnywhere, Category = Gameplay)
-		class USphereComponent* Min_Range_Sphere;
+	class USphereComponent* Min_Range_Sphere;
 
 	UPROPERTY(EditAnywhere, Category = Gameplay)
-		float Max_Range = 1000.0;
+	float Max_Range = 1000.0;
 
 	UPROPERTY(VisibleAnywhere, Category = Gameplay)
-		class USphereComponent* Max_Range_Sphere;
+	class USphereComponent* Max_Range_Sphere;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<ASiegeProjectile> Projectile;
 
 private:
 	FTimerHandle Launch_Handler;
@@ -47,14 +51,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Debug)
 	FRotator LaunchRot;
 
-
 	TArray<AActor*> In_Range;
 	bool Target_Available;
 
 	bool ShouldTurn(AActor* TurnTo);
 	bool fireready = true;
-
-	TSubclassOf<class ASiegeProjectile> Projectile;
 
 	UFUNCTION(Category = Gameplay)
 	void OnMinRangeOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);

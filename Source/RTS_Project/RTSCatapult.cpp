@@ -90,27 +90,6 @@ void ARTSCatapult::Reload()
 
 ARTSCatapult::ARTSCatapult()
 {
-
-	static ConstructorHelpers::FObjectFinder<UBlueprint> ProjectileBlueprint(TEXT(SIEGE_PROJECTILE_BP_PATH));
-
-	if (ProjectileBlueprint.Object)
-	{
-		Projectile = (UClass*)ProjectileBlueprint.Object->GeneratedClass;
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed to Load Projectile Asset!")));
-	}
-
-
-	static ConstructorHelpers::FObjectFinder<UTexture> ThumbnailAsset(TEXT(CATAPULT_THUMBNAIL_PATH));
-	if (ThumbnailAsset.Succeeded())
-	{
-		Thumbnail = ThumbnailAsset.Object;
-	}
-
-
-
 	Min_Range_Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("MinRange"));
 	Min_Range_Sphere->InitSphereRadius(Min_Range);
 	Min_Range_Sphere->SetupAttachment(RootComponent);

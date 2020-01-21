@@ -17,12 +17,14 @@ ARTSPlayerController::ARTSPlayerController()
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
-
+	FOWManagerClass = AFogOfWarManager::StaticClass();
+	/*
 	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(FOW_MANAGER_PATH));
-	if (TargetBlueprint.Object && HasAuthority())
+	if (TargetBlueprint.Object)
 	{
 		FOWManagerClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
 	}
+	*/
 }
 
 void ARTSPlayerController::BeginPlay()
@@ -30,7 +32,7 @@ void ARTSPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 	HudPtr = Cast<ARTSHUD>(GetHUD());
 
-	if (!HasAuthority())
+	if (GetNetMode() !=  ENetMode::NM_DedicatedServer)
 	{
 		if (Cast<ACommander>(GetPawn()) && HudPtr)
 		{
@@ -48,7 +50,7 @@ void ARTSPlayerController::BeginPlay()
 	}
 	else
 	{
-		FOWManager = InitFOW();
+	//	FOWManager = InitFOW();
 	}
 
 }

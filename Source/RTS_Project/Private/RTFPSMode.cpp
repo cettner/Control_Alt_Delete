@@ -8,18 +8,13 @@
 #include "RTFPSPlayerStart.h"
 #include "FPSServerController.h"
 #include "RTSSelectionCamera.h"
-#include "CombatCommander.h"
+#include "Commander.h"
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	
-	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(COMBAT_COMMANDER_BP_PATH));
-	if (TargetBlueprint.Object)
-	{
-		DefaultFPSClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
-	}
-
+	DefaultFPSClass = ACommander::StaticClass();
 	DefaultRTSClass = ARTSSelectionCamera::StaticClass();
 	GameStateClass = ARTFPSGameState::StaticClass();
 	PlayerControllerClass = AFPSServerController::StaticClass();

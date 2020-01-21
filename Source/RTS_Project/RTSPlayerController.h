@@ -100,13 +100,13 @@ public:
 	virtual AFogOfWarManager * InitFOW();
 	
 
-public:
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Fog Of War")
+	TSubclassOf<AFogOfWarManager> FOWManagerClass;
 	AFogOfWarManager * FOWManager;
 
 private:
 	void DebugEvent();
-
-	TSubclassOf<AFogOfWarManager> FOWManagerClass;
 
 //	RTSSpawnHelper  SpawnHelper;
 };
