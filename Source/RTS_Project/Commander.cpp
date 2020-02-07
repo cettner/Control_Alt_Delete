@@ -52,7 +52,7 @@ ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	FPS_Camera->SetupAttachment(GetCapsuleComponent());
-	FPS_Camera->RelativeLocation = FVector(-39.56f, 1.75f, 64.f);
+	FPS_Camera->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f));
 	FPS_Camera->bUsePawnControlRotation = true;
 
 	FPS_Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FPS_Mesh"));
@@ -60,8 +60,8 @@ ACommander::ACommander()
 	FPS_Mesh->SetupAttachment(FPS_Camera);
 	FPS_Mesh->bCastDynamicShadow = false;
 	FPS_Mesh->CastShadow = false;
-	FPS_Mesh->RelativeRotation = FRotator(1.9f, -19.19f, 5.2f);
-	FPS_Mesh->RelativeLocation = FVector(-0.5f, -4.4f, -155.7f);
+	FPS_Mesh->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
+	FPS_Mesh->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
@@ -70,8 +70,8 @@ ACommander::ACommander()
 	trace.bReturnPhysicalMaterial = false;
 	trace.AddIgnoredActor(this);
 
-	PrimaryActorTick.bCanEverTick = Role != ROLE_Authority;
-	PrimaryActorTick.bStartWithTickEnabled = Role != ROLE_Authority;
+	PrimaryActorTick.bCanEverTick = GetLocalRole() != ROLE_Authority;
+	PrimaryActorTick.bStartWithTickEnabled = GetLocalRole() != ROLE_Authority;
 }
 
 void ACommander::MoveForward(float Val)

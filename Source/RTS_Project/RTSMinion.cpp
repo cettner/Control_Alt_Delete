@@ -140,7 +140,7 @@ void ARTSMinion::SetSelectable()
 
 ACommander * ARTSMinion::GetCommander()
 {
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
 		ACommander * commander = AIC->GetCommander();
@@ -225,7 +225,7 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
-	if (Role != ROLE_Authority && GetWorld())
+	if (GetLocalRole() != ROLE_Authority && GetWorld())
 	{
 		/*Set Enemy Selection Rings For Local Player*/
 		APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());

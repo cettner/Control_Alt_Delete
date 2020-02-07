@@ -17,7 +17,7 @@ URTSSelectionComponent::URTSSelectionComponent()
 		PrimarySelectionRing->SetDecalMaterial(PrimaryDecalMaterialAsset.Object);
 	}
 	PrimarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
-	PrimarySelectionRing->RelativeScale3D = FVector(1.0f,.25f,.25f);
+	PrimarySelectionRing->SetRelativeScale3D(FVector(1.0f,.25f,.25f));
 	PrimarySelectionRing->SetRelativeLocation(FVector(0, 0, -100.0f));
 	PrimarySelectionRing->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 	PrimarySelectionRing->SetVisibility(false);
@@ -29,7 +29,7 @@ URTSSelectionComponent::URTSSelectionComponent()
 		SecondarySelectionRing->SetDecalMaterial(SecondaryDecalMaterialAsset.Object);
 	}
 	SecondarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
-	SecondarySelectionRing->RelativeScale3D = FVector(1.0f, .25f, .25f);
+	SecondarySelectionRing->SetRelativeScale3D(FVector(1.0f, .25f, .25f));
 	SecondarySelectionRing->SetRelativeLocation(FVector(0, 0, -100.0f));
 	SecondarySelectionRing->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 	SecondarySelectionRing->SetVisibility(false);

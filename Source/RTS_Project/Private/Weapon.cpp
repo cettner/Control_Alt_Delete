@@ -139,7 +139,7 @@ void AWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 
 void AWeapon::OnLeaveInventory()
 {
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		SetOwningPawn(NULL);
 	}
@@ -154,7 +154,7 @@ void AWeapon::SetOwningPawn(ACombatCommander* NewOwner)
 {
 	if (MyPawn != NewOwner)
 	{
-		Instigator = NewOwner;
+		SetInstigator(NewOwner);
 		MyPawn = NewOwner;
 		
 		// net owner for RPC calls
@@ -260,7 +260,7 @@ void AWeapon::StopWeaponAnimation(const FWeaponAnim& Animation)
 
 FVector AWeapon::GetAdjustedAim() const
 {
-	APlayerController* const PC = Instigator ? Cast<APlayerController>(Instigator->Controller) : NULL;
+	APlayerController* const PC = GetInstigator() ? Cast<APlayerController>(GetInstigator()->Controller) : NULL;
 	FVector FinalAim = FVector::ZeroVector;
 
 	if (PC)
@@ -270,7 +270,7 @@ FVector AWeapon::GetAdjustedAim() const
 		PC->GetPlayerViewPoint(CamLoc, CamRot);
 		FinalAim = CamRot.Vector();
 	}
-	else if(Instigator)
+	else if(GetInstigator())
 	{
 		AAIController* AIC = MyPawn ? Cast<AAIController>(MyPawn->Controller) : NULL;
 
@@ -280,7 +280,7 @@ FVector AWeapon::GetAdjustedAim() const
 		}
 		else
 		{
-			FinalAim = Instigator->GetBaseAimRotation().Vector();
+			FinalAim = GetInstigator()->GetBaseAimRotation().Vector();
 		}
 	}
 

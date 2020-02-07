@@ -60,7 +60,7 @@ bool UHealthComponent::CanDie(float KillingDamage, FDamageEvent const& DamageEve
 {
 	bool InevitabilityOfDeath;
 
-	if (bIsDying || (CompOwner && CompOwner->IsPendingKill()) || (CompOwner && CompOwner->Role != ROLE_Authority))
+	if (bIsDying || (CompOwner && CompOwner->IsPendingKill()) || (CompOwner && CompOwner->GetLocalRole() != ROLE_Authority))
 	{
 		InevitabilityOfDeath = false;
 	}
@@ -95,7 +95,7 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 
 	bIsDying = true;
 	
-	if (CompOwner->Role == ROLE_Authority)
+	if (CompOwner->GetLocalRole() == ROLE_Authority)
 	{
 		ReplicateHit(KillingDamage, DamageEvent, InstigatingPawn, DamageCauser, true);
 	}
@@ -104,7 +104,7 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 	{
 		//Initial Character Tear Down
 		CharacterOwner->DetachFromControllerPendingDestroy();
-		CharacterOwner->bReplicateMovement = false;
+		CharacterOwner->SetReplicatingMovement(false);
 		CharacterOwner->TearOff();
 		CharacterOwner->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		CharacterOwner->GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -185,7 +185,7 @@ void UHealthComponent::DestroyOwner(float timetilldestruction)
 
 void UHealthComponent::ReplicateHit(float Damage, FDamageEvent const & DamageEvent, APawn * InstigatingPawn, AActor * DamageCauser, bool bKilled)
 {
-	if (CompOwner->Role == ROLE_Authority)
+	if (CompOwner->GetLocalRole() == ROLE_Authority)
 	{
 		const float TimeoutTime = GetWorld()->GetTimeSeconds() + 0.5f;
 
@@ -215,7 +215,7 @@ void UHealthComponent::ReplicateHit(float Damage, FDamageEvent const & DamageEve
 
 void UHealthComponent::PlayLocalHit(float Damage, FDamageEvent const& DamageEvent, APawn* InstigatingPawn, AActor* DamageCauser)
 {
-	if (CompOwner->Role == ROLE_Authority)
+	if (CompOwner->GetLocalRole() == ROLE_Authority)
 	{
 		ReplicateHit(Damage, DamageEvent, InstigatingPawn, DamageCauser, false);
 	}

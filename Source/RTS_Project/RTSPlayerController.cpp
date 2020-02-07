@@ -83,7 +83,7 @@ void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 		{
 			ARTSMinion * freeminion = *Itr;
-			if (freeminion->GetTeam() == PS->Team_ID && freeminion->Role != ROLE_Authority)
+			if (freeminion->GetTeam() == PS->Team_ID && freeminion->GetLocalRole() != ROLE_Authority)
 			{
 				Units.AddUnique(freeminion);
 			}

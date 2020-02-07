@@ -59,7 +59,7 @@ void ACombatCommander::WeaponSwitchComplete()
 	{
 		EquipWeapon(NextWeapon);
 		//Replication wont occur if we switched to our old weapon since nothing actually changed, so we kick off equipped locally
-		if (CurrentWeapon == NextWeapon && Role != ROLE_Authority)
+		if (CurrentWeapon == NextWeapon && GetLocalRole() != ROLE_Authority)
 		{
 			OnRep_CurrentWeapon(CurrentWeapon);
 		}
@@ -105,7 +105,7 @@ void ACombatCommander::SetWeaponEquippedTimer()
 void ACombatCommander::AddWeapon(AWeapon * Added_Weapon)
 {
 
-	if (Added_Weapon && Role == ROLE_Authority)
+	if (Added_Weapon && GetLocalRole() == ROLE_Authority)
 	{
 
 		Added_Weapon->OnEnterInventory(this);
@@ -119,7 +119,7 @@ void ACombatCommander::EquipWeapon(AWeapon* Weapon)
 {
 	if (Weapon)
 	{
-		if (Role == ROLE_Authority)
+		if (GetLocalRole() == ROLE_Authority)
 		{
 			SetCurrentWeapon(Weapon, CurrentWeapon);
 		}
@@ -147,7 +147,7 @@ void ACombatCommander::UnEquipComplete()
 
 void ACombatCommander::RemoveWeapon(AWeapon* Weapon)
 {
-	if (Weapon && Role == ROLE_Authority)
+	if (Weapon && GetLocalRole() == ROLE_Authority)
 	{
 		Weapon->OnLeaveInventory();
 		Inventory.RemoveSingle(Weapon);
@@ -259,7 +259,7 @@ void ACombatCommander::PostInitializeComponents()
 
 void ACombatCommander::SpawnDefaultInventory()
 {
-	if (Role < ROLE_Authority)
+	if (GetLocalRole() < ROLE_Authority)
 	{
 		return;
 	}

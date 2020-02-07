@@ -93,7 +93,7 @@ void AFogOfWarManager::OnFowTextureUpdated_Implementation(UTexture2D* currentTex
 }
 
 void AFogOfWarManager::RegisterFowActor(AActor* Actor) {
-	if (Actor->Role != ROLE_Authority)
+	if (Actor->GetLocalRole() != ROLE_Authority)
 	{
 		FowActors.AddUnique(Actor);
 	}
