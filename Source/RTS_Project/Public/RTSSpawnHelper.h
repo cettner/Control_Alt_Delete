@@ -21,7 +21,7 @@ enum Structure_Types
 UENUM(BlueprintType)
 enum Unit_Types
 {
-	UNITLBOUND = STRUCTUREUBOUND,
+	UNITLBOUND,
 	BUILDER,
 	CATAPULT,
 	UNITUBOUND
@@ -30,7 +30,8 @@ enum Unit_Types
 UENUM(BlueprintType)
 enum Weapon_Types
 {
-	NO_WEAPON = UNITUBOUND,
+	WEAPONLBOUND,
+	NO_WEAPON,
 	ONE_H_AXE_BASIC,
 	SHIELD,
 	WEAPONUBOUND
