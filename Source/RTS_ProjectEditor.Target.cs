@@ -8,7 +8,10 @@ public class RTS_ProjectEditorTarget : TargetRules
 	public RTS_ProjectEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
+        bLegacyPublicIncludePaths = false;
+        ShadowVariableWarningLevel = WarningLevel.Error;
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		ExtraModuleNames.AddRange( new string[] { "RTS_Project" } );
+        ExtraModuleNames.AddRange( new string[] { "RTS_Project" } );
 	}
 }
