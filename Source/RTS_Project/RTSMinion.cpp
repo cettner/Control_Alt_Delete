@@ -42,6 +42,7 @@ ARTSMinion::ARTSMinion()
 	Selection->SetDetection(GetCapsuleComponent());
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
+	Health->SetIsReplicated(true);
 }
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
