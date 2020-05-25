@@ -55,6 +55,7 @@ public:
 		DamageCauser = NULL;
 		DamageEventClassID = 0;
 		bKilled = false;
+		EnsureReplicationByte = 0;
 	}
 };
 
