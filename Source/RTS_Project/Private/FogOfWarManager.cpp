@@ -2,9 +2,9 @@
 
 #include "FogOfWarManager.h"
 #include "Runtime/Engine/Classes/Engine/Texture2D.h"
-#include "FogOfWarWorker.h"
+#include "RTSFPS/RTS/FOW/FogOfWarWorker.h"
 #include "RenderingThread.h"
-#include "RTSPlayerController.h"
+#include "RTSFPS/BaseClasses/RTSPlayerController.h"
 #include "Engine.h"
 
 

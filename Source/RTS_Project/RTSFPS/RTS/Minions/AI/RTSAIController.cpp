@@ -6,8 +6,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Navigation/CrowdFollowingComponent.h"
-#include "RTSMinion.h"
-#include "Commander.h"
+#include "RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTSFPS/FPS/Commander.h"
 
 const FName ARTSAIController::AIMessage_Finished = TEXT("Task Complete");
 

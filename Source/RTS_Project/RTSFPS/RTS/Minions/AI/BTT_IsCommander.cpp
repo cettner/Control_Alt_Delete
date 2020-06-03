@@ -1,19 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BT_IsResource.h"
+#include "BTT_IsCommander.h"
 #include "RTSAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Navigation/CrowdFollowingComponent.h"
-#include "Resource.h"
+#include "RTSFPS/FPS/Commander.h"
 
-bool UBT_IsResource::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) const
+bool UBTT_IsCommander::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) const
 {
-	AResource * resource = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+	
+	ACommander * commander = Cast<ACommander>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
 
-	if (resource)
+	if (commander)
 	{
 		return true;
 	}
@@ -21,6 +22,5 @@ bool UBT_IsResource::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerCo
 	{
 		return false;
 	}
+	
 }
-
-

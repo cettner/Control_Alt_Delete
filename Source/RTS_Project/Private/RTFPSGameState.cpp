@@ -4,7 +4,6 @@
 #include "RTFPSPlayerState.h"
 #include "ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
-#include "GameAssets.h"
 #include "UnrealNetwork.h"
 #include "Engine.h"
 

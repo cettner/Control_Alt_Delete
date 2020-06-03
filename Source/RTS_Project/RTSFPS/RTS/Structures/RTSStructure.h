@@ -7,7 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine.h"
-#include "RTSSelectable.h"
+#include "RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "RTSStructure.generated.h"
 
 UCLASS()

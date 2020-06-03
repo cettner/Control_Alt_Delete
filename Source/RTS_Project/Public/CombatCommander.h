@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Commander.h"
+#include "RTSFPS/FPS/Commander.h"
 #include "Weapon.h"
 #include "Runtime/Core/Public/Containers/EnumAsByte.h"
 #include "CombatCommander.generated.h"

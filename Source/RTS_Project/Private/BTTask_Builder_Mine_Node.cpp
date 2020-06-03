@@ -2,8 +2,8 @@
 
 #include "BTTask_Builder_Mine_Node.h"
 #include "BuilderAIController.h"
-#include "RTSBUILDER.h"
-#include "Resource.h"
+#include "RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
+#include "RTSFPS/GameObjects/Resource.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"

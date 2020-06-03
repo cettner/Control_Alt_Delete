@@ -6,7 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Navigation/CrowdFollowingComponent.h"
-#include "Commander.h"
+#include "RTSFPS/FPS/Commander.h"
 
 
 

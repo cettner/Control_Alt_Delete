@@ -2,9 +2,10 @@
 
 
 #include "BTDecorator_IsTargetEnemy.h"
-#include "RTSAIController.h"
+#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "RTSFPS/BaseClasses/RTSMinion.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "RTSMinion.h"
+
 
 
 bool UBTDecorator_IsTargetEnemy::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const

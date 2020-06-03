@@ -2,10 +2,8 @@
 
 #include "RTSCatapult.h"
 #include "Runtime/Engine/Public/TimerManager.h "
-#include "RTSAIController.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "ConstructorHelpers.h"
-#include "GameAssets.h"
 #include "Engine.h"
 
 void ARTSCatapult::BeginPlay()

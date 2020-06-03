@@ -4,7 +4,7 @@
 #include "Components/DecalComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Materials/Material.h"
-#include "GameAssets.h"
+#include "AssetHelpers/GameAssets.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 
 // Sets default values for this component's properties

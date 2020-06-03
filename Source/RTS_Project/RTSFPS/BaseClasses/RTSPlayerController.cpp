@@ -2,12 +2,12 @@
 
 #include "RTSPlayerController.h"
 #include "ConstructorHelpers.h"
-#include "RTSStructure.h"
+#include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTFPSPlayerState.h"
 #include "RTFPSGameState.h"
 #include "Weapon.h"
-#include "Commander.h"
-#include "GameAssets.h"
+#include "RTSFPS/FPS/Commander.h"
+#include "AssetHelpers/GameAssets.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
  

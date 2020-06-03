@@ -2,8 +2,6 @@
 
 #include "RTSCamera.h"
 #include "Components/InputComponent.h"
-#include "GameFramework/PlayerController.h"
-#include "RTSPlayerController.h"
 // Sets default values
 ARTSCamera::ARTSCamera()
 {

@@ -1,14 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTFPSMode.h"
-#include "GameAssets.h"
 #include "Engine.h"
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
 #include "RTFPSPlayerStart.h"
 #include "FPSServerController.h"
-#include "RTSSelectionCamera.h"
-#include "Commander.h"
+#include "RTSFPS/RTS/Camera/RTSSelectionCamera.h"
+#include "RTSFPS/FPS/Commander.h"
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

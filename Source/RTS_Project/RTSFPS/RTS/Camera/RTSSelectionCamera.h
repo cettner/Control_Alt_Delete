@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSCamera.h"
-#include "RTSMinion.h"
-#include "RTSStructure.h"
+#include "RTSFPS/RTS/Camera/RTSCamera.h"
+#include "RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTSSelectable.h"
 #include "RTSSelectionCamera.generated.h"
 

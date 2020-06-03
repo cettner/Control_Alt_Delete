@@ -3,10 +3,6 @@
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
-#include "RTSPlayerController.h"
-#include "RTSCatapult.h"
-#include "RTSBUILDER.h"
-#include "Resource.h"
 
 // Sets default values
 ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
@@ -100,7 +96,7 @@ void ARTSStructure::SpawnUnit(int unit_index)
 	SpawnLocation.X -= 500;
 	SpawnLocation.Z = 100;
 
-	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
+//	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
 //	PC->Spawn_RTS_Minion(SpawnLocation,SpawnRotation,type);
 
 }

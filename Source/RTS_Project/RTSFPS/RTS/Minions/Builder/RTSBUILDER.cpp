@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSBUILDER.h"
-#include "Resource.h"
-#include "RTSStructure.h"
+#include "RTSFPS/GameObjects/Resource.h"
+#include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "GameFramework/PlayerController.h"
-#include "RTSPlayerController.h"
+#include "RTSFPS/BaseClasses/RTSPlayerController.h"
 #include "Public/BuilderAIController.h"
 #include "Runtime/Engine/Public/TimerManager.h "
 #include "GameFramework/Actor.h"

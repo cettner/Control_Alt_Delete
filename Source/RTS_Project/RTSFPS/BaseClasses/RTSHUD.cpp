@@ -4,10 +4,10 @@
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "UObject/ConstructorHelpers.h"
 #include "RTSMinion.h"
-#include "Commander.h"
+#include "RTSFPS/FPS/Commander.h"
 #include "DefaultPlayerState.h"
-#include "RTSStructure.h"
-#include "GameAssets.h"
+#include "RTSFPS/RTS/Structures/RTSStructure.h"
+#include "AssetHelpers/GameAssets.h"
 #include "Runtime/Engine/Public/EngineUtils.h"
 
 ARTSHUD::ARTSHUD()

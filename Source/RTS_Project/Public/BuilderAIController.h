@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSAIController.h"
+#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "BuilderAIController.generated.h"
 
 /**

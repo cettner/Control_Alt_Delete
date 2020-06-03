@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSMinion.h"
-#include "RTSHUD.h"
-#include "RTSBUILDER.h"
+#include "RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTSFPS/BaseClasses/RTSHUD.h"
+#include "RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
 #include "GameFramework/Actor.h"
-#include "RTSPlayerController.h"
-#include "RTSSelectionComponent.h"
-#include "RTSSelectable.h"
+#include "RTSFPS/BaseClasses/RTSPlayerController.h"
+#include "RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "Resource.generated.h"
 
 

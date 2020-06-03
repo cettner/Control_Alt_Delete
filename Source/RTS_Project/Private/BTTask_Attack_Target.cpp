@@ -6,8 +6,8 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "RTSMinion.h"
-#include "RTSAIController.h"
+#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "RTSFPS/BaseClasses/RTSMinion.h"
 
 EBTNodeResult::Type UBTTask_Attack_Target::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {

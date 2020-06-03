@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "FogOfWarWorker.h"
+#include "RTSFPS/RTS/FOW/FogOfWarWorker.h"
 #include "Runtime/RHI/Public/RHI.h"
 #include "FogOfWarManager.generated.h"
 
