@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "TeamPlayerStart.h"
+#include "RTSFPS/GameObjects/TeamPlayerStart.h"
 #include "DefaultMode.generated.h"
 
 /**

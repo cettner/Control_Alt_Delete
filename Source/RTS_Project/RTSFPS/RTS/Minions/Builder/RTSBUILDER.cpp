@@ -5,7 +5,7 @@
 #include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "GameFramework/PlayerController.h"
 #include "RTSFPS/BaseClasses/RTSPlayerController.h"
-#include "Public/BuilderAIController.h"
+#include "RTSFPS/RTS/Minions/Builder/AI/BuilderAIController.h"
 #include "Runtime/Engine/Public/TimerManager.h "
 #include "GameFramework/Actor.h"
 #include "Engine.h"

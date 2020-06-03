@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "HealthComponent.h"
+#include "RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTSMinion.generated.h"
 

@@ -5,7 +5,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "RTSMinion.h"
 #include "RTSFPS/FPS/Commander.h"
-#include "DefaultPlayerState.h"
+#include "GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "AssetHelpers/GameAssets.h"
 #include "Runtime/Engine/Public/EngineUtils.h"

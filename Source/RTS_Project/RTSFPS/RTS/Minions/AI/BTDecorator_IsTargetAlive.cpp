@@ -3,7 +3,7 @@
 
 #include "BTDecorator_IsTargetAlive.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "HealthComponent.h"
+#include "RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 
 bool UBTDecorator_IsTargetAlive::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {

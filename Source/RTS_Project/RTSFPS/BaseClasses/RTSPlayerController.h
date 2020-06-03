@@ -9,8 +9,8 @@
 #include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "Components/InputComponent.h"
 #include "RTSFPS/RTS/Camera/RTSSelectable.h"
-#include "FogOfWarManager.h"
-#include "RTFPSPlayerState.h"
+#include "RTSFPS/RTS/FOW/FogOfWarManager.h"
+#include "GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTSPlayerController.generated.h"
 
 

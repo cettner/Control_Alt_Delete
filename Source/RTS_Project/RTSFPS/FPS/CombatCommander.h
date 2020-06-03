@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "RTSFPS/FPS/Commander.h"
-#include "Weapon.h"
+#include "RTSFPS/FPS/Weapons/Weapon.h"
 #include "Runtime/Core/Public/Containers/EnumAsByte.h"
 #include "CombatCommander.generated.h"
 

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "DefaultGameState.h"
-#include "FogOfWarManager.h"
 #include "RTFPSGameState.generated.h"
 
 /**

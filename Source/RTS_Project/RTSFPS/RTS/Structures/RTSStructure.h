@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSSpawnHelper.h"
+#include "AssetHelpers/RTSSpawnHelper.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine.h"

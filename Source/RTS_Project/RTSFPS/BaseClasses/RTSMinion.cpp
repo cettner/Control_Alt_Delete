@@ -17,7 +17,7 @@
 #include "AssetHelpers/GameAssets.h"
 #include "RTSFPS/FPS/Commander.h"
 #include "UnrealNetwork.h"
-#include "DefaultPlayerState.h"
+#include "GameArchitecture/Game/DefaultPlayerState.h"
 
 ARTSMinion::ARTSMinion()
 {

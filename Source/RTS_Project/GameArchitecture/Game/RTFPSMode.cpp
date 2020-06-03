@@ -4,8 +4,8 @@
 #include "Engine.h"
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
-#include "RTFPSPlayerStart.h"
-#include "FPSServerController.h"
+#include "RTSFPS/GameObjects/RTFPSPlayerStart.h"
+#include "RTSFPS/FPS/FPSServerController.h"
 #include "RTSFPS/RTS/Camera/RTSSelectionCamera.h"
 #include "RTSFPS/FPS/Commander.h"
 

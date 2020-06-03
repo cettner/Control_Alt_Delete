@@ -4,7 +4,7 @@
 #include "RTSFPS/BaseClasses/RTSMinion.h"
 #include "RTSFPS/RTS/Minions/Catapult/RTSCatapult.h"
 #include "RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
-#include "Weapon.h"
+#include "RTSFPS/FPS/Weapons/Weapon.h"
 #include "AssetHelpers/GameAssets.h"
 #include "Engine.h"
 
