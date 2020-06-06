@@ -7,6 +7,7 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSessionInterface.h"
 #include "PreGame/LobbySystem/SessionMenuInterface.h"
+#include "PreGame/MainMenu/MainMenu.h"
 #include "LobbyGameInstance.generated.h"
 
 
@@ -19,6 +20,15 @@ class RTS_PROJECT_API ULobbyGameInstance : public UGameInstance, public ISession
 {
 	GENERATED_BODY()
 	
+public:
+	ULobbyGameInstance(const FObjectInitializer& ObjectInitializer);
+
+	virtual void Init();
+
+	// Create menu called from the level blueprint
+	UFUNCTION(BlueprintCallable)
+	void LoadMainMenu();
+
 public:
 	///// ISessionMenuInterface /////////////////// 
 	UFUNCTION()
@@ -36,13 +46,32 @@ public:
 
 private:
 	// Session Events
-	FString DesiredServerName;
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);
 	void OnFindSessionsComplete(bool Success);
 	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 	void CreateSession();
+
+protected:
+	// Main Menu
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UUserWidget> MenuClass;
+	UMainMenu* MainMenu;
+
+protected:
+	bool RestartSession;
+
+protected:
+	/*User Input TODO:: Make Setable from UI*/
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	FString DesiredServerName;
+
+protected:
+	//Lobby
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	FString LobbyMapName;
+
 private:
 
 	// Session

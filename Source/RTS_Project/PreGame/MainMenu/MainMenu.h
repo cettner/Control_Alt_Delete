@@ -35,9 +35,12 @@ class RTS_PROJECT_API UMainMenu : public UUserWidget
 
 public:
 
-	void Setup(ISessionMenuInterface* SessionMenuInterface);
+	virtual void Setup(ISessionMenuInterface* MenuInterface);
 
-	void Teardown();
+	virtual void Teardown();
+
+protected:
+	virtual bool Initialize() override;
 
 protected:
 
@@ -48,8 +51,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UWidget* HostSessionMenuWidget;
 
-
-protected:
 
 	// Link to buttons
 	UPROPERTY(meta = (BindWidget))
@@ -65,8 +66,23 @@ protected:
 	void OnJoinSessionPressed();
 
 
+protected:
+	ISessionMenuInterface* SessionMenuInterface;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+protected:
+	/*User Input TODO:: Make Setable from UI*/
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	FString DesiredServerName;
+
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	int PlayersPerTeam;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	//// JOIN SESSIONS ///////
 protected:
+
 
 	UPROPERTY(meta = (BindWidget))
 	UWidget* SessionListMenuWidget;
