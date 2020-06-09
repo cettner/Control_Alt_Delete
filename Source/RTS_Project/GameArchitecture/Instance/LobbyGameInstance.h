@@ -8,6 +8,7 @@
 #include "OnlineSessionInterface.h"
 #include "PreGame/LobbySystem/SessionMenuInterface.h"
 #include "PreGame/MainMenu/MainMenu.h"
+#include "PreGame/LobbySystem/LobbyMenu.h"
 #include "LobbyGameInstance.generated.h"
 
 
@@ -28,6 +29,11 @@ public:
 	// Create menu called from the level blueprint
 	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadLobbyMenu();
+
+	virtual bool CanStartMatch();
 
 public:
 	///// ISessionMenuInterface /////////////////// 
@@ -58,6 +64,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UUserWidget> MenuClass;
 	UMainMenu* MainMenu;
+
+
+	// Main Menu
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UUserWidget> LobbyClass;
+	ULobbyMenu* LobbyMenu;
 
 protected:
 	bool RestartSession;

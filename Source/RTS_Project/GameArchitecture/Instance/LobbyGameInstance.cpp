@@ -12,6 +12,7 @@ const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");
 ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	MenuClass = UMainMenu::StaticClass();
+	LobbyClass = UMainMenu::StaticClass();
 	RestartSession = false;
 	DesiredServerName = "Default Server";
 }
@@ -56,6 +57,26 @@ void ULobbyGameInstance::LoadMainMenu()
 	
 	MainMenu->Setup(this);
 	
+}
+
+void ULobbyGameInstance::LoadLobbyMenu()
+{
+	if (LobbyClass == nullptr)
+	{
+		return;
+	}
+	else if (LobbyMenu == nullptr)
+	{
+		LobbyMenu = CreateWidget<ULobbyMenu>(this, LobbyClass);
+		if (LobbyMenu == nullptr) return;
+	}
+	
+	LobbyMenu->Setup();
+}
+
+bool ULobbyGameInstance::CanStartMatch()
+{
+	return true;
 }
 
 void ULobbyGameInstance::Host(FString ServerName)

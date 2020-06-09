@@ -14,6 +14,11 @@ UCLASS()
 class RTS_PROJECT_API ULobbyMenu : public UUserWidget
 {
 	GENERATED_BODY()
+	public:
+		virtual void Setup();
+
+	protected:
+		virtual bool Initialize() override;
 
 	protected:
 		uint8 PlayersPerTeam;
