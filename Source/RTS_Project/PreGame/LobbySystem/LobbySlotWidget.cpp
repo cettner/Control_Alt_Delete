@@ -14,8 +14,16 @@ bool ULobbySlotWidget::Initialize()
 }
 
 
-void ULobbySlotWidget::Setup(ULobbyMenu * InParent)
+void ULobbySlotWidget::Setup(FSlotPlayerData SlotInfo)
 {
+	if (SlotInfo.isSlotActive)
+	{
+
+	}
+	else
+	{
+
+	}
 }
 
 void ULobbySlotWidget::ActivateSlot(FSlotPlayerData SlotInfo)

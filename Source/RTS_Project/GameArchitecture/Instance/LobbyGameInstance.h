@@ -13,9 +13,20 @@
 
 
 
-/**
- * 
- */
+
+USTRUCT()
+struct FLobbySettings
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	int NumTeams = 2;
+
+	UPROPERTY(EditDefaultsOnly)
+	int NumPlayersPerTeam = 1;
+};
+
+
 UCLASS()
 class RTS_PROJECT_API ULobbyGameInstance : public UGameInstance, public ISessionMenuInterface
 {
@@ -33,7 +44,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadLobbyMenu();
 
+public:
+
 	virtual bool CanStartMatch();
+
+	/*Called by server at lobby startup*/
+	FLobbySettings GetLobbySettings();
+
 
 public:
 	///// ISessionMenuInterface /////////////////// 
@@ -74,15 +91,20 @@ protected:
 protected:
 	bool RestartSession;
 
+/**********************************************************************************************/
 protected:
 	/*User Input TODO:: Make Setable from UI*/
 	UPROPERTY(EditDefaultsOnly, Category = Session)
 	FString DesiredServerName;
 
-protected:
 	//Lobby
 	UPROPERTY(EditDefaultsOnly, Category = Session)
 	FString LobbyMapName;
+
+	FLobbySettings LobbySettings;
+/**********************************************************************************************/
+
+
 
 private:
 

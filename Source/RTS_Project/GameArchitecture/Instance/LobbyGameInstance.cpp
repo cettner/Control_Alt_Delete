@@ -79,6 +79,11 @@ bool ULobbyGameInstance::CanStartMatch()
 	return true;
 }
 
+FLobbySettings ULobbyGameInstance::GetLobbySettings()
+{
+	return LobbySettings;
+}
+
 void ULobbyGameInstance::Host(FString ServerName)
 {
 	DesiredServerName = ServerName;

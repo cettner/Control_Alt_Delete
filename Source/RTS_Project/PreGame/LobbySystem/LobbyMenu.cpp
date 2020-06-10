@@ -3,6 +3,40 @@
 
 #include "LobbyMenu.h"
 
+
+
+void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
+{
+	UWorld* World = this->GetWorld();
+	if (TeamAList == nullptr || TeamBList == nullptr || World == nullptr || TeamSlots.Num() < 2 ) return;
+
+	TeamAList->ClearChildren();
+	FLobbyData Ateam = TeamSlots[0];
+	FLobbyData Bteam = TeamSlots[1];
+
+	for( size_t i = 0; i < Ateam.TeamData.Num(); i++)
+	{
+		FSlotPlayerData data = Ateam.TeamData[i];
+		ULobbySlotWidget* slot = CreateWidget<ULobbySlotWidget>(World, LobbySlotClass);
+		if (slot)
+		{
+			slot->Setup(data);
+			TeamAList->AddChild(slot);
+		}	
+	}
+
+	for (size_t i = 0; i < Bteam.TeamData.Num(); i++)
+	{
+		FSlotPlayerData data = Bteam.TeamData[i];
+		ULobbySlotWidget* slot = CreateWidget<ULobbySlotWidget>(World, LobbySlotClass);
+		if (slot)
+		{
+			slot->Setup(data);
+			TeamBList->AddChild(slot);
+		}
+	}
+}
+
 bool ULobbyMenu::Initialize()
 {
 	bool Success = Super::Initialize();
@@ -18,11 +52,12 @@ void ULobbyMenu::Setup()
 	if (World == nullptr) return;
 
 	APlayerController* PC = World->GetFirstPlayerController();
-	if (PC == nullptr)
-	{
-		return;
-	}
+	if (PC == nullptr) return;
 
+	ALobbyGameState* GS = Cast<ALobbyGameState>(World->GetGameState());
+	if (GS == nullptr) return;
+
+	/*Only the Lobby host can start the game*/
 	if (PC->GetNetMode() == NM_ListenServer)
 	{
 		StartGameButton->SetIsEnabled(true);
@@ -31,6 +66,11 @@ void ULobbyMenu::Setup()
 	{
 		StartGameButton->SetIsEnabled(false);
 	}
+
+
+	/*Draw the initial team slots*/
+	DrawLobbySlots(GS->GetLobbyData());
+
 
 	this->AddToViewport();
 

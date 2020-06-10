@@ -7,20 +7,10 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
-#include "LobbyMenu.h"
 #include "LobbySlotWidget.generated.h"
 
 
 
-// Struct for sessions
-USTRUCT()
-struct FSlotPlayerData
-{
-	GENERATED_BODY()
-	FString PlayerName;
-	uint32 TeamId;
-
-};
 
 UCLASS()
 class RTS_PROJECT_API ULobbySlotWidget : public UUserWidget
@@ -31,7 +21,7 @@ class RTS_PROJECT_API ULobbySlotWidget : public UUserWidget
 		bool IsSlotFilled();
 
 	public:
-		virtual void Setup(ULobbyMenu * InParent);
+		virtual void Setup(FSlotPlayerData SlotInfo);
 		virtual void ActivateSlot(FSlotPlayerData SlotInfo);
 		virtual void DeactivateSlot();
 
@@ -59,6 +49,6 @@ class RTS_PROJECT_API ULobbySlotWidget : public UUserWidget
 		UPROPERTY(meta = (BindWidget))
 		UTextBlock* PlayerName;
 
-		UPROPERTY(meta = (BindWidget))
-		UButton * KickButton;
+	//	UPROPERTY(meta = (BindWidget))
+	//	UButton * KickButton;
 };

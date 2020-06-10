@@ -6,12 +6,88 @@
 #include "GameFramework/GameStateBase.h"
 #include "LobbyGameState.generated.h"
 
-/**
- * 
- */
+
+
+USTRUCT()
+struct FSlotPlayerData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	FString PlayerName = "";
+
+	UPROPERTY()
+	int32 TeamId = -1;
+
+	UPROPERTY()
+	int32 SlotId = -1;
+
+	UPROPERTY()
+	bool isSlotActive = false;
+
+	UPROPERTY()
+	uint32 OwningPlayerID = 0xFFFFU;
+};
+
+USTRUCT()
+struct FLobbyData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	TArray<FSlotPlayerData> TeamData;
+
+	int ActiveNum()
+	{
+		int activecount = 0;
+		for (int i = 0; i < TeamData.Num(); i++)
+		{
+			if (TeamData[i].isSlotActive)
+			{
+				activecount++;
+			}
+		}
+		return(activecount);
+	}
+
+	FLobbyData() { TeamData = TArray<FSlotPlayerData>();}
+};
+
+
+
+
 UCLASS()
 class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 {
 	GENERATED_BODY()
-	
+
+
+	public:
+		TArray<FLobbyData> GetLobbyData();
+		bool AddPlayertoLobby(APlayerController* NewPlayer);
+
+	public:
+	ALobbyGameState();
+
+
+	protected:
+
+		UPROPERTY(ReplicatedUsing = OnRep_LobbyInfo)
+		TArray<FLobbyData> LobbyData;
+
+		UFUNCTION()
+		void OnRep_LobbyInfo();
+
+	private:
+		uint32 PlayersinLobby = 0;
+		uint32 MaxPlayers = 0;
+
+		/*Data Copied from GameInstance for Server Use*/
+		uint32 NumTeams = 0;
+		uint32 NumPlayersPerTeam = 0;
+
+
+protected:
+		void PostInitializeComponents() override;
+		void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 };

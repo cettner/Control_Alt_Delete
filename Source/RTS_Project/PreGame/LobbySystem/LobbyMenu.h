@@ -5,23 +5,33 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "GameArchitecture/Lobby/LobbyGameState.h"
+#include "LobbySlotWidget.h"
 #include "LobbyMenu.generated.h"
 
 /**
  * 
  */
+
+
+ // Struct for sessions
+
+
+
 UCLASS()
 class RTS_PROJECT_API ULobbyMenu : public UUserWidget
 {
 	GENERATED_BODY()
 	public:
 		virtual void Setup();
+		virtual void DrawLobbySlots(TArray<FLobbyData> TeamSlots);
 
 	protected:
 		virtual bool Initialize() override;
 
 	protected:
-		uint8 PlayersPerTeam;
+		UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<ULobbySlotWidget> LobbySlotClass;
 
 	protected:
 		UPROPERTY(meta = (BindWidget))
