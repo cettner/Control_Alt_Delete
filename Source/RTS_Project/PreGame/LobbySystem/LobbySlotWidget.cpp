@@ -13,7 +13,6 @@ bool ULobbySlotWidget::Initialize()
 	JoinSlotButton->OnClicked.AddDynamic(this, &ULobbySlotWidget::OnJoinSlotButtonPressed);
 
 
-
 	SlotData.isSlotActive = false;
 	return (true);
 }
@@ -44,6 +43,6 @@ void ULobbySlotWidget::OnJoinSlotButtonPressed()
 	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
 
-	GS->ServerRequestMoveSlot(PC, SlotData);
+	PC->RequestMoveSlot(SlotData);
 }
 

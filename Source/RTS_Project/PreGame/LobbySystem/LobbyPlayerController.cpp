@@ -26,8 +26,36 @@ bool ALobbyPlayerController::SetLobbyMenu(ULobbyMenu* menu)
 	return(LobbyMenu != nullptr);
 }
 
+void ALobbyPlayerController::RequestMoveSlot(FSlotPlayerData RequestedSlot)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		UWorld* World = GetWorld();
+		if (World == nullptr) return;
+
+		ALobbyGameState* GS = World->GetGameState<ALobbyGameState>();
+		if (GS == nullptr) return;
+
+		GS->ServerRequestMoveSlot(this,RequestedSlot);
+	}
+	else
+	{
+		ServerRequestMoveSlot(RequestedSlot);
+	}
+}
+
 void ALobbyPlayerController::RefreshServerLobbyUI(TArray<FLobbyData> LobbyData)
 {
 	if (LobbyMenu == nullptr) return;
 	LobbyMenu->DrawLobbySlots(LobbyData);
+}
+
+bool ALobbyPlayerController::ServerRequestMoveSlot_Validate(FSlotPlayerData RequestedSlot)
+{
+	return(true);
+}
+
+void ALobbyPlayerController::ServerRequestMoveSlot_Implementation (FSlotPlayerData RequestedSlotData)
+{
+	RequestMoveSlot(RequestedSlotData);
 }

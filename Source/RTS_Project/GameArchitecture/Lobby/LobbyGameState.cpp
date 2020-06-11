@@ -11,6 +11,10 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 {
 	if ( (NewPlayer == nullptr || PlayersinLobby == MaxPlayers) && LobbyData.Num() > 0) 	return false;
 
+	/*Make Sure Player isnt already in the lobby*/
+	FSlotPlayerData temp;
+	if (FindPlayerinLobby(NewPlayer, temp) == true) return false;
+	
 	int smallestteamindex = -1;
 	int emptyslotindex = -1;
 	int smallestteamsize = MaxPlayers;
@@ -41,7 +45,7 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 
 
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].isSlotActive = true;
-	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = NewPlayer->GetUniqueID();
+	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = NewPlayer->PlayerState->PlayerId;
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].PlayerName = NewPlayer->PlayerState->GetPlayerName();
 
 	NewPlayer->PlayerSlotInfo = LobbyData[smallestteamindex].TeamData[emptyslotindex];
@@ -70,6 +74,26 @@ void ALobbyGameState::OnRep_LobbyInfo()
 	Lobby->DrawLobbySlots(LobbyData);
 }
 
+bool ALobbyGameState::FindPlayerinLobby(ALobbyPlayerController * player, FSlotPlayerData& OutSlot)
+{
+	int idtosearch = player->PlayerState->PlayerId;
+
+	for (int i = 0; i < LobbyData.Num(); i++)
+	{
+		FLobbyData teamdata = LobbyData[i];
+		for (int k = 0; k < teamdata.TeamData.Num(); k++)
+		{
+			FSlotPlayerData data = teamdata.TeamData[k];
+			if (data.OwningPlayerID == idtosearch)
+			{
+				OutSlot = data;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 TArray<FLobbyData> ALobbyGameState::GetLobbyData()
 {
 	return (LobbyData);
@@ -86,12 +110,14 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	/*Check if the RequestedSlot is Available*/
 	int requestedteamid = RequestedSlotData.TeamId;
 	int requestedslotid = RequestedSlotData.SlotId;
-
 	if (LobbyData[requestedteamid].TeamData[requestedslotid].isSlotActive == true) return;
 
+
 	/*Get the Slot the player currently occupies*/
-	int currentteam = RequestingPlayer->PlayerSlotInfo.TeamId;
-	int currentslot = RequestingPlayer->PlayerSlotInfo.SlotId;
+	FSlotPlayerData currentslotdata;
+	if (FindPlayerinLobby(RequestingPlayer, currentslotdata) == false) return;
+	int currentteam = currentslotdata.TeamId;
+	int currentslot = currentslotdata.SlotId;
 	if (currentteam < 0 || currentslot < 0) return;
 
 	FSlotPlayerData ownedslot = LobbyData[currentteam].TeamData[currentslot];
@@ -104,7 +130,7 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	/*Put the player in its new spot*/
 	LobbyData[requestedteamid].TeamData[requestedslotid].isSlotActive = true;
 	LobbyData[requestedteamid].TeamData[requestedslotid].PlayerName = RequestingPlayer->PlayerState->GetPlayerName();
-	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = RequestingPlayer->GetUniqueID();
+	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = RequestingPlayer->PlayerState->PlayerId;
 	
 	/*Store its new location*/
 	RequestingPlayer->PlayerSlotInfo = LobbyData[requestedteamid].TeamData[requestedslotid];

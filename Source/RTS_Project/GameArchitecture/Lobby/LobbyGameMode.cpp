@@ -17,8 +17,9 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
 
-
 	if (PC == nullptr || GS == nullptr) return;
+	int debug = PC->PlayerState->PlayerId;
+
 	if (!GS->AddPlayertoLobby(PC))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode:: Failed to Add player to lobby!"));

@@ -28,6 +28,11 @@ public:
 	FSlotPlayerData PlayerSlotInfo;
 	bool SetLobbyMenu(ULobbyMenu * menu);
 
+	void RequestMoveSlot(FSlotPlayerData RequestedSlot);
+
+	UFUNCTION(Server, reliable, WithValidation)
+	void ServerRequestMoveSlot(FSlotPlayerData RequestedSlot);
+
 	/*Only used by Listen server*/
 	void RefreshServerLobbyUI(TArray<FLobbyData> LobbyData);
 

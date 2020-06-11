@@ -83,6 +83,9 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		void OnRep_LobbyInfo();
 
 	private:
+		bool FindPlayerinLobby(ALobbyPlayerController * player ,FSlotPlayerData& OutSlot);
+
+	private:
 		uint32 PlayersinLobby = 0;
 		uint32 MaxPlayers = 0;
 
