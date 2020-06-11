@@ -2,8 +2,8 @@
 
 
 #include "LobbyMenu.h"
-
-
+#include "LobbyPlayerController.h"
+#include "GameArchitecture/Lobby/LobbyGameState.h"
 
 void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 {
@@ -11,6 +11,7 @@ void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 	if (TeamAList == nullptr || TeamBList == nullptr || World == nullptr || TeamSlots.Num() < 2 ) return;
 
 	TeamAList->ClearChildren();
+	TeamBList->ClearChildren();
 	FLobbyData Ateam = TeamSlots[0];
 	FLobbyData Bteam = TeamSlots[1];
 
@@ -51,8 +52,10 @@ void ULobbyMenu::Setup()
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
 
-	APlayerController* PC = World->GetFirstPlayerController();
+	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
+	PC->SetLobbyMenu(this);
+
 
 	ALobbyGameState* GS = Cast<ALobbyGameState>(World->GetGameState());
 	if (GS == nullptr) return;

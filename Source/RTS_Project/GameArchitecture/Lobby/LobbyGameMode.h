@@ -15,5 +15,6 @@ class RTS_PROJECT_API ALobbyGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 		virtual void PostLogin(APlayerController* NewPlayer) override;
+		ALobbyGameMode(const FObjectInitializer& ObjectInitializer);
 	
 };

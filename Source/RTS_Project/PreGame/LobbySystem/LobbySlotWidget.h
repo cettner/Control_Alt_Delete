@@ -7,6 +7,7 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "GameArchitecture/Lobby/LobbyGameState.h"
 #include "LobbySlotWidget.generated.h"
 
 
@@ -21,15 +22,17 @@ class RTS_PROJECT_API ULobbySlotWidget : public UUserWidget
 		bool IsSlotFilled();
 
 	public:
-		virtual void Setup(FSlotPlayerData SlotInfo);
-		virtual void ActivateSlot(FSlotPlayerData SlotInfo);
-		virtual void DeactivateSlot();
+		virtual void Setup(FSlotPlayerData SlotInfo);		
 
 	protected:
 		virtual bool Initialize() override;
+	
+	protected:
+		UFUNCTION()
+		virtual void OnJoinSlotButtonPressed();
 
 	private:
-		bool bIsSlotFilled;
+		FSlotPlayerData SlotData;
 
 	protected:
 		UPROPERTY(meta = (BindWidget))

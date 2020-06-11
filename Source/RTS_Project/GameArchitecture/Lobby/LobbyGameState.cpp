@@ -3,12 +3,13 @@
 
 #include "LobbyGameState.h"
 #include "UnrealNetwork.h"
+#include "PreGame/LobbySystem/LobbyPlayerController.h"
 #include "GameArchitecture/Instance/LobbyGameInstance.h"
 
 
-bool ALobbyGameState::AddPlayertoLobby(APlayerController* NewPlayer)
+bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 {
-	if (PlayersinLobby == MaxPlayers && LobbyData.Num() > 0) 	return false;
+	if ( (NewPlayer == nullptr || PlayersinLobby == MaxPlayers) && LobbyData.Num() > 0) 	return false;
 
 	int smallestteamindex = -1;
 	int emptyslotindex = -1;
@@ -41,7 +42,12 @@ bool ALobbyGameState::AddPlayertoLobby(APlayerController* NewPlayer)
 
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].isSlotActive = true;
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = NewPlayer->GetUniqueID();
+	LobbyData[smallestteamindex].TeamData[emptyslotindex].PlayerName = NewPlayer->PlayerState->GetPlayerName();
+
+	NewPlayer->PlayerSlotInfo = LobbyData[smallestteamindex].TeamData[emptyslotindex];
+
 	PlayersinLobby++;
+
 	return true;
 }
 
@@ -52,13 +58,65 @@ ALobbyGameState::ALobbyGameState()
 
 void ALobbyGameState::OnRep_LobbyInfo()
 {
-	int debug = 19;
-}
+	UWorld * World = GetWorld();
+	if (World == nullptr) return;
+	
+	ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
+	if (PC == nullptr) return;
 
+	ULobbyMenu* Lobby = PC->GetLobbyMenu();
+	if (Lobby == nullptr) return;
+
+	Lobby->DrawLobbySlots(LobbyData);
+}
 
 TArray<FLobbyData> ALobbyGameState::GetLobbyData()
 {
 	return (LobbyData);
+}
+
+bool ALobbyGameState::ServerRequestMoveSlot_Validate(ALobbyPlayerController * RequestingPlayer, FSlotPlayerData RequestedSlot)
+{
+	return(true);
+}
+
+void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerController * RequestingPlayer, FSlotPlayerData RequestedSlotData)
+{
+	if (RequestingPlayer == nullptr) return;
+	/*Check if the RequestedSlot is Available*/
+	int requestedteamid = RequestedSlotData.TeamId;
+	int requestedslotid = RequestedSlotData.SlotId;
+
+	if (LobbyData[requestedteamid].TeamData[requestedslotid].isSlotActive == true) return;
+
+	/*Get the Slot the player currently occupies*/
+	int currentteam = RequestingPlayer->PlayerSlotInfo.TeamId;
+	int currentslot = RequestingPlayer->PlayerSlotInfo.SlotId;
+	if (currentteam < 0 || currentslot < 0) return;
+
+	FSlotPlayerData ownedslot = LobbyData[currentteam].TeamData[currentslot];
+
+	/*Deativate the owned slot*/
+	LobbyData[currentteam].TeamData[currentslot].isSlotActive = false;
+	LobbyData[currentteam].TeamData[currentslot].PlayerName = "";
+	LobbyData[currentteam].TeamData[currentslot].OwningPlayerID = 0xFFFFU;
+
+	/*Put the player in its new spot*/
+	LobbyData[requestedteamid].TeamData[requestedslotid].isSlotActive = true;
+	LobbyData[requestedteamid].TeamData[requestedslotid].PlayerName = RequestingPlayer->PlayerState->GetPlayerName();
+	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = RequestingPlayer->GetUniqueID();
+	
+	/*Store its new location*/
+	RequestingPlayer->PlayerSlotInfo = LobbyData[requestedteamid].TeamData[requestedslotid];
+	
+	/*Refresh the lobby UI for listen servers*/
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+	ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
+	if (PC == nullptr) return;
+	PC->RefreshServerLobbyUI(LobbyData);
+
+	
 }
 
 void ALobbyGameState::PostInitializeComponents()

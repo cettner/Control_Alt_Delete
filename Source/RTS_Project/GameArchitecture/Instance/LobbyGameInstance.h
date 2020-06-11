@@ -23,7 +23,7 @@ struct FLobbySettings
 	int NumTeams = 2;
 
 	UPROPERTY(EditDefaultsOnly)
-	int NumPlayersPerTeam = 1;
+	int NumPlayersPerTeam = 2;
 };
 
 
@@ -88,6 +88,10 @@ protected:
 	TSubclassOf<UUserWidget> LobbyClass;
 	ULobbyMenu* LobbyMenu;
 
+	//Lobby
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	FString LobbyMapName;
+
 protected:
 	bool RestartSession;
 
@@ -97,14 +101,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Session)
 	FString DesiredServerName;
 
-	//Lobby
-	UPROPERTY(EditDefaultsOnly, Category = Session)
-	FString LobbyMapName;
-
 	FLobbySettings LobbySettings;
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	FString PlayerName;
 /**********************************************************************************************/
-
-
 
 private:
 

@@ -15,6 +15,7 @@ ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializ
 	LobbyClass = UMainMenu::StaticClass();
 	RestartSession = false;
 	DesiredServerName = "Default Server";
+	PlayerName = "";
 }
 
 void ULobbyGameInstance::Init()

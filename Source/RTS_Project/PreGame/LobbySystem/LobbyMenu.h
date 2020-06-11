@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "GameArchitecture/Lobby/LobbyGameState.h"
 #include "LobbySlotWidget.h"
 #include "LobbyMenu.generated.h"
 

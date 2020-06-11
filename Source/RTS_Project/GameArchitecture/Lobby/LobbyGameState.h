@@ -55,6 +55,7 @@ struct FLobbyData
 
 
 
+class ALobbyPlayerController;
 
 UCLASS()
 class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
@@ -64,7 +65,10 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 
 	public:
 		TArray<FLobbyData> GetLobbyData();
-		bool AddPlayertoLobby(APlayerController* NewPlayer);
+		bool AddPlayertoLobby(ALobbyPlayerController* NewPlayer);
+
+		UFUNCTION(Server, reliable, WithValidation)
+		void ServerRequestMoveSlot(ALobbyPlayerController * RequestingPlayer, FSlotPlayerData RequestedSlot);
 
 	public:
 	ALobbyGameState();
