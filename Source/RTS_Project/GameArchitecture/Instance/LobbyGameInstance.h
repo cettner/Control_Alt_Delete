@@ -26,6 +26,15 @@ struct FLobbySettings
 	int NumPlayersPerTeam = 2;
 };
 
+USTRUCT()
+struct FGameSettings
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	int TeamId = -1;
+};
+
 
 UCLASS()
 class RTS_PROJECT_API ULobbyGameInstance : public UGameInstance, public ISessionMenuInterface
@@ -37,6 +46,12 @@ public:
 
 	virtual void Init();
 
+	/*Called by server at lobby startup*/
+	FLobbySettings GetLobbySettings();
+
+	bool SetGameSettings(FGameSettings settings);
+	FGameSettings GetGameSettings();
+
 	// Create menu called from the level blueprint
 	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu();
@@ -44,12 +59,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadLobbyMenu();
 
-public:
 
-	virtual bool CanStartMatch();
-
-	/*Called by server at lobby startup*/
-	FLobbySettings GetLobbySettings();
+protected:
+	bool RestartSession;
 
 
 public:
@@ -73,27 +85,29 @@ private:
 	void OnDestroySessionComplete(FName SessionName, bool Success);
 	void OnFindSessionsComplete(bool Success);
 	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-
 	void CreateSession();
 
+
+/**********************************************************************************************/
 protected:
 	// Main Menu
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UUserWidget> MenuClass;
 	UMainMenu* MainMenu;
 
-
-	// Main Menu
+	//Lobby
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UUserWidget> LobbyClass;
 	ULobbyMenu* LobbyMenu;
 
-	//Lobby
+
 	UPROPERTY(EditDefaultsOnly, Category = Session)
 	FString LobbyMapName;
 
-protected:
-	bool RestartSession;
+	UPROPERTY(EditDefaultsOnly, Category = Session)
+	FString GameMapName;
+/**********************************************************************************************/
+
 
 /**********************************************************************************************/
 protected:
@@ -107,6 +121,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Session)
 	FString PlayerName;
 /**********************************************************************************************/
+
+	FGameSettings GameSettings;
+
 
 private:
 

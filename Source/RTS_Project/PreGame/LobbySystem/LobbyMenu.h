@@ -29,6 +29,10 @@ class RTS_PROJECT_API ULobbyMenu : public UUserWidget
 		virtual bool Initialize() override;
 
 	protected:
+	    UFUNCTION()
+		void OnPressedStartGameButton();
+
+	protected:
 		UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ULobbySlotWidget> LobbySlotClass;
 

@@ -43,8 +43,20 @@ bool ULobbyMenu::Initialize()
 	bool Success = Super::Initialize();
 	if (!Success) return false;
 
+	if (StartGameButton == nullptr) return false;
+	StartGameButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedStartGameButton);
+
 	bIsFocusable = true;
 	return(true);
+}
+
+void ULobbyMenu::OnPressedStartGameButton()
+{
+	UWorld* World = GetWorld();
+	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
+	if (PC == nullptr) return;
+
+
 }
 
 void ULobbyMenu::Setup()

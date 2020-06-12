@@ -75,14 +75,20 @@ void ULobbyGameInstance::LoadLobbyMenu()
 	LobbyMenu->Setup();
 }
 
-bool ULobbyGameInstance::CanStartMatch()
-{
-	return true;
-}
-
 FLobbySettings ULobbyGameInstance::GetLobbySettings()
 {
 	return LobbySettings;
+}
+
+bool ULobbyGameInstance::SetGameSettings(FGameSettings settings)
+{
+	GameSettings = settings;
+	return true;
+}
+
+FGameSettings ULobbyGameInstance::GetGameSettings()
+{
+	return GameSettings;
 }
 
 void ULobbyGameInstance::Host(FString ServerName)

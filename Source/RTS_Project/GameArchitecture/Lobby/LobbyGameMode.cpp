@@ -4,23 +4,19 @@
 #include "LobbyGameMode.h"
 #include "LobbyGameState.h"
 #include "PreGame/LobbySystem/LobbyPlayerController.h"
+#include "LobbyGameSession.h"
 #include "PreGame/MenuPawn.h"
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 	ALobbyGameState* GS = GetGameState<ALobbyGameState>();
-
+	ALobbyPlayerController* NewLobbyPlayer = Cast<ALobbyPlayerController>(NewPlayer);
 	UWorld* World = GetWorld();
-	if (World == nullptr) return;
+	
+	if (World == nullptr || GS == nullptr || NewLobbyPlayer == nullptr) return;
 
-	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
-	if (PC == nullptr) return;
-
-	if (PC == nullptr || GS == nullptr) return;
-	int debug = PC->PlayerState->PlayerId;
-
-	if (!GS->AddPlayertoLobby(PC))
+	if (!GS->AddPlayertoLobby(NewLobbyPlayer))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode:: Failed to Add player to lobby!"));
 	}
@@ -28,9 +24,10 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	/*If we're a listen server, draw the new lobby*/
 	if (GetNetMode() == NM_ListenServer)
 	{
-		ULobbyMenu* Lobby = PC->GetLobbyMenu();
+		ALobbyPlayerController* LocalController = World->GetFirstPlayerController<ALobbyPlayerController>();
+		if (LocalController == nullptr) return;
+		ULobbyMenu* Lobby = LocalController->GetLobbyMenu();
 		if (Lobby == nullptr) return;
-
 		Lobby->DrawLobbySlots(GS->GetLobbyData());
 	}
 
@@ -40,4 +37,5 @@ ALobbyGameMode::ALobbyGameMode(const FObjectInitializer& ObjectInitializer)
 {
 	PlayerControllerClass = ALobbyPlayerController::StaticClass();
 	DefaultPawnClass = AMenuPawn::StaticClass();
+	GameSessionClass = ALobbyGameSession::StaticClass();
 }
