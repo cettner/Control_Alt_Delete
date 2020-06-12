@@ -15,7 +15,7 @@ void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 	FLobbyData Ateam = TeamSlots[0];
 	FLobbyData Bteam = TeamSlots[1];
 
-	for( size_t i = 0; i < Ateam.TeamData.Num(); i++)
+	for( int i = 0; i < Ateam.TeamData.Num(); i++)
 	{
 		FSlotPlayerData data = Ateam.TeamData[i];
 		ULobbySlotWidget* slot = CreateWidget<ULobbySlotWidget>(World, LobbySlotClass);
@@ -26,7 +26,7 @@ void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 		}	
 	}
 
-	for (size_t i = 0; i < Bteam.TeamData.Num(); i++)
+	for (int i = 0; i < Bteam.TeamData.Num(); i++)
 	{
 		FSlotPlayerData data = Bteam.TeamData[i];
 		ULobbySlotWidget* slot = CreateWidget<ULobbySlotWidget>(World, LobbySlotClass);

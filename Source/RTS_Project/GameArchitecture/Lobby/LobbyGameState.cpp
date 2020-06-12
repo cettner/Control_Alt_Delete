@@ -5,6 +5,7 @@
 #include "UnrealNetwork.h"
 #include "PreGame/LobbySystem/LobbyPlayerController.h"
 #include "GameArchitecture/Instance/LobbyGameInstance.h"
+#include "GameFramework/PlayerState.h"
 
 
 bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
@@ -159,10 +160,10 @@ void ALobbyGameState::PostInitializeComponents()
 		NumPlayersPerTeam = initsettings.NumPlayersPerTeam;
 		MaxPlayers = NumTeams * NumPlayersPerTeam;
 
-		for (size_t i = 0; i < initsettings.NumTeams; i++)
+		for (int i = 0; i < initsettings.NumTeams; i++)
 		{
 			FLobbyData teamslots = FLobbyData();
-			for (size_t k = 0; k < initsettings.NumPlayersPerTeam; k++)
+			for (int k = 0; k < initsettings.NumPlayersPerTeam; k++)
 			{
 				FSlotPlayerData tempslot;
 				tempslot.isSlotActive = false;
