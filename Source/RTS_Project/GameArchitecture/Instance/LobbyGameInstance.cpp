@@ -139,11 +139,14 @@ void ULobbyGameInstance::OpenSessionListMenu()
 
 	if (SessionSearch.IsValid())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OpenSessionListMenu] Session is valid"));
-		//SessionSearch->bIsLanQuery = true;
+		SessionSearch->bIsLanQuery = true;
 		SessionSearch->MaxSearchResults = 100;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OpenSessionListMenu] Session is Invalid"));
 	}
 }
 
@@ -284,14 +287,14 @@ void ULobbyGameInstance::CreateSession()
 		FOnlineSessionSettings SessionSettings;
 
 		// Switch between bIsLANMatch when using NULL subsystem
-		if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
-		{
+		//if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
+		//{
 			SessionSettings.bIsLANMatch = true;
-		}
-		else
-		{
-			SessionSettings.bIsLANMatch = false;
-		}
+		//}
+		//else
+		//{
+		//	SessionSettings.bIsLANMatch = false;
+		//}
 
 		if (DesiredServerName == "")
 		{
@@ -303,6 +306,11 @@ void ULobbyGameInstance::CreateSession()
 		SessionSettings.NumPublicConnections = 2;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
+		SessionSettings.bAllowInvites = true;
+		SessionSettings.bAllowJoinInProgress = true;
+		SessionSettings.bShouldAdvertise = true;
+		SessionSettings.bAllowJoinViaPresence = true;
+		SessionSettings.bAllowJoinViaPresenceFriendsOnly = false;
 
 		//Custom Game Settings
 		SessionSettings.Set(SERVER_NAME_SETTINGS_KEY, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
