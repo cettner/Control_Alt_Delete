@@ -29,26 +29,21 @@ void ARTSPlayerController::BeginPlay()
 {
 	bShowMouseCursor = true;
 	HudPtr = Cast<ARTSHUD>(GetHUD());
+	FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
 
-	if (GetNetMode() !=  ENetMode::NM_DedicatedServer)
+	if (Cast<ACommander>(GetPawn()) && HudPtr)
 	{
-		if (Cast<ACommander>(GetPawn()) && HudPtr)
-		{
-			bShowMouseCursor = false;
-			HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
-		}
-		else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
-		{
-			HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
-		}
+		bShowMouseCursor = false;
+		HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+	}
+	else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
+	{
+		HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
 	}
 	else
 	{
-	//	FOWManager = InitFOW();
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
 	}
 
 }

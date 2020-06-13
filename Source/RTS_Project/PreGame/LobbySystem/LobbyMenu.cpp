@@ -55,8 +55,7 @@ void ULobbyMenu::OnPressedStartGameButton()
 	UWorld* World = GetWorld();
 	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
-
-
+	PC->RequestStartGame();
 }
 
 void ULobbyMenu::Setup()

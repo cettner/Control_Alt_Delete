@@ -32,6 +32,9 @@ struct FGameSettings
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
+	uint32 PlayerId = -1;
+
+	UPROPERTY(EditDefaultsOnly)
 	int TeamId = -1;
 };
 
@@ -58,6 +61,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadLobbyMenu();
+
+	void StartGame();
 
 
 protected:

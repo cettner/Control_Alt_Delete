@@ -70,6 +70,9 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRequestMoveSlot(ALobbyPlayerController * RequestingPlayer, FSlotPlayerData RequestedSlot);
 
+		virtual bool RequestStartGame(ALobbyPlayerController * RequestingPlayer);
+		virtual bool CanPlayerStartGame(ALobbyPlayerController * Player);
+
 	public:
 	ALobbyGameState();
 

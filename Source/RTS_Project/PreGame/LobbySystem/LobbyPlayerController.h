@@ -7,10 +7,7 @@
 #include "GameArchitecture/Lobby/LobbyGameState.h"
 #include "LobbyPlayerController.generated.h"
 
-/**
- * 
- */
-
+/*Forward Declarations*/
 class ULobbyMenu;
 
 UCLASS()
@@ -32,6 +29,11 @@ public:
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void ServerRequestMoveSlot(FSlotPlayerData RequestedSlot);
+
+	void RequestStartGame();
+
+	UFUNCTION(Server, reliable, WithValidation)
+	void ServerRequestStartGame();
 
 	/*Only used by Listen server*/
 	void RefreshServerLobbyUI(TArray<FLobbyData> LobbyData);

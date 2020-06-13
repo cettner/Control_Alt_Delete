@@ -53,7 +53,55 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 
 	PlayersinLobby++;
 
+	/*Refresh the lobby UI for listen servers, Clients Will draw during lobby info replication*/
+	if (GetNetMode() == NM_ListenServer)
+	{
+		UWorld* World = GetWorld();
+		if (World == nullptr) return false;
+		ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
+		if (PC == nullptr) return false;
+		PC->RefreshServerLobbyUI(LobbyData);
+	}
+
 	return true;
+}
+
+bool ALobbyGameState::RequestStartGame(ALobbyPlayerController * RequestingPlayer)
+{
+	if (RequestingPlayer == nullptr) return false;
+
+	if (CanPlayerStartGame(RequestingPlayer) == false) return(false);
+	
+	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
+
+	if (GI == nullptr) return(false);
+	
+	GI->StartGame();
+	return(true);
+}
+
+bool ALobbyGameState::CanPlayerStartGame(ALobbyPlayerController * Player)
+{
+	if (HasAuthority() == false) return(false);
+
+	if (GetNetMode() == NM_ListenServer)
+	{
+		UWorld * World = GetWorld();
+		ALobbyPlayerController * LocalPC = World->GetFirstPlayerController<ALobbyPlayerController>();
+		if (World == nullptr || LocalPC == nullptr) return false;
+
+		if (LocalPC == Player)
+		{
+			return(true);
+		}
+
+	}
+	else if (GetNetMode() == NM_DedicatedServer)
+	{
+		/*Currently Unimplemented*/
+		return(false);
+	}
+	return false;
 }
 
 ALobbyGameState::ALobbyGameState()
@@ -76,7 +124,7 @@ void ALobbyGameState::OnRep_LobbyInfo()
 }
 
 bool ALobbyGameState::FindPlayerinLobby(ALobbyPlayerController * player, FSlotPlayerData& OutSlot)
-{
+{ 
 	int idtosearch = player->PlayerState->PlayerId;
 
 	for (int i = 0; i < LobbyData.Num(); i++)

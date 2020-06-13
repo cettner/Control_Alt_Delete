@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "LobbyGameInstance.h"
@@ -73,6 +73,13 @@ void ULobbyGameInstance::LoadLobbyMenu()
 	}
 	
 	LobbyMenu->Setup();
+}
+
+void ULobbyGameInstance::StartGame()
+{
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+	World->ServerTravel("/Game/Maps/DevMap?listen");
 }
 
 FLobbySettings ULobbyGameInstance::GetLobbySettings()
@@ -179,8 +186,6 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 
 	if (World == nullptr) return;
 
-	FString ListenOption = "?listen";
-	//bUseSeamlessTravel = true;
 	World->ServerTravel("/Game/Maps/LobbyMap?listen");
 }
 

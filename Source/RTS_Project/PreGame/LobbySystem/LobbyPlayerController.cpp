@@ -2,6 +2,7 @@
 
 
 #include "LobbyPlayerController.h"
+#include "LobbyMenu.h"
 
 ALobbyPlayerController::ALobbyPlayerController(const FObjectInitializer& ObjectInitializer)
 {
@@ -44,6 +45,24 @@ void ALobbyPlayerController::RequestMoveSlot(FSlotPlayerData RequestedSlot)
 	}
 }
 
+void ALobbyPlayerController::RequestStartGame()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		UWorld* World = GetWorld();
+		if (World == nullptr) return;
+
+		ALobbyGameState* GS = World->GetGameState<ALobbyGameState>();
+		if (GS == nullptr) return;
+
+		GS->RequestStartGame(this);
+	}
+	else
+	{
+		ServerRequestStartGame();
+	}
+}
+
 void ALobbyPlayerController::RefreshServerLobbyUI(TArray<FLobbyData> LobbyData)
 {
 	if (LobbyMenu == nullptr) return;
@@ -58,4 +77,14 @@ bool ALobbyPlayerController::ServerRequestMoveSlot_Validate(FSlotPlayerData Requ
 void ALobbyPlayerController::ServerRequestMoveSlot_Implementation (FSlotPlayerData RequestedSlotData)
 {
 	RequestMoveSlot(RequestedSlotData);
+}
+
+bool ALobbyPlayerController::ServerRequestStartGame_Validate()
+{
+	return(true);
+}
+
+void  ALobbyPlayerController::ServerRequestStartGame_Implementation()
+{
+	RequestStartGame();
 }
