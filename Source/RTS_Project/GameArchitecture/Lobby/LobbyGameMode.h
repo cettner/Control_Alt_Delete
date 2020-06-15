@@ -15,6 +15,7 @@ class RTS_PROJECT_API ALobbyGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 		virtual void PostLogin(APlayerController* NewPlayer) override;
+	    virtual void Logout(AController * Exiting) override;
 		ALobbyGameMode(const FObjectInitializer& ObjectInitializer);
 	
 };

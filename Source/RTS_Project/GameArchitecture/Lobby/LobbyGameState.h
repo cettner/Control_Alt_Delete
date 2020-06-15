@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
+#include "GameArchitecture/Instance/LobbyGameInstance.h"
 #include "LobbyGameState.generated.h"
 
 
@@ -64,6 +65,7 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 
 
 	public:
+		ALobbyGameState();
 		TArray<FLobbyData> GetLobbyData();
 		bool AddPlayertoLobby(ALobbyPlayerController* NewPlayer);
 
@@ -72,9 +74,12 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 
 		virtual bool RequestStartGame(ALobbyPlayerController * RequestingPlayer);
 		virtual bool CanPlayerStartGame(ALobbyPlayerController * Player);
+		virtual bool StoreLobbyData();
+	
+	protected:
+		virtual bool StorePlayerData(ULobbyGameInstance * GI);
+		virtual bool StoreServerData(ULobbyGameInstance * GI);
 
-	public:
-	ALobbyGameState();
 
 
 	protected:

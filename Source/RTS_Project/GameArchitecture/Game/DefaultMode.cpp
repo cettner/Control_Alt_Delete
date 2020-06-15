@@ -19,9 +19,9 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	}
 }
 
-void ADefaultMode::BeginPlay()
+void ADefaultMode::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 	UWorld* World = GetWorld();
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
@@ -33,16 +33,6 @@ void ADefaultMode::BeginPlay()
 			TeamStartingPoints[Start->teamid].Add(Start);
 		}
 	}
-}
-
-void ADefaultMode::PostLogin(APlayerController * NewPlayer)
-{
-	Super::PostLogin(NewPlayer);
-}
-
-void ADefaultMode::Logout(AController * Exiting)
-{
-	Super::Logout(Exiting);
 }
 
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
@@ -71,9 +61,9 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 	return (ChoosePlayerStart(Player));
 }
 
-void ADefaultMode::InitGame(const FString & MapName, const FString & Options, FString & ErrorMessage)
+bool ADefaultMode::ReadyToStartMatch_Implementation()
 {
-	Super::InitGame(MapName, Options, ErrorMessage);
+	return false;
 }
 
 void ADefaultMode::InitGameState()

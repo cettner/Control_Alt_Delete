@@ -21,6 +21,11 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	}
 }
 
+void ALobbyGameMode::Logout(AController * Exiting)
+{
+	Super::Logout(Exiting);
+}
+
 ALobbyGameMode::ALobbyGameMode(const FObjectInitializer& ObjectInitializer)
 {
 	PlayerControllerClass = ALobbyPlayerController::StaticClass();

@@ -56,22 +56,14 @@ public:
 
 	ARTSHUD * HudPtr;
 
-	/*
-	UFUNCTION(BlueprintCallable, Category = Spawn)
-	ARTSStructure * Spawn_RTS_Structure(FVector Location, FRotator Rotation, int Structure_index);
 
-	UFUNCTION(BlueprintCallable, Category = Spawn)
-	ARTSMinion * Spawn_RTS_Minion(FVector Location, FRotator Rotation, int Unit_index);
-
-	UFUNCTION(BlueprintCallable, Category = Spawn)
-	AWeapon * Spawn_Weapon(FVector Location, FRotator Rotation, int Weapon_index);
-	*/
-
+/**************************LOCAL DATA**************************************/
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> SelectedUnits;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSStructure*> SelectedStructures;
+/*************************************************************************/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <int> Resource_Count;
@@ -91,9 +83,6 @@ public:
 
 	virtual void SetPawn(APawn* InPawn) override;
 
-	UFUNCTION(Server, unreliable, WithValidation)
-	void FinishPlayerLogin();
-
 	void FinishLocalPlayerSetup(ARTFPSPlayerState * PS);
 	
 	virtual AFogOfWarManager * InitFOW();
@@ -107,5 +96,4 @@ protected:
 private:
 	void DebugEvent();
 
-//	RTSSpawnHelper  SpawnHelper;
 };

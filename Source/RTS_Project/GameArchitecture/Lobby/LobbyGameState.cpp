@@ -5,6 +5,7 @@
 #include "UnrealNetwork.h"
 #include "PreGame/LobbySystem/LobbyPlayerController.h"
 #include "GameArchitecture/Instance/LobbyGameInstance.h"
+#include "PreGame/LobbySystem/LobbyMenu.h"
 #include "GameFramework/PlayerState.h"
 
 
@@ -104,6 +105,76 @@ bool ALobbyGameState::CanPlayerStartGame(ALobbyPlayerController * Player)
 	return false;
 }
 
+bool ALobbyGameState::StoreLobbyData()
+{
+	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
+	if (GI == nullptr) return(false);
+
+	if (GetNetMode() > NM_ListenServer)
+	{
+		/*Client: Only Store Player Data*/
+		return(StorePlayerData(GI));
+	}
+	else if (GetNetMode() == NM_DedicatedServer)
+	{
+		/*Dedicated Server Only Store Server Data*/
+		return(StoreServerData(GI));
+	}
+	else if(GetNetMode() == NM_ListenServer)
+	{
+		/*Listen Server, Store Both Player And Server Data*/
+		return(StoreServerData(GI) && StorePlayerData(GI));
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool ALobbyGameState::StorePlayerData(ULobbyGameInstance * GI)
+{
+	UWorld * World = GetWorld();
+	if (World == nullptr) return false;
+
+	ALobbyPlayerController * Player = World->GetFirstPlayerController<ALobbyPlayerController>();
+	if (Player == nullptr) return false;
+
+	/*Find the player in the lobby*/
+	FSlotPlayerData playerslot;
+	if (FindPlayerinLobby(Player, playerslot) == false) return(false);
+	
+	FPlayerSettings settings;
+	settings.PlayerId = playerslot.OwningPlayerID;
+	settings.TeamId = playerslot.TeamId;
+	settings.bIsValid = true;
+
+	return(GI->SetPlayerSettings(settings));
+}
+
+bool ALobbyGameState::StoreServerData(ULobbyGameInstance * GI)
+{
+	FServerSettings ServerSettings = FServerSettings();
+	for (int i = 0; i < LobbyData.Num(); i++)
+	{
+		FLobbyData team = LobbyData[i];
+		for (int k = 0; k < team.TeamData.Num(); k++)
+		{
+			FSlotPlayerData slotdata = team.TeamData[k];
+			
+			if (slotdata.isSlotActive)
+			{
+				FPlayerSettings activeplayer;
+				activeplayer.PlayerId = slotdata.OwningPlayerID;
+				activeplayer.TeamId = slotdata.TeamId;
+				ServerSettings.settings.Emplace(activeplayer);
+				ServerSettings.bIsValid = true;
+			}
+		}
+	}
+
+	return (GI->SetServerSettings(ServerSettings));
+}
+
 ALobbyGameState::ALobbyGameState()
 {
 	LobbyData = TArray<FLobbyData>();
@@ -119,12 +190,15 @@ void ALobbyGameState::OnRep_LobbyInfo()
 
 	ULobbyMenu* Lobby = PC->GetLobbyMenu();
 	if (Lobby == nullptr) return;
-
+	
+	/*Store Our Data Locally in the Game Instance Then Draw the new Lobby*/
+	StoreLobbyData();
 	Lobby->DrawLobbySlots(LobbyData);
 }
 
 bool ALobbyGameState::FindPlayerinLobby(ALobbyPlayerController * player, FSlotPlayerData& OutSlot)
 { 
+	if (player == nullptr || player->PlayerState == nullptr) return false;
 	int idtosearch = player->PlayerState->PlayerId;
 
 	for (int i = 0; i < LobbyData.Num(); i++)

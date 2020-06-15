@@ -65,6 +65,15 @@ void ALobbyPlayerController::RequestStartGame()
 
 void ALobbyPlayerController::RefreshServerLobbyUI(TArray<FLobbyData> LobbyData)
 {
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+
+	ALobbyGameState* GS = World->GetGameState<ALobbyGameState>();
+	if (GS == nullptr) return;
+
+	/*Store the Data Locally and Draw the Lobby*/
+	GS->StoreLobbyData();
+
 	if (LobbyMenu == nullptr) return;
 	LobbyMenu->DrawLobbySlots(LobbyData);
 }

@@ -7,8 +7,6 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSessionInterface.h"
 #include "PreGame/LobbySystem/SessionMenuInterface.h"
-#include "PreGame/MainMenu/MainMenu.h"
-#include "PreGame/LobbySystem/LobbyMenu.h"
 #include "LobbyGameInstance.generated.h"
 
 
@@ -27,16 +25,30 @@ struct FLobbySettings
 };
 
 USTRUCT()
-struct FGameSettings
+struct FPlayerSettings
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	uint32 PlayerId = -1;
+	int PlayerId = -1;
 
 	UPROPERTY(EditDefaultsOnly)
 	int TeamId = -1;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsValid = false;
 };
+
+struct FServerSettings
+{
+	TArray<FPlayerSettings> settings = TArray<FPlayerSettings>();
+	bool bIsValid = false;
+};
+	
+
+/*Forward Declarations*/
+class UMainMenu;
+class ULobbyMenu;
 
 
 UCLASS()
@@ -52,8 +64,11 @@ public:
 	/*Called by server at lobby startup*/
 	FLobbySettings GetLobbySettings();
 
-	bool SetGameSettings(FGameSettings settings);
-	FGameSettings GetGameSettings();
+	bool SetPlayerSettings(FPlayerSettings settings);
+	FPlayerSettings GetPlayerSettings();
+
+	bool SetServerSettings(FServerSettings settings);
+	FServerSettings GetServerSettings();
 
 	// Create menu called from the level blueprint
 	UFUNCTION(BlueprintCallable)
@@ -63,7 +78,6 @@ public:
 	void LoadLobbyMenu();
 
 	void StartGame();
-
 
 protected:
 	bool RestartSession;
@@ -127,8 +141,8 @@ public:
 	FString PlayerName;
 /**********************************************************************************************/
 
-	FGameSettings GameSettings;
-
+	FPlayerSettings PlayerSettings;
+	FServerSettings ServerSettings;
 
 private:
 

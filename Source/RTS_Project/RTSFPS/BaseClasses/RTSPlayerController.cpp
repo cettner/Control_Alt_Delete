@@ -181,13 +181,3 @@ void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
 	Possess(camera);
 }
 
-
-bool ARTSPlayerController::FinishPlayerLogin_Validate()
-{
-	return(true);
-}
-
-void ARTSPlayerController::FinishPlayerLogin_Implementation()
-{
-
-}

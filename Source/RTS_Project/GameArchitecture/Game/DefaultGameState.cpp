@@ -64,14 +64,13 @@ bool ADefaultGameState::IsTeamValid(int Team_Index)
 	return(-1 < Team_Index && Team_Index < GM->GetNumTeams());
 }
 
-void ADefaultGameState::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void ADefaultGameState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	if (HasAuthority())
+	{
+
+	}
 }
 
 ADefaultGameState::ADefaultGameState(const FObjectInitializer & ObjectInitializer)

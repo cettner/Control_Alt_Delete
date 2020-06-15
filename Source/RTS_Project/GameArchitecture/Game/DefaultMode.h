@@ -61,11 +61,9 @@ public:
 	int GetTeamSize() { return(team_size);  }
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void PostLogin(APlayerController * NewPlayer) override;
-	virtual void Logout(AController * Exiting) override;
+	virtual void PostInitializeComponents() override;
 	virtual AActor * FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override;
-	virtual void InitGame(const FString & MapName,const FString & Options, FString & ErrorMessage) override;
+	virtual bool ReadyToStartMatch_Implementation();
 	virtual void InitGameState() override;
 
 protected:

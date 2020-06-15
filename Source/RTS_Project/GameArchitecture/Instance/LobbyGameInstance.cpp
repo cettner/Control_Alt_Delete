@@ -4,6 +4,8 @@
 #include "LobbyGameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemTypes.h"
+#include "PreGame/MainMenu/MainMenu.h"
+#include "PreGame/LobbySystem/LobbyMenu.h"
 
 const static FName SESSION_NAME = TEXT("RTSFPSGameSession");
 const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");
@@ -87,15 +89,26 @@ FLobbySettings ULobbyGameInstance::GetLobbySettings()
 	return LobbySettings;
 }
 
-bool ULobbyGameInstance::SetGameSettings(FGameSettings settings)
+bool ULobbyGameInstance::SetPlayerSettings(FPlayerSettings settings)
 {
-	GameSettings = settings;
+	PlayerSettings = settings;
 	return true;
 }
 
-FGameSettings ULobbyGameInstance::GetGameSettings()
+FPlayerSettings ULobbyGameInstance::GetPlayerSettings()
 {
-	return GameSettings;
+	return PlayerSettings;
+}
+
+bool ULobbyGameInstance::SetServerSettings(FServerSettings settings)
+{
+	ServerSettings = settings;
+	return true;
+}
+
+FServerSettings ULobbyGameInstance::GetServerSettings()
+{
+	return(ServerSettings);
 }
 
 void ULobbyGameInstance::Host(FString ServerName)
