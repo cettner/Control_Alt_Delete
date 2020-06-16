@@ -3,7 +3,6 @@
 #include "DefaultMode.h"
 #include "DefaultGameState.h"
 #include "Engine.h"
-
 #include "DefaultPlayerState.h"
 
 ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer) 
@@ -12,11 +11,8 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	GameStateClass = ADefaultGameState::StaticClass();
 	PlayerStateClass = ADefaultPlayerState::StaticClass();
 
-	for (int i = 0; i < num_teams; i++)
-	{
-		TeamSpawnSelector newteam;
-		TeamStartingPoints.Emplace(newteam);
-	}
+	PlayerRegistry = TMap<int, bool>();
+	LobbyPlayers = TArray<FPlayerSettings>();
 }
 
 void ADefaultMode::PostInitializeComponents()
@@ -25,6 +21,15 @@ void ADefaultMode::PostInitializeComponents()
 	UWorld* World = GetWorld();
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
+
+	/*Create a Set of spawn points for each team*/
+	for (int i = 0; i < NumTeams; i++)
+	{
+		TeamSpawnSelector newteam;
+		TeamStartingPoints.Emplace(newteam);
+	}
+	
+	/*Find PlayerStarts For each team and add them*/
 	for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
 	{
 		ATeamPlayerStart* Start = *It;
@@ -33,15 +38,20 @@ void ADefaultMode::PostInitializeComponents()
 			TeamStartingPoints[Start->teamid].Add(Start);
 		}
 	}
+
+	if (!LoadServerData())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PreInitializeComponents] Failed to Load Server Data from Game Instance"));
+	}
+}
+
+void ADefaultMode::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
 }
 
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
-	if (Cast<APlayerStart>(Player->StartSpot))
-	{
-		return(Cast<APlayerStart>(Player->StartSpot));
-	}
-
 	UWorld* World = GetWorld();
 	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(Player->PlayerState);
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
@@ -63,7 +73,7 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 
 bool ADefaultMode::ReadyToStartMatch_Implementation()
 {
-	return false;
+	return CheckPlayerRegistry();
 }
 
 void ADefaultMode::InitGameState()
@@ -75,6 +85,107 @@ void ADefaultMode::InitGameState()
 	{
 		GS->TeamInitialize(this);
 	}
+}
+
+void ADefaultMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+	
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+
+	/*IF we're on a listen server, register the servers playercontroller*/
+	if (GetNetMode() == NM_ListenServer && NewPlayer == World->GetFirstPlayerController())
+	{
+		ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+		FPlayerSettings settings;
+		if (PC && PC->GetPlayerInfo(settings))
+		{
+			RegisterPlayerData(PC, settings);
+		}
+	}
+}
+
+bool ADefaultMode::LoadServerData()
+{
+
+	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
+
+	FServerSettings settings = GI->GetServerSettings();
+
+	if (settings.bIsValid == false) return false;
+	
+	bool retval = true;
+
+	NumTeams = settings.NumTeams;
+	TeamSize = settings.NumPlayersPerTeam;
+	LobbyPlayers = settings.settings;
+
+	for (int i = 0; i < LobbyPlayers.Num(); i++)
+	{
+		if (LobbyPlayers[i].bIsValid  && !PlayerRegistry.Contains(LobbyPlayers[i].PlayerId))
+		{
+			PlayerRegistry.Emplace(LobbyPlayers[i].PlayerId, false);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::LoadServerData] Server Player Settings are Invalid"));
+			retval = false;
+		}
+	}
+
+	return retval;
+}
+
+bool ADefaultMode::RegisterPlayerData(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings)
+{
+	if (settings.bIsValid == false || RegisteringPlayer == nullptr) return false;
+
+	if (PlayerRegistry.Contains(settings.PlayerId))
+	{
+		PlayerRegistry[settings.PlayerId] = FinishPlayerRegistration(RegisteringPlayer, settings);
+		return(PlayerRegistry[settings.PlayerId]);
+	}
+	else
+	{
+		/*TODO:: Implement adding of player midgame*/
+	}
+
+	return false;
+}
+
+bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings)
+{
+	ADefaultPlayerState* PS = RegisteringPlayer->GetPlayerState<ADefaultPlayerState>();
+	int playerindex = INDEX_NONE; 
+	
+	for (int i = 0; i < LobbyPlayers.Num(); i++)
+	{
+		if (LobbyPlayers[i].PlayerId == settings.PlayerId)
+		{
+			playerindex = i;
+			break;
+		}
+	}
+	
+	if (playerindex <= INDEX_NONE || PS == nullptr) return(false);
+
+	PS->Team_ID = LobbyPlayers[playerindex].TeamId;
+	PS->PlayerId = LobbyPlayers[playerindex].PlayerId;
+
+	return true;
+}
+
+bool ADefaultMode::CheckPlayerRegistry()
+{
+	bool ballplayersregistered = (PlayerRegistry.Num() > 0);
+
+	for (TPair<int,bool>& Elem : PlayerRegistry)
+	{
+		ballplayersregistered &= Elem.Value;
+	}
+
+	return(ballplayersregistered);
 }
 
 

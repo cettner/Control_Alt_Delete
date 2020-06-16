@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
 #include "RTSFPS/GameObjects/TeamPlayerStart.h"
+#include "GameArchitecture/Game/DefaultPlayerController.h"
+#include "GameArchitecture/Instance/LobbyGameInstance.h"
 #include "DefaultMode.generated.h"
 
 /**
@@ -57,17 +59,32 @@ class RTS_PROJECT_API ADefaultMode : public AGameMode
 	GENERATED_BODY()
 public:
 	ADefaultMode(const FObjectInitializer& ObjectInitializer);
-	int GetNumTeams() { return (num_teams); }
-	int GetTeamSize() { return(team_size);  }
+	virtual bool RegisterPlayerData(ADefaultPlayerController * RegisteringPlayer, FPlayerSettings settings);
+	int GetNumTeams() { return (NumTeams); }
+	int GetTeamSize() { return (TeamSize); }
+
 
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void PreInitializeComponents() override;
 	virtual AActor * FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override;
-	virtual bool ReadyToStartMatch_Implementation();
+	virtual bool ReadyToStartMatch_Implementation() override;
 	virtual void InitGameState() override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 protected:
-	int num_teams = 2;
-	int team_size = 2;
+	virtual bool LoadServerData();
+	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings);
+	virtual bool CheckPlayerRegistry();
+
+protected:
+/************************************/
+	/*Loaded from Game Instance*/
+	int NumTeams = 2;
+	int TeamSize = 2;
+	TArray<FPlayerSettings> LobbyPlayers;
+/************************************/
+	
+	TMap<int, bool> PlayerRegistry;
 	TArray<TeamSpawnSelector> TeamStartingPoints;
 };

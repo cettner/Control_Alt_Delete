@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "GameArchitecture/Instance/DefaultGameInstance.h"
+#include "GameArchitecture/Instance/LobbyGameInstance.h"
 #include "DefaultPlayerController.generated.h"
 
 /**
@@ -15,8 +15,16 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-	UFUNCTION(Server, reliable, WithValidation)
-	void ServerRegisterPlayerInfo(FPlayerSettings settings);
+	protected:
+		void PostInitializeComponents() override;
 
-	virtual void RegisterPlayerInfo(FPlayerSettings settings);
+	public:
+		virtual bool GetPlayerInfo(FPlayerSettings& outsettings);
+
+	protected:
+		UFUNCTION(Server, reliable, WithValidation)
+		void ServerRegisterPlayerInfo(FPlayerSettings settings);
+
+		virtual void RegisterPlayerInfo(FPlayerSettings settings);
+
 };

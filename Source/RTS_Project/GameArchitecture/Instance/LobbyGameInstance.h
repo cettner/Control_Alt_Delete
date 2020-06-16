@@ -39,9 +39,21 @@ struct FPlayerSettings
 	bool bIsValid = false;
 };
 
+USTRUCT()
 struct FServerSettings
 {
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
 	TArray<FPlayerSettings> settings = TArray<FPlayerSettings>();
+
+	UPROPERTY(EditDefaultsOnly)
+	int NumTeams = 2;
+
+	UPROPERTY(EditDefaultsOnly)
+	int NumPlayersPerTeam = 2;
+
+	UPROPERTY(EditDefaultsOnly)
 	bool bIsValid = false;
 };
 	

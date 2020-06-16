@@ -16,13 +16,6 @@ ARTSPlayerController::ARTSPlayerController()
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
 	FOWManagerClass = AFogOfWarManager::StaticClass();
-	/*
-	ConstructorHelpers::FObjectFinder<UBlueprint> TargetBlueprint(TEXT(FOW_MANAGER_PATH));
-	if (TargetBlueprint.Object)
-	{
-		FOWManagerClass = (UClass*)TargetBlueprint.Object->GeneratedClass;
-	}
-	*/
 }
 
 void ARTSPlayerController::BeginPlay()

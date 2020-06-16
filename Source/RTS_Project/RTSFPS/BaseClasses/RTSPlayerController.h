@@ -11,6 +11,7 @@
 #include "RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "RTSFPS/RTS/FOW/FogOfWarManager.h"
 #include "GameArchitecture/Game/RTFPSPlayerState.h"
+#include "GameArchitecture/Game/DefaultPlayerController.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -20,9 +21,6 @@
  */
 
 #define NUM_RESOURCES 3
-#define RESOURCE_ONE_PLAYER_START 200
-#define RESOURCE_TWO_PLAYER_START 150
-#define RESOURCE_THREE_PLAYER_START 0
 #define MAX_RESOURCES 9999
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
@@ -38,7 +36,7 @@ class ARTSStructure;
 class AWeapon;
 
 UCLASS()
-class RTS_PROJECT_API ARTSPlayerController : public APlayerController
+class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
 {
 	GENERATED_BODY()
 	

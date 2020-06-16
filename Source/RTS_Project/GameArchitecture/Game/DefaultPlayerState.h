@@ -16,9 +16,8 @@ class RTS_PROJECT_API ADefaultPlayerState : public APlayerState
 
 protected:
 	virtual void PostInitializeComponents() override;
+
 protected:
-	virtual void BeginPlay() override;
-	virtual void ClientInitialize(AController * C) override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 public:

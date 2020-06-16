@@ -10,23 +10,6 @@ void ADefaultPlayerState::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
-void ADefaultPlayerState::BeginPlay()
-{
-	if (HasAuthority())
-	{
-		UWorld * World = GetWorld();
-		if (World && World->GetGameState<ADefaultGameState>())
-		{
-			Team_ID = World->GetGameState<ADefaultGameState>()->AssignBalancedTeam(this);
-		}
-	}
-}
-
-void ADefaultPlayerState::ClientInitialize(AController * C)
-{
-	Super::ClientInitialize(C);
-}
-
 ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

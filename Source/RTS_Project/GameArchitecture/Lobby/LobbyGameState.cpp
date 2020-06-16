@@ -166,6 +166,7 @@ bool ALobbyGameState::StoreServerData(ULobbyGameInstance * GI)
 				FPlayerSettings activeplayer;
 				activeplayer.PlayerId = slotdata.OwningPlayerID;
 				activeplayer.TeamId = slotdata.TeamId;
+				activeplayer.bIsValid = true;
 				ServerSettings.settings.Emplace(activeplayer);
 				ServerSettings.bIsValid = true;
 			}

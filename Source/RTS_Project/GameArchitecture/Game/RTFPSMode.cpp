@@ -55,11 +55,6 @@ UClass * ARTFPSMode::GetDefaultPawnClassForController_Implementation(AController
 
 AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
-	if (Cast<APlayerStart>(Player->StartSpot))
-	{
-		return(Cast<APlayerStart>(Player->StartSpot));
-	}
-
 	UWorld* World = GetWorld();
 	ARTFPSPlayerState * PS = Cast<ARTFPSPlayerState>(Player->PlayerState);
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
@@ -84,16 +79,16 @@ void ARTFPSMode::BeginPlay()
 	Super::BeginPlay();
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
-	for (int i = 0; i < TeamStartingPoints.Num(); i++)
-	{
-		for (int k = 0; k < TeamStartingPoints[i].Num(); k++)
-		{
-			ARTFPSPlayerStart * Start = Cast<ARTFPSPlayerStart>(TeamStartingPoints[i].GetNextSpawn());
-			if (Start && Start->isRTSStart && GS->IsTeamValid(Start->teamid))
-			{
-				RTSStartingPoints[Start->teamid].Add(Start);
-			}
-		}
-	}
+	//for (int i = 0; i < TeamStartingPoints.Num(); i++)
+	//{
+	//	for (int k = 0; k < TeamStartingPoints[i].Num(); k++)
+	//	{
+	//		ARTFPSPlayerStart * Start = Cast<ARTFPSPlayerStart>(TeamStartingPoints[i].GetNextSpawn());
+	//		if (Start && Start->isRTSStart && GS->IsTeamValid(Start->teamid))
+	//		{
+	//			RTSStartingPoints[Start->teamid].Add(Start);
+	//		}
+	//	}
+	//}
 			
 }

@@ -30,7 +30,7 @@ void ULobbyGameInstance::Init()
 
 		if (SessionInterface.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[UEscapeRoomGameInstance::Init] SessionInterface.IsValid"));
+			UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::Init] SessionInterface.IsValid"));
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &ULobbyGameInstance::OnCreateSessionComplete);
 
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &ULobbyGameInstance::OnDestroySessionComplete);
