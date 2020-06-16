@@ -8,6 +8,7 @@
 void ADefaultPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	RequestRegistration();
 }
 
 bool ADefaultPlayerController::ServerRegisterPlayerInfo_Validate(FPlayerSettings settings)
