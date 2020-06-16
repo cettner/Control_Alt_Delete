@@ -94,16 +94,27 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
 
+	ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+
 	/*IF we're on a listen server, register the servers playercontroller*/
 	if (GetNetMode() == NM_ListenServer && NewPlayer == World->GetFirstPlayerController())
 	{
-		ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
 		FPlayerSettings settings;
 		if (PC && PC->GetPlayerInfo(settings))
 		{
 			RegisterPlayerData(PC, settings);
 		}
 	}
+	else if (PC)
+	{
+		/*Else Request the Client for registration data*/
+		PC->ClientRequestRegistration();
+	}
+
+
+
+
+
 }
 
 bool ADefaultMode::LoadServerData()

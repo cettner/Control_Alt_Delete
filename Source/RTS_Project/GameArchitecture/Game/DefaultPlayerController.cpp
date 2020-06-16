@@ -8,16 +8,6 @@
 void ADefaultPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	FPlayerSettings mysettings;
-	if (!HasAuthority() && GetPlayerInfo(mysettings))
-	{
-		RegisterPlayerInfo(mysettings);
-	}
-	else if(!HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[DefaultPlayerController::PostInitializeComponents] Failed to get player settings"));
-	}
 }
 
 bool ADefaultPlayerController::ServerRegisterPlayerInfo_Validate(FPlayerSettings settings)
@@ -27,12 +17,17 @@ bool ADefaultPlayerController::ServerRegisterPlayerInfo_Validate(FPlayerSettings
 
 void ADefaultPlayerController::ServerRegisterPlayerInfo_Implementation(FPlayerSettings settings)
 {
+	RegisterPlayerInfo(settings);
+}
 
+void ADefaultPlayerController::ClientRequestRegistration_Implementation()
+{
+	RequestRegistration();
 }
 
 void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
 {
-	if (HasAuthority())
+	if (HasAuthority() && (bisregistered == false))
 	{
 		UWorld* World = GetWorld();
 		if (World == nullptr) return;
@@ -40,11 +35,27 @@ void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
 		ADefaultMode * GM = World->GetAuthGameMode<ADefaultMode>();
 		if (GM == nullptr) return;
 
-		GM->RegisterPlayerData(this,settings);
+		bisregistered = GM->RegisterPlayerData(this,settings);
 	}
 	else
 	{
 		ServerRegisterPlayerInfo(settings);
+	}
+}
+
+void ADefaultPlayerController::RequestRegistration()
+{
+	if (GetNetMode() == NM_Client)
+	{
+		FPlayerSettings mysettings;
+		if (GetPlayerInfo(mysettings))
+		{
+			ServerRegisterPlayerInfo(mysettings);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[DefaultPlayerController::RequestRegistration] Failed to get player settings"));
+		}
 	}
 }
 

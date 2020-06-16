@@ -21,10 +21,19 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 	public:
 		virtual bool GetPlayerInfo(FPlayerSettings& outsettings);
 
+		UFUNCTION(Client, reliable)
+		void ClientRequestRegistration();
+
+		bool IsRegistered() { return(bisregistered); }
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);
 
 		virtual void RegisterPlayerInfo(FPlayerSettings settings);
+
+		virtual void RequestRegistration();
+
+		bool bisregistered = false;
 
 };
