@@ -21,7 +21,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 	public:
 		virtual bool GetPlayerInfo(FPlayerSettings& outsettings);
 
-		UFUNCTION(Client, reliable)
+		UFUNCTION(NetMulticast, reliable)
 		void ClientRequestRegistration();
 
 		bool IsRegistered() { return(bisregistered); }
