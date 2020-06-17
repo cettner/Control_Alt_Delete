@@ -14,14 +14,16 @@ class RTS_PROJECT_API ADefaultPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
+public:
+	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
+
 protected:
 	virtual void PostInitializeComponents() override;
+	void ClientInitialize(AController* Controller) override;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
-public:
-	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
 
 public:
 

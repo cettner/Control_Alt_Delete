@@ -105,16 +105,6 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 			RegisterPlayerData(PC, settings);
 		}
 	}
-	else if (PC)
-	{
-		/*Else Request the Client for registration data*/
-		PC->ClientRequestRegistration();
-	}
-
-
-
-
-
 }
 
 bool ADefaultMode::LoadServerData()
