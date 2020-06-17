@@ -36,6 +36,7 @@ public:
 	void ServerRequestStartGame();
 
 	/*Only used by Listen server*/
-	void RefreshServerLobbyUI(TArray<FLobbyData> LobbyData);
+	void RefreshLobbyUI();
+
 
 };

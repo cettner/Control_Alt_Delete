@@ -46,7 +46,7 @@ void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
 
 void ADefaultPlayerController::RequestRegistration()
 {
-	if (GetNetMode() == NM_Client)
+	if (GetLocalRole() == ROLE_AutonomousProxy)
 	{
 		FPlayerSettings mysettings;
 		if (GetPlayerInfo(mysettings))

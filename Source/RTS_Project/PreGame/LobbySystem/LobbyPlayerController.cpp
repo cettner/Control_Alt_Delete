@@ -63,7 +63,7 @@ void ALobbyPlayerController::RequestStartGame()
 	}
 }
 
-void ALobbyPlayerController::RefreshServerLobbyUI(TArray<FLobbyData> LobbyData)
+void ALobbyPlayerController::RefreshLobbyUI()
 {
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
@@ -75,7 +75,7 @@ void ALobbyPlayerController::RefreshServerLobbyUI(TArray<FLobbyData> LobbyData)
 	GS->StoreLobbyData();
 
 	if (LobbyMenu == nullptr) return;
-	LobbyMenu->DrawLobbySlots(LobbyData);
+	LobbyMenu->DrawLobbySlots(GS->GetLobbyData());
 }
 
 bool ALobbyPlayerController::ServerRequestMoveSlot_Validate(FSlotPlayerData RequestedSlot)

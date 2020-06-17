@@ -61,7 +61,7 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 		if (World == nullptr) return false;
 		ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 		if (PC == nullptr) return false;
-		PC->RefreshServerLobbyUI(LobbyData);
+		PC->RefreshLobbyUI();
 	}
 
 	return true;
@@ -188,12 +188,12 @@ void ALobbyGameState::OnRep_LobbyInfo()
 	
 	ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
-
-	ULobbyMenu* Lobby = PC->GetLobbyMenu();
-	if (Lobby == nullptr) return;
 	
 	/*Store Our Data Locally in the Game Instance Then Draw the new Lobby*/
 	StoreLobbyData();
+
+	ULobbyMenu* Lobby = PC->GetLobbyMenu();
+	if (Lobby == nullptr) return;
 	Lobby->DrawLobbySlots(LobbyData);
 }
 
@@ -264,7 +264,7 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	if (World == nullptr) return;
 	ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
-	PC->RefreshServerLobbyUI(LobbyData);
+	PC->RefreshLobbyUI();
 
 	
 }
