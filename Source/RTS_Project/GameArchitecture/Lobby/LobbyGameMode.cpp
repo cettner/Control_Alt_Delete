@@ -4,6 +4,7 @@
 #include "LobbyGameMode.h"
 #include "LobbyGameState.h"
 #include "PreGame/LobbySystem/LobbyPlayerController.h"
+#include "PreGame/LobbySystem/LobbyPlayerState.h"
 #include "LobbyGameSession.h"
 #include "PreGame/MenuPawn.h"
 
@@ -29,6 +30,7 @@ void ALobbyGameMode::Logout(AController * Exiting)
 ALobbyGameMode::ALobbyGameMode(const FObjectInitializer& ObjectInitializer)
 {
 	PlayerControllerClass = ALobbyPlayerController::StaticClass();
+	PlayerStateClass = ALobbyPlayerState::StaticClass();
 	DefaultPawnClass = AMenuPawn::StaticClass();
 	GameSessionClass = ALobbyGameSession::StaticClass();
 	GameStateClass = ALobbyGameState::StaticClass();
