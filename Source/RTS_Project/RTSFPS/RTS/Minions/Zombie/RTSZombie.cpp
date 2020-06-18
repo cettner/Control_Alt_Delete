@@ -70,8 +70,19 @@ bool ARTSZombie::CanDoDamage(AActor* AttackMe)
 void ARTSZombie::ClearTarget()
 {
 	Super::ClearTarget();
+	
+	/*Have to notify the controller that the attack failed otherwise it will continue to wait for the message*/
+	if (GetWorldTimerManager().IsTimerActive(AttackEndHandler) || GetWorldTimerManager().IsTimerActive(DamageEventHandler))
+	{
+		ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
+		if (AIC)
+		{
+			AIC->SendAIMessage(ARTSAIController::AIMessage_Finished, FAIMessage::EStatus::Failure);
+		}
+	}
 	GetWorldTimerManager().ClearTimer(AttackEndHandler);
 	GetWorldTimerManager().ClearTimer(DamageEventHandler);
+	bAttackAnimPlaying = false;
 }
 
 void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)

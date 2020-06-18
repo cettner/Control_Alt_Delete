@@ -103,6 +103,8 @@ AActor * ARTSMinion::GetTarget()
 
 void ARTSMinion::SetTarget(AActor * NewTarget)
 {
+	ClearTarget();
+
 	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());
 	if (rtscontrol)
 	{
