@@ -131,25 +131,27 @@ protected:
 	TSubclassOf<UUserWidget> LobbyClass;
 	ULobbyMenu* LobbyMenu;
 
+/***********************************************************************************************/
+	//Maps
+	UPROPERTY(EditDefaultsOnly, Category = Maps)
+	FString MainMenuMapName;
 
-	UPROPERTY(EditDefaultsOnly, Category = Session)
+	UPROPERTY(EditDefaultsOnly, Category = Maps)
 	FString LobbyMapName;
 
-	UPROPERTY(EditDefaultsOnly, Category = Session)
+	UPROPERTY(EditDefaultsOnly, Category = Maps)
 	FString GameMapName;
 /**********************************************************************************************/
 
-
-/**********************************************************************************************/
 protected:
 	/*User Input TODO:: Make Setable from UI*/
-	UPROPERTY(EditDefaultsOnly, Category = Session)
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
 	FString DesiredServerName;
 
 	FLobbySettings LobbySettings;
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = Session)
+	UPROPERTY(EditDefaultsOnly, Category = Settings)
 	FString PlayerName;
 /**********************************************************************************************/
 

@@ -63,8 +63,15 @@ void ARTSZombie::StartAttack(AActor* AttackMe)
 }
 
 bool ARTSZombie::CanDoDamage(AActor* AttackMe)
-{
+{	
 	return(IsEnemy(AttackMe) && (AttackVarients.Num() > 0));
+}
+
+void ARTSZombie::ClearTarget()
+{
+	Super::ClearTarget();
+	GetWorldTimerManager().ClearTimer(AttackEndHandler);
+	GetWorldTimerManager().ClearTimer(DamageEventHandler);
 }
 
 void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)

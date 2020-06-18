@@ -21,33 +21,32 @@ void ADefaultMode::PostInitializeComponents()
 	UWorld* World = GetWorld();
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
-
-	/*Create a Set of spawn points for each team*/
-	for (int i = 0; i < NumTeams; i++)
+	if (GS && LoadServerData())
 	{
-		TeamSpawnSelector newteam;
-		TeamStartingPoints.Emplace(newteam);
-	}
-	
-	/*Find PlayerStarts For each team and add them*/
-	for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
-	{
-		ATeamPlayerStart* Start = *It;
-		if (GS && GS->IsTeamValid(Start->teamid))
+		/*Create a Set of spawn points for each team*/
+		for (int i = 0; i < NumTeams; i++)
 		{
-			TeamStartingPoints[Start->teamid].Add(Start);
+			TeamSpawnSelector newteam;
+			TeamStartingPoints.Emplace(newteam);
 		}
-	}
 
-	if (!LoadServerData())
+		GS->TeamInitialize(this);
+
+		/*Find PlayerStarts For each team and add them*/
+		for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
+		{
+			ATeamPlayerStart* Start = *It;
+			if (GS && GS->IsTeamValid(Start->teamid))
+			{
+				TeamStartingPoints[Start->teamid].Add(Start);
+			}
+		}
+
+	}
+	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PreInitializeComponents] Failed to Load Server Data from Game Instance"));
 	}
-}
-
-void ADefaultMode::PreInitializeComponents()
-{
-	Super::PreInitializeComponents();
 }
 
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
@@ -58,9 +57,9 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 
 	if (PS && GS)
 	{
-		if (GS->IsTeamValid(PS->Team_ID) && TeamStartingPoints.Num())
+		if (GS->IsTeamValid(PS->TeamID) && TeamStartingPoints.Num())
 		{
-			ATeamPlayerStart * retval = TeamStartingPoints[PS->Team_ID].GetNextSpawn();
+			ATeamPlayerStart * retval = TeamStartingPoints[PS->TeamID].GetNextSpawn();
 			if (retval)
 			{
 				return(retval);
@@ -74,17 +73,6 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 bool ADefaultMode::ReadyToStartMatch_Implementation()
 {
 	return CheckPlayerRegistry();
-}
-
-void ADefaultMode::InitGameState()
-{
-	Super::InitGameState();
-	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
-
-	if (GS)
-	{
-		GS->TeamInitialize(this);
-	}
 }
 
 void ADefaultMode::PostLogin(APlayerController* NewPlayer)
@@ -109,7 +97,6 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 
 bool ADefaultMode::LoadServerData()
 {
-
 	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
 
 	FServerSettings settings = GI->GetServerSettings();
@@ -121,6 +108,9 @@ bool ADefaultMode::LoadServerData()
 	NumTeams = settings.NumTeams;
 	TeamSize = settings.NumPlayersPerTeam;
 	LobbyPlayers = settings.settings;
+
+	/*Empty the Registry*/
+	PlayerRegistry.Empty();
 
 	for (int i = 0; i < LobbyPlayers.Num(); i++)
 	{
@@ -171,7 +161,7 @@ bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* Registerin
 	
 	if (playerindex <= INDEX_NONE || PS == nullptr) return(false);
 
-	PS->Team_ID = LobbyPlayers[playerindex].TeamId;
+	PS->TeamID = LobbyPlayers[playerindex].TeamId;
 	PS->PlayerId = LobbyPlayers[playerindex].PlayerId;
 
 	return true;

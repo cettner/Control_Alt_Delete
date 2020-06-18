@@ -13,6 +13,8 @@ void ADefaultPlayerState::PostInitializeComponents()
 
 void ADefaultPlayerState::ClientInitialize(AController* Controller)
 {
+	Super::ClientInitialize(Controller);
+
 	ADefaultPlayerController* PC = Cast<ADefaultPlayerController>(Controller);
 	if (PC)
 	{
@@ -23,11 +25,11 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-
+	TeamID = -1;
 }
 
 void ADefaultPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ADefaultPlayerState, Team_ID);
+	DOREPLIFETIME(ADefaultPlayerState, TeamID);
 }

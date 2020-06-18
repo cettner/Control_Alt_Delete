@@ -5,6 +5,12 @@
 #include "LobbyPlayerController.h"
 #include "GameArchitecture/Lobby/LobbyGameState.h"
 
+
+void ULobbyMenu::Teardown()
+{
+	this->RemoveFromViewport();
+}
+
 void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 {
 	UWorld* World = this->GetWorld();
@@ -48,6 +54,9 @@ bool ULobbyMenu::Initialize()
 	if (StartGameButton == nullptr) return false;
 	StartGameButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedStartGameButton);
 
+	if (LeaveLobbyButton == nullptr) return false;
+	LeaveLobbyButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedLeaveLobbyButton);
+
 	bIsFocusable = true;
 	return(true);
 }
@@ -58,6 +67,16 @@ void ULobbyMenu::OnPressedStartGameButton()
 	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
 	PC->RequestStartGame();
+}
+
+void ULobbyMenu::OnPressedLeaveLobbyButton()
+{
+	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
+
+	if (GI != nullptr)
+	{
+		GI->EndSession();
+	}
 }
 
 void ULobbyMenu::Setup()

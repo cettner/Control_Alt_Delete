@@ -73,11 +73,9 @@ public:
 	HUDSTATE state;
 
 
-	UFUNCTION(BlueprintCallable, Category = HUD)
-		void Change_HUD_State(int statetype);
+		void Change_HUD_State(HUDSTATE statetype);
 
-	UFUNCTION(BlueprintCallable, Category = HUD)
-		int Get_HUD_State();
+		HUDSTATE Get_HUD_State();
 
 	UPROPERTY(EditAnywhere)
 		float selection_transparency = 0.15f;

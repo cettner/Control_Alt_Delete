@@ -67,7 +67,9 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 	public:
 		ALobbyGameState();
 		TArray<FLobbyData> GetLobbyData();
-		bool AddPlayertoLobby(ALobbyPlayerController* NewPlayer);
+		bool AddPlayertoLobby(ALobbyPlayerController * NewPlayer);
+
+		bool RemovePlayerFromLobby(ALobbyPlayerController * LeavingPlayer);
 
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRequestMoveSlot(ALobbyPlayerController * RequestingPlayer, FSlotPlayerData RequestedSlot);

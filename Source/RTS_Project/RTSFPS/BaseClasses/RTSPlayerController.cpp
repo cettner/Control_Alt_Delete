@@ -55,7 +55,7 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 	
 	if (Cast<ADefaultPlayerState>(PlayerState) && Cast<ACommander>(InPawn))
 	{
-		int team_id = Cast<ADefaultPlayerState>(PlayerState)->Team_ID;
+		int team_id = Cast<ADefaultPlayerState>(PlayerState)->TeamID;
 		Cast<ACommander>(InPawn)->SetTeam(team_id);
 	}
 	
@@ -69,7 +69,7 @@ void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 		{
 			ARTSMinion * freeminion = *Itr;
-			if (freeminion->GetTeam() == PS->Team_ID && freeminion->GetLocalRole() != ROLE_Authority)
+			if (freeminion->GetTeam() == PS->TeamID && freeminion->GetLocalRole() != ROLE_Authority)
 			{
 				Units.AddUnique(freeminion);
 			}
@@ -114,7 +114,7 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 		if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
 		{
 			 ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Moving %d, Im team %d"),Units[i]->GetTeam(), PS->Team_ID));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Moving %d, Im team %d"),Units[i]->GetTeam(), PS->TeamID));
 			if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
 			{
 				Units[i]->SetTarget(target);

@@ -28,6 +28,6 @@ protected:
 public:
 
 	UPROPERTY(Replicated)
-	int Team_ID = -1;
+	int TeamID;
 	
 };

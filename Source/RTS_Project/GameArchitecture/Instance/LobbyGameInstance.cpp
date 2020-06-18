@@ -5,6 +5,7 @@
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemTypes.h"
 #include "PreGame/MainMenu/MainMenu.h"
+#include "Kismet/GameplayStatics.h"
 #include "PreGame/LobbySystem/LobbyMenu.h"
 
 const static FName SESSION_NAME = TEXT("RTSFPSGameSession");
@@ -18,6 +19,9 @@ ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializ
 	RestartSession = false;
 	DesiredServerName = "Default Server";
 	PlayerName = "";
+	LobbyMapName = "/Game/Maps/LobbyMap";
+	GameMapName = "/Game/Maps/DevMap";
+	MainMenuMapName = "/Game/Maps/MainMenuMap";
 }
 
 void ULobbyGameInstance::Init()
@@ -81,7 +85,9 @@ void ULobbyGameInstance::StartGame()
 {
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
-	World->ServerTravel("/Game/Maps/DevMap?listen");
+
+	FString modifier = "?listen";
+	World->ServerTravel(GameMapName + modifier);
 }
 
 FLobbySettings ULobbyGameInstance::GetLobbySettings()
@@ -185,6 +191,7 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 	if (MainMenu != nullptr)
 	{
 		MainMenu->Teardown();
+		MainMenu = nullptr;
 	}
 
 	UEngine* Engine = GetEngine();
@@ -199,24 +206,34 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 
 	if (World == nullptr) return;
 
-	World->ServerTravel("/Game/Maps/LobbyMap?listen");
+	/*StartMap as Listen Server*/
+	FString modifier = "?listen";
+
+	World->ServerTravel(LobbyMapName + modifier);
 }
 
 void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)
 {
 	if (Success)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[UCoopPuzzleGameInstance::OnDestroySessionComplete] Success "));
-		
+	{	
 		if (RestartSession)
 		{
 			CreateSession();
 			RestartSession = false;
 		}
+		else
+		{
+			UWorld* World = GetWorld();
+			if (World != nullptr)
+			{
+				UGameplayStatics::OpenLevel(World, FName(*MainMenuMapName));
+			}
+
+		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UCoopPuzzleGameInstance::OnDestroySessionComplete] NO Success "));
+		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnDestroySessionComplete] NO Success "));
 	}
 }
 
@@ -271,6 +288,7 @@ void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessio
 	if (MainMenu != nullptr)
 	{
 		MainMenu->Teardown();
+		MainMenu = nullptr;
 	}
 	if (!SessionInterface.IsValid()) return;
 
@@ -339,6 +357,14 @@ void ULobbyGameInstance::CreateSession()
 
 void ULobbyGameInstance::EndSession()
 {
+
+	// Teardown Menu and change levels
+	if (LobbyMenu != nullptr)
+	{
+		LobbyMenu->Teardown();
+		LobbyMenu = nullptr;
+	}
+
 	if (SessionInterface.IsValid() && (SessionInterface->GetNamedSession(SESSION_NAME) != nullptr))
 	{
 		/*Should be false but just to be sure*/

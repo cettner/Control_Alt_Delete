@@ -63,13 +63,10 @@ public:
 	int GetNumTeams() { return (NumTeams); }
 	int GetTeamSize() { return (TeamSize); }
 
-
 protected:
 	virtual void PostInitializeComponents() override;
-	virtual void PreInitializeComponents() override;
 	virtual AActor * FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override;
 	virtual bool ReadyToStartMatch_Implementation() override;
-	virtual void InitGameState() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 protected:

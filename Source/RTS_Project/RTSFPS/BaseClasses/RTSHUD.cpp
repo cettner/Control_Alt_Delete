@@ -112,17 +112,17 @@ void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilte
 	}
 }
 
-void ARTSHUD::Change_HUD_State(int statetype)
+void ARTSHUD::Change_HUD_State(HUDSTATE statetype)
 {
-	if (statetype > (int)LBOUND && statetype < (int)UBOUND)
+	if (statetype > LBOUND && statetype < UBOUND)
 	{
-		state = (HUDSTATE)statetype;
+		state = statetype;
 	}
 }
 
-int ARTSHUD::Get_HUD_State()
+ARTSHUD::HUDSTATE ARTSHUD::Get_HUD_State()
 {
-	return ((int)state);
+	return (state);
 }
 
 void ARTSHUD::RTSSelectAndMoveHandler()
@@ -175,7 +175,7 @@ void ARTSHUD::GetSelectedUnits()
 		for (int32 i = 0; i < endindex; i++)
 		{
 			/*Remove Enemy Minions*/
-			if (Selected_Units[i]->GetTeam() != PS->Team_ID)
+			if (Selected_Units[i]->GetTeam() != PS->TeamID)
 			{
 				Selected_Units.RemoveAt(i);
 				endindex--;

@@ -232,7 +232,7 @@ void ARTSMinion::BeginPlay()
 		APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
 		if (PC && Cast<ADefaultPlayerState>(PC->PlayerState))
 		{
-			if (GetTeam() != Cast<ADefaultPlayerState>(PC->PlayerState)->Team_ID)
+			if (GetTeam() != Cast<ADefaultPlayerState>(PC->PlayerState)->TeamID)
 			{
 				SetUnselectable();
 			}

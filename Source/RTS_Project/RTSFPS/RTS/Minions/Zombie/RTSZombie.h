@@ -60,6 +60,7 @@ public:
 	virtual bool CanAttack(AActor * AttackMe) override;
 	virtual void StartAttack(AActor * AttackMe) override;
 	virtual bool CanDoDamage(AActor * AttackMe) override;
+	virtual void ClearTarget() override;
 
 	UFUNCTION()
 	virtual void DoDamage(AActor * AttackMe, int ComboCount = 0, FAttackAnim Attack = FAttackAnim());

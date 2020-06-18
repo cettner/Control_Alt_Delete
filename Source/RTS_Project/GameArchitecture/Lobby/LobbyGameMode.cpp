@@ -25,6 +25,14 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 void ALobbyGameMode::Logout(AController * Exiting)
 {
 	Super::Logout(Exiting);
+	ALobbyGameState* GS = GetGameState<ALobbyGameState>();
+	ALobbyPlayerController* PC = Cast<ALobbyPlayerController>(Exiting);
+	if (GS == nullptr || PC == nullptr) return;
+
+	if (!GS->RemovePlayerFromLobby(PC))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode::[Logout] Failed to Remove Exiting Player to lobby!"));
+	}
 }
 
 ALobbyGameMode::ALobbyGameMode(const FObjectInitializer& ObjectInitializer)

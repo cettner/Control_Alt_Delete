@@ -67,6 +67,34 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 	return true;
 }
 
+bool ALobbyGameState::RemovePlayerFromLobby(ALobbyPlayerController* LeavingPlayer)
+{
+	FSlotPlayerData settings;
+	bool retval = false;
+
+	if (FindPlayerinLobby(LeavingPlayer, settings))
+	{
+		/*Team and SlotID Remain the Same For Future PLayers*/
+		LobbyData[settings.TeamId].TeamData[settings.SlotId].PlayerName = "";
+		LobbyData[settings.TeamId].TeamData[settings.SlotId].isSlotActive = false;
+		LobbyData[settings.TeamId].TeamData[settings.SlotId].OwningPlayerID = -1;
+		retval = true;
+
+
+		/*Refresh the lobby UI for listen servers, Clients Will draw during lobby info replication*/
+		if (GetNetMode() == NM_ListenServer)
+		{
+			UWorld* World = GetWorld();
+			if (World == nullptr) return false;
+			ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
+			if (PC == nullptr) return false;
+			PC->RefreshLobbyUI();
+		}
+	}
+
+	return(retval);
+}
+
 bool ALobbyGameState::RequestStartGame(ALobbyPlayerController * RequestingPlayer)
 {
 	if (RequestingPlayer == nullptr) return false;
