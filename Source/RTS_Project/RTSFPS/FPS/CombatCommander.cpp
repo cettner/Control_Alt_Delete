@@ -16,9 +16,16 @@ void ACombatCommander::BeginPlay()
 	Super::BeginPlay();
 }
 
-FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon)
+FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon, bool bWantsFirstPerson)
 {
-	return(WeaponAttachPoint);
+	if (bWantsFirstPerson)
+	{
+		return(WeaponAttachPointFP);
+	}
+	else
+	{
+		return(WeaponAttachPoint3P);
+	}
 }
 
 void ACombatCommander::SetWeaponStance()

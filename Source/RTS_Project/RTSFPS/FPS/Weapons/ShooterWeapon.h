@@ -212,6 +212,8 @@ public:
 	bool CanReload() const;
 
 protected:
+
+/********************************Logic Variables**********************************/
 	/** name of bone/socket for muzzle in weapon mesh */
 	UPROPERTY(EditDefaultsOnly, Category = Effects)
 	FName MuzzleAttachPoint;
@@ -232,14 +234,6 @@ protected:
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_BurstCounter)
 	int32 BurstCounter;
 
-	/** fire animations */
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	FWeaponAnim FireAnim;
-
-	/** reload animations */
-	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	FWeaponAnim ReloadAnim;
-
 	/** is fire animation playing? */
 	bool bPlayingFireAnim;
 
@@ -259,6 +253,28 @@ protected:
 
 	/** time of last successful weapon fire */
 	float LastFireTime;
+/************************************************************************************/
+
+/********************************Animations*****************************************/
+	/** fire animations */
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	FWeaponAnim FireAnim;
+
+	/** reload animations */
+	UPROPERTY(EditDefaultsOnly, Category = Animation)
+	FWeaponAnim ReloadAnim;
+/**********************************************************************************/
+
+/********************************Effects******************************************/
+	/** FX for muzzle flash */
+	UPROPERTY(EditDefaultsOnly, Category = Effects)
+	UParticleSystem* MuzzleFX;
+
+	/** spawned component for muzzle FX */
+	UPROPERTY(Transient)
+	UParticleSystemComponent* MuzzlePSC;
+
+/**********************************************************************************/
 
 	/** Handle for efficient management of StopReload timer */
 	FTimerHandle TimerHandle_StopReload;

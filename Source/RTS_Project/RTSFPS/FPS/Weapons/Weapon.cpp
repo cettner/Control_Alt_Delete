@@ -176,19 +176,19 @@ void AWeapon::AttachMeshToPawn()
 
 		// For locally controller players we attach both weapons and let the bOnlyOwnerSee, bOwnerNoSee flags deal with visibility.
 
-		FName AttachPoint = MyPawn->GetWeaponAttachPoint(this);
-
 		if (MyPawn->IsLocallyControlled() == true)
 		{
+			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,true);
 			USkeletalMeshComponent* PawnMesh1p = MyPawn->GetSpecifcPawnMesh(true);
 			USkeletalMeshComponent* PawnMesh3p = MyPawn->GetSpecifcPawnMesh(false);
 			FirstPersonMesh->SetHiddenInGame(false);
-			ThirdPersonMesh->SetHiddenInGame(false);
+			ThirdPersonMesh->SetHiddenInGame(true);
 			FirstPersonMesh->AttachToComponent(PawnMesh1p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
 			ThirdPersonMesh->AttachToComponent(PawnMesh3p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
 		}
 		else
 		{
+			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,false);
 			USkeletalMeshComponent* UseWeaponMesh = GetWeaponMesh();
 			USkeletalMeshComponent* UsePawnMesh = MyPawn->GetPawnMesh();
 			UseWeaponMesh->AttachToComponent(UsePawnMesh, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);

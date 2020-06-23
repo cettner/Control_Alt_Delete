@@ -252,13 +252,14 @@ void AShooterWeapon::SimulateWeaponFire()
 		bPlayingFireAnim = true;
 	}
 
-	/*
+
 	if (MuzzleFX)
 	{
 		USkeletalMeshComponent* UseWeaponMesh = GetWeaponMesh();
 		MuzzlePSC = UGameplayStatics::SpawnEmitterAttached(MuzzleFX, UseWeaponMesh, MuzzleAttachPoint);
 	}
 
+	/*
 	if (bLoopedFireSound)
 	{
 		if (FireAC == NULL)

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ShooterWeapon.h"
 #include "GameFramework/DamageType.h"
+#include "RTSFPS/GameObjects/ImpactEffect.h"
 #include "ShooterWeapon_Instant.generated.h"
 
 /**
@@ -144,6 +145,10 @@ UParticleSystem* TrailFX;
 UPROPERTY(EditDefaultsOnly, Category = Effects)
 FName TrailTargetParam;
 
+/** impact effects */
+UPROPERTY(EditDefaultsOnly, Category = Effects)
+TSubclassOf<AImpactEffect> ImpactTemplate;
+
 //////////////////////////////////////////////
 protected:
 	UFUNCTION()
@@ -155,4 +160,5 @@ protected:
 	/** spawn trail effect */
 	void SpawnTrailEffect(const FVector& EndPoint);
 
+	void SpawnImpactEffects(const FHitResult& Impact);
 };

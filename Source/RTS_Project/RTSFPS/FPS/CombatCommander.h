@@ -29,7 +29,7 @@ public:
 	void RemoveWeapon(AWeapon* Weapon);
 
 	/*Get Socket Name, TODO:(based on griptype)*/
-	FName GetWeaponAttachPoint(AWeapon* Weapon);
+	virtual FName GetWeaponAttachPoint(AWeapon* Weapon, bool bWantsFirstPerson);
 
 	/*Notifier From Weapon that Unequip Animation has Completed*/
 	void UnEquipComplete();
@@ -81,7 +81,10 @@ protected:
 protected:
 	/** socket or bone name for attaching weapon mesh */
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)
-	FName WeaponAttachPoint;
+	FName WeaponAttachPointFP;
+
+	UPROPERTY(EditDefaultsOnly, Category = Inventory)
+	FName WeaponAttachPoint3P;
 
 	/*Inital Array Containing All Starter Weapons*/
 	UPROPERTY(EditDefaultsOnly, Category = Inventory)

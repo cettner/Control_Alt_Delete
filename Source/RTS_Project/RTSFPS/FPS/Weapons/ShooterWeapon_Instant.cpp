@@ -6,6 +6,8 @@
 #include "Runtime\Engine\Classes\Kismet\GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
+
+/**************************Client Logic**************************/
 void AShooterWeapon_Instant::FireWeapon()
 {
 	const int32 RandomSeed = FMath::Rand();
@@ -97,24 +99,31 @@ float AShooterWeapon_Instant::GetCurrentSpread() const
 	return FinalSpread;
 }
 
-bool AShooterWeapon_Instant::ShouldDealDamage(AActor* TestActor) const
-{
-	// if we're an actor on the server, or the actor's role is authoritative, we should register damage
-	if (TestActor)
-	{
-		if (GetNetMode() != NM_Client ||
-			TestActor->GetLocalRole() == ROLE_Authority ||
-			TestActor->GetTearOff())
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
+/**************************Client Effects*************************/
 void AShooterWeapon_Instant::OnRep_HitNotify()
 {
+}
+
+void AShooterWeapon_Instant::SimulateInstantHit(const FVector& ShotOrigin, int32 RandomSeed, float ReticleSpread)
+{
+	FRandomStream WeaponRandomStream(RandomSeed);
+	const float ConeHalfAngle = FMath::DegreesToRadians(ReticleSpread * 0.5f);
+
+	const FVector StartTrace = ShotOrigin;
+	const FVector AimDir = GetAdjustedAim();
+	const FVector ShootDir = WeaponRandomStream.VRandCone(AimDir, ConeHalfAngle, ConeHalfAngle);
+	const FVector EndTrace = StartTrace + ShootDir * InstantConfig.WeaponRange;
+
+	FHitResult Impact = WeaponTrace(StartTrace, EndTrace);
+	if (Impact.bBlockingHit)
+	{
+		SpawnImpactEffects(Impact);
+		SpawnTrailEffect(Impact.ImpactPoint);
+	}
+	else
+	{
+		SpawnTrailEffect(EndTrace);
+	}
 }
 
 void AShooterWeapon_Instant::SpawnTrailEffect(const FVector& EndPoint)
@@ -129,6 +138,49 @@ void AShooterWeapon_Instant::SpawnTrailEffect(const FVector& EndPoint)
 			TrailPSC->SetVectorParameter(TrailTargetParam, EndPoint);
 		}
 	}
+}
+
+void AShooterWeapon_Instant::SpawnImpactEffects(const FHitResult& Impact)
+{
+	if (ImpactTemplate && Impact.bBlockingHit)
+	{
+		FHitResult UseImpact = Impact;
+
+		// trace again to find component lost during replication
+		if (!Impact.Component.IsValid())
+		{
+			const FVector StartTrace = Impact.ImpactPoint + Impact.ImpactNormal * 10.0f;
+			const FVector EndTrace = Impact.ImpactPoint - Impact.ImpactNormal * 10.0f;
+			FHitResult Hit = WeaponTrace(StartTrace, EndTrace);
+			UseImpact = Hit;
+		}
+
+		FTransform const SpawnTransform(Impact.ImpactNormal.Rotation(), Impact.ImpactPoint);
+		AImpactEffect* EffectActor = GetWorld()->SpawnActorDeferred<AImpactEffect>(ImpactTemplate, SpawnTransform);
+		if (EffectActor)
+		{
+			EffectActor->SurfaceHit = UseImpact;
+			UGameplayStatics::FinishSpawningActor(EffectActor, SpawnTransform);
+		}
+	}
+}
+
+/*****************************Server******************************/
+
+bool AShooterWeapon_Instant::ShouldDealDamage(AActor* TestActor) const
+{
+	// if we're an actor on the server, or the actor's role is authoritative, we should register damage
+	if (TestActor)
+	{
+		if (GetNetMode() != NM_Client ||
+			TestActor->GetLocalRole() == ROLE_Authority ||
+			TestActor->GetTearOff())
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void AShooterWeapon_Instant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)

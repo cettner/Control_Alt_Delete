@@ -98,6 +98,7 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 bool ADefaultMode::LoadServerData()
 {
 	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
+	if (GI == nullptr) return(false);
 
 	FServerSettings settings = GI->GetServerSettings();
 
