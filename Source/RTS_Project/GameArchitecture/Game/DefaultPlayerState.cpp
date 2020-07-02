@@ -28,6 +28,17 @@ ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitial
 	TeamID = -1;
 }
 
+void ADefaultPlayerState::OnRep_TeamID()
+{
+	UWorld* World =  GetWorld();
+	if (World == nullptr) return;
+
+	ADefaultPlayerController * PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+	if (PC == nullptr) return;
+
+	PC->ClientNotifyTeamChange(TeamID);
+}
+
 void ADefaultPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

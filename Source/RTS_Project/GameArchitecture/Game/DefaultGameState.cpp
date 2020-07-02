@@ -64,20 +64,6 @@ bool ADefaultGameState::IsTeamValid(int Team_Index)
 	return(-1 < Team_Index && Team_Index < GM->GetNumTeams());
 }
 
-void ADefaultGameState::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	if (HasAuthority())
-	{
-
-	}
-}
-
-ADefaultGameState::ADefaultGameState(const FObjectInitializer & ObjectInitializer)
-: Super(ObjectInitializer)
-{
-}
-
 int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
 {
 	int retval = HasTeam(New_Player);

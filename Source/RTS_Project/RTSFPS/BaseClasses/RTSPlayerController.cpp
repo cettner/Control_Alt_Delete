@@ -63,6 +63,8 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 
 void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 {
+	if (PS == nullptr) return;
+
 	TArray<AActor *> Units;
 	if (PS->isRtsPlayer && FOWManager)
 	{

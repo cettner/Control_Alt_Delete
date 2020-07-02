@@ -19,33 +19,38 @@ void ADefaultMode::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	UWorld* World = GetWorld();
-	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
-	if (GS && LoadServerData())
+
+	if (LoadServerData())
 	{
-		/*Create a Set of spawn points for each team*/
-		for (int i = 0; i < NumTeams; i++)
-		{
-			TeamSpawnSelector newteam;
-			TeamStartingPoints.Emplace(newteam);
-		}
 
-		GS->TeamInitialize(this);
-
-		/*Find PlayerStarts For each team and add them*/
-		for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
-		{
-			ATeamPlayerStart* Start = *It;
-			if (GS && GS->IsTeamValid(Start->teamid))
-			{
-				TeamStartingPoints[Start->teamid].Add(Start);
-			}
-		}
 
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PreInitializeComponents] Failed to Load Server Data from Game Instance"));
+	}
+
+	ADefaultGameState* GS = GetGameState<ADefaultGameState>();
+	if (GS == nullptr) return;
+
+	/*Create a Set of spawn points for each team*/
+	for (int i = 0; i < NumTeams; i++)
+	{
+		TeamSpawnSelector newteam;
+		TeamStartingPoints.Emplace(newteam);
+	}
+
+	GS->TeamInitialize(this);
+
+	/*Find PlayerStarts For each team and add them*/
+	for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
+	{
+		ATeamPlayerStart* Start = *It;
+		if (GS->IsTeamValid(Start->teamid))
+		{
+			TeamStartingPoints[Start->teamid].Add(Start);
+		}
 	}
 }
 
@@ -84,13 +89,24 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 
 	ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
 
-	/*IF we're on a listen server, register the servers playercontroller*/
+	/*IF we're on a listen server, register the servers playercontroller and */
 	if (GetNetMode() == NM_ListenServer && NewPlayer == World->GetFirstPlayerController())
 	{
 		FPlayerSettings settings;
 		if (PC && PC->GetPlayerInfo(settings))
 		{
-			RegisterPlayerData(PC, settings);
+			if (RegisterPlayerData(PC, settings))
+			{
+				PC->ClientNotifyTeamChange(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Failed to Register Player Data"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Invalid Player Data"));
 		}
 	}
 }

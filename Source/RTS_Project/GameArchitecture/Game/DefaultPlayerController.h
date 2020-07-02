@@ -26,6 +26,8 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		bool IsRegistered() { return(bisregistered); }
 
+		virtual void ClientNotifyTeamChange(int newteamid);
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);

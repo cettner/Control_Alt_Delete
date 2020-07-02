@@ -29,3 +29,15 @@ void AFPSServerController::Server_Request_Interact_Implementation(ACommander * C
 
 	}
 }
+
+void AFPSServerController::ClientNotifyTeamChange(int newteamid)
+{
+	Super::ClientNotifyTeamChange(newteamid);
+	/*Listen Server dosn't use replication from playerstate so an initial call is made here at game start*/
+	if ((GetLocalRole() == ROLE_Authority && GetRemoteRole() < ROLE_AutonomousProxy))
+	{
+		ARTSMinion* PlayerPawn = GetPawn<ARTSMinion>();
+		if (PlayerPawn == nullptr) return;
+		PlayerPawn->SetTeam(newteamid);
+	}
+}

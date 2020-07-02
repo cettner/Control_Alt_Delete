@@ -74,6 +74,36 @@ AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const 
 	return (ChoosePlayerStart(Player));
 }
 
+APawn* ARTFPSMode::SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot)
+{
+	APawn* startpawn = Super::SpawnDefaultPawnFor(NewPlayer, StartSpot);
+	
+	ACommander* FPSPawn = Cast<ACommander>(startpawn);
+	ADefaultPlayerState* PS = NewPlayer->GetPlayerState<ADefaultPlayerState>();
+	
+	if (FPSPawn && PS)
+	{
+		FPSPawn->SetTeam(PS->TeamID);
+	}
+	
+	return startpawn;
+}
+
+APawn* ARTFPSMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
+{
+	APawn* startpawn = Super::SpawnDefaultPawnAtTransform(NewPlayer, SpawnTransform);
+
+	ACommander* FPSPawn = Cast<ACommander>(startpawn);
+	ADefaultPlayerState* PS = NewPlayer->GetPlayerState<ADefaultPlayerState>();
+
+	if (FPSPawn && PS)
+	{
+		FPSPawn->SetTeam(PS->TeamID);
+	}
+
+	return startpawn;
+}
+
 void ARTFPSMode::BeginPlay()
 {
 	Super::BeginPlay();

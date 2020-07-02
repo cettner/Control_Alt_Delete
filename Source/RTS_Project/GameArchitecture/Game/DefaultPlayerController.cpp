@@ -25,6 +25,10 @@ void ADefaultPlayerController::ClientRequestRegistration_Implementation()
 	RequestRegistration();
 }
 
+void ADefaultPlayerController::ClientNotifyTeamChange(int newteamid)
+{
+}
+
 void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
 {
 	if (HasAuthority() && (bisregistered == false))

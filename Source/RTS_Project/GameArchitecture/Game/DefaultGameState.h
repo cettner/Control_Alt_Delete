@@ -22,11 +22,7 @@ protected:
 	TArray<TArray<APlayerState *>> Teams;
 	
 
-protected:
-	virtual void PostInitializeComponents() override;
-
 public:
-	ADefaultGameState(const FObjectInitializer& ObjectInitializer);
 	bool TeamInitialize(ADefaultMode * GameMode);
 	int AssignAvailableTeam(APlayerState * New_Player);
 	int AssignBalancedTeam(APlayerState * New_Player);

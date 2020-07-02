@@ -171,7 +171,6 @@ void ACombatCommander::ServerEquipWeapon_Implementation(AWeapon* Weapon)
 	EquipWeapon(Weapon);
 }
 
-
 bool ACombatCommander::ServerUnEquipWeapon_Validate()
 {
 	return(true);

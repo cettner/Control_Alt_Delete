@@ -183,6 +183,10 @@ void AWeapon::AttachMeshToPawn()
 			USkeletalMeshComponent* PawnMesh3p = MyPawn->GetSpecifcPawnMesh(false);
 			FirstPersonMesh->SetHiddenInGame(false);
 			ThirdPersonMesh->SetHiddenInGame(true);
+			
+			FirstPersonMesh->CastShadow = false;
+			ThirdPersonMesh->CastShadow = false;
+
 			FirstPersonMesh->AttachToComponent(PawnMesh1p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
 			ThirdPersonMesh->AttachToComponent(PawnMesh3p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
 		}

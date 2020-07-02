@@ -19,6 +19,7 @@ class RTS_PROJECT_API ACommander : public ARTSMinion
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void PossessedBy(AController* NewController) override;
 
 public:
 	/*Override to allow selection of which mesh should play the animation*/
@@ -61,6 +62,8 @@ public:
     virtual void SetTarget(AActor * newtarget) override;
 
 	virtual bool CanInteract(AActor * Interactable) override;
+
+	virtual int GetTeam() override;
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void MinionInteractionHandler(ARTSMinion * Interacted);

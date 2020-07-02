@@ -76,7 +76,7 @@ bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 	ARTSMinion * InMinion = Cast<ARTSMinion>(FriendOrFoe);
 	ARTSStructure* InStructure = Cast<ARTSStructure>(FriendOrFoe);
 
-	if (InMinion && InMinion->team_index != this->team_index && InMinion->team_index >= 0)
+	if (InMinion && InMinion->GetTeam() != this->GetTeam() && InMinion->GetTeam() >= 0)
 	{
 		Enemy = true;
 	}

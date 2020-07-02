@@ -14,9 +14,10 @@ UCLASS()
 class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 {
 	GENERATED_BODY()
-
-	UFUNCTION(Server, reliable, WithValidation)
-	void Server_Request_Interact(ACommander * Controlled_Cmdr, AActor * Interacted);
 	
+	public:
+		UFUNCTION(Server, reliable, WithValidation)
+		void Server_Request_Interact(ACommander * Controlled_Cmdr, AActor * Interacted);
 	
+		virtual void ClientNotifyTeamChange(int newteamid) override;
 };

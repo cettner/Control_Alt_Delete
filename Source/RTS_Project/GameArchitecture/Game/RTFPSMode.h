@@ -30,6 +30,8 @@ public:
 protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
 	virtual AActor * FindPlayerStart_Implementation(AController * Player, const FString & IncomingName) override;
+	virtual APawn  * SpawnDefaultPawnFor_Implementation(AController* NewPlayer, AActor* StartSpot) override;
+	virtual APawn  * SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 	virtual void BeginPlay();
 
 protected:

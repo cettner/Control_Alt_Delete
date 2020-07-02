@@ -18,6 +18,11 @@ public:
 	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
 
 protected:
+	/*Virtual Function For Override*/
+	UFUNCTION()
+	virtual void OnRep_TeamID();
+
+protected:
 	virtual void PostInitializeComponents() override;
 	void ClientInitialize(AController* Controller) override;
 
@@ -27,7 +32,7 @@ protected:
 
 public:
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
 	int TeamID;
 	
 };

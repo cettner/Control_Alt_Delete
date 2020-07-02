@@ -47,6 +47,16 @@ void ACommander::Tick(float DeltaTime)
 	}
 }
 
+void ACommander::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
+	if (PS == nullptr) return;
+
+	SetTeam(PS->TeamID);
+
+}
+
 ACommander::ACommander()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -145,6 +155,22 @@ bool ACommander::CanInteract(AActor * Interactable)
 	}
 
 	return(retval);
+}
+
+int ACommander::GetTeam()
+{
+
+	ADefaultPlayerController * PC = GetController<ADefaultPlayerController>();
+	if (PC && PC->PlayerState)
+	{
+		ADefaultPlayerState *  PS = Cast<ADefaultPlayerState>(PC->PlayerState);
+		if (PS)
+		{
+			return(PS->TeamID);
+		}
+	}
+
+	return(team_index);
 }
 
 bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
