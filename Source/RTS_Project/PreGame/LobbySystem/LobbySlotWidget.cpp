@@ -2,7 +2,6 @@
 
 
 #include "LobbySlotWidget.h"
-#include "GameArchitecture/Instance/LobbyGameInstance.h"
 #include "LobbyPlayerController.h"
 
 bool ULobbySlotWidget::Initialize()
@@ -17,7 +16,6 @@ bool ULobbySlotWidget::Initialize()
 	SlotData.isSlotActive = false;
 	return (true);
 }
-
 
 void ULobbySlotWidget::Setup(FSlotPlayerData SlotInfo)
 {

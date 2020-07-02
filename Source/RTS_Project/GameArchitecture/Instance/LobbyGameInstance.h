@@ -37,6 +37,9 @@ struct FPlayerSettings
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsValid = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<FString, int> CustomSettings = TMap<FString,int>();
 };
 
 USTRUCT()

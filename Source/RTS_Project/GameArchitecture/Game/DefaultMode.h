@@ -77,8 +77,8 @@ protected:
 protected:
 /************************************/
 	/*Loaded from Game Instance*/
-	int NumTeams = 2;
-	int TeamSize = 2;
+	int NumTeams;
+	int TeamSize;
 	TArray<FPlayerSettings> LobbyPlayers;
 /************************************/
 	

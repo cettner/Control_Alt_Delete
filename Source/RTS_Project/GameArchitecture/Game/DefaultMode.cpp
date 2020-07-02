@@ -10,9 +10,12 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 {
 	GameStateClass = ADefaultGameState::StaticClass();
 	PlayerStateClass = ADefaultPlayerState::StaticClass();
-
+	
+	TeamStartingPoints = TArray<TeamSpawnSelector>();
 	PlayerRegistry = TMap<int, bool>();
 	LobbyPlayers = TArray<FPlayerSettings>();
+	NumTeams = -1;
+	TeamSize = -1;
 }
 
 void ADefaultMode::PostInitializeComponents()

@@ -176,6 +176,7 @@ bool ALobbyGameState::StorePlayerData(ULobbyGameInstance * GI)
 	settings.TeamId = playerslot.TeamId;
 	settings.bIsValid = true;
 
+	SetCustomPlayerSettings(settings, playerslot);
 	return(GI->SetPlayerSettings(settings));
 }
 
@@ -202,6 +203,10 @@ bool ALobbyGameState::StoreServerData(ULobbyGameInstance * GI)
 	}
 
 	return (GI->SetServerSettings(ServerSettings));
+}
+
+void ALobbyGameState::SetCustomPlayerSettings(FPlayerSettings& outsettings, const FSlotPlayerData StoredSlot)
+{
 }
 
 ALobbyGameState::ALobbyGameState()

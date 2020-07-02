@@ -81,6 +81,7 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 	protected:
 		virtual bool StorePlayerData(ULobbyGameInstance * GI);
 		virtual bool StoreServerData(ULobbyGameInstance * GI);
+		virtual void SetCustomPlayerSettings(FPlayerSettings &outsettings, const FSlotPlayerData StoredSlot);
 
 
 
