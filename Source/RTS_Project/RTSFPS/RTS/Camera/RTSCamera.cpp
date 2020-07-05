@@ -61,7 +61,7 @@ void ARTSCamera::Zoom_In()
 {
 	CameraMove = CameraMove.GetSafeNormal() * Camera_Speed;
 	FVector NewLocal = GetActorLocation();
-	NewLocal += GetActorForwardVector() * (CameraMove.Z + 50);
+	NewLocal += Main_Camera->GetForwardVector() * (CameraMove.Z + 50);
 	SetActorLocation(NewLocal);
 }
 
@@ -69,7 +69,7 @@ void ARTSCamera::Zoom_Out()
 {
 	CameraMove = CameraMove.GetSafeNormal() * Camera_Speed;
 	FVector NewLocal = GetActorLocation();
-	NewLocal += GetActorForwardVector() * (CameraMove.Z - 50);
+	NewLocal += Main_Camera->GetForwardVector() * (CameraMove.Z - 50);
 	SetActorLocation(NewLocal);
 }
 

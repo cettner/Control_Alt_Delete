@@ -112,7 +112,7 @@ void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilte
 	}
 }
 
-void ARTSHUD::Change_HUD_State(HUDSTATE statetype)
+void ARTSHUD::ChangeHUDState(HUDSTATE statetype)
 {
 	if (statetype > LBOUND && statetype < UBOUND)
 	{
@@ -120,7 +120,7 @@ void ARTSHUD::Change_HUD_State(HUDSTATE statetype)
 	}
 }
 
-ARTSHUD::HUDSTATE ARTSHUD::Get_HUD_State()
+ARTSHUD::HUDSTATE ARTSHUD::GetHUDState()
 {
 	return (state);
 }

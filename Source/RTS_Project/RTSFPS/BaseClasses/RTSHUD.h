@@ -73,9 +73,9 @@ public:
 	HUDSTATE state;
 
 
-		void Change_HUD_State(HUDSTATE statetype);
+		void ChangeHUDState(HUDSTATE statetype);
 
-		HUDSTATE Get_HUD_State();
+		HUDSTATE GetHUDState();
 
 	UPROPERTY(EditAnywhere)
 		float selection_transparency = 0.15f;

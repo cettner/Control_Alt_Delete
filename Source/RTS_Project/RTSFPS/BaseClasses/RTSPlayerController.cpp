@@ -30,11 +30,11 @@ void ARTSPlayerController::BeginPlay()
 	if (Cast<ACommander>(GetPawn()) && HudPtr)
 	{
 		bShowMouseCursor = false;
-		HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+		HudPtr->ChangeHUDState(ARTSHUD::FPS_AIM_AND_SHOOT);
 	}
 	else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
 	{
-		HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+		HudPtr->ChangeHUDState(ARTSHUD::RTS_SELECT_AND_MOVE);
 	}
 	else
 	{
@@ -154,7 +154,7 @@ bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
 void ARTSPlayerController::PossessCommander_Implementation(ACommander * commander)
 {
 	bShowMouseCursor = false;
-	HudPtr->Change_HUD_State(ARTSHUD::FPS_AIM_AND_SHOOT);
+	HudPtr->ChangeHUDState(ARTSHUD::FPS_AIM_AND_SHOOT);
 	Possess(commander);
 }
 
@@ -174,7 +174,7 @@ bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
 void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
 {
 	bShowMouseCursor = true;
-	HudPtr->Change_HUD_State(ARTSHUD::RTS_SELECT_AND_MOVE);
+	HudPtr->ChangeHUDState(ARTSHUD::RTS_SELECT_AND_MOVE);
 	Possess(camera);
 }
 
