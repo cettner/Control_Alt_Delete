@@ -66,13 +66,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <int> Resource_Count;
 
-	UFUNCTION(Server, unreliable,  WithValidation)
+	UFUNCTION(Server, reliable,  WithValidation)
 	void PossessCommander(ACommander * commander);
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void PossessRTSCamera(ARTSCamera * camera);
 
-	UFUNCTION(Server, unreliable, WithValidation)
+	UFUNCTION(Server, reliable, WithValidation)
 	void MoveMinions(ARTSPlayerController * PC, const TArray<ARTSMinion *>& Units, FHitResult Hit);
 
 	virtual void BeginPlay() override;

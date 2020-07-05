@@ -23,12 +23,10 @@ protected:
 	virtual void OnRep_TeamID();
 
 protected:
-	virtual void PostInitializeComponents() override;
 	void ClientInitialize(AController* Controller) override;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
 
 public:
 

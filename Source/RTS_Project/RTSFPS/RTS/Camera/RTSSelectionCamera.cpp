@@ -13,15 +13,13 @@ void ARTSSelectionCamera::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
     InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSSelectionCamera::SelectPressed);
 	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSSelectionCamera::SelectReleased);
-	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSSelectionCamera::MoveSelected);   
+	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSSelectionCamera::MoveSelected); 
 }
 
 void  ARTSSelectionCamera::SelectPressed()
 {
-	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
+		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
 
-	if(PC)
-	{
 		ARTSHUD * HudPtr = Cast<ARTSHUD>(PC->GetHUD());
 		
 		FHitResult Hit;
@@ -39,15 +37,11 @@ void  ARTSSelectionCamera::SelectPressed()
 
 		HudPtr->Initial_select = HudPtr->GetMouseLocation();
 		HudPtr->SelctionInProcess = true;
-	}
 }
 
 void ARTSSelectionCamera::SelectReleased()
 {
-	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
-
-	if(PC)
-	{
+		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
 		FHitResult Hit;
 		PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 		AActor * target = Hit.GetActor();
@@ -87,7 +81,6 @@ void ARTSSelectionCamera::SelectReleased()
 		}
 		TempClick = nullptr;
 		PC->Update_UI_Selection();
-	}
 }
 	
 void ARTSSelectionCamera::MoveSelected()

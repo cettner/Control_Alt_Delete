@@ -5,8 +5,10 @@
 // Sets default values
 ARTSCamera::ARTSCamera()
 {
+	bReplicates = false;
+	
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = !(GetNetMode() == NM_DedicatedServer && GetLocalRole() == ROLE_Authority) ;
 
 	Main_CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	Main_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -16,6 +18,7 @@ ARTSCamera::ARTSCamera()
 	Main_CameraSpringArm->bDoCollisionTest = false;
 
 	Main_Camera->SetupAttachment(Main_CameraSpringArm, USpringArmComponent::SocketName);
+	Main_Camera->SetRelativeRotation(FRotator(-45.0, 0.0, 0.0));
 
 	// Controls Camera Movement Speed
 	Camera_Speed = 800.0f;
@@ -36,9 +39,9 @@ void ARTSCamera::Tick(float DeltaTime)
 	{
 		CameraMove = CameraMove.GetSafeNormal() * Camera_Speed;
 		FVector NewLocal = GetActorLocation();
-		NewLocal += FVector(1.0, 0.0, 0.0) * CameraMove.X * DeltaTime;
-		NewLocal += FVector(0.0, 1.0, 0.0) * CameraMove.Y * DeltaTime;
-		NewLocal += GetActorForwardVector() * CameraMove.Z * DeltaTime;
+		FVector XYPlane = FVector::CrossProduct(GetActorForwardVector(), FVector(0.0,0.0,-1.0));
+		NewLocal += GetActorForwardVector() * CameraMove.X * DeltaTime;
+		NewLocal += XYPlane * CameraMove.Y * DeltaTime;
 		SetActorLocation(NewLocal);
 	}
 

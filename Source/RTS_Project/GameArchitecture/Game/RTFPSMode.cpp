@@ -26,26 +26,20 @@ ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 
 UClass * ARTFPSMode::GetDefaultPawnClassForController_Implementation(AController * InController)
 {
-	if (InController)
+	if (InController && HasMatchStarted())
 	{
 		ARTFPSPlayerState * PlayerState = Cast<ARTFPSPlayerState>(InController->PlayerState);
 
-		if (PlayerState)
+		if (PlayerState == nullptr) return (nullptr);
+		
+		if (PlayerState->isRtsPlayer)
 		{
-			if (PlayerState->isRtsPlayer)
-			{
-				return(DefaultRTSClass);
-			}
-			else
-			{
-				return(DefaultFPSClass);
-			}
+			return(DefaultRTSClass);
 		}
 		else
 		{
-			return(nullptr);
+			return(DefaultFPSClass);
 		}
-
 	}
 	else
 	{
@@ -55,19 +49,16 @@ UClass * ARTFPSMode::GetDefaultPawnClassForController_Implementation(AController
 
 AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
-	UWorld* World = GetWorld();
+	UWorld * World = GetWorld();
 	ARTFPSPlayerState * PS = Cast<ARTFPSPlayerState>(Player->PlayerState);
 	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
 
-	if (PS && GS)
+	for (TActorIterator<ARTFPSPlayerStart> It(World); It; ++It)
 	{
-		if (PS->isRtsPlayer && GS->IsTeamValid(PS->TeamID) && TeamStartingPoints[PS->TeamID].Num())
+		ARTFPSPlayerStart * Start = *It;
+		if (GS->IsTeamValid(Start->teamid) && Start->isRTSStart == PS->isRtsPlayer && Start->teamid == PS->TeamID)
 		{
-			return(TeamStartingPoints[PS->TeamID].GetNextSpawn());
-		}
-		else if (GS->IsTeamValid(PS->TeamID) && TeamStartingPoints[PS->TeamID].Num())
-		{
-			return(TeamStartingPoints[PS->TeamID].GetNextSpawn());
+			return(Start);
 		}
 	}
 
@@ -82,9 +73,13 @@ bool ARTFPSMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringP
 		ARTFPSPlayerState* PS = RegisteringPlayer->GetPlayerState<ARTFPSPlayerState>();
 		if (PS == nullptr) return false;
 		
-		if (settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey))
+		if (settings.CustomSettings.Contains(RTS_Project::IsRTSPlayerkey))
 		{
-			PS->isRtsPlayer = StaticCast<bool>(settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey));
+			PS->isRtsPlayer = (bool)(*settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ARTSFPSMODE::FinishPlayerRegistration] Failed to Load Custom Setting"));
 		}
 	}
 

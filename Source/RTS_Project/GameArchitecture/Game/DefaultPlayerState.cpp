@@ -6,11 +6,6 @@
 #include "Engine/World.h"
 #include "UnrealNetwork.h"
 
-void ADefaultPlayerState::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
 void ADefaultPlayerState::ClientInitialize(AController* Controller)
 {
 	Super::ClientInitialize(Controller);

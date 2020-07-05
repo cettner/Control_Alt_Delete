@@ -22,7 +22,9 @@ void ARTSPlayerController::BeginPlay()
 {
 	bShowMouseCursor = true;
 	HudPtr = Cast<ARTSHUD>(GetHUD());
+
 	FInputModeGameOnly InputMode;
+	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
 
 	if (Cast<ACommander>(GetPawn()) && HudPtr)

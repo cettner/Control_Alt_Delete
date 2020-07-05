@@ -24,12 +24,7 @@ void ADefaultMode::PostInitializeComponents()
 	UWorld* World = GetWorld();
 
 
-	if (LoadServerData())
-	{
-
-
-	}
-	else
+	if (!LoadServerData())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PreInitializeComponents] Failed to Load Server Data from Game Instance"));
 	}
