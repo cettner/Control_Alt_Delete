@@ -49,8 +49,7 @@ public:
 	};
 	virtual void GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
 	
-	
-	FVector2D Initial_select;  // intial mouse cursor location
+	FVector2D Initial_select;  // intial mouse cursor location on click
 	FVector2D End_Select;		//mouse cursor location on release
 	
 	FVector2D GetMouseLocation();
@@ -72,13 +71,12 @@ public:
 
 	HUDSTATE state;
 
+	void ChangeHUDState(HUDSTATE statetype);
 
-		void ChangeHUDState(HUDSTATE statetype);
-
-		HUDSTATE GetHUDState();
+	HUDSTATE GetHUDState();
 
 	UPROPERTY(EditAnywhere)
-		float selection_transparency = 0.15f;
+	float selection_transparency = 0.15f;
 
 private:
 	/** Crosshair asset pointer */

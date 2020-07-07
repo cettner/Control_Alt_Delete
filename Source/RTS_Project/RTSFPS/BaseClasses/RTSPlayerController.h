@@ -21,7 +21,6 @@
  */
 
 #define NUM_RESOURCES 3
-#define MAX_RESOURCES 9999
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
 enum Resource_Types
@@ -44,13 +43,13 @@ public:
 	ARTSPlayerController();
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-		void Update_UI_Selection();
+	void UpdateUISelection();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-		void Update_UI_Resource();
+	void UpdateUIResource();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-		void Update_UI_Spawn(AActor * NewSpawn);
+	void UpdateUISpawn(AActor * NewSpawn);
 
 	ARTSHUD * HudPtr;
 
@@ -77,9 +76,13 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+
 	virtual void SetupInputComponent() override;
 
 	virtual void SetPawn(APawn* InPawn) override;
+
+	virtual void ClientNotifyTeamChange(int newteam) override;
 
 	void FinishLocalPlayerSetup(ARTFPSPlayerState * PS);
 	

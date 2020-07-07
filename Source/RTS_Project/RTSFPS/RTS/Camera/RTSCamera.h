@@ -17,10 +17,8 @@ public:
 	ARTSCamera();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+
 	FVector CameraMove;
-	FVector2D CameraPos;
 
 public:	
 	// Called every frame
@@ -30,14 +28,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	//Camera Movement Functions
-	void Translate_Cam_LeftRight(float AxisVal);
-	void Translate_Cam_Up_Down(float AxisVal);
-	void Zoom_In();
-	void Zoom_Out();
+	void TranslateCamLeftRight(float AxisVal);
+	void TranslateCamUpDown(float AxisVal);
+	void ZoomIn();
+	void ZoomOut();
 
 	UPROPERTY(EditAnywhere)
-	class USpringArmComponent* Main_CameraSpringArm;
-	UCameraComponent* Main_Camera;
+	USpringArmComponent* MainCameraSpringArm;
+	UCameraComponent* MainCamera;
 
-	float Camera_Speed;
+	float CameraSpeed;
 };

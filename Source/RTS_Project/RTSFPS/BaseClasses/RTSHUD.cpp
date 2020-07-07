@@ -209,7 +209,6 @@ FVector2D ARTSHUD::GetMouseLocation()
 	float PosX;
 	float PosY;
 	GetOwningPlayerController()->GetMousePosition(PosX, PosY);
-
 	return(FVector2D(PosX, PosY));
 }
 

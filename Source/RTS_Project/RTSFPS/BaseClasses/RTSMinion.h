@@ -50,13 +50,11 @@ public:
 
 	virtual void ClearTarget();
 
-	void SetSelected();
+	virtual void SetSelected();
 
-	void SetDeselected();
+	virtual void SetDeselected();
 
-	void SetUnselectable();
-
-	void SetSelectable();
+	virtual void SetTeamColors();
 
 	virtual void ReleaseAssets();
 
@@ -91,8 +89,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * RTSBehavior;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
+	
+	UPROPERTY(Editdefaultsonly, Category = Selection)
 	URTSSelectionComponent * Selection;
 
 	UPROPERTY(Replicated)

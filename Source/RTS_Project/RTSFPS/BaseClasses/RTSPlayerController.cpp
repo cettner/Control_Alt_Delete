@@ -20,13 +20,17 @@ ARTSPlayerController::ARTSPlayerController()
 
 void ARTSPlayerController::BeginPlay()
 {
-	bShowMouseCursor = true;
-	HudPtr = Cast<ARTSHUD>(GetHUD());
+	Super::BeginPlay();
 
+	/*Client or Listen Server, Initilize the Hud Locally*/
+	/*Initialize Hud*/
+	HudPtr = Cast<ARTSHUD>(GetHUD());
+	
+	/**/
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
-
+	
 	if (Cast<ACommander>(GetPawn()) && HudPtr)
 	{
 		bShowMouseCursor = false;
@@ -41,6 +45,11 @@ void ARTSPlayerController::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
 	}
 
+}
+
+void ARTSPlayerController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -61,6 +70,33 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 		Cast<ACommander>(InPawn)->SetTeam(team_id);
 	}
 	
+}
+
+void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
+{
+	Super::ClientNotifyTeamChange(newteam);
+
+	/*Clear the units we currently have under our control*/
+	SelectedUnits.Empty();
+	SelectedStructures.Empty();
+
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+
+	/*Iterate through all minions in the map, set team color on all minons that don't match our team ID*/
+	for (TActorIterator<ARTSMinion> It(World); It; ++It)
+	{
+		ARTSMinion* Minion = *It;
+		if (!Minion->IsPendingKill())
+		{
+			Minion->SetDeselected();
+			if (Minion->GetTeam() != newteam)
+			{
+				Minion->SetTeamColors();
+				Minion->SetSelected();
+			}
+		}
+	}
 }
 
 void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
@@ -138,7 +174,6 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 	}
 }
 
-
 bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
 {
 	if (commander && HudPtr)
@@ -157,7 +192,6 @@ void ARTSPlayerController::PossessCommander_Implementation(ACommander * commande
 	HudPtr->ChangeHUDState(ARTSHUD::FPS_AIM_AND_SHOOT);
 	Possess(commander);
 }
-
 
 bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
 {

@@ -3,13 +3,9 @@
 #include "RTSMinion.h"
 #include "UObject/ConstructorHelpers.h"
 #include "RTSFPS/RTS/Camera/RTSSelectionComponent.h"
-#include "Camera/CameraComponent.h"
-#include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Materials/Material.h"
 #include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include"Runtime/Engine/Classes/Engine/World.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
@@ -40,6 +36,7 @@ ARTSMinion::ARTSMinion()
 	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("Selection"));
 	Selection->SetRoot(RootComponent);
 	Selection->SetDetection(GetCapsuleComponent());
+
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 	Health->SetIsReplicated(true);
@@ -131,14 +128,9 @@ void ARTSMinion::SetDeselected()
 	Selection->SetDeselected();
 }
 
-void ARTSMinion::SetUnselectable()
+void ARTSMinion::SetTeamColors()
 {
-	Selection->EnableSecondary();
-}
-
-void ARTSMinion::SetSelectable()
-{
-	Selection->DisableSecondary();
+	Selection->SetSelectionColor(FLinearColor::Red);
 }
 
 ACommander * ARTSMinion::GetCommander()
@@ -228,22 +220,6 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
-	if (GetLocalRole() != ROLE_Authority && GetWorld())
-	{
-		/*Set Enemy Selection Rings For Local Player*/
-		APlayerController* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
-		if (PC && Cast<ADefaultPlayerState>(PC->PlayerState))
-		{
-			if (GetTeam() != Cast<ADefaultPlayerState>(PC->PlayerState)->TeamID)
-			{
-				SetUnselectable();
-			}
-			else
-			{
-				SetSelectable();
-			}
-		}
-	}
 }
 
 float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

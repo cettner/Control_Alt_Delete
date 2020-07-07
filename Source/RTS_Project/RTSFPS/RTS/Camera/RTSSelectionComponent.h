@@ -14,7 +14,7 @@ enum SELECTION_TYPE
 	CLICK_AND_CLEAR
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable)
 class RTS_PROJECT_API URTSSelectionComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -25,21 +25,19 @@ public:
 
 	void SetSelected();
 	void SetDeselected();
-	void EnableSecondary();
-	void DisableSecondary();
 	void SetRoot(USceneComponent* RootComponent);
 	void SetDetection(UPrimitiveComponent * Collision);
+	void SetSelectionColor(FLinearColor Color);
+
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	/*TODO Find a Way to Set Material for Selection Ring from blueprint (Currently Hardcoded Reference)*/
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	UDecalComponent* PrimarySelectionRing;
 
-public:	
+	/*Name of Parameter Set in Material*/
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	FName ColorParamName;
 
-	/*Used for normal togglable selection*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
-	class UDecalComponent* PrimarySelectionRing;
-
-	/*Used to designate permanent designatable objects, like enemies, or teammates*/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Selection)
-	class UDecalComponent* SecondarySelectionRing;
+	/*Dynamic Instance that allows us to change Color of Selection Ring at Runtime*/
+	UMaterialInstanceDynamic* DynamicColor;
 };
