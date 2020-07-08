@@ -7,9 +7,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include"Runtime/Engine/Classes/Engine/World.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include"Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 #include "AssetHelpers/GameAssets.h"
 #include "RTSFPS/FPS/Commander.h"
 #include "UnrealNetwork.h"
@@ -215,11 +212,6 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 	{
 		AIC->MoveToActor(move_to_me, 5.0f, true, true, false, 0, false);
 	}
-}
-
-void ARTSMinion::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
