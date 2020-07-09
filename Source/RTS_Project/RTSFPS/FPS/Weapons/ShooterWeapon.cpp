@@ -259,36 +259,11 @@ void AShooterWeapon::SimulateWeaponFire()
 		MuzzlePSC = UGameplayStatics::SpawnEmitterAttached(MuzzleFX, UseWeaponMesh, MuzzleAttachPoint);
 	}
 
-	/*
-	if (bLoopedFireSound)
-	{
-		if (FireAC == NULL)
-		{
-			FireAC = PlayWeaponSound(FireLoopSound);
-		}
-	}
-	else
+	if (FireSound)
 	{
 		PlayWeaponSound(FireSound);
 	}
 
-	AShooterPlayerController* PC = (MyPawn != NULL) ? Cast<AShooterPlayerController>(MyPawn->Controller) : NULL;
-	if (PC != NULL && PC->IsLocalController())
-	{
-		if (FireCameraShake != NULL)
-		{
-			PC->ClientPlayCameraShake(FireCameraShake, 1);
-		}
-		if (FireForceFeedback != NULL && PC->IsVibrationEnabled())
-		{
-			FForceFeedbackParameters FFParams;
-			FFParams.bLooping = false;
-			FFParams.bPlayWhilePaused = false;
-			FFParams.Tag = "Weapon";
-			PC->ClientPlayForceFeedback(FireForceFeedback, FFParams);
-		}
-	}
-	*/
 }
 
 void AShooterWeapon::StopSimulatingWeaponFire()
@@ -461,7 +436,6 @@ bool AShooterWeapon::CanFire() const
 
 bool AShooterWeapon::CanReload() const
 {
-	//bool bCanReload = (!MyPawn || MyPawn->CanReload());
 	bool bGotAmmo = ((CurrentAmmoInClip < WeaponConfig.AmmoPerClip) && (CurrentAmmo - CurrentAmmoInClip > 0) && !HasInfiniteClip());
 	bool bStateOKToReload = ((CurrentState == EWeaponState::Idle) || (CurrentState == EWeaponState::Firing));
 	return(bGotAmmo && bStateOKToReload);

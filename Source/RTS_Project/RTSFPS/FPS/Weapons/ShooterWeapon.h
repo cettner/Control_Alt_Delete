@@ -276,6 +276,27 @@ protected:
 
 /**********************************************************************************/
 
+/********************************Sound******************************************/
+    /** single fire sound (bLoopedFireSound not set) */
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	USoundCue* FireSound;
+
+    /** looped fire sound (bLoopedFireSound set) */
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	USoundCue* FireLoopSound;
+
+	/** finished burst sound (bLoopedFireSound set) */
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	USoundCue* FireFinishSound;
+
+	/** out of ammo sound */
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	USoundCue* OutOfAmmoSound;
+
+	/** reload sound */
+	UPROPERTY(EditDefaultsOnly, Category = Sound)
+	USoundCue* ReloadSound;
+/*******************************************************************************/
 	/** Handle for efficient management of StopReload timer */
 	FTimerHandle TimerHandle_StopReload;
 
