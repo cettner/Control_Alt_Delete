@@ -2,7 +2,7 @@
 
 
 #include "JoinSessionInfoWidget.h"
-#include "PreGame/MainMenu/MainMenu.h"
+#include "RTS_Project/PreGame/MainMenu/MainMenu.h"
 
 void UJoinSessionInfoWidget::Setup(UMainMenu * InParent, uint32 InIndex)
 {

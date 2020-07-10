@@ -1,13 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSAIController.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "Navigation/CrowdFollowingComponent.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
-#include "RTSFPS/FPS/Commander.h"
+
 
 const FName ARTSAIController::AIMessage_Finished = TEXT("Task Complete");
 

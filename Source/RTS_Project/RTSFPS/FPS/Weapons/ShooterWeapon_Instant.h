@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ShooterWeapon.h"
 #include "GameFramework/DamageType.h"
-#include "RTSFPS/GameObjects/ImpactEffect.h"
+#include "RTS_Project/RTSFPS/GameObjects/ImpactEffect.h"
 #include "ShooterWeapon_Instant.generated.h"
 
 /**

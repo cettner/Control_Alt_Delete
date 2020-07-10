@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSFPS/BaseClasses/RTSPlayerController.h"
-#include "RTSFPS/FPS/Commander.h"
+#include "../BaseClasses/RTSPlayerController.h"
+#include "Commander.h"
 #include "FPSServerController.generated.h"
 
 /**

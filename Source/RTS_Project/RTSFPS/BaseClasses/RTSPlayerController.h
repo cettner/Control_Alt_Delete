@@ -5,12 +5,11 @@
 #include "CoreMinimal.h"
 #include "RTSHUD.h"
 #include "RTSMinion.h"
-#include "RTSFPS/RTS/Camera/RTSCamera.h"
-#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "RTSFPS/RTS/Camera/RTSSelectable.h"
-#include "RTSFPS/RTS/FOW/FogOfWarManager.h"
-#include "GameArchitecture/Game/RTFPSPlayerState.h"
-#include "GameArchitecture/Game/DefaultPlayerController.h"
+#include "../RTS/Camera/RTSCamera.h"
+#include "../RTS/Camera/RTSSelectable.h"
+#include "../RTS/FOW/FogOfWarManager.h"
+#include "../../GameArchitecture/Game/DefaultPlayerController.h"
+#include "../../GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -22,13 +21,7 @@
 #define NUM_RESOURCES 3
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
-enum Resource_Types
-{
-	TYPE_ONE,
-	TYPE_TWO,
-	TYPE_THREE,
-	NULL_TYPE
-};
+
 
 class ARTSStructure;
 class AWeapon;

@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSSelectionCamera.h"
-#include "RTSFPS/BaseClasses/RTSPlayerController.h"
-#include "RTSFPS/BaseClasses/RTSHUD.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSPlayerController.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSHUD.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 
 

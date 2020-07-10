@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSubsystem.h"
-#include "OnlineSessionInterface.h"
-#include "PreGame/LobbySystem/SessionMenuInterface.h"
+#include "../../PreGame/LobbySystem/SessionMenuInterface.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "LobbyGameInstance.generated.h"
 
 

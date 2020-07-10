@@ -3,17 +3,22 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
-#include "RTSFPS/BaseClasses/RTSHUD.h"
-#include "RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
 #include "GameFramework/Actor.h"
-#include "RTSFPS/BaseClasses/RTSPlayerController.h"
-#include "RTSFPS/RTS/Camera/RTSSelectable.h"
+#include "../RTS/Camera/RTSSelectable.h"
 #include "Resource.generated.h"
 
 
 
 #define NUM_SLOTS 4
+
+enum Resource_Types
+{
+	TYPE_ONE,
+	TYPE_TWO,
+	TYPE_THREE,
+	NULL_TYPE
+};
+
 
 UCLASS(Blueprintable)
 class RTS_PROJECT_API AResource : public ARTSSelectable
@@ -43,8 +48,6 @@ protected:
 	int resource_val = 90;
 
 	virtual void SetType(Resource_Types typeset);
-	ARTSHUD * HudPtr;
-public:	
 
 private:
 	Resource_Types mytype = TYPE_ONE;

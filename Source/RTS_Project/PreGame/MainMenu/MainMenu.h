@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PreGame/LobbySystem/SessionMenuInterface.h"
-#include "PreGame/MainMenu/Joining/JoinSessionInfoWidget.h"
+#include "RTS_Project/PreGame/LobbySystem/SessionMenuInterface.h"
+#include "RTS_Project/PreGame/MainMenu/Joining/JoinSessionInfoWidget.h"
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "MainMenu.generated.h"

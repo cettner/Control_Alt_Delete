@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BT_Can_Builder_Carry_More.h"
-#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
-#include "RTSFPS/GameObjects/Resource.h"
-#include "BehaviorTree/BehaviorTree.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
-#include "GameArchitecture/Instance/LobbyGameInstance.h"
+#include "../../GameArchitecture/Instance/LobbyGameInstance.h"
 #include "LobbyGameState.generated.h"
 
 

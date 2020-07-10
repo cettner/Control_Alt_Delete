@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ShooterWeapon.h"
-#include "RTSFPS/FPS/CombatCommander.h"
+#include "RTS_Project/RTSFPS/FPS/CombatCommander.h"
+
 #include "AIController.h"
 #define DEBUG_WEAPON
 

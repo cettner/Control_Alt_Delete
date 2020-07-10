@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
+#include "../../../BaseClasses/RTSMinion.h"
 #include "SiegeProjectile.h"
 #include "RTSCatapult.generated.h"
 

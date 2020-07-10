@@ -2,11 +2,13 @@
 
 #include "BTService_CheckForCommand.h"
 #include "RTSAIController.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
+
 
 
 

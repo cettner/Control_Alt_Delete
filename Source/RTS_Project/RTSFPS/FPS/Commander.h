@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
+#include "../BaseClasses/RTSMinion.h"
 #include "Camera/CameraComponent.h"
-#include "RTSFPS/RTS/Camera/RTSSelectable.h"
+#include "../RTS/Camera/RTSSelectable.h"
 #include "Commander.generated.h"
 
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1

@@ -1,16 +1,19 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "RTS_Project/AssetHelpers/GameAssets.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+#include "RTS_Project/GameArchitecture/Game/DefaultPlayerState.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+
 #include "UObject/ConstructorHelpers.h"
-#include "RTSFPS/RTS/Camera/RTSSelectionComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
-#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "AssetHelpers/GameAssets.h"
-#include "RTSFPS/FPS/Commander.h"
 #include "UnrealNetwork.h"
-#include "GameArchitecture/Game/DefaultPlayerState.h"
+
+
 
 ARTSMinion::ARTSMinion()
 {

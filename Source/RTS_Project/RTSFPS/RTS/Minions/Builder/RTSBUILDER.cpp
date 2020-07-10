@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSBUILDER.h"
-#include "RTSFPS/GameObjects/Resource.h"
-#include "RTSFPS/RTS/Structures/RTSStructure.h"
-#include "GameFramework/PlayerController.h"
-#include "RTSFPS/BaseClasses/RTSPlayerController.h"
-#include "RTSFPS/RTS/Minions/Builder/AI/BuilderAIController.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSPlayerController.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/Builder/AI/BuilderAIController.h"
+
 #include "Runtime/Engine/Public/TimerManager.h "
 #include "GameFramework/Actor.h"
 #include "Engine.h"

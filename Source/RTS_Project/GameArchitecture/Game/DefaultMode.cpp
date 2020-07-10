@@ -177,7 +177,7 @@ bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* Registerin
 	if (playerindex <= INDEX_NONE || PS == nullptr) return(false);
 
 	PS->TeamID = LobbyPlayers[playerindex].TeamId;
-	PS->PlayerId = LobbyPlayers[playerindex].PlayerId;
+	PS->SetPlayerId(LobbyPlayers[playerindex].PlayerId);
 
 	return true;
 }

@@ -2,13 +2,12 @@
 
 #include "RTSHUD.h"
 #include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
-#include "UObject/ConstructorHelpers.h"
 #include "RTSMinion.h"
-#include "RTSFPS/FPS/Commander.h"
-#include "GameArchitecture/Game/RTFPSPlayerState.h"
-#include "RTSFPS/RTS/Structures/RTSStructure.h"
-#include "AssetHelpers/GameAssets.h"
-#include "Runtime/Engine/Public/EngineUtils.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "RTS_Project/AssetHelpers/GameAssets.h"
+
 
 ARTSHUD::ARTSHUD()
 {

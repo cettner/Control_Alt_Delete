@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "RTSSpawnHelper.h"
-#include "RTSFPS/RTS/Structures/RTSStructure.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
-#include "RTSFPS/RTS/Minions/Catapult/RTSCatapult.h"
-#include "RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
-#include "RTSFPS/FPS/Weapons/Weapon.h"
-#include "AssetHelpers/GameAssets.h"
+#include "../RTSFPS/RTS/Minions/Catapult/RTSCatapult.h"
+#include "../RTSFPS/RTS/Minions/Catapult/RTSCatapult.h"
+#include "../RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
+#include "../RTSFPS/FPS/Weapons/Weapon.h"
+#include "GameAssets.h"
 #include "Engine.h"
 
 const FString RTSSpawnHelper::BuilderPath = TEXT(BUILDER_BP_PATH);

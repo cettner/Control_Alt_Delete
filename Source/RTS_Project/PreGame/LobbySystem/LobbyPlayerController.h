@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "GameArchitecture/Lobby/LobbyGameState.h"
+#include "RTS_Project/GameArchitecture/Lobby/LobbyGameState.h"
 #include "LobbyPlayerController.generated.h"
 
 /*Forward Declarations*/

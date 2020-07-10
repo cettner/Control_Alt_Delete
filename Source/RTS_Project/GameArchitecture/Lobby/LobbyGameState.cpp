@@ -3,9 +3,9 @@
 
 #include "LobbyGameState.h"
 #include "UnrealNetwork.h"
-#include "PreGame/LobbySystem/LobbyPlayerController.h"
-#include "GameArchitecture/Instance/LobbyGameInstance.h"
-#include "PreGame/LobbySystem/LobbyMenu.h"
+#include "RTS_Project/PreGame/LobbySystem/LobbyPlayerController.h"
+#include "RTS_Project/GameArchitecture/Instance/LobbyGameInstance.h"
+#include "RTS_Project/PreGame/LobbySystem/LobbyMenu.h"
 #include "GameFramework/PlayerState.h"
 
 
@@ -47,7 +47,7 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 
 
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].isSlotActive = true;
-	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = NewPlayer->PlayerState->PlayerId;
+	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = NewPlayer->PlayerState->GetPlayerId();
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].PlayerName = NewPlayer->PlayerState->GetPlayerName();
 
 	NewPlayer->PlayerSlotInfo = LobbyData[smallestteamindex].TeamData[emptyslotindex];
@@ -233,7 +233,7 @@ void ALobbyGameState::OnRep_LobbyInfo()
 bool ALobbyGameState::FindPlayerinLobby(ALobbyPlayerController * player, FSlotPlayerData& OutSlot)
 { 
 	if (player == nullptr || player->PlayerState == nullptr) return false;
-	int idtosearch = player->PlayerState->PlayerId;
+	int idtosearch = player->PlayerState->GetPlayerId();
 
 	for (int i = 0; i < LobbyData.Num(); i++)
 	{
@@ -287,7 +287,7 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	/*Put the player in its new spot*/
 	LobbyData[requestedteamid].TeamData[requestedslotid].isSlotActive = true;
 	LobbyData[requestedteamid].TeamData[requestedslotid].PlayerName = RequestingPlayer->PlayerState->GetPlayerName();
-	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = RequestingPlayer->PlayerState->PlayerId;
+	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = RequestingPlayer->PlayerState->GetPlayerId();
 	
 	/*Store its new location*/
 	RequestingPlayer->PlayerSlotInfo = LobbyData[requestedteamid].TeamData[requestedslotid];

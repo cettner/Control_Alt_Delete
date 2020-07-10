@@ -2,7 +2,7 @@
 
 
 #include "MenuGameMode.h"
-#include "PreGame\MainMenu\MainMenuPlayerController.h"
+#include "RTS_Project/PreGame\MainMenu\MainMenuPlayerController.h"
 
 AMenuGameMode::AMenuGameMode(const FObjectInitializer& ObjectInitializer)
 {

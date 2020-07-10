@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "GameArchitecture/Instance/LobbyGameInstance.h"
+#include "../../GameArchitecture/Instance/LobbyGameInstance.h"
 #include "DefaultPlayerController.generated.h"
 
 /**

@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "RTSFPS/RTS/Camera/RTSSelectable.h"
+#include "../GameSystems/HealthSystem/HealthComponent.h"
+#include "../RTS/Camera/RTSSelectionComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
-#include "RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTSMinion.generated.h"
 
 

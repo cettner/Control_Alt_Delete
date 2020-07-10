@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "../../AI/RTSAIController.h"
 #include "BuilderAIController.generated.h"
 
 /**
@@ -16,8 +16,6 @@ class RTS_PROJECT_API ABuilderAIController : public ARTSAIController
 {
 	GENERATED_BODY()
 
-
-	//static uint32 NextRequestId;
 	FAIRequestID MineRequestId;
 
 	FORCEINLINE void StoreMineRequestId() { MineRequestId = MineRequestId + 1; }

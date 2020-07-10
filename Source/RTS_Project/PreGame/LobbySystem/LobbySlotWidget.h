@@ -7,7 +7,7 @@
 #include "Components/WidgetSwitcher.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
-#include "GameArchitecture/Lobby/LobbyGameState.h"
+#include "RTS_Project/GameArchitecture/Lobby/LobbyGameState.h"
 #include "LobbySlotWidget.generated.h"
 
 

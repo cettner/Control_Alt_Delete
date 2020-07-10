@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "RTSFPS/GameObjects/TeamPlayerStart.h"
-#include "GameArchitecture/Game/DefaultPlayerController.h"
-#include "GameArchitecture/Instance/LobbyGameInstance.h"
+#include "../../RTSFPS/GameObjects/TeamPlayerStart.h"
+#include "../../GameArchitecture/Game/DefaultPlayerController.h"
+#include "../../GameArchitecture/Instance/LobbyGameInstance.h"
 #include "DefaultMode.generated.h"
 
-/**
+/*
  * 
  */
 

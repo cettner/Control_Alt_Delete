@@ -4,11 +4,12 @@
 #include "Engine.h"
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
-#include "RTSFPS/GameObjects/RTFPSPlayerStart.h"
-#include "RTSFPS/FPS/FPSServerController.h"
-#include "RTSFPS/RTS/Camera/RTSSelectionCamera.h"
-#include "RTSFPS/FPS/Commander.h"
-#include "RTSFPS/PreGame/RTSFPSLobbyGameState.h"
+#include "RTS_Project/RTSFPS/GameObjects/RTFPSPlayerStart.h"
+#include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionCamera.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+#include "RTS_Project/RTSFPS/PreGame/RTSFPSLobbyGameState.h"
+
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

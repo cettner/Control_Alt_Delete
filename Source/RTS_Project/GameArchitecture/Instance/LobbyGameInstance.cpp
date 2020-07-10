@@ -4,9 +4,9 @@
 #include "LobbyGameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemTypes.h"
-#include "PreGame/MainMenu/MainMenu.h"
+#include "RTS_Project/PreGame/MainMenu/MainMenu.h"
 #include "Kismet/GameplayStatics.h"
-#include "PreGame/LobbySystem/LobbyMenu.h"
+#include "RTS_Project/PreGame/LobbySystem/LobbyMenu.h"
 
 const static FName SESSION_NAME = TEXT("RTSFPSGameSession");
 const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");

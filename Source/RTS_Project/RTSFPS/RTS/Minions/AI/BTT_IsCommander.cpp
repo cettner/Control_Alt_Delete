@@ -2,12 +2,14 @@
 
 #include "BTT_IsCommander.h"
 #include "RTSAIController.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Navigation/CrowdFollowingComponent.h"
-#include "RTSFPS/FPS/Commander.h"
+
 
 bool UBTT_IsCommander::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) const
 {

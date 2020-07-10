@@ -3,7 +3,7 @@
 
 #include "LobbyMenu.h"
 #include "LobbyPlayerController.h"
-#include "GameArchitecture/Lobby/LobbyGameState.h"
+#include "RTS_Project/GameArchitecture/Lobby/LobbyGameState.h"
 
 
 void ULobbyMenu::Teardown()

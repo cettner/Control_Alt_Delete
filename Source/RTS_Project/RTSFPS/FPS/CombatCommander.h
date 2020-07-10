@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSFPS/FPS/Commander.h"
-#include "RTSFPS/FPS/Weapons/Weapon.h"
+#include "Commander.h"
+#include "Weapons/Weapon.h"
 #include "Runtime/Core/Public/Containers/EnumAsByte.h"
 #include "CombatCommander.generated.h"
 

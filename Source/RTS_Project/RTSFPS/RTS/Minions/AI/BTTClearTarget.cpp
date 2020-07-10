@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BTTClearTarget.h"
-#include "RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 
 
 

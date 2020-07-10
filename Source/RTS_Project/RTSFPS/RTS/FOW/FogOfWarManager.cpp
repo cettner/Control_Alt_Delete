@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FogOfWarManager.h"
-#include "Runtime/Engine/Classes/Engine/Texture2D.h"
-#include "RTSFPS/RTS/FOW/FogOfWarWorker.h"
-#include "RenderingThread.h"
-#include "RTSFPS/BaseClasses/RTSPlayerController.h"
-#include "Engine.h"
+#include "FogOfWarWorker.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSPlayerController.h"
 
+#include "Engine.h"
+#include "RenderingThread.h"
+#include "Runtime/Engine/Classes/Engine/Texture2D.h"
 
 AFogOfWarManager::AFogOfWarManager(const FObjectInitializer &FOI) : Super(FOI) {
 	

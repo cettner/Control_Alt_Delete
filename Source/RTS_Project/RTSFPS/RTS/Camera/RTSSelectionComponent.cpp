@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSSelectionComponent.h"
+#include "RTS_Project/AssetHelpers/GameAssets.h"
+
 #include "Components/DecalComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "AssetHelpers/GameAssets.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
 
 // Sets default values for this component's properties

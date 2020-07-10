@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AssetHelpers/RTSSpawnHelper.h"
+#include "RTS_Project/AssetHelpers/RTSSpawnHelper.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine.h"
-#include "RTSFPS/RTS/Camera/RTSSelectable.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "RTSStructure.generated.h"
 
 UCLASS()

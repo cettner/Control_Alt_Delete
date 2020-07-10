@@ -2,7 +2,7 @@
 
 
 #include "DefaultPlayerController.h"
-#include "GameArchitecture/Game/DefaultMode.h"
+#include "DefaultMode.h"
 
 
 void ADefaultPlayerController::PostInitializeComponents()

@@ -3,10 +3,10 @@
 
 #include "LobbyGameMode.h"
 #include "LobbyGameState.h"
-#include "PreGame/LobbySystem/LobbyPlayerController.h"
-#include "PreGame/LobbySystem/LobbyPlayerState.h"
+#include "RTS_Project/PreGame/LobbySystem/LobbyPlayerController.h"
+#include "RTS_Project/PreGame/LobbySystem/LobbyPlayerState.h"
 #include "LobbyGameSession.h"
-#include "PreGame/MenuPawn.h"
+#include "RTS_Project/PreGame/MenuPawn.h"
 
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {

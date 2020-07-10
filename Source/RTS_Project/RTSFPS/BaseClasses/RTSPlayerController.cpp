@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSPlayerController.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+#include "RTS_Project/AssetHelpers/GameAssets.h"
+
 #include "ConstructorHelpers.h"
-#include "RTSFPS/RTS/Structures/RTSStructure.h"
-#include "GameArchitecture/Game/RTFPSPlayerState.h"
-#include "RTSFPS/FPS/Commander.h"
-#include "AssetHelpers/GameAssets.h"
 #include "ConstructorHelpers.h"
 #include "Engine.h"
  
