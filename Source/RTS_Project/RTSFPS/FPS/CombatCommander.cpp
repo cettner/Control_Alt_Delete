@@ -28,9 +28,20 @@ FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon, bool bWantsFirstP
 	}
 }
 
+EWeaponState ACombatCommander::GetWeaponState()
+{
+	EWeaponState retstate = EWeaponState::Unequipped;
+	if (CurrentWeapon)
+	{
+		retstate = CurrentWeapon->GetCurrentState();
+	}
+	
+	return(retstate);
+}
+
 void ACombatCommander::SetWeaponStance()
 {
-	if (CurrentWeapon && CurrentWeapon->GetCurrentState() < EWeaponState::Unequipping)
+	if (CurrentWeapon)
 	{
 		Stance = CurrentWeapon->Stance;
 	}
@@ -139,7 +150,18 @@ void ACombatCommander::EquipWeapon(AWeapon* Weapon)
 
 void ACombatCommander::UnEquipWeapon()
 {
-	CurrentWeapon->OnUnEquip();
+	if (CurrentWeapon)
+	{
+		if (GetLocalRole() == ROLE_Authority)
+		{
+			CurrentWeapon->OnUnEquip();
+		}
+		else
+		{
+			ServerUnEquipWeapon();
+		}
+	}
+
 }
 
 void ACombatCommander::UnEquipComplete()
@@ -159,6 +181,11 @@ void ACombatCommander::RemoveWeapon(AWeapon* Weapon)
 		Weapon->OnLeaveInventory();
 		Inventory.RemoveSingle(Weapon);
 	}
+}
+
+bool ACombatCommander::IsWeaponEquipped()
+{
+	return bIsWeaponEquipped;
 }
 
 bool ACombatCommander::ServerEquipWeapon_Validate(AWeapon* Weapon)

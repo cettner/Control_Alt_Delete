@@ -28,8 +28,13 @@ public:
 	/*Remove Weapon From Inventory*/
 	void RemoveWeapon(AWeapon* Weapon);
 
+	bool IsWeaponEquipped();
+
 	/*Get Socket Name, TODO:(based on griptype)*/
 	virtual FName GetWeaponAttachPoint(AWeapon* Weapon, bool bWantsFirstPerson);
+
+	UFUNCTION(BlueprintCallable)
+	virtual EWeaponState GetWeaponState();
 
 	/*Notifier From Weapon that Unequip Animation has Completed*/
 	void UnEquipComplete();

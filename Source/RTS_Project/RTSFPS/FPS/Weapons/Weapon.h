@@ -35,18 +35,17 @@ enum Combat_Stance
 	RIFLE_STANCE,
 };
 
-namespace EWeaponState
+
+UENUM(BlueprintType)
+enum EWeaponState
 {
-	enum Type
-	{
-		Idle,
-		Firing,
-		Reloading,
-		Equipping,
-		Unequipping,
-		Unequipped
-	};
-}
+	Idle,
+	Firing,
+	Reloading,
+	Equipping,
+	Unequipping,
+	Unequipped
+};
 
 
 USTRUCT()
@@ -138,7 +137,7 @@ protected:
 	virtual void DetermineWeaponState();
 
 	/** update weapon state */
-	virtual void SetWeaponState(EWeaponState::Type NewState);
+	virtual void SetWeaponState(EWeaponState NewState);
 
 	/*Determine Attatchment State*/
 	bool IsAttachedToPawn() const;
@@ -181,7 +180,7 @@ protected:
 	bool bIsEquipped = false;
 
 	/** current weapon state */
-	EWeaponState::Type CurrentState;
+	EWeaponState CurrentState;
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
 	ACombatCommander* MyPawn;
@@ -197,7 +196,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Game|Weapon")
 	ACombatCommander* GetPawnOwner() const;
 
-	EWeaponState::Type GetCurrentState() const;
+	EWeaponState GetCurrentState() const;
 
 protected:
 	UFUNCTION()

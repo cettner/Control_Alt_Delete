@@ -302,7 +302,7 @@ void AShooterWeapon::StopSimulatingWeaponFire()
 
 void AShooterWeapon::DetermineWeaponState()
 {
-	EWeaponState::Type NewState = EWeaponState::Idle;
+	EWeaponState NewState = EWeaponState::Idle;
 
 	if (bPendingUnEquip)
 	{
@@ -338,9 +338,9 @@ void AShooterWeapon::DetermineWeaponState()
 	SetWeaponState(NewState);
 }
 
-void AShooterWeapon::SetWeaponState(EWeaponState::Type NewState)
+void AShooterWeapon::SetWeaponState(EWeaponState NewState)
 {
-	const EWeaponState::Type PrevState = CurrentState;
+	const EWeaponState PrevState = CurrentState;
 
 	if (PrevState == EWeaponState::Firing && NewState != EWeaponState::Firing)
 	{

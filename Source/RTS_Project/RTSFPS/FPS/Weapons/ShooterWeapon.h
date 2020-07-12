@@ -149,7 +149,7 @@ protected:
 
 	virtual void DetermineWeaponState() override;
 
-	virtual void SetWeaponState(EWeaponState::Type NewState) override;
+	virtual void SetWeaponState(EWeaponState NewState) override;
 
 	/** get the originating location for camera damage */
 	FVector GetCameraDamageStartLocation(const FVector& AimDir) const;

@@ -293,7 +293,7 @@ FVector AWeapon::GetAdjustedAim() const
 
 void AWeapon::DetermineWeaponState()
 {
-	EWeaponState::Type NewState = EWeaponState::Idle;
+	EWeaponState NewState = EWeaponState::Idle;
 
 	if (bPendingUnEquip)
 	{
@@ -314,9 +314,9 @@ void AWeapon::DetermineWeaponState()
 	SetWeaponState(NewState);
 }
 
-void AWeapon::SetWeaponState(EWeaponState::Type NewState)
+void AWeapon::SetWeaponState(EWeaponState NewState)
 {
-	const EWeaponState::Type PrevState = CurrentState;
+	const EWeaponState PrevState = CurrentState;
 	CurrentState = NewState;
 }
 
@@ -330,7 +330,7 @@ ACombatCommander * AWeapon::GetPawnOwner() const
 	return(MyPawn);
 }
 
-EWeaponState::Type AWeapon::GetCurrentState() const
+EWeaponState AWeapon::GetCurrentState() const
 {
 	return CurrentState;
 }
