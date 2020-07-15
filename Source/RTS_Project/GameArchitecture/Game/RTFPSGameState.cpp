@@ -2,10 +2,6 @@
 
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
-#include "ConstructorHelpers.h"
-#include "Runtime/Engine/Classes/Engine/World.h"
-#include "UnrealNetwork.h"
-#include "Engine.h"
 
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
 {

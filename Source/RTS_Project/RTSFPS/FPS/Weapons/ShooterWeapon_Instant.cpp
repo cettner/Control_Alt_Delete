@@ -2,7 +2,7 @@
 
 
 #include "ShooterWeapon_Instant.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "Runtime\Engine\Classes\Kismet\GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 

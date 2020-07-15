@@ -4,7 +4,7 @@
 #include "DefaultPlayerController.h"
 #include "DefaultGameState.h"
 #include "Engine/World.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 void ADefaultPlayerState::ClientInitialize(AController* Controller)
 {

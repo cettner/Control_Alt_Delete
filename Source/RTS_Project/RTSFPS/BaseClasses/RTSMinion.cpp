@@ -11,7 +11,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 
 

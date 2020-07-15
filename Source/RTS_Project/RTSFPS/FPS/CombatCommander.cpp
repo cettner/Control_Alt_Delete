@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CombatCommander.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "Engine/EngineTypes.h"
 #include "Components/CapsuleComponent.h"
 
@@ -51,6 +51,18 @@ void ACombatCommander::SetWeaponStance()
 	}
 }
 
+TEnumAsByte<Combat_Stance> ACombatCommander::GetWeaponStance()
+{
+	if (CurrentWeapon)
+	{
+		return CurrentWeapon->Stance;
+	}
+	else
+	{
+		return NO_WEAPON_STANCE;
+	}
+}
+
 void ACombatCommander::SetupPlayerInputComponent(UInputComponent * ActorInputComponent)
 {
 	Super::SetupPlayerInputComponent(InputComponent);
@@ -88,29 +100,36 @@ void ACombatCommander::WeaponSwitchComplete()
 
 void ACombatCommander::HandleSwitchWeapon(int direction)
 {
-	if (Inventory.Num() >= 2)
+	if (GetLocalRole() < ROLE_Authority)
 	{
-		/*If we're already Cycling Weapons */
-		if (NextWeapon && bIsSwitching_Weapon)
+		ServerSwitchWeapon(direction);
+	}
+	else
+	{
+		if (Inventory.Num() >= 2)
 		{
-			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
-			NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
-		}
-		else if (CurrentWeapon) // Get the nextweapon based on the current
-		{
-			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-			NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
-		}
+			/*If we're already Cycling Weapons */
+			if (NextWeapon && bIsSwitching_Weapon)
+			{
+				const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
+				NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
+			}
+			else if (CurrentWeapon) // Get the nextweapon based on the current
+			{
+				const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
+				NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
+			}
 
-		if (bIsSwitching_Weapon)
-		{
-			SetWeaponEquippedTimer();
-		}
-		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
-		{
-			bIsSwitching_Weapon = true;
-			UnEquipWeapon();
-			SetWeaponEquippedTimer();
+			if (bIsSwitching_Weapon)
+			{
+				SetWeaponEquippedTimer();
+			}
+			else if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
+			{
+				bIsSwitching_Weapon = true;
+				UnEquipWeapon();
+				SetWeaponEquippedTimer();
+			}
 		}
 	}
 }
@@ -139,7 +158,7 @@ void ACombatCommander::EquipWeapon(AWeapon* Weapon)
 	{
 		if (GetLocalRole() == ROLE_Authority)
 		{
-			SetCurrentWeapon(Weapon, CurrentWeapon);
+			SetCurrentWeapon(Weapon);
 		}
 		else
 		{
@@ -155,6 +174,7 @@ void ACombatCommander::UnEquipWeapon()
 		if (GetLocalRole() == ROLE_Authority)
 		{
 			CurrentWeapon->OnUnEquip();
+			CurrentWeapon = nullptr;
 		}
 		else
 		{
@@ -166,12 +186,21 @@ void ACombatCommander::UnEquipWeapon()
 
 void ACombatCommander::UnEquipComplete()
 {
-	SetWeaponStance();
-	bIsWeaponEquipped = false;
-	if (!bIsSwitching_Weapon)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		WeaponSwitchComplete();
+		bIsWeaponEquipped = false;
+		SetWeaponStance();
+
+		if (!bIsSwitching_Weapon)
+		{
+			WeaponSwitchComplete();
+		}
 	}
+	else if(CurrentWeapon)
+	{
+
+	}
+
 }
 
 void ACombatCommander::RemoveWeapon(AWeapon* Weapon)
@@ -206,6 +235,16 @@ bool ACombatCommander::ServerUnEquipWeapon_Validate()
 void ACombatCommander::ServerUnEquipWeapon_Implementation()
 {
 	UnEquipWeapon();
+}
+
+bool ACombatCommander::ServerSwitchWeapon_Validate(int direction)
+{
+	return(true);
+}
+
+void ACombatCommander::ServerSwitchWeapon_Implementation(int direction)
+{
+	HandleSwitchWeapon(direction);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -316,7 +355,7 @@ void ACombatCommander::SpawnDefaultInventory()
 	}
 }
 
-void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapon)
+void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon)
 {
 		CurrentWeapon = NewWeapon;
 
@@ -326,7 +365,7 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapo
 		{
 			NewWeapon->SetOwningPawn(this);	// Make sure weapon's MyPawn is pointing back to us. During replication, we can't guarantee APawn::CurrentWeapon will rep after AWeapon::MyPawn!
 
-			NewWeapon->OnEquip(LastWeapon);
+			NewWeapon->OnEquip();
 		}
 
 	// Change How we are holding the weapon in animation blueprint.
@@ -335,8 +374,14 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon, AWeapon * LastWeapo
 
 void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 {
-	SetCurrentWeapon(CurrentWeapon, LastWeapon);
-	bIsWeaponEquipped = true;
+	if (LastWeapon)
+	{
+		LastWeapon->SetOwningPawn(this);
+		LastWeapon->OnUnEquip(CurrentWeapon);
+	}
+
+	SetCurrentWeapon(CurrentWeapon);
+	bIsWeaponEquipped = CurrentWeapon != nullptr;
 }
 
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "ShooterWeapon.generated.h"
 
 /**

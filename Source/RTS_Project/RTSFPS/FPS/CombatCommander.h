@@ -74,6 +74,9 @@ protected:
 	void StopWeaponFire();
 
 public:
+	UFUNCTION(BlueprintCallable)
+	TEnumAsByte<Combat_Stance> GetWeaponStance();
+
 	/*Read by Animation Blueprint to determine which state machine to use*/
 	UPROPERTY(BlueprintReadOnly)
 	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
@@ -104,7 +107,7 @@ protected:
 	void SpawnDefaultInventory();
 
 	/** updates current weapon */
-	void SetCurrentWeapon(AWeapon* NewWeapon, AWeapon* LastWeapon = NULL);
+	void SetCurrentWeapon(AWeapon* NewWeapon);
 
 	/**
 	* [server + local] equips weapon from inventory
@@ -125,6 +128,9 @@ protected:
 
 	/*Notifer That User has completed Weapon Selection*/
 	void WeaponSwitchComplete();
+
+	UFUNCTION(reliable, server, WithValidation)
+	void ServerSwitchWeapon(int direction);
 
 	/** equip weapon */
 	UFUNCTION(reliable, server, WithValidation)

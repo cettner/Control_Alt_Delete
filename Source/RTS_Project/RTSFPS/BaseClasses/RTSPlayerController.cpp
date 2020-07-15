@@ -6,8 +6,6 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/AssetHelpers/GameAssets.h"
 
-#include "ConstructorHelpers.h"
-#include "ConstructorHelpers.h"
 #include "Engine.h"
  
 ARTSPlayerController::ARTSPlayerController()

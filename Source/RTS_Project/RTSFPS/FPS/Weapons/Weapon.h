@@ -106,7 +106,7 @@ public:
 public:
 
 	/** weapon is being equipped by owner pawn */
-	virtual void OnEquip(const AWeapon* LastWeapon);
+	virtual void OnEquip();
 	
 	/** weapon is now equipped by owner pawn */
 	virtual void OnEquipFinished();

@@ -46,11 +46,15 @@ Weapon_Grip_Type AWeapon::GetType()
 	return(Grip_Type);
 }
 
-void AWeapon::OnEquip(const AWeapon * LastWeapon)
+void AWeapon::OnEquip()
 {
 	if (!HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Equipping %s..."), *this->GetName()));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Equipping %s..."), *this->GetName()));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Equipping %s..."), *this->GetName()));
 	}
 	
 	AttachMeshToPawn();
@@ -78,7 +82,11 @@ void AWeapon::OnEquipFinished()
 {
 	if (!HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Finished Equipping %s!"), *this->GetName()));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Finished Equipping %s!"), *this->GetName()));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Finished Equipping %s!"), *this->GetName()));
 	}
 	
 	AttachMeshToPawn();
@@ -94,7 +102,11 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 {
 	if (!HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Unequipping %s..."), *this->GetName()));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Unequipping %s..."), *this->GetName()));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Unequipping %s..."), *this->GetName()));
 	}
 
 	if (bPendingEquip)
@@ -121,7 +133,15 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 
 void AWeapon::OnUnEquipFinished()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Unequip %s Finished"), *this->GetName()));
+	if (!HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Unequip %s Finished"), *this->GetName()));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Unequip %s Finished"), *this->GetName()));
+	}
+
 	DetachMeshFromPawn();
 	bIsEquipped = false;
 	bPendingUnEquip = false;
@@ -229,6 +249,7 @@ float AWeapon::PlayWeaponAnimation(const FWeaponAnim& Animation)
 		UAnimMontage* UseAnim = MyPawn->IsFirstPerson() ? Animation.AnimFirstPerson : Animation.AnimThirdPerson;
 		if (UseAnim)
 		{
+			
 			Duration = MyPawn->PlayAnimMontage(UseAnim);
 		}
 	}

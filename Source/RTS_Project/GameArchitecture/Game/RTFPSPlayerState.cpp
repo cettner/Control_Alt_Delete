@@ -4,7 +4,7 @@
 #include "RTS_Project/RTSFPS/BaseClasses/RTSPlayerController.h"
 #include "RTFPSGameState.h"
 #include "Engine/World.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 #define FPSONLY
 
