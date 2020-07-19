@@ -21,29 +21,32 @@ void ARTSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*Client or Listen Server, Initilize the Hud Locally*/
-	/*Initialize Hud*/
-	HudPtr = Cast<ARTSHUD>(GetHUD());
-	
-	/**/
+	/*This is carryover from the lobby UI set it back so that the initial click is used*/
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
 	
-	if (Cast<ACommander>(GetPawn()) && HudPtr)
-	{
-		bShowMouseCursor = false;
-		HudPtr->ChangeHUDState(ARTSHUD::FPS_AIM_AND_SHOOT);
-	}
-	else if (Cast<ARTSCamera>(GetPawn()) && HudPtr)
-	{
-		HudPtr->ChangeHUDState(ARTSHUD::RTS_SELECT_AND_MOVE);
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
-	}
 
+	/*Client or Listen Server, Initilize the Hud Locally*/
+    /*Initialize Hud*/
+	HudPtr = Cast<ARTSHUD>(GetHUD());
+	if (HudPtr)
+	{
+		if (Cast<ACommander>(GetPawn()))
+		{
+			bShowMouseCursor = false;
+			HudPtr->ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
+		}
+		else if (Cast<ARTSCamera>(GetPawn()))
+		{
+			HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
+		}
+		HudPtr->InitializeUI();
+	}
 }
 
 void ARTSPlayerController::PostInitializeComponents()
@@ -86,7 +89,7 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 	for (TActorIterator<ARTSMinion> It(World); It; ++It)
 	{
 		ARTSMinion* Minion = *It;
-		if (!Minion->IsPendingKill())
+		if (Minion && !Minion->IsPendingKill())
 		{
 			Minion->SetDeselected();
 			if (Minion->GetTeam() != newteam)
@@ -188,7 +191,7 @@ bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
 void ARTSPlayerController::PossessCommander_Implementation(ACommander * commander)
 {
 	bShowMouseCursor = false;
-	HudPtr->ChangeHUDState(ARTSHUD::FPS_AIM_AND_SHOOT);
+	HudPtr->ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
 	Possess(commander);
 }
 
@@ -207,7 +210,7 @@ bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
 void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
 {
 	bShowMouseCursor = true;
-	HudPtr->ChangeHUDState(ARTSHUD::RTS_SELECT_AND_MOVE);
+	HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
 	Possess(camera);
 }
 

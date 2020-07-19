@@ -5,7 +5,7 @@
 #include "Engine/EngineTypes.h"
 #include "Components/CapsuleComponent.h"
 
-ACombatCommander::ACombatCommander()
+ACombatCommander::ACombatCommander() : Super()
 {
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Block);

@@ -2,7 +2,7 @@
 
 
 #include "HealthComponent.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "GameFramework/Actor.h"
 #include "Engine.h"
 
@@ -270,8 +270,9 @@ void UHealthComponent::PreReplication(IRepChangedPropertyTracker & ChangedProper
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UHealthComponent,Current_Health) 
-	DOREPLIFETIME_CONDITION(UHealthComponent, LastTakeHitInfo, COND_Custom)
+	DOREPLIFETIME(UHealthComponent, Current_Health);
+	DOREPLIFETIME(UHealthComponent, MaxHealth);
+	DOREPLIFETIME_CONDITION(UHealthComponent, LastTakeHitInfo, COND_Custom);
 }
 
 void UHealthComponent::HandleRagDoll(USkeletalMeshComponent * Mesh, const float DeathAnimDuration)

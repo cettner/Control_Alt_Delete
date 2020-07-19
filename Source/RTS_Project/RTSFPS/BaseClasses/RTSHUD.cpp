@@ -9,7 +9,7 @@
 #include "RTS_Project/AssetHelpers/GameAssets.h"
 
 
-ARTSHUD::ARTSHUD()
+ARTSHUD::ARTSHUD() : Super()
 {
 	// Set the crosshair texture
 	static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshairTexObj(TEXT(FPS_CROSSHAIR_PATH));
@@ -18,25 +18,26 @@ ARTSHUD::ARTSHUD()
 	state = GAME_INIT;
 }
 
-void ARTSHUD::DrawHUD() //similiar to "tick" of actor class overridden
+template<typename ClassFilter>
+inline bool ARTSHUD::GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
 {
-	switch (state)
+	//Is Actor subclass?
+	if (!ClassFilter::StaticClass()->IsChildOf(AActor::StaticClass()))
 	{
-	case ARTSHUD::GAME_INIT:
-		break;
-	case ARTSHUD::RTS_SELECT_AND_MOVE:
-		RTSSelectAndMoveHandler();
-		break;
-	case ARTSHUD::FPS_AIM_AND_SHOOT:
-		FPSAimAndShootHandler();
-		break;
-	case ARTSHUD::RTS_STRUCTURE_SELECT:
-		RTSStructureSelectHandler();
-		break;
-	default:
-		break;
+		return false;
 	}
 
+	//Run Inner Function, output to Base AActor Array
+	TArray<AActor*> OutActorsBaseArray;
+	GetActorsInSelectionRectangle(ClassFilter::StaticClass(), FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed);
+
+	//Construct casted template type array
+	for (AActor* EachActor : OutActorsBaseArray)
+	{
+		OutActors.Add(CastChecked<ClassFilter>(EachActor));
+	}
+
+	return true;
 }
 
 void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D & FirstPoint, const FVector2D & SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
@@ -109,19 +110,6 @@ void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilte
 			}
 		}
 	}
-}
-
-void ARTSHUD::ChangeHUDState(HUDSTATE statetype)
-{
-	if (statetype > LBOUND && statetype < UBOUND)
-	{
-		state = statetype;
-	}
-}
-
-ARTSHUD::HUDSTATE ARTSHUD::GetHUDState()
-{
-	return (state);
 }
 
 void ARTSHUD::RTSSelectAndMoveHandler()
@@ -201,14 +189,6 @@ void ARTSHUD::GetSelectedUnits()
 			}
 		}
 	}
-}
-
-FVector2D ARTSHUD::GetMouseLocation()
-{
-	float PosX;
-	float PosY;
-	GetOwningPlayerController()->GetMousePosition(PosX, PosY);
-	return(FVector2D(PosX, PosY));
 }
 
 void ARTSHUD::GetSelectedStructures()

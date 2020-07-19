@@ -60,6 +60,8 @@ public:
 };
 
 
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTS_PROJECT_API UHealthComponent : public UActorComponent
 {
@@ -125,10 +127,10 @@ protected:
 
 	/////////////////////////////////////////////////
 	//Life
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Health")
 	float Current_Health;
 
-	UPROPERTY(EditDefaultsOnly, Category="Health")
+	UPROPERTY(EditDefaultsOnly, Replicated, Category="Health")
 	float MaxHealth;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Health")

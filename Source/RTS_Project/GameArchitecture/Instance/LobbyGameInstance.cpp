@@ -15,7 +15,7 @@ const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");
 ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	MenuClass = UMainMenu::StaticClass();
-	LobbyClass = UMainMenu::StaticClass();
+	LobbyClass = ULobbyMenu::StaticClass();
 	RestartSession = false;
 	DesiredServerName = "Default Server";
 	PlayerName = "";

@@ -2,7 +2,7 @@
 
 #include "Weapon.h"
 #include "Components/SkinnedMeshComponent.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 #include "RTS_Project/RTSFPS/FPS/CombatCommander.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"

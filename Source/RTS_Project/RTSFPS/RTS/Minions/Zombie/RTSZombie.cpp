@@ -3,7 +3,7 @@
 
 #include "RTSZombie.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "UnrealNetwork.h"
+#include "Net/UnrealNetwork.h"
 
 ARTSZombie::ARTSZombie() : Super()
 {

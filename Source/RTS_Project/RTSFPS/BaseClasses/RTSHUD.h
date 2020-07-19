@@ -10,81 +10,57 @@
 #include "CanvasItem.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/Texture2D.h"
+#include "RTSFPSHUD.h"
 #include "RTSHUD.generated.h"
 
 class ARTSStructure; 
-/**
- * 
- */
+
+
 UCLASS()
-class RTS_PROJECT_API ARTSHUD : public AHUD
+class RTS_PROJECT_API ARTSHUD : public ARTSFPSHUD
 {
 	GENERATED_BODY()
 	
 public:
 	ARTSHUD();
-	virtual void DrawHUD() override;  // HUD "tick" function
+
 	
 	//overriden engine functions to give more control over unit selection
 	template <typename ClassFilter>
-	bool GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false)
-	{
-		//Is Actor subclass?
-		if (!ClassFilter::StaticClass()->IsChildOf(AActor::StaticClass()))
-		{
-			return false;
-		}
+	bool GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false);
 
-		//Run Inner Function, output to Base AActor Array
-		TArray<AActor*> OutActorsBaseArray;
-		GetActorsInSelectionRectangle(ClassFilter::StaticClass(), FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed);
-
-		//Construct casted template type array
-		for (AActor* EachActor : OutActorsBaseArray)
-		{
-			OutActors.Add(CastChecked<ClassFilter>(EachActor));
-		}
-
-		return true;
-	};
 	virtual void GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
 	
 	FVector2D Initial_select;  // intial mouse cursor location on click
 	FVector2D End_Select;		//mouse cursor location on release
 	
-	FVector2D GetMouseLocation();
-
 	TArray <ARTSMinion*> Selected_Units;
 	TArray <ARTSStructure*> Selected_Structure;
 
 	bool SelctionInProcess = false;
 	bool StructureSelected = false;
 
-	enum HUDSTATE {
-		LBOUND,
-		GAME_INIT,
-		RTS_SELECT_AND_MOVE,
-		RTS_STRUCTURE_SELECT,
-		FPS_AIM_AND_SHOOT,
-		UBOUND
-	};
 
-	HUDSTATE state;
 
-	void ChangeHUDState(HUDSTATE statetype);
-
-	HUDSTATE GetHUDState();
+protected:
 
 	UPROPERTY(EditAnywhere)
 	float selection_transparency = 0.15f;
 
-private:
 	/** Crosshair asset pointer */
-	class UTexture2D* CrosshairTex;
+	UTexture2D* CrosshairTex;
+
+protected:
+	virtual void RTSSelectAndMoveHandler() override;
+	virtual void RTSStructureSelectHandler() override;
+	virtual void FPSAimAndShootHandler() override;
+
+
+private:
 	void GetSelectedUnits();
 	void GetSelectedStructures();
 	void CleanSelectedActors();
-	void RTSSelectAndMoveHandler();
-	void RTSStructureSelectHandler();
-	void FPSAimAndShootHandler();
+
 };
+
+

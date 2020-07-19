@@ -57,7 +57,7 @@ void ACommander::PossessedBy(AController* NewController)
 
 }
 
-ACommander::ACommander()
+ACommander::ACommander() : Super()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	FPS_Camera->SetupAttachment(GetCapsuleComponent());

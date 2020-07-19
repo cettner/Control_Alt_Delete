@@ -64,7 +64,7 @@ void ARTSMinion::StartAttack(AActor * AttackMe)
 
 bool ARTSMinion::IsAlive()
 {
-	return (Health->IsAlive());
+	return (Health && Health->IsAlive());
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
@@ -120,17 +120,26 @@ void ARTSMinion::ClearTarget()
 
 void ARTSMinion::SetSelected()
 {
-	Selection->SetSelected();
+	if (Selection)
+	{
+		Selection->SetSelected();
+	}
 }
 
 void ARTSMinion::SetDeselected()
 {
-	Selection->SetDeselected();
+	if (Selection)
+	{
+		Selection->SetDeselected();
+	}
 }
 
 void ARTSMinion::SetTeamColors()
 {
-	Selection->SetSelectionColor(FLinearColor::Red);
+	if (Selection)
+	{
+		Selection->SetSelectionColor(FLinearColor::Red);
+	}
 }
 
 ACommander * ARTSMinion::GetCommander()
