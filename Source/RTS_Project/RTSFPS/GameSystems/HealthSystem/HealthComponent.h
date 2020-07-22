@@ -73,6 +73,12 @@ public:
 
 	virtual void SetMaxHealth(float healthval);
 
+	virtual float GetMaxHealth();
+
+	virtual float GetCurrentHealth();
+
+	virtual float GetHealthPercentage();
+
 	virtual bool IsAlive();
 
 	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
@@ -128,7 +134,7 @@ protected:
 	/////////////////////////////////////////////////
 	//Life
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Health")
-	float Current_Health;
+	float CurrentHealth;
 
 	UPROPERTY(EditDefaultsOnly, Replicated, Category="Health")
 	float MaxHealth;

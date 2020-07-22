@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "FPSUI.generated.h"
 
 /**
@@ -20,17 +22,33 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 
 	protected:
 		virtual bool Initialize() override;
+		virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
+
+	protected:
+		UHealthComponent* GetOwnerHealthComp() const;
 
 	protected:
 		UFUNCTION()
-		virtual void UpdateHealthPercent();
+		virtual float UpdateHealthPercent() const;
+
+		UFUNCTION()
+		virtual FText UpdateCurrentHealthText() const;
+
+		UFUNCTION()
+		virtual FText UpdateMaxHealthText() const;
+
 
     protected:
-		/*Pointer to Owners Pawn for ease of access*/
-		APawn* OwnerPawn;
+		/*Floating Point to Text Formatting Options*/
+		FNumberFormattingOptions FloatingPointOptions;
 
     protected:
 	   UPROPERTY(meta = (BindWidget))
 	   UProgressBar* HealthBar;
 
+	   UPROPERTY(meta = (BindWidgetOptional))
+	   UTextBlock* MaxHealthText;
+
+	   UPROPERTY(meta = (BindWidgetOptional))
+	   UTextBlock* CurrentHealthText;
 };

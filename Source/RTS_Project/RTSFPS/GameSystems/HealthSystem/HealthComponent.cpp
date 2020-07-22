@@ -13,7 +13,8 @@ UHealthComponent::UHealthComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	//Make it so the component is "Alive"
-	Current_Health = 1000.0F;
+	MaxHealth = 300.0f;
+	CurrentHealth = MaxHealth;
 }
 
 void UHealthComponent::SetMaxHealth(float healthval)
@@ -21,9 +22,28 @@ void UHealthComponent::SetMaxHealth(float healthval)
 	MaxHealth = healthval;
 }
 
+float UHealthComponent::GetMaxHealth()
+{
+	return MaxHealth;
+}
+
+float UHealthComponent::GetCurrentHealth()
+{
+	return CurrentHealth;
+}
+
+float UHealthComponent::GetHealthPercentage()
+{
+	if (MaxHealth <= 0.0) return(0.0);
+	float percent = CurrentHealth / MaxHealth;
+	percent = FMath::Clamp(percent, 0.0f, 1.0f);
+
+	return (percent);
+}
+
 bool UHealthComponent::IsAlive()
 {
-	return (Current_Health > 0.0F);
+	return (CurrentHealth > 0.0F);
 }
 
 float UHealthComponent::HandleDamageEvent(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
@@ -32,9 +52,9 @@ float UHealthComponent::HandleDamageEvent(float Damage, FDamageEvent const & Dam
 	if (Damage > 0.0f && !bIsDying)
 	{
 		ActualDamage = ModifyDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-		Current_Health -= ActualDamage;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s: Damage Taken: %.2f Health Remaining: %.2f"),*CompOwner->GetName(), ActualDamage, Current_Health));
-		if (Current_Health <= 0.0f)
+		CurrentHealth -= ActualDamage;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s: Damage Taken: %.2f Health Remaining: %.2f"),*CompOwner->GetName(), ActualDamage, CurrentHealth));
+		if (CurrentHealth <= 0.0f)
 		{
 			Die(Damage, DamageEvent, EventInstigator, DamageCauser);
 		}
@@ -77,7 +97,7 @@ bool UHealthComponent::Die(float KillingDamage, FDamageEvent const & DamageEvent
 	{
 		return (false);
 	}
-	Current_Health = FMath::Min(0.0f, Current_Health);
+	CurrentHealth = FMath::Min(0.0f, CurrentHealth);
 
 	OnDeath(KillingDamage, DamageEvent, Killer ? Killer->GetPawn() : NULL, DamageCauser);
 
@@ -270,7 +290,7 @@ void UHealthComponent::PreReplication(IRepChangedPropertyTracker & ChangedProper
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UHealthComponent, Current_Health);
+	DOREPLIFETIME(UHealthComponent, CurrentHealth);
 	DOREPLIFETIME(UHealthComponent, MaxHealth);
 	DOREPLIFETIME_CONDITION(UHealthComponent, LastTakeHitInfo, COND_Custom);
 }
