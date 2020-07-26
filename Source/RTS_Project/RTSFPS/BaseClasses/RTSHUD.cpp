@@ -161,8 +161,15 @@ void ARTSHUD::GetSelectedUnits()
 		int endindex = Selected_Units.Num();
 		for (int32 i = 0; i < endindex; i++)
 		{
+			/*Remove Minions that are dead, dieing, or being removed from memory*/
+			if (!Selected_Units[i] || Selected_Units[i]->IsPendingKill() || !Selected_Units[i]->IsAlive())
+			{
+				Selected_Units.RemoveAt(i);
+				endindex--;
+				i--;
+			}
 			/*Remove Enemy Minions*/
-			if (Selected_Units[i]->GetTeam() != PS->TeamID)
+			else if (Selected_Units[i]->GetTeam() != PS->TeamID)
 			{
 				Selected_Units.RemoveAt(i);
 				endindex--;

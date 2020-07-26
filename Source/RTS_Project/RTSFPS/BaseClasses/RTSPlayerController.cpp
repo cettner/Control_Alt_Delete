@@ -153,7 +153,11 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 	AActor * target = Hit.GetActor();
 	for (int i = 0; i < Units.Num(); i++)
 	{
-		if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
+		if (!Units[i] || Units[i]->IsPendingKill() || !Units[i]->IsAlive()) /*Skip Dead or Invalid Minions*/
+		{
+
+		}
+		else if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
 		{
 			 ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Moving %d, Im team %d"),Units[i]->GetTeam(), PS->TeamID));

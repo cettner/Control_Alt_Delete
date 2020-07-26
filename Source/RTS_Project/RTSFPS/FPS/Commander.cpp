@@ -157,7 +157,7 @@ bool ACommander::CanInteract(AActor * Interactable)
 	return(retval);
 }
 
-int ACommander::GetTeam()
+int ACommander::GetTeam() const
 {
 
 	ADefaultPlayerController * PC = GetController<ADefaultPlayerController>();

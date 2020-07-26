@@ -11,11 +11,16 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
 
+UBTTask_Attack_Target::UBTTask_Attack_Target()
+{
+	NodeName = "Attack BlackBoard Key";
+}
+
 EBTNodeResult::Type UBTTask_Attack_Target::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
-	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 	ARTSAIController* Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
 
 	if (Controller && target && !MessageRecieved)

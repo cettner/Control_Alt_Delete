@@ -6,11 +6,16 @@
 
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
+UBTDecorator_IsTargetAlive::UBTDecorator_IsTargetAlive()
+{
+	NodeName = "Is Key Alive";
+}
+
 
 bool UBTDecorator_IsTargetAlive::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	bool isAlive = false;
-	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 
 	if (target)
 	{

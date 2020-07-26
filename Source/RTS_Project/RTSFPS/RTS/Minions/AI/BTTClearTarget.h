@@ -3,19 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTClearTarget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API UBTTClearTarget : public UBTTaskNode
+class RTS_PROJECT_API UBTTClearTarget : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	public:
+		UBTTClearTarget();
 		virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	
+    protected:
+	    UPROPERTY(EditDefaultsOnly, Category = Blackboard)
+	    bool bShouldReleaseAssets = true;
 	
 	
 };

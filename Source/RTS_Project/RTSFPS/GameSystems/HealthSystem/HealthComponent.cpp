@@ -4,6 +4,7 @@
 #include "HealthComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Actor.h"
+#include "Perception/AIPerceptionSystem.h"
 #include "Engine.h"
 
 // Sets default values for this component's properties
@@ -22,17 +23,17 @@ void UHealthComponent::SetMaxHealth(float healthval)
 	MaxHealth = healthval;
 }
 
-float UHealthComponent::GetMaxHealth()
+float UHealthComponent::GetMaxHealth() const
 {
 	return MaxHealth;
 }
 
-float UHealthComponent::GetCurrentHealth()
+float UHealthComponent::GetCurrentHealth() const 
 {
 	return CurrentHealth;
 }
 
-float UHealthComponent::GetHealthPercentage()
+float UHealthComponent::GetHealthPercentage() const
 {
 	if (MaxHealth <= 0.0) return(0.0);
 	float percent = CurrentHealth / MaxHealth;
@@ -41,7 +42,7 @@ float UHealthComponent::GetHealthPercentage()
 	return (percent);
 }
 
-bool UHealthComponent::IsAlive()
+bool UHealthComponent::IsAlive() const
 {
 	return (CurrentHealth > 0.0F);
 }
@@ -111,6 +112,8 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 	{
 		return;
 	}
+
+	OnDeathStart.ExecuteIfBound();
 
 	bIsDying = true;
 	

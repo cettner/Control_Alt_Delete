@@ -4,7 +4,13 @@
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
 
+
+UBTTClearTarget::UBTTClearTarget()
+{
+    NodeName = "Clear Key Value";
+}
 
 EBTNodeResult::Type UBTTClearTarget::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -13,11 +19,12 @@ EBTNodeResult::Type UBTTClearTarget::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
         if(Controller && minion)
         {
-            if(minion->HasAssets())
+            if(minion->HasAssets() || bShouldReleaseAssets)
             {   
                 minion->ReleaseAssets();
             }
-            minion->ClearTarget();
+            
+            OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
             return (EBTNodeResult::Succeeded);
         }
         else

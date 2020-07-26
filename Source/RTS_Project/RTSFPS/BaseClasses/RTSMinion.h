@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "../GameSystems/HealthSystem/HealthComponent.h"
-#include "../RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "RTSMinion.generated.h"
 
@@ -26,9 +28,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = UI)
 	UTexture* GetThumbnail();
 
-	UPROPERTY(EditDefaultsOnly,Category = UI)
-	UTexture* Thumbnail;
-
 	virtual bool CanInteract(AActor * Interactable);
 
 	virtual bool CanAttack(AActor * AttackMe);
@@ -38,6 +37,9 @@ public:
 	virtual void StartAttack(AActor * AttackMe);
 
 	virtual bool IsAlive();
+
+	UFUNCTION()
+	virtual void OnDeath();
 
 	virtual bool IsEnemy(AActor *  InMinion);
 
@@ -70,9 +72,14 @@ public:
 	//TODO: Make this a Server Call
 	virtual void SetTeam(int team_id);
 
-	virtual int GetTeam();
+	virtual int GetTeam() const;
 
 	virtual UBehaviorTree* GetBehavior();
+
+	virtual FRTSAIPerceptionConfig GetAIConfig() const;
+
+protected:
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -86,12 +93,20 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * RTSBehavior;
+
+	UPROPERTY(EditDefaultsOnly, Category = Perception)
+	FRTSAIPerceptionConfig AIConfig;
 	
 	UPROPERTY(Editdefaultsonly, Category = Selection)
 	URTSSelectionComponent * Selection;
 
 	UPROPERTY(Replicated)
 	ACommander * Cmdr;
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	UTexture* Thumbnail;
+
+
 
 };
 

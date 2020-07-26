@@ -37,9 +37,29 @@ ARTSMinion::ARTSMinion()
 	Selection->SetRoot(RootComponent);
 	Selection->SetDetection(GetCapsuleComponent());
 
-
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
+	Health->OnDeathStart.BindUFunction(this,"OnDeath");
 	Health->SetIsReplicated(true);
+
+	AIConfig.LoseSightRadius = 2000.0;
+	/*Radial from forward vector ie: 180 == 180 * 2*/
+	AIConfig.PeripheralVision = 180.0;
+	AIConfig.SightRadius = 1500;
+
+	FAISenseAffiliationFilter Affiliations;
+	Affiliations.bDetectEnemies = true;
+	Affiliations.bDetectFriendlies = false;
+	Affiliations.bDetectNeutrals = false;
+
+	AIConfig.SightAffiliation = Affiliations;
+}
+
+void ARTSMinion::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	UWorld* World = GetWorld();
+	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+	PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
 }
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
@@ -65,6 +85,13 @@ void ARTSMinion::StartAttack(AActor * AttackMe)
 bool ARTSMinion::IsAlive()
 {
 	return (Health && Health->IsAlive());
+}
+
+void ARTSMinion::OnDeath()
+{
+	UWorld* World = GetWorld();
+	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+	PerceptionSystem->UnregisterSource(*this);
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
@@ -183,7 +210,7 @@ void ARTSMinion::SetTeam(int team_id)
 	team_index = team_id;
 }
 
-int ARTSMinion::GetTeam()
+int ARTSMinion::GetTeam() const
 {
 	return team_index;
 }
@@ -193,10 +220,15 @@ UBehaviorTree* ARTSMinion::GetBehavior()
 	return(RTSBehavior);
 }
 
+FRTSAIPerceptionConfig ARTSMinion::GetAIConfig() const
+{
+	return AIConfig;
+}
+
 //interface function for override;
 void ARTSMinion::ReleaseAssets()
 {
-	ClearTarget();
+
 }
 
 bool ARTSMinion::HasAssets()

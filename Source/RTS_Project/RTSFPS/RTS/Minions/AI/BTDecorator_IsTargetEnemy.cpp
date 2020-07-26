@@ -9,11 +9,16 @@
 
 
 
+UBTDecorator_IsTargetEnemy::UBTDecorator_IsTargetEnemy()
+{
+	NodeName = "Is Key Enemy";
+}
+
 bool UBTDecorator_IsTargetEnemy::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	bool result = false;
 	ARTSAIController* Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 
 	if (Controller && target)
 	{

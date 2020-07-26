@@ -63,7 +63,7 @@ public:
 
 	virtual bool CanInteract(AActor * Interactable) override;
 
-	virtual int GetTeam() override;
+	virtual int GetTeam() const override;
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void MinionInteractionHandler(ARTSMinion * Interacted);

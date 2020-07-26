@@ -3,18 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BTDecorator.h"
+#include "BehaviorTree/Decorators/BTDecorator_BlackboardBase.h"
 #include "BT_Can_Interact.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API UBT_Can_Interact : public UBTDecorator
+class RTS_PROJECT_API UBT_Can_Interact : public UBTDecorator_BlackboardBase
 {
 	GENERATED_BODY()
-	
-	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
+   public: 
+	   UBT_Can_Interact();
+
+   protected:
+	   virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 	
 	
 };

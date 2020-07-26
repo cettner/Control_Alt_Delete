@@ -7,7 +7,11 @@
 #include "Animation/AnimMontage.h"
 #include "Sound/SoundCue.h"
 #include "GameFramework/MovementComponent.h"
+#include "UObject/ObjectMacros.h"
 #include "HealthComponent.generated.h"
+
+
+DECLARE_DELEGATE(FOnDeathStartDelegate);
 
 /** replicated information on a hit we've taken */
 USTRUCT()
@@ -73,13 +77,13 @@ public:
 
 	virtual void SetMaxHealth(float healthval);
 
-	virtual float GetMaxHealth();
+	virtual float GetMaxHealth() const;
 
-	virtual float GetCurrentHealth();
+	virtual float GetCurrentHealth() const;
 
-	virtual float GetHealthPercentage();
+	virtual float GetHealthPercentage() const;
 
-	virtual bool IsAlive();
+	virtual bool IsAlive() const;
 
 	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
@@ -124,7 +128,10 @@ protected:
 	virtual void PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-	
+
+public:
+	FOnDeathStartDelegate OnDeathStart;
+
 protected:
 	/////////////////////////////////////////////////
 	//Components

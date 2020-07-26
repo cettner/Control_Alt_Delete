@@ -6,14 +6,31 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
+#include "Navigation/CrowdFollowingComponent.h"
 
 
 const FName ARTSAIController::AIMessage_Finished = TEXT("Task Complete");
 
-ARTSAIController::ARTSAIController()
+ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
+	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
+	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	
+	SetPerceptionComponent(*PerceptionComp);
+
+	SightConfig->SightRadius = DefaultPerceptionConfig.SightRadius;
+	SightConfig->LoseSightRadius = DefaultPerceptionConfig.LoseSightRadius;
+	SightConfig->DetectionByAffiliation = DefaultPerceptionConfig.SightAffiliation;
+	SightConfig->PeripheralVisionAngleDegrees = DefaultPerceptionConfig.PeripheralVision;
+
+	PerceptionComponent->ConfigureSense(*SightConfig);
+	PerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+
+	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnTargetPerceptionUpdated);
+	//PerceptionComp->OnPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnPerceptionUpdated);
+
 	AIRequestId = 1U;
 }
 
@@ -27,7 +44,45 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 	{
 		BlackboardComp->InitializeBlackboard(*Minion->GetBehavior()->BlackboardAsset);
 		BehaviorComp->StartTree(*Minion->GetBehavior());
+		
+		if (!ConfigureRTSPerception(Minion))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ARTSAIController::OnPossess] Failed to configure Perception"));
+		}
 	}
+}
+
+bool ARTSAIController::ConfigureRTSPerception(ARTSMinion* Minion)
+{
+	if (PerceptionComponent == nullptr) return false;
+	FAISenseID Id = UAISense::GetSenseID(UAISense_Sight::StaticClass());  
+
+	if (!Id.IsValid()) return false;
+
+	UAISenseConfig_Sight * sightperceptionconfig = Cast<UAISenseConfig_Sight>(PerceptionComponent->GetSenseConfig(Id));
+	if (sightperceptionconfig == nullptr) return false;
+
+	FRTSAIPerceptionConfig config = Minion->GetAIConfig();
+	sightperceptionconfig->SightRadius = config.SightRadius;
+	sightperceptionconfig->LoseSightRadius = config.LoseSightRadius;
+	sightperceptionconfig->DetectionByAffiliation = config.SightAffiliation;
+	sightperceptionconfig->PeripheralVisionAngleDegrees = config.PeripheralVision;
+	PerceptionComponent->RequestStimuliListenerUpdate();
+
+	return true;
+}
+
+ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other) const
+{
+	const ARTSMinion* minion = Cast<ARTSMinion>(&Other);
+	const ARTSMinion* myminion = GetPawn<ARTSMinion>();
+
+	if (minion && myminion && myminion->GetTeam() != minion->GetTeam())
+	{
+		return(ETeamAttitude::Hostile);
+	}
+
+	return ETeamAttitude::Neutral;
 }
 
 void ARTSAIController::SetTarget(AActor * newtarget)
@@ -58,6 +113,16 @@ void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus 
 	FAIMessage Msg(AIMessage, this, AIRequestId, Status);
 	FAIMessage::Send(this, Msg);
 	StoreAIRequestId();
+}
+
+void ARTSAIController::ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+{
+	Super::ActorsPerceptionUpdated(UpdatedActors);
+}
+
+void ARTSAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+
 }
 
 ACommander * ARTSAIController::GetCommander()

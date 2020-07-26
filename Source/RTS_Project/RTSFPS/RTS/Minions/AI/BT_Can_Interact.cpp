@@ -9,10 +9,16 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
+
+UBT_Can_Interact::UBT_Can_Interact()
+{
+    NodeName = "Can Interact With Key";
+}
+
 bool UBT_Can_Interact::CalculateRawConditionValue(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory) const
 {
     ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-    AActor * target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+    AActor * target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 
     if(Controller && target)
     {
