@@ -6,6 +6,7 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/GameArchitecture/Game/DefaultPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 
 #include "UObject/ConstructorHelpers.h"
 #include "Components/CapsuleComponent.h"
@@ -89,9 +90,13 @@ bool ARTSMinion::IsAlive()
 
 void ARTSMinion::OnDeath()
 {
+	/*Unregister Minion to be percieved from AI perception*/
 	UWorld* World = GetWorld();
 	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
 	PerceptionSystem->UnregisterSource(*this);
+
+	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+	GS->OnMinionDeath(this);
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)

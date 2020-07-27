@@ -28,7 +28,12 @@ void ARTSStructure::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-bool ARTSStructure::IsDropPoint()
+int ARTSStructure::GetTeam() const
+{
+	return teamindex;
+}
+
+bool ARTSStructure::IsDropPoint() const
 {
 	return (isdroppoint);
 }

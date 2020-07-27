@@ -86,3 +86,18 @@ bool ARTFPSMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringP
 
 	return RetParent;
 }
+
+void ARTFPSMode::StartMatch()
+{
+	Super::StartMatch();
+	ARTFPSGameState * GS = GetGameState<ARTFPSGameState>();
+	if (GS)
+	{
+		GS->RefreshAllUnits();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ARTSFPSMODE::StartMatch] Failed to initialize RTS Teams"));
+	}
+
+}

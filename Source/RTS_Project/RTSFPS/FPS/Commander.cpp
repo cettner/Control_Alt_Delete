@@ -173,6 +173,16 @@ int ACommander::GetTeam() const
 	return(team_index);
 }
 
+void ACommander::OnDeath()
+{
+	Super::OnDeath();
+	AFPSServerController * PC = GetController<AFPSServerController>();
+	if (PC && GetLocalRole() == ROLE_Authority)
+	{
+
+	}
+}
+
 bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
 {
 	int index = Squad.IndexOfByKey(needs_orders);

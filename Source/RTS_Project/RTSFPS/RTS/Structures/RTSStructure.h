@@ -57,8 +57,6 @@ public:
 	FVector BannerLocation;
 	FVector SpawnLocation;
 
-	bool IsDropPoint();
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	bool isdroppoint = true;
 
@@ -74,6 +72,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	float Catapult_Spawn_Time = 20.0;
 
+public:
+	int GetTeam() const;
+
+	bool IsDropPoint() const;
 
 private:
 	RTSSpawnHelper * SHelper;

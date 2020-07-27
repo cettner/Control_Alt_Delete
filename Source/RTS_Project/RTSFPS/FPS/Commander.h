@@ -65,6 +65,8 @@ public:
 
 	virtual int GetTeam() const override;
 
+	virtual void OnDeath() override;
+
 	UFUNCTION(Server, reliable, WithValidation)
 	void MinionInteractionHandler(ARTSMinion * Interacted);
 
