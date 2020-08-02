@@ -28,7 +28,6 @@ bool ARTSZombie::CanAttack(AActor* AttackMe)
 
 void ARTSZombie::StartAttack(AActor* AttackMe)
 {
-	
 	if (AttackVarients.Num() && !bAttackAnimPlaying && GetWorld())
 	{
 		FAttackAnim Attack = DecideAttack(AttackMe);
@@ -87,7 +86,8 @@ void ARTSZombie::ReleaseAssets()
 
 void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)
 {
-	
+	if (!this->IsValidLowLevel() || !this->IsAlive()) return;
+
 	if (CanAttack(AttackMe))
 	{	
 		FDamageEvent DE;

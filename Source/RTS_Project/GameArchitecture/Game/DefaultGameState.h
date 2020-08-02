@@ -27,9 +27,9 @@ public:
 	int AssignAvailableTeam(APlayerState * New_Player);
 	int AssignBalancedTeam(APlayerState * New_Player);
 	bool SwapTeam(APlayerState * Player, int New_Team);
-	int HasTeam(APlayerState * Player);
-	bool IsTeamValid(int team_id);
-	bool IsTeamFull(int Team_Index);
+	int HasTeam(APlayerState * Player) const;
+	bool IsTeamValid(int team_id) const;
+	bool IsTeamFull(int Team_Index) const;
 	bool LeaveTeam(APlayerState * Player);
 	
 };

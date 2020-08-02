@@ -84,7 +84,11 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	virtual void BeginDestroy() override;
 	virtual void PostInitializeComponents() override;
+
+protected:
+	virtual void OnDeath() override;
 
 protected:
 	/** socket or bone name for attaching weapon mesh */

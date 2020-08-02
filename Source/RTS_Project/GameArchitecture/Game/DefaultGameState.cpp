@@ -21,7 +21,7 @@ bool ADefaultGameState::TeamInitialize(ADefaultMode * GameMode)
 	return(initialized);
 }
 
-int ADefaultGameState::HasTeam(APlayerState * Player)
+int ADefaultGameState::HasTeam(APlayerState * Player) const
 {
 	bool found = false;
 	int retval = -1;
@@ -47,7 +47,7 @@ int ADefaultGameState::HasTeam(APlayerState * Player)
 	return (retval);
 }
 
-bool ADefaultGameState::IsTeamFull(int Team_Index)
+bool ADefaultGameState::IsTeamFull(int Team_Index) const
 {
 	bool retval = true;
 
@@ -59,9 +59,9 @@ bool ADefaultGameState::IsTeamFull(int Team_Index)
 	return (retval);
 }
 
-bool ADefaultGameState::IsTeamValid(int Team_Index)
+bool ADefaultGameState::IsTeamValid(int Team_Index) const
 {
-	return(-1 < Team_Index && Team_Index < GM->GetNumTeams());
+	return(initialized &&(-1 < Team_Index) && (Team_Index < GM->GetNumTeams()));
 }
 
 int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)

@@ -25,7 +25,6 @@ URTSSelectionComponent::URTSSelectionComponent()
 
 	}
 
-	//TeamColorMaterial = CreateDefaultSubobject<UMaterial>("TeamColor");
 
 	PrimarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
 	PrimarySelectionRing->SetRelativeScale3D(FVector(1.0f, .25f, .25f));

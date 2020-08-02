@@ -201,8 +201,9 @@ void AWeapon::AttachMeshToPawn()
 			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,true);
 			USkeletalMeshComponent* PawnMesh1p = MyPawn->GetSpecifcPawnMesh(true);
 			USkeletalMeshComponent* PawnMesh3p = MyPawn->GetSpecifcPawnMesh(false);
-			FirstPersonMesh->SetHiddenInGame(false);
-			ThirdPersonMesh->SetHiddenInGame(true);
+			
+			FirstPersonMesh->SetHiddenInGame(false,true);
+			ThirdPersonMesh->SetHiddenInGame(true,true);
 			
 			FirstPersonMesh->CastShadow = false;
 			ThirdPersonMesh->CastShadow = false;

@@ -22,7 +22,8 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	if (Minion == nullptr) return;
 
 	TArray<AActor*> PercievedActors;
-	Controller->GetPerceptionComponent()->GetCurrentlyPerceivedActors(UAISense_Sight::StaticClass(), PercievedActors);
+	//Controller->GetPerceptionComponent()->GetPerceivedActors(UAISense_Sight::StaticClass(), PercievedActors);
+	Controller->GetPerceptionComponent()->GetHostileActors(PercievedActors);
 
 	AActor* ClosestTarget = GetClosestTarget(Minion, PercievedActors);
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), ClosestTarget);

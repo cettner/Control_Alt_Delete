@@ -27,6 +27,9 @@ ARTSMinion::ARTSMinion()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
+	/*SelectionRings Shouldnt appear on mesh*/
+	GetMesh()->bReceivesDecals = false;
+
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
@@ -60,7 +63,11 @@ void ARTSMinion::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	UWorld* World = GetWorld();
 	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
-	PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+	if (PerceptionSystem)
+	{
+		PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+	}
+
 }
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
@@ -102,6 +109,7 @@ void ARTSMinion::OnDeath()
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 {
 	bool Enemy = false;
+	if (!FriendOrFoe->IsValidLowLevel()) return false;
 	ARTSMinion * InMinion = Cast<ARTSMinion>(FriendOrFoe);
 	ARTSStructure* InStructure = Cast<ARTSStructure>(FriendOrFoe);
 
@@ -109,7 +117,7 @@ bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 	{
 		Enemy = true;
 	}
-	else if(InStructure && InStructure->teamindex != this->GetTeam() && InStructure->teamindex >= 0)
+	else if(InStructure && InStructure->GetTeam() != this->GetTeam() && InStructure->GetTeam() >= 0)
 	{
 		Enemy = true;
 	}

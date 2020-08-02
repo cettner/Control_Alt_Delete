@@ -26,6 +26,10 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void RefreshAllUnits();
 		virtual void OnMinionDeath(ARTSMinion* Minion);
 		virtual void HandlePlayerDeath(AFPSServerController * Controller);
+		virtual void HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
+		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
+		virtual TArray<ARTSStructure *> GetAllStructuresOfTeam(int teamindex) const;
+
 
     public:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;

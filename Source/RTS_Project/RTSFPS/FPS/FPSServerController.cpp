@@ -1,6 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FPSServerController.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+
+#include "Net/UnrealNetwork.h"
+
+
+
 
 bool AFPSServerController::Server_Request_Interact_Validate(ACommander * Controlled_Cmdr, AActor * Interacted)
 {
@@ -30,6 +36,21 @@ void AFPSServerController::Server_Request_Interact_Implementation(ACommander * C
 	}
 }
 
+void AFPSServerController::SelectRespawnStructure(ARTSStructure* RespawnStructure)
+{
+	if (!HasAuthority())
+	{
+		ServerSelectRespawnStructure(RespawnStructure);
+	}
+	else
+	{
+		if (RespawnStructure->CanSpawn(ACommander::StaticClass()) && !isSpawningMinion)
+		{
+			isSpawningMinion = RespawnStructure->QueueMinion(ACommander::StaticClass(), this);
+		}
+	}
+}
+
 void AFPSServerController::ClientNotifyTeamChange(int newteamid)
 {
 	Super::ClientNotifyTeamChange(newteamid);
@@ -41,3 +62,35 @@ void AFPSServerController::ClientNotifyTeamChange(int newteamid)
 		PlayerPawn->SetTeam(newteamid);
 	}
 }
+
+void AFPSServerController::OnPawnDeath()
+{
+}
+
+void AFPSServerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	isSpawningMinion = false;
+}
+
+bool AFPSServerController::ServerSelectRespawnStructure_Validate(ARTSStructure* SelectedStructure)
+{
+	return(true);
+}
+
+void AFPSServerController::ServerSelectRespawnStructure_Implementation(ARTSStructure* SelectedStructure)
+{
+	SelectRespawnStructure(SelectedStructure);
+}
+
+void AFPSServerController::OnRep_isSpawningMinion()
+{
+
+}
+
+void AFPSServerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AFPSServerController, isSpawningMinion);
+}
+

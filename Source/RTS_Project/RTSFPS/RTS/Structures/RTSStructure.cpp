@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.=
 #include "RTSStructure.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
@@ -9,23 +11,27 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Supe
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	USkeletalMeshComponent * Mesh = GetSkeletalMeshComponent();
+	if (Mesh)
+	{
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Mesh->SetCanEverAffectNavigation(true);
+		Mesh->bFillCollisionUnderneathForNavmesh = true;
+	}
 }
 
-// Called when the game starts or when spawned
+void ARTSStructure::SetSelected()
+{
+}
+
+void ARTSStructure::SetDeselected()
+{
+}
+
 void ARTSStructure::BeginPlay()
 {
-	bIsConstructed = false;
-	CurrentIntegrity = 1.0;
 
-	BannerLocation = GetActorLocation();
-	BannerLocation.X += spawndistance;
-	SpawnLocation = BannerLocation;
-}
-
-// Called every frame
-void ARTSStructure::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 int ARTSStructure::GetTeam() const
@@ -33,93 +39,108 @@ int ARTSStructure::GetTeam() const
 	return teamindex;
 }
 
+void ARTSStructure::SetTeam(int newteamindex)
+{
+	teamindex = newteamindex;
+}
+
 bool ARTSStructure::IsDropPoint() const
 {
 	return (isdroppoint);
 }
 
-void ARTSStructure::Queue_Minion(int minion_index)
+bool ARTSStructure::CanSpawn(TSubclassOf<ARTSMinion> minionclass) const
 {
-	if (minion_index > (int)UNITLBOUND && minion_index < (int)UNITUBOUND)
+	return (GetIndexByClass(minionclass) > -1);
+}
+
+int ARTSStructure::GetIndexByClass(TSubclassOf<ARTSMinion> minionclass) const
+{
+	int index = -1;
+	for (int i = 0; i < SpawnableUnits.Num(); i++)
 	{
-		if (SpawnQueue.IsEmpty())
+		TSubclassOf<ARTSMinion> availableclasses = SpawnableUnits[i].MinionClass;
+
+		if (availableclasses.Get()->IsChildOf(minionclass.Get()))
 		{
-			SpawnQueue.Enqueue(minion_index);
-			float spawntime = GetSpawnTimeByIndex((Unit_Types)minion_index) / 100.0f;
-			GetWorldTimerManager().SetTimer(Queue_Handler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
+			index = i;
+			break;
 		}
-		else
-		{
-			SpawnQueue.Enqueue(minion_index);
-		}
+	}
+	return index;
+}
+
+bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController)
+{
+	int index = GetIndexByClass(minionclass);
+	if (index < 0) return false;
+	
+	FStructureSpawnData Spawndata = SpawnableUnits[index];
+		
+	FStructureQueueData Queuedata;
+	Queuedata.RecieveingController = InheritingController;
+	Queuedata.SpawnClass = Spawndata.MinionClass;
+	Queuedata.SpawnTime = SpawnableUnits[index].SpawnTime;
+	
+	if (StructureQueue.IsEmpty())
+	{
+		StructureQueue.Enqueue(Queuedata);
+		float spawntime = Queuedata.SpawnTime / 100.0f;
+		GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Minion Spawn Requested")));
+		StructureQueue.Enqueue(Queuedata);
 	}
+
+
+	return true;
 }
 
 void ARTSStructure::UpdateSpawnQueue()
 {
-	Update_Queue_UI_Status(queuestatus);
 	queuestatus++;
-	int spawnindex = -1;
-	if (queuestatus >= 100.0)
+	FStructureQueueData queuedata = FStructureQueueData();
+	if (queuestatus >= 100.0f)
 	{ 
-		if (SpawnQueue.Dequeue(spawnindex))
+		if (StructureQueue.Dequeue(queuedata))
 		{
-			SpawnUnit(spawnindex);
+			SpawnUnit(queuedata);
 		}
 		
-		queuestatus = 0.0;
+		queuestatus = 0.0f;
 		
-		if (SpawnQueue.Peek(spawnindex))
+		if (StructureQueue.Peek(queuedata))
 		{
-			float spawntime = GetSpawnTimeByIndex((Unit_Types)spawnindex) / 100.0f;
-			GetWorldTimerManager().SetTimer(Queue_Handler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
+			float spawntime = queuedata.SpawnTime / 100.0f;
+			GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 		}
 	}
-	else if(SpawnQueue.Peek(spawnindex))
+	else if(StructureQueue.Peek(queuedata))
 	{
-		float spawntime = GetSpawnTimeByIndex((Unit_Types)spawnindex) / 100.0f;
-		GetWorldTimerManager().SetTimer(Queue_Handler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
+		float spawntime = queuedata.SpawnTime / 100.0f;
+		GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 	}
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Updated Null Queue!")));
-		queuestatus = 0.0;
+		queuestatus = 0.0f;
 	}
 
 }
 
-void ARTSStructure::SpawnUnit(int unit_index)
+void ARTSStructure::SpawnUnit(FStructureQueueData QueueData)
 {
-	Unit_Types type = (Unit_Types)unit_index;
-	FRotator SpawnRotation(0, 0, 0);
+	UWorld * World = GetWorld();
+	if (World == nullptr) return;
 
-	SpawnLocation = GetActorLocation();
-	SpawnLocation.X -= 500;
-	SpawnLocation.Z = 100;
+	ARTFPSGameState* GS = World->GetGameState<ARTFPSGameState>();
+	if (GS == nullptr) return;
 
-//	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetWorld()->GetFirstPlayerController());
-//	PC->Spawn_RTS_Minion(SpawnLocation,SpawnRotation,type);
-
+	GS->HandleStructureMinionSpawn(this, QueueData);
 }
 
 void ARTSStructure::CancelSpawn()
 {
 
-}
-
-float ARTSStructure::GetSpawnTimeByIndex(Unit_Types type)
-{
-	switch (type)
-	{
-	case BUILDER:
-		return(Builder_Spawn_Time);
-	case CATAPULT:
-		return(Catapult_Spawn_Time);
-	default:
-		return - 1.0;
-	}
 }

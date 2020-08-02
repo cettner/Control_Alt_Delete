@@ -2,6 +2,8 @@
 
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "RTS_Project/RTSFPS/FPS/Death/RespawnSelectionPawn.h"
 
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
 {
@@ -56,17 +58,96 @@ void ARTFPSGameState::RefreshAllUnits()
 
 void ARTFPSGameState::OnMinionDeath(ARTSMinion* Minion)
 {
-	if (!Minion || !IsTeamValid(Minion->GetTeam())) return;
-
-	if (AllUnits[Minion->GetTeam()].Minions.Remove(Minion) != (int32)1)
+	if (Minion && IsTeamValid(Minion->GetTeam()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnMinionDeath] Minion Removal Unsuccessful!"));
+		if (AllUnits[Minion->GetTeam()].Minions.Remove(Minion) != (int32)1)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnMinionDeath] Minion Removal Unsuccessful!"));
+		}
+
+		AFPSServerController* PC = Minion->GetController<AFPSServerController>();
+		if (PC)
+		{
+			HandlePlayerDeath(PC);
+		}
 	}
 }
 
 void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 {
+	Controller->OnPawnDeath();
+	Controller->UnPossess();
+	UWorld* World = GetWorld();
 
+	if (World == nullptr) return;
+
+	FActorSpawnParameters RespawnActorParams;
+	RespawnActorParams.bNoFail = true;
+	RespawnActorParams.Owner = Controller;
+
+	ADefaultPlayerState* PS = Controller->GetPlayerState<ADefaultPlayerState>();
+	TArray<ARTSStructure*> structures = GetAllStructuresOfTeam(PS->TeamID);
+
+
+	ARespawnSelectionPawn * Respawnactor =  World->SpawnActor<ARespawnSelectionPawn>(ARespawnSelectionPawn::StaticClass(),RespawnActorParams);
+	if (structures.Num() && Respawnactor)
+	{
+		Respawnactor->SetRevolveActor(structures[0]);
+	}
+	if (Respawnactor)
+	{
+		Controller->Possess(Respawnactor);
+	}
+
+}
+
+void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData)
+{
+	UWorld* World = GetWorld();
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.bNoFail = true;
+
+	ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass,FTransform());
+
+	AFPSServerController* PC = Cast<AFPSServerController>(SpawnData.RecieveingController);
+
+	if (PC && Minion)
+	{
+		Minion->SetTeam(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
+		APawn* respawnpawn = PC->GetPawn();
+		PC->UnPossess();
+		respawnpawn->Destroy();
+		PC->Possess(Minion);
+	}
+	else
+	{
+		Minion->SetTeam(SpawningStructure->GetTeam());
+	}
+
+	UGameplayStatics::FinishSpawningActor(Minion, FTransform());
+
+}
+
+TArray<ARTSMinion*> ARTFPSGameState::GetAllMinionsOfTeam(int teamindex) const
+{
+    TArray<ARTSMinion*> minions = TArray<ARTSMinion*>();
+	if (IsTeamValid(teamindex))
+	{
+		minions = AllUnits[teamindex].Minions;
+	}
+
+	return minions;
+}
+
+TArray<ARTSStructure *> ARTFPSGameState::GetAllStructuresOfTeam(int teamindex) const
+{
+	TArray<ARTSStructure*> structures = TArray<ARTSStructure*>();
+	if (IsTeamValid(teamindex))
+	{
+		structures = AllUnits[teamindex].Structures;
+	}
+
+	return structures;
 }
 
 bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
@@ -81,7 +162,7 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 		}
 	}
 
-	return false;
+	return result;
 }
 
 

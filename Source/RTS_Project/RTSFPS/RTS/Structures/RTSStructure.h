@@ -3,15 +3,41 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTS_Project/AssetHelpers/RTSSpawnHelper.h"
-#include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
-#include "Engine.h"
-#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectable.h"
+
+#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/SkeletalMeshActor.h"
+#include "RTS_Project/AssetHelpers/GameAssets.h"
 #include "RTSStructure.generated.h"
 
+
+USTRUCT()
+struct FStructureQueueData
+{
+	GENERATED_USTRUCT_BODY()
+	TSubclassOf<ARTSMinion> SpawnClass = nullptr;
+	AController* RecieveingController = nullptr;
+	float SpawnTime = 0.0f;
+};
+
+
+USTRUCT()
+struct FStructureSpawnData
+{
+	GENERATED_USTRUCT_BODY()
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ARTSMinion> MinionClass = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	float SpawnTime = 0.0f;
+};
+
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public ARTSSelectable
+class RTS_PROJECT_API ARTSStructure : public ASkeletalMeshActor, public IRTSObjectInterface
 {
 	GENERATED_BODY()
 	
@@ -19,69 +45,53 @@ public:
 	// Sets default values for this actor's properties
 	ARTSStructure(const FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-	void Update_Queue_UI_Status(float status);
+public:
+	/*RTSObject Interface Overrides*/
+	virtual void SetSelected() override;
+	virtual void SetDeselected() override;
+	virtual int GetTeam() const override;
+	virtual void SetTeam(int newteamindex) override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gameplay)
-	float CurrentIntegrity;
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	bool bIsConstructed = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gameplay)
-	float MaxIntegrity;
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	int teamindex = -1;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gameplay)
-	bool bIsConstructed;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gameplay)
-	int teamindex;
-
-	/*SPAWN DATA*/
-	TQueue<int> SpawnQueue;
-
-	UPROPERTY(BlueprintReadOnly)
-	float queuestatus = 0.0;
-
-	UFUNCTION(BlueprintCallable, Category = UI)
-	void Queue_Minion(int minion_index);
-	FTimerHandle Queue_Handler;
-
-	const float spawndistance = 300.0;
-	FVector BannerLocation;
-	FVector SpawnLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 	bool isdroppoint = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	bool Can_Spawn_Builder = true;
+protected:
+	/*SPAWN DATA*/
+	FTimerHandle QueueHandler;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float Builder_Spawn_Time = 10.0;
+	UPROPERTY(BlueprintReadOnly)
+	float queuestatus = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	bool Can_Spawn_Catapult = true;
+	UPROPERTY(EditDefaultsOnly, Category = Minions)
+	TArray< FStructureSpawnData> SpawnableUnits;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	float Catapult_Spawn_Time = 20.0;
-
+	TQueue<FStructureQueueData> StructureQueue;
 public:
-	int GetTeam() const;
+
+	bool QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController = nullptr);
 
 	bool IsDropPoint() const;
 
-private:
-	RTSSpawnHelper * SHelper;
+	bool CanSpawn(TSubclassOf<ARTSMinion> minionclass) const;
+
+	int GetIndexByClass(TSubclassOf<ARTSMinion> minionclass) const;
+
+protected:
 
 	void UpdateSpawnQueue();
-	void SpawnUnit(int unit_index);
+	void SpawnUnit(FStructureQueueData QueueData);
 	void CancelSpawn();
-	float GetSpawnTimeByIndex(Unit_Types type);
 };

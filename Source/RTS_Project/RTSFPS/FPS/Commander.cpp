@@ -71,6 +71,7 @@ ACommander::ACommander() : Super()
 	FPS_Mesh->CastShadow = false;
 	FPS_Mesh->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	FPS_Mesh->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
+	FPS_Mesh->bReceivesDecals = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 

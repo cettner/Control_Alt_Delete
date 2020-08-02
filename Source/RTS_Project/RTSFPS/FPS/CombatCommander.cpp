@@ -323,10 +323,28 @@ void ACombatCommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	DOREPLIFETIME(ACombatCommander, CurrentWeapon);
 }
 
+void ACombatCommander::BeginDestroy()
+{
+	Super::BeginDestroy();
+	for (int i = 0; i < Inventory.Num(); i++)
+	{
+		Inventory[i]->Destroy();
+	}
+}
+
 void ACombatCommander::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SpawnDefaultInventory();
+}
+
+void ACombatCommander::OnDeath()
+{
+	Super::OnDeath();
+	for (int i = 0; i < Inventory.Num(); i++)
+	{
+		Inventory[i]->SetActorHiddenInGame(true);
+	}
 }
 
 void ACombatCommander::SpawnDefaultInventory()
