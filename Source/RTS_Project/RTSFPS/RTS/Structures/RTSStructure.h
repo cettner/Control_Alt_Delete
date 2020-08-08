@@ -7,6 +7,8 @@
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
@@ -34,10 +36,22 @@ struct FStructureSpawnData
 
 	UPROPERTY(EditDefaultsOnly)
 	float SpawnTime = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture* MinionThumbnail = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsEnabled = true;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString MinionName =  "";
 };
 
+/*Forward Declaration*/
+class UStructureSpawnQueueWidget;
+
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public ASkeletalMeshActor, public IRTSObjectInterface
+class RTS_PROJECT_API ARTSStructure : public ASkeletalMeshActor, public IRTSObjectInterface, public IMenuInteractableInterface
 {
 	GENERATED_BODY()
 	
@@ -52,10 +66,16 @@ public:
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+public:
+    /*IMenuInteractable Interface overrides*/
+	virtual UUserWidget* GetMenu() override;
+	virtual bool CanOpenMenu(APawn * InvokingPawn) const override;
 
+protected:
+	virtual void PostInitializeComponents() override;
+
+protected:
+	URTSSelectionComponent * Selection;
 
 protected:
 
@@ -72,22 +92,45 @@ protected:
 	/*SPAWN DATA*/
 	FTimerHandle QueueHandler;
 
+	uint32 CurrentQueueSize = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	uint32 MaxQueueSize = 10;
+
 	UPROPERTY(BlueprintReadOnly)
 	float queuestatus = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = Minions)
+	UPROPERTY(EditDefaultsOnly, Category = Spawning)
 	TArray< FStructureSpawnData> SpawnableUnits;
 
 	TQueue<FStructureQueueData> StructureQueue;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UStructureSpawnQueueWidget> MenuClass;
+
+	UStructureSpawnQueueWidget * Menu;
+
 public:
 
 	bool QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController = nullptr);
 
 	bool IsDropPoint() const;
 
+	bool IsQueueFull() const;
+
 	bool CanSpawn(TSubclassOf<ARTSMinion> minionclass) const;
 
 	int GetIndexByClass(TSubclassOf<ARTSMinion> minionclass) const;
+
+	TArray< FStructureSpawnData> GetSpawnData() const;
+
+	float GetCurrentQueueStatus() const;
+
+	uint32 GetCurrentQueueSize() const;
+
+	uint32 GetMaxQueueSize() const;
 
 protected:
 

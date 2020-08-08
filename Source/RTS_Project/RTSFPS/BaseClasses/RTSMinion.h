@@ -74,6 +74,9 @@ public:
 
 	virtual int GetTeam() const;
 
+	UFUNCTION()
+	virtual void OnRep_TeamID();
+
 	virtual UBehaviorTree* GetBehavior();
 
 	virtual FRTSAIPerceptionConfig GetAIConfig() const;
@@ -88,7 +91,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UHealthComponent * Health;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	int team_index = -1;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)

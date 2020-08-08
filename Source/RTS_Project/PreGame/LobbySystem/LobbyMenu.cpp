@@ -15,8 +15,6 @@ void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 {
 	UWorld* World = this->GetWorld();
 	if (TeamAList == nullptr || TeamBList == nullptr || World == nullptr || TeamSlots.Num() < 2 ) return;
-	
-	World->GetFirstPlayerController<ALobbyPlayerController>();
 
 	TeamAList->ClearChildren();
 	TeamBList->ClearChildren();

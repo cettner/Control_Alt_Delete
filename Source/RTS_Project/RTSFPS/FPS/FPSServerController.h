@@ -18,11 +18,10 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		UFUNCTION(Server, reliable, WithValidation)
 		void Server_Request_Interact(ACommander * Controlled_Cmdr, AActor * Interacted);
 
-
-
 		void SelectRespawnStructure(ARTSStructure* SelectedStructure);
 		
 		virtual void ClientNotifyTeamChange(int newteamid) override;
+
 		virtual void OnPawnDeath();
 
 

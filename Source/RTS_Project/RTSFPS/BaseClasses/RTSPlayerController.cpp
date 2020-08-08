@@ -15,6 +15,7 @@ ARTSPlayerController::ARTSPlayerController()
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
 	FOWManagerClass = AFogOfWarManager::StaticClass();
+	ExternalMenu = nullptr;
 }
 
 void ARTSPlayerController::BeginPlay()
@@ -137,6 +138,29 @@ AFogOfWarManager * ARTSPlayerController::InitFOW()
 	}
 
 	return(FOWManager);
+}
+
+void ARTSPlayerController::OpenExternalMenu(UUserWidget* InMenu)
+{
+	if (InMenu == nullptr || !InMenu->IsValidLowLevel()) return;
+	
+	InMenu->AddToViewport();
+	bShowMouseCursor = true;
+	FInputModeUIOnly inputMode;
+	SetInputMode(inputMode);
+	ExternalMenu = InMenu;
+}
+
+void ARTSPlayerController::CloseExternalMenu()
+{
+	if (ExternalMenu == nullptr) return;
+
+	ExternalMenu->RemoveFromViewport();
+	FInputModeGameOnly inputMode;
+	inputMode.SetConsumeCaptureMouseDown(false);
+	SetInputMode(inputMode);
+	bShowMouseCursor = false;
+	ExternalMenu = nullptr;
 }
 
 void ARTSPlayerController::DebugEvent()

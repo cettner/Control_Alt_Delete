@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "FPSServerController.h"
 #include "Net/UnrealNetwork.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
 
 float ACommander::PlayAnimMontage(UAnimMontage* AnimMontage, float InPlayRate, FName StartSectionName)
 {
@@ -256,37 +257,34 @@ bool ACommander::LeaveSquad(ARTSMinion * leaver)
 
 bool ACommander::SelectableInterationHandler_Validate(ARTSSelectable * Interacted)
 {
-	if (Interacted)
-	{
-		return(true);
-	}
-	return(false);
+	return(true);
 }
 
 void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
+	AFPSServerController * PC = GetController<AFPSServerController>();
 
-	if(CanInteract(hittarget))
+	if(CanInteract(hittarget) && PC)
 	{
 		AFPSServerController * Server = Cast<AFPSServerController>(GetController());
-		if (Server && Server->Server_Request_Interact_Validate(this,hittarget))
+		if (Server)
 		{
-			Server->Server_Request_Interact_Implementation(this, hittarget);
+			Server->Server_Request_Interact(this, hittarget);
 		}
 	} 
+	else if (IMenuInteractableInterface* menusource = Cast<IMenuInteractableInterface>(hittarget))
+	{
+		if (menusource->CanOpenMenu(this))
+		{
+			PC->OpenExternalMenu(menusource->GetMenu());
+		}
+	}
 }
 
 bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)
 {
-	if (Interacted)
-	{
-		return(true);
-	}
-	else
-	{
-		return(false);
-	}
+	return(true);
 }
 
 void ACommander::MinionInteractionHandler_Implementation(ARTSMinion * Interacted)

@@ -228,6 +228,28 @@ int ARTSMinion::GetTeam() const
 	return team_index;
 }
 
+void ARTSMinion::OnRep_TeamID()
+{
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+	
+	ADefaultPlayerController * PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+	if (PC == nullptr) return;
+
+	ADefaultPlayerState* PS = PC->GetPlayerState<ADefaultPlayerState>();
+	if (PS && PS->TeamID != team_index)
+	{
+		SetTeamColors();
+		SetSelected();
+	}
+	else
+	{
+		SetDeselected();
+	}
+
+
+}
+
 UBehaviorTree* ARTSMinion::GetBehavior()
 {
 	return(RTSBehavior);

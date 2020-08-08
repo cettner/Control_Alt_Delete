@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.=
 #include "RTSStructure.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "UI/StructureSpawnQueueWidget.h"
 
 #include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
@@ -11,6 +12,7 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Supe
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("SelectionComp"));
 
 	USkeletalMeshComponent * Mesh = GetSkeletalMeshComponent();
 	if (Mesh)
@@ -18,7 +20,47 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Supe
 		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		Mesh->SetCanEverAffectNavigation(true);
 		Mesh->bFillCollisionUnderneathForNavmesh = true;
+		Selection->SetDetection(Mesh);
+		Selection->SetRoot(Mesh);
 	}
+
+
+	MenuClass = nullptr;
+	Menu = nullptr;
+}
+
+UUserWidget* ARTSStructure::GetMenu()
+{
+	UWorld* World = GetWorld();
+
+	if (World == nullptr) return nullptr;
+
+	if (MenuClass)
+	{
+		Menu = CreateWidget <UStructureSpawnQueueWidget>(World, MenuClass);
+		if (Menu)
+		{
+			Menu->Setup(this);
+		}
+	}
+
+	return(Menu);
+}
+
+bool ARTSStructure::CanOpenMenu(APawn* InvokingPawn) const
+{
+	ARTSMinion * minion = Cast<ARTSMinion>(InvokingPawn);
+	if (minion)
+	{
+		return(GetTeam() == minion->GetTeam());
+	}
+	return false;
+}
+
+void ARTSStructure::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
 }
 
 void ARTSStructure::SetSelected()
@@ -27,11 +69,6 @@ void ARTSStructure::SetSelected()
 
 void ARTSStructure::SetDeselected()
 {
-}
-
-void ARTSStructure::BeginPlay()
-{
-
 }
 
 int ARTSStructure::GetTeam() const
@@ -47,6 +84,11 @@ void ARTSStructure::SetTeam(int newteamindex)
 bool ARTSStructure::IsDropPoint() const
 {
 	return (isdroppoint);
+}
+
+bool ARTSStructure::IsQueueFull() const
+{
+	return (CurrentQueueSize >= MaxQueueSize);
 }
 
 bool ARTSStructure::CanSpawn(TSubclassOf<ARTSMinion> minionclass) const
@@ -70,10 +112,30 @@ int ARTSStructure::GetIndexByClass(TSubclassOf<ARTSMinion> minionclass) const
 	return index;
 }
 
+TArray<FStructureSpawnData> ARTSStructure::GetSpawnData() const
+{
+	return SpawnableUnits;
+}
+
+float ARTSStructure::GetCurrentQueueStatus() const
+{
+	return queuestatus;
+}
+
+uint32 ARTSStructure::GetCurrentQueueSize() const
+{
+	return CurrentQueueSize;
+}
+
+uint32 ARTSStructure::GetMaxQueueSize() const
+{
+	return MaxQueueSize;
+}
+
 bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController)
 {
 	int index = GetIndexByClass(minionclass);
-	if (index < 0) return false;
+	if (index < 0 || IsQueueFull()) return false;
 	
 	FStructureSpawnData Spawndata = SpawnableUnits[index];
 		
@@ -85,12 +147,14 @@ bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerC
 	if (StructureQueue.IsEmpty())
 	{
 		StructureQueue.Enqueue(Queuedata);
+		CurrentQueueSize++;
 		float spawntime = Queuedata.SpawnTime / 100.0f;
 		GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 	}
 	else
 	{
 		StructureQueue.Enqueue(Queuedata);
+		CurrentQueueSize++;
 	}
 
 
@@ -106,6 +170,7 @@ void ARTSStructure::UpdateSpawnQueue()
 		if (StructureQueue.Dequeue(queuedata))
 		{
 			SpawnUnit(queuedata);
+			CurrentQueueSize--;
 		}
 		
 		queuestatus = 0.0f;

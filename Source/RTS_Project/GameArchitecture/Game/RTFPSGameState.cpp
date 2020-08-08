@@ -104,10 +104,8 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData)
 {
 	UWorld* World = GetWorld();
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.bNoFail = true;
 
-	ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass,FTransform());
+	ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass,FTransform(),nullptr,nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 
 	AFPSServerController* PC = Cast<AFPSServerController>(SpawnData.RecieveingController);
 
@@ -122,6 +120,8 @@ void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructur
 	else
 	{
 		Minion->SetTeam(SpawningStructure->GetTeam());
+		/*Set Team Colors on listen Server*/
+		Minion->OnRep_TeamID();
 	}
 
 	UGameplayStatics::FinishSpawningActor(Minion, FTransform());
