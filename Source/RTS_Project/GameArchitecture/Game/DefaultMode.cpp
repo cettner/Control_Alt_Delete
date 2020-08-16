@@ -16,6 +16,10 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	LobbyPlayers = TArray<FPlayerSettings>();
 	NumTeams = -1;
 	TeamSize = -1;
+
+	DefaultSettings.bIsValid = true;
+	DefaultSettings.NumPlayersPerTeam = 2;
+	DefaultSettings.NumTeams = 2;
 }
 
 void ADefaultMode::PostInitializeComponents()
@@ -116,7 +120,11 @@ bool ADefaultMode::LoadServerData()
 
 	FServerSettings settings = GI->GetServerSettings();
 
-	if (settings.bIsValid == false) return false;
+	if (settings.bIsValid == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::LoadServerData] Failed to get valid data from GameInstance Using Default."));
+		settings = GetDefaultSettings();
+	}
 	
 	bool retval = true;
 
@@ -192,6 +200,11 @@ bool ADefaultMode::CheckPlayerRegistry()
 	}
 
 	return(ballplayersregistered);
+}
+
+FServerSettings ADefaultMode::GetDefaultSettings() const
+{
+	return DefaultSettings;
 }
 
 

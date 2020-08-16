@@ -73,6 +73,7 @@ protected:
 	virtual bool LoadServerData();
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings);
 	virtual bool CheckPlayerRegistry();
+	virtual FServerSettings GetDefaultSettings() const;
 
 protected:
 /************************************/
@@ -84,4 +85,9 @@ protected:
 	
 	TMap<int, bool> PlayerRegistry;
 	TArray<TeamSpawnSelector> TeamStartingPoints;
+
+
+	/*Used By Editor Because Game Instance Cannot be Set Properly*/
+	UPROPERTY(EditDefaultsOnly, Category = Debug)
+	FServerSettings DefaultSettings;
 };

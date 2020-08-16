@@ -31,6 +31,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
 		virtual TArray<ARTSStructure *> GetAllStructuresOfTeam(int teamindex) const;
 		
+		virtual TArray<TSubclassOf<AResource>> GetResourceTypes() const;
 		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount);
 		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);

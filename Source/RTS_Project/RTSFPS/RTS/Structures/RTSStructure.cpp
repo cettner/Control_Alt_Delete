@@ -142,7 +142,7 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
 	if (GS == nullptr) return false;
 
-	return 	GS->AddTeamResource(GetTeam(), ResourceType, Amount);;
+	return 	GS->AddTeamResource(GetTeam(), ResourceType, Amount);
 }
 
 bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController)

@@ -152,6 +152,19 @@ TArray<ARTSStructure *> ARTFPSGameState::GetAllStructuresOfTeam(int teamindex) c
 	return structures;
 }
 
+TArray<TSubclassOf<AResource>> ARTFPSGameState::GetResourceTypes() const
+{
+	TArray<TSubclassOf<AResource>> ResourceTypes = TArray<TSubclassOf<AResource>>();
+
+	for (TObjectIterator<AResource> Itr; Itr; ++Itr)
+	{
+		AResource* Resource = *Itr;
+		ResourceTypes.AddUnique(Resource->GetClass());
+	}
+
+	return ResourceTypes;
+}
+
 bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
 {
 	bool retval = false;
@@ -204,7 +217,7 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	
 	if (result)
 	{
-		TArray<TSubclassOf<AResource>> MapResources = Game->GetResourceTypes();
+		TArray<TSubclassOf<AResource>> MapResources = GetResourceTypes();
 
 		for (int i = 0; i < GameMode->GetNumTeams(); i++)
 		{
@@ -224,6 +237,8 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 			TeamResources.Emplace(Resources);
 		}
 	}
+
+	RefreshAllUnits();
 
 	return result;
 }
