@@ -6,11 +6,19 @@
 #include "DefaultMode.h"
 #include "../../RTSFPS/FPS/Commander.h"
 #include "../../RTSFPS/RTS/Camera/RTSCamera.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTFPSMode.generated.h"
 
-/**
- * 
- */
+
+#define NUM_RESOURCES 1
+
+USTRUCT()
+struct FResourceData 
+{
+	GENERATED_USTRUCT_BODY()
+	TMap<TSubclassOf<AResource>,int> ValueMap = TMap<TSubclassOf<AResource>, int>();
+};
+
 UCLASS()
 class RTS_PROJECT_API ARTFPSMode : public ADefaultMode
 {
@@ -33,8 +41,18 @@ protected:
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings) override;
 	virtual void StartMatch() override;
 
+public:
+	int GetStartingResources(TSubclassOf<AResource> ResourceClass);
+	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
+
 protected:
 	int MaxRTSPlayersPerTeam = 1;
 	int MinRTSPlatersPerTeam = 1;
 	
+	UPROPERTY(EditDefaultsOnly)
+	int StartingResource = 100;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<AResource>> ResourceTypes;
+
 };

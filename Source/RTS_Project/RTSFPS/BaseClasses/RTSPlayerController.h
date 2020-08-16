@@ -18,7 +18,6 @@
  * 
  */
 
-#define NUM_RESOURCES 3
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
 

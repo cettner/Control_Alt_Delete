@@ -22,6 +22,7 @@ ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	HUDClass = ARTSHUD::StaticClass();
 	PlayerStateClass = ARTFPSPlayerState::StaticClass();
 	DefaultPawnClass = nullptr;
+	ResourceTypes = TArray<TSubclassOf<AResource>>();
 
 }
 
@@ -100,4 +101,14 @@ void ARTFPSMode::StartMatch()
 		UE_LOG(LogTemp, Warning, TEXT("[ARTSFPSMODE::StartMatch] Failed to initialize RTS Teams"));
 	}
 
+}
+
+int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass)
+{
+	return StartingResource;
+}
+
+TArray<TSubclassOf<AResource>> ARTFPSMode::GetResourceTypes() const
+{
+	return ResourceTypes;
 }

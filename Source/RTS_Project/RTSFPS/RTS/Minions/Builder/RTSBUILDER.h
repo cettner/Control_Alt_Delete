@@ -13,15 +13,6 @@
 
 class AResource; class ARTSStructure;
 
-enum Builder_State
-{
-	IDLE,
-	MINE_ON_ROUTE,
-	MINING,
-	DELIVERY_ON_ROUTE,
-	DElIVERY,
-};
-
 UCLASS()
 class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion
 {
@@ -33,47 +24,42 @@ public:
 	virtual void ReleaseAssets() override;
 	virtual bool CanInteract(AActor * Interactable) override;
 
-	bool CanCarryMore(); 
-	bool CanMine();
+public:
 
-	ARTSStructure * Get_Nearest_Dropoint();
+	bool CanCarryMore(); 
+	virtual bool DeliverResources(ARTSStructure* Structure);
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsMining();
 	
 	void StartMining(AResource * Node);
-
-
-	int carried_resource = 0;
-	int max_resource = 50;
-	
+	virtual int GetCurrentWeight() const;
+	virtual int GetMaxWeight() const;
+	virtual int GetWeightof(TSubclassOf<AResource> ResourceType) const;
 
 protected:
+	TMap<TSubclassOf<AResource>, int> CarriedResources;
 
-	Builder_State state = IDLE;
-	int mine_amount = 5;
-	float mine_interval = 1.0;
+	UPROPERTY(EditDefaultsOnly)
+	int MaxCarryWeight = 50;
 
 
+	int CurrentWeight = 0;
+
+protected:
+	int MineAmount = 5;
+	float MineInterval = 1.0;
 
 private:
 	UPROPERTY(Transient)
 	AResource * target_node;
 
-	FVector Node_Local;
+	FTimerHandle MineHandler;
 
-	ARTSStructure * target_struct;
-	FTimerHandle Mine_Handler;
-
-	UPROPERTY(EditDefaultsOnly)
-	float mine_range = 200.0;
-	UPROPERTY (EditDefaultsOnly)
-	float deliver_range = 500.0;
-
-	bool node_timer_set = false;
-	bool is_state_machine_active = false;
-	int node_ref = -1;
-	TArray<int> type_count;
+	bool bIsMining = false;
 
 	void Mine_Resource();
-	void DeliverResources();
-	bool Drop_Point_Available();
-	bool Node_Nearby(FVector check_local);
+	void AddResource(TSubclassOf<AResource> type, int amount);
+	void CalculateCurrentWeight();
+	int CalculateGatherAmount(TSubclassOf<AResource> type) const;
 };

@@ -3,7 +3,7 @@
 #include "RTSBUILDER.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSPlayerController.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSMode.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/Builder/AI/BuilderAIController.h"
 
 #include "Runtime/Engine/Public/TimerManager.h "
@@ -13,49 +13,28 @@
 
 ARTSBUILDER::ARTSBUILDER()
 {
-	for (int i = 0; i < NUM_RESOURCES; i++)
-	{
-		type_count.Add(0);
-	}
+
 }
 
-
-ARTSStructure * ARTSBUILDER::Get_Nearest_Dropoint()
+bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
+	if (Structure == nullptr) return false;
 
-	float closest_dist = FLT_MAX;
-	float dist;
-
-	FVector mylocal = GetActorLocation();
-
-	ARTSStructure * retval = NULL;
-
-	for (TActorIterator<ARTSStructure>ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	bool retval = false;
+	for (TPair<TSubclassOf<AResource>, int>& Elem : CarriedResources)
 	{
-		if (ActorItr->IsDropPoint())
+		if (Elem.Value > 0)
 		{
-			FVector struct_local = ActorItr->GetActorLocation();
-			dist = mylocal.Dist(mylocal, struct_local);
-
-			if (dist < closest_dist)
+			if (Structure->ScoreResource(Elem.Key, Elem.Value, this))
 			{
-				retval = *ActorItr;
-				closest_dist = dist;
+				CarriedResources[Elem.Key] = 0;
+				retval = true;
 			}
 		}
 	}
+	CalculateCurrentWeight();
 
-	return retval;
-}
-
-void ARTSBUILDER::DeliverResources()
-{
-	carried_resource = 0;
-}
-
-bool ARTSBUILDER::Drop_Point_Available()
-{
-	return (true);
+	return(retval);
 }
 
 bool ARTSBUILDER::HasAssets()
@@ -63,10 +42,21 @@ bool ARTSBUILDER::HasAssets()
 	return(Super::HasAssets());
 }
 
-
 void ARTSBUILDER::ReleaseAssets()
 {
 	Super::ReleaseAssets();
+
+	if (GetWorldTimerManager().IsTimerActive(MineHandler))
+	{
+		GetWorldTimerManager().ClearTimer(MineHandler);
+		ABuilderAIController* AIC = Cast<ABuilderAIController>(GetController());
+		if (AIC)
+		{
+			AIC->SendMineUpdateMessage();
+		}
+	}
+
+	bIsMining = false;
 }
 
 bool ARTSBUILDER::CanInteract(AActor * Interactable)
@@ -83,21 +73,35 @@ bool ARTSBUILDER::CanInteract(AActor * Interactable)
 
 bool ARTSBUILDER::CanCarryMore()
 {
-	return(max_resource > carried_resource);
+	return(MaxCarryWeight > CurrentWeight);
 }
-
 
 void ARTSBUILDER::StartMining(AResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/	
 	target_node = Node;
-	GetWorldTimerManager().SetTimer(Mine_Handler, this, &ARTSBUILDER::Mine_Resource, 1.0, false, mine_interval);
-	node_timer_set = true;
+	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::Mine_Resource, 1.0, false, MineInterval);
+	bIsMining = true;
 }
 
-bool ARTSBUILDER::CanMine()
+int ARTSBUILDER::GetCurrentWeight() const
 {
-	return(!node_timer_set);
+	return CurrentWeight;
+}
+
+int ARTSBUILDER::GetMaxWeight() const
+{
+	return MaxCarryWeight;
+}
+
+int ARTSBUILDER::GetWeightof(TSubclassOf<AResource> ResourceType) const
+{
+	return 1;
+}
+
+bool ARTSBUILDER::IsMining()
+{
+	return(bIsMining && IsAlive());
 }
 
 void ARTSBUILDER::Mine_Resource()
@@ -105,24 +109,11 @@ void ARTSBUILDER::Mine_Resource()
 	AResource * Node = Cast<AResource>(GetTarget());
 	if(IsValid(Node) && Node == target_node) //verify that the current target and the target specified at start of mine operation are the same
 	{
-		int gather_amount = (max_resource - carried_resource);  // determine how much room we have to add.
-		int added_resource = 0;
-		Resource_Types type = NULL_TYPE;
-
-		if (gather_amount < mine_amount)  //ask the node for less if we can only fit that much
-		{	
-			added_resource = Node->Mine(gather_amount,type);
-		}
-		else    // we can ask for the full value
-		{
-			gather_amount = mine_amount; 
-			added_resource = Node->Mine(gather_amount,type);
-		}
-	
-		carried_resource += added_resource;
-		type_count[type] += added_resource;
-
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Carrying %d of %d"), carried_resource, max_resource));
+		TSubclassOf<AResource> ResourceType = Node->GetClass();
+		int gatherAmount = CalculateGatherAmount(ResourceType);  // determine how much room we have to add.
+		int addedResource = 0;
+		addedResource = Node->Mine(gatherAmount);
+		AddResource(ResourceType,addedResource);
 	}
 
 	ABuilderAIController * AIC = Cast<ABuilderAIController>(GetController());
@@ -131,17 +122,52 @@ void ARTSBUILDER::Mine_Resource()
 		AIC->SendMineUpdateMessage();
 	}
 
-	node_timer_set = false;
+	bIsMining = false;
 	target_node =nullptr;
 }
 
-
-
-
-// TODO:: IMPLEMENT ME
-bool ARTSBUILDER::Node_Nearby(FVector check_local)  
+void ARTSBUILDER::AddResource(TSubclassOf<AResource> type, int amount)
 {
-	return false;
+	int* currentcount = CarriedResources.Find(type);
+	if (currentcount != nullptr)
+	{
+		*currentcount += amount;
+	}
+	else
+	{
+		CarriedResources.Emplace(type, amount);
+	}
+	CalculateCurrentWeight();
+}
+
+void ARTSBUILDER::CalculateCurrentWeight()
+{
+	int weight = 0;
+	for (TPair<TSubclassOf<AResource>, int>& Elem : CarriedResources)
+	{
+		weight += Elem.Value * GetWeightof(Elem.Key);
+	}
+	CurrentWeight = weight;
+}
+
+int ARTSBUILDER::CalculateGatherAmount(TSubclassOf<AResource> type) const
+{
+	int gatheramount = 0;
+	int typeweight = GetWeightof(type);
+
+	for (int i = 1; i < (MineAmount + 1); i++)
+	{
+		int nextwieght = CurrentWeight + (typeweight * i);
+		if (nextwieght > MaxCarryWeight)
+		{
+			break;
+		}
+		else
+		{
+			gatheramount = i;
+		}
+	}
+	return(gatheramount);
 }
 
 

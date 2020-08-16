@@ -81,9 +81,9 @@ void ARTSStructure::SetTeam(int newteamindex)
 	teamindex = newteamindex;
 }
 
-bool ARTSStructure::IsDropPoint() const
+bool ARTSStructure::IsDropPointFor(TSubclassOf<AResource> ResourceType) const
 {
-	return (isdroppoint);
+	return (true);
 }
 
 bool ARTSStructure::IsQueueFull() const
@@ -130,6 +130,19 @@ uint32 ARTSStructure::GetCurrentQueueSize() const
 uint32 ARTSStructure::GetMaxQueueSize() const
 {
 	return MaxQueueSize;
+}
+
+bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar)
+{
+	if (!IsDropPointFor(ResourceType)) return(false);
+
+	UWorld* World = GetWorld();
+	if (World == nullptr) return false;
+
+	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+	if (GS == nullptr) return false;
+
+	return 	GS->AddTeamResource(GetTeam(), ResourceType, Amount);;
 }
 
 bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController)

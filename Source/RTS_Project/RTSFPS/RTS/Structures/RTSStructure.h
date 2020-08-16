@@ -9,6 +9,7 @@
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
@@ -116,7 +117,7 @@ public:
 
 	bool QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController = nullptr);
 
-	bool IsDropPoint() const;
+	virtual bool IsDropPointFor(TSubclassOf<AResource> ResourceType) const;
 
 	bool IsQueueFull() const;
 
@@ -131,6 +132,8 @@ public:
 	uint32 GetCurrentQueueSize() const;
 
 	uint32 GetMaxQueueSize() const;
+
+	bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar = nullptr);
 
 protected:
 

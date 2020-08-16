@@ -2,6 +2,7 @@
 
 #include "FPSServerController.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -10,14 +11,7 @@
 
 bool AFPSServerController::Server_Request_Interact_Validate(ACommander * Controlled_Cmdr, AActor * Interacted)
 {
-	if (Controlled_Cmdr && Interacted)
-	{
 		return(true);
-	}
-	else
-	{
-		return(false);
-	}
 }
 
 void AFPSServerController::Server_Request_Interact_Implementation(ACommander * Controlled_Cmdr, AActor * Interacted)
@@ -26,9 +20,9 @@ void AFPSServerController::Server_Request_Interact_Implementation(ACommander * C
 	{
 		Controlled_Cmdr->MinionInteractionHandler(Cast<ARTSMinion>(Interacted));
 	}
-	else if(Cast<ARTSSelectable>(Interacted))
+	else if(Cast<IRTSObjectInterface>((Interacted)))
 	{
-		Controlled_Cmdr->SelectableInterationHandler(Cast<ARTSSelectable>(Interacted));
+		Controlled_Cmdr->SelectableInterationHandler(Interacted);
 	}
 	else
 	{

@@ -22,7 +22,7 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
         if(minion)
         {
             bool can_carry = minion->CanCarryMore();
-            if(can_carry && minion->CanMine())  //if we have room to carry and builder mine cooldown is ready
+            if(can_carry && !minion->IsMining())  //if we have room to carry and builder is not already mining
             {   
                 minion->StartMining(target);
                 WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, Controller->GetMineRequestId());

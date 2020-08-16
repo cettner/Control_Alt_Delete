@@ -7,6 +7,7 @@
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
+#include "RTFPSMode.h"
 #include "RTFPSGameState.generated.h"
 
 struct RTSTeamUnits
@@ -29,15 +30,22 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
 		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
 		virtual TArray<ARTSStructure *> GetAllStructuresOfTeam(int teamindex) const;
-
+		
+		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
+		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount);
+		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 
     public:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
 
+    protected:
+		void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:
 		TArray<RTSTeamUnits> AllUnits;
 		RTSTeamUnits InvalidUnits;
 
+		UPROPERTY(Replicated)
+		TArray<FResourceData> TeamResources;
 
 };

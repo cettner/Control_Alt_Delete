@@ -45,6 +45,7 @@ public:
 
 	virtual AActor* GetTarget();
 
+	UFUNCTION(BlueprintCallable)
 	virtual void SetTarget(AActor * NewTarget);
 
 	virtual void ClearTarget();

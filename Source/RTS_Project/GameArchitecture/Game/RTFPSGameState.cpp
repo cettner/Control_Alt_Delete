@@ -2,8 +2,10 @@
 
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
-#include "Kismet/GameplayStatics.h"
 #include "RTS_Project/RTSFPS/FPS/Death/RespawnSelectionPawn.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
 {
@@ -150,20 +152,88 @@ TArray<ARTSStructure *> ARTFPSGameState::GetAllStructuresOfTeam(int teamindex) c
 	return structures;
 }
 
+bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
+{
+	bool retval = false;
+	if (IsTeamValid(TeamID))
+	{
+		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		if (currentval != nullptr)
+		{
+			*currentval += amount;
+			retval = true;
+		}
+	}
+	return retval;
+}
+
+bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount)
+{
+	bool retval = false;
+	if (IsTeamValid(TeamID))
+	{
+		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		if (currentval != nullptr && *currentval <= requestedamount)
+		{
+			retval = true;
+		}
+	}
+	return retval;
+}
+
+bool ARTFPSGameState::RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
+{
+	bool retval = false;
+	if (IsTeamValid(TeamID))
+	{
+		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		if (currentval != nullptr && *currentval <= amount)
+		{
+			*currentval -= amount;
+			retval = true;
+		}
+	}
+	return retval;
+}
+
 bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 {
 	bool result = Super::TeamInitialize(GameMode);
+
+	ARTFPSMode * Game = Cast<ARTFPSMode>(GameMode);
+	
 	if (result)
 	{
+		TArray<TSubclassOf<AResource>> MapResources = Game->GetResourceTypes();
+
 		for (int i = 0; i < GameMode->GetNumTeams(); i++)
 		{
 			RTSTeamUnits newunitteam;
 			AllUnits.Emplace(newunitteam);
+
+			FResourceData newdata;
+
+			FResourceData Resources;
+
+			for (int k = 0; k < MapResources.Num(); k++)
+			{
+				int startingval = Game->GetStartingResources(MapResources[k]);
+				Resources.ValueMap.Emplace(MapResources[k], startingval);
+				Game->GetStartingResources(MapResources[k]);
+			}
+			TeamResources.Emplace(Resources);
 		}
 	}
 
 	return result;
 }
+
+void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ARTFPSGameState, TeamResources);
+}
+
 
 
 

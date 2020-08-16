@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Commander.h"
+#include "FPSServerController.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+
+#include "Net/UnrealNetwork.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
-#include "Runtime/Engine/Public/DrawDebugHelpers.h"
-#include "Engine.h"
-#include "FPSServerController.h"
-#include "Net/UnrealNetwork.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
 
 float ACommander::PlayAnimMontage(UAnimMontage* AnimMontage, float InPlayRate, FName StartSectionName)
 {
@@ -151,7 +151,7 @@ bool ACommander::CanInteract(AActor * Interactable)
 	{
 		retval = true;
 	}
-	else if (Cast<ARTSSelectable>(Interactable))
+	else if (Cast<IRTSObjectInterface>(Interactable))
 	{
 		retval = true;
 	}
@@ -255,7 +255,7 @@ bool ACommander::LeaveSquad(ARTSMinion * leaver)
 	}
 }
 
-bool ACommander::SelectableInterationHandler_Validate(ARTSSelectable * Interacted)
+bool ACommander::SelectableInterationHandler_Validate(AActor * Interacted)
 {
 	return(true);
 }
@@ -265,21 +265,21 @@ void ACommander::Interact()
 	AActor * hittarget = GetSelectableActor();
 	AFPSServerController * PC = GetController<AFPSServerController>();
 
-	if(CanInteract(hittarget) && PC)
+	IMenuInteractableInterface* menusource = Cast<IMenuInteractableInterface>(hittarget);
+
+	if (menusource && menusource->CanOpenMenu(this) && PC)
 	{
-		AFPSServerController * Server = Cast<AFPSServerController>(GetController());
+			PC->OpenExternalMenu(menusource->GetMenu());
+	}
+	else if(CanInteract(hittarget) && PC)
+	{
+		AFPSServerController * Server = GetController<AFPSServerController>();
 		if (Server)
 		{
 			Server->Server_Request_Interact(this, hittarget);
 		}
 	} 
-	else if (IMenuInteractableInterface* menusource = Cast<IMenuInteractableInterface>(hittarget))
-	{
-		if (menusource->CanOpenMenu(this))
-		{
-			PC->OpenExternalMenu(menusource->GetMenu());
-		}
-	}
+
 }
 
 bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)
@@ -305,7 +305,7 @@ void ACommander::MinionInteractionHandler_Implementation(ARTSMinion * Interacted
 	}
 }
 
-void ACommander::SelectableInterationHandler_Implementation(ARTSSelectable * Interacted)
+void ACommander::SelectableInterationHandler_Implementation(AActor * Interacted)
 {
 	for(int i = 0; i < Squad.Num();  i++)
 	{

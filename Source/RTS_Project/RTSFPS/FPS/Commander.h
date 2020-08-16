@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 #include "Camera/CameraComponent.h"
-#include "../RTS/Camera/RTSSelectable.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "Commander.generated.h"
 
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
@@ -71,7 +71,7 @@ public:
 	void MinionInteractionHandler(ARTSMinion * Interacted);
 
 	UFUNCTION(Server, reliable, WithValidation)
-	void SelectableInterationHandler(ARTSSelectable * Interacted);
+	void SelectableInterationHandler(AActor * Interacted);
 
 	USkeletalMeshComponent * GetSpecifcPawnMesh(bool WantFirstPerson) const;
 
