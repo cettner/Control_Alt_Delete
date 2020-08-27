@@ -2,6 +2,7 @@
 
 
 #include "FPSUI.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h" 
 
 
 UFPSUI::UFPSUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -9,6 +10,9 @@ UFPSUI::UFPSUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitia
 	HealthBar = CreateDefaultSubobject<UProgressBar>(TEXT("Health Bar"));
 	CurrentHealthText = CreateDefaultSubobject<UTextBlock>(TEXT("Current Health Text"));
 	MaxHealthText = CreateDefaultSubobject<UTextBlock>(TEXT("Max Health Text"));
+	TeamResourceList = CreateDefaultSubobject<UPanelWidget>(TEXT("Team Resource List"));
+
+	ResourceWidgetClass = nullptr;
 
 	FloatingPointOptions.MaximumFractionalDigits = 2;
 	FloatingPointOptions.MinimumFractionalDigits = 0;
@@ -26,14 +30,22 @@ bool UFPSUI::Initialize()
 	CurrentHealthText->TextDelegate.BindUFunction(this, "UpdateCurrentHealthText");
 	MaxHealthText->TextDelegate.BindUFunction(this, "UpdateMaxHealthText");
 
+	if (TeamResourceList && (ResourceWidgetClass != nullptr))
+	{
+		UWorld* World = GetWorld();
+		ARTFPSGameState* GS = World->GetGameState<ARTFPSGameState>();
+		if (GS == nullptr) return false;
+
+		TArray<FResourceUIData> ResourceInfo = GS->GetMapResourceInfo();
+		for (int i = 0; i < ResourceInfo.Num(); i++)
+		{
+			UTeamResourceWidget * child = CreateWidget<UTeamResourceWidget>(World, ResourceWidgetClass);
+			child->Setup(ResourceInfo[i]);
+			TeamResourceList->AddChild(child);
+		}
+	}
 
 	return success;
-}
-
-void UFPSUI::NativeTick(const FGeometry& MyGeometry, float DeltaTime)
-{
-	Super::NativeTick(MyGeometry, DeltaTime);
-	HealthBar->SynchronizeProperties();
 }
 
 UHealthComponent* UFPSUI::GetOwnerHealthComp() const

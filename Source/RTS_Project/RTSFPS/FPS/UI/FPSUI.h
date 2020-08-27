@@ -7,6 +7,7 @@
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/Shared/UI/TeamResourceWidget.h"
 #include "FPSUI.generated.h"
 
 /**
@@ -22,7 +23,6 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 
 	protected:
 		virtual bool Initialize() override;
-		virtual void NativeTick(const FGeometry& MyGeometry, float DeltaTime) override;
 
 	protected:
 		UHealthComponent* GetOwnerHealthComp() const;
@@ -43,6 +43,10 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 		FNumberFormattingOptions FloatingPointOptions;
 
     protected:
+		UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<UTeamResourceWidget> ResourceWidgetClass;
+
+    protected:
 	   UPROPERTY(meta = (BindWidget))
 	   UProgressBar* HealthBar;
 
@@ -51,4 +55,7 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 
 	   UPROPERTY(meta = (BindWidgetOptional))
 	   UTextBlock* CurrentHealthText;
+
+	   UPROPERTY(meta = (BindWidgetOptional))
+	   UPanelWidget* TeamResourceList;
 };

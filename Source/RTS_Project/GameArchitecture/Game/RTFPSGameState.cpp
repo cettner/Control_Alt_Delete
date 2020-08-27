@@ -165,6 +165,11 @@ TArray<TSubclassOf<AResource>> ARTFPSGameState::GetResourceTypes() const
 	return ResourceTypes;
 }
 
+TArray<FResourceUIData> ARTFPSGameState::GetMapResourceInfo() const
+{
+	return MapResourceInfo;
+}
+
 bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
 {
 	bool retval = false;
@@ -209,6 +214,17 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TSubclassOf<AResource> Reso
 	return retval;
 }
 
+int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass)
+{
+	int retval = -1;
+	if (IsTeamValid(TeamID) && TeamResources[TeamID].ValueMap.Find(ResourceClass))
+	{
+		retval = *TeamResources[TeamID].ValueMap.Find(ResourceClass);
+	}
+
+	return(retval);
+}
+
 bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 {
 	bool result = Super::TeamInitialize(GameMode);
@@ -219,12 +235,12 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	{
 		TArray<TSubclassOf<AResource>> MapResources = GetResourceTypes();
 
+		InitializeMapResourceInfo(MapResources);
+
 		for (int i = 0; i < GameMode->GetNumTeams(); i++)
 		{
 			RTSTeamUnits newunitteam;
 			AllUnits.Emplace(newunitteam);
-
-			FResourceData newdata;
 
 			FResourceData Resources;
 
@@ -241,6 +257,26 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	RefreshAllUnits();
 
 	return result;
+}
+
+bool ARTFPSGameState::InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> ResourceClasses)
+{
+	bool retval = true;
+	for (int i = 0; i < ResourceClasses.Num(); i++)
+	{
+		TSubclassOf<AResource> SearchClass = ResourceClasses[i];
+
+		for (TActorIterator<AResource> It(GetWorld(), SearchClass); It; ++It)
+		{
+			AResource* ResourceType = *It;
+			MapResourceInfo.Add(ResourceType->GetUIData());
+			break;
+		}
+	}
+
+
+
+	return(retval);
 }
 
 void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

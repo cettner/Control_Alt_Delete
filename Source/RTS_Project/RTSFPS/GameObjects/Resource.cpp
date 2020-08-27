@@ -26,27 +26,35 @@ AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(Object
 		Selection->SetDetection(Mesh);
 		Selection->SetRoot(Mesh);
 	}
+
+	UIData.ResourceName = "Default Resource";
+	UIData.Key = GetClass();
 }
 
-int AResource::Mine(uint32 amount_to_mine)
+int AResource::Mine(uint32 AmountToMine)
 {
-	if (resource_val > (int)amount_to_mine)
+	if ((ResourceVal > (int)AmountToMine) || bisinfinite)
 	{
 		if (!bisinfinite)
 		{
-			resource_val -= amount_to_mine;
+			ResourceVal -= AmountToMine;
 		}
 
-		return(amount_to_mine);
+		return(AmountToMine);
 	}
 	else // theres not enough to give so give what's left.
 	{
-		int retval = resource_val;
-		resource_val = 0;
+		int retval = ResourceVal;
+		ResourceVal = 0;
 		Destroy();
 
 		return(retval);
 	}
+}
+
+FResourceUIData AResource::GetUIData() const
+{
+	return UIData;
 }
 
 void AResource::SetSelected()

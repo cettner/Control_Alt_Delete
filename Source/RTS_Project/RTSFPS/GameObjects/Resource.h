@@ -9,7 +9,20 @@
 #include "Engine/StaticMeshActor.h"
 #include "Resource.generated.h"
 
+USTRUCT(Blueprintable)
+struct FResourceUIData
+{
+	GENERATED_USTRUCT_BODY()
 
+	UPROPERTY(EditDefaultsOnly)
+	FName ResourceName = "";
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture* ResourceImage = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AResource> Key = nullptr;
+};
 
 UCLASS(Blueprintable)
 class RTS_PROJECT_API AResource : public AStaticMeshActor, public IRTSObjectInterface
@@ -20,6 +33,7 @@ public:
 	// Sets default values for this actor's properties
 	AResource(const FObjectInitializer& ObjectInitializer);
 	int Mine(uint32 amount_to_mine);
+	FResourceUIData GetUIData() const;
 
 public:
 	/*RTSObject Interface Overrides*/
@@ -35,5 +49,8 @@ protected:
 	bool bisinfinite = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	int resource_val = 90;
+	int ResourceVal = 90;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	FResourceUIData UIData;
 };
