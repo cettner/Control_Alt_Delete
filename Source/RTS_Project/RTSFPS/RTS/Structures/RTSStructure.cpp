@@ -136,10 +136,28 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 {
 	if (!IsDropPointFor(ResourceType)) return(false);
 
+	/*TODO: Context for this function seems to be incorrect in Editor so we have to iterate through all World contexts till its valid*/
+	/*it is valid in standalone though through normal GetWorld() call*/
 	UWorld* World = GetWorld();
-	if (World == nullptr) return false;
+	ARTFPSGameState* GS = nullptr;
 
-	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+	if (World && World->WorldType != EWorldType::Game)
+	{
+		for (int i = 0; i < GEngine->GetWorldContexts().Num(); i++)
+		{
+			World = GEngine->GetWorldContexts()[i].World();
+			if (World == nullptr) continue;
+
+			GS = World->GetGameState<ARTFPSGameState>();
+			if (GS != nullptr) break;
+		}
+	}
+	else if(World)
+	{
+		GS = World->GetGameState<ARTFPSGameState>();
+	}
+
+
 	if (GS == nullptr) return false;
 
 	return 	GS->AddTeamResource(GetTeam(), ResourceType, Amount);

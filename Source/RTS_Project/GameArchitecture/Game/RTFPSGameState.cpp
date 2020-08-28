@@ -274,8 +274,6 @@ bool ARTFPSGameState::InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> R
 		}
 	}
 
-
-
 	return(retval);
 }
 
