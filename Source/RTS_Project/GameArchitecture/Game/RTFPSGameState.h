@@ -37,6 +37,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount);
 		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
+		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
 		virtual int GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass);
 
     public:

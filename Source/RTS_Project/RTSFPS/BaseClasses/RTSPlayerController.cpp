@@ -5,8 +5,6 @@
 #include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/AssetHelpers/GameAssets.h"
-
-#include "Engine.h"
  
 ARTSPlayerController::ARTSPlayerController()
 {
@@ -50,17 +48,11 @@ void ARTSPlayerController::BeginPlay()
 	}
 }
 
-void ARTSPlayerController::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
 void ARTSPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	ClickEventKeys.Add(EKeys::RightMouseButton);
 	ClickEventKeys.Add(EKeys::LeftMouseButton);
-	InputComponent->BindAction("Debug", IE_Pressed, this, &ARTSPlayerController::DebugEvent);
 }
 
 void ARTSPlayerController::SetPawn(APawn * InPawn)
@@ -163,10 +155,6 @@ void ARTSPlayerController::CloseExternalMenu()
 	ExternalMenu = nullptr;
 }
 
-void ARTSPlayerController::DebugEvent()
-{
-}
-
 bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
 {
 	return (true);
@@ -204,41 +192,16 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 	}
 }
 
-bool ARTSPlayerController::PossessCommander_Validate(ACommander * commander)
+bool ARTSPlayerController::ServerPurchaseMinion_Validate(ARTSStructure * SpawningStructure, TSubclassOf<ARTSMinion> RequestedClass)
 {
-	if (commander && HudPtr)
-	{
-		return(true);
-	}
-	else
-	{
-		return(false);
-	}
+	return(true);
 }
 
-void ARTSPlayerController::PossessCommander_Implementation(ACommander * commander)
+void ARTSPlayerController::ServerPurchaseMinion_Implementation(ARTSStructure * SpawningStructure, TSubclassOf<ARTSMinion> RequestedClass)
 {
-	bShowMouseCursor = false;
-	HudPtr->ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
-	Possess(commander);
-}
-
-bool ARTSPlayerController::PossessRTSCamera_Validate(ARTSCamera * camera)
-{
-	if (camera && HudPtr)
+	if (SpawningStructure && SpawningStructure->PurchaseQueueItem(RequestedClass))
 	{
-		return(true);
+		SpawningStructure->QueueMinion(RequestedClass);
 	}
-	else
-	{
-		return(false);
-	}
-}
-
-void ARTSPlayerController::PossessRTSCamera_Implementation(ARTSCamera * camera)
-{
-	bShowMouseCursor = true;
-	HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
-	Possess(camera);
 }
 

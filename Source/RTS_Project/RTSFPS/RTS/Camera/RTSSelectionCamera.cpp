@@ -80,7 +80,6 @@ void ARTSSelectionCamera::SelectReleased()
 			CurrentView.empty();
 		}
 		TempClick = nullptr;
-		PC->UpdateUISelection();
 }
 	
 void ARTSSelectionCamera::MoveSelected()

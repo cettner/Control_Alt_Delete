@@ -28,6 +28,9 @@ class RTS_PROJECT_API UStructureQueueSelectionWidget : public UUserWidget
 	   UFUNCTION()
 	   virtual void OnSelectionClicked();
 
+	   UFUNCTION()
+	   virtual bool UpdateSelectionButtonEnabled();
+
     protected:
 		UPROPERTY(meta = (BindWidget))
 		UButton* SelectButton;

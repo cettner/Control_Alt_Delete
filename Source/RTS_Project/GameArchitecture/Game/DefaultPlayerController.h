@@ -28,6 +28,8 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void ClientNotifyTeamChange(int newteamid);
 
+		virtual int GetTeamID() const;
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);

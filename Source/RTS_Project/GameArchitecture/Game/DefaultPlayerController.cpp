@@ -3,7 +3,7 @@
 
 #include "DefaultPlayerController.h"
 #include "DefaultMode.h"
-
+#include "DefaultPlayerState.h"
 
 void ADefaultPlayerController::PostInitializeComponents()
 {
@@ -27,6 +27,16 @@ void ADefaultPlayerController::ClientRequestRegistration_Implementation()
 
 void ADefaultPlayerController::ClientNotifyTeamChange(int newteamid)
 {
+}
+
+int ADefaultPlayerController::GetTeamID() const
+{
+	ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
+	if (PS)
+	{
+		return(PS->TeamID);
+	}
+	return -1;
 }
 
 void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)

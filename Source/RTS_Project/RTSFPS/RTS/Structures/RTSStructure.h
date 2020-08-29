@@ -26,6 +26,14 @@ struct FStructureQueueData
 	float SpawnTime = 0.0f;
 };
 
+USTRUCT()
+struct FResourceData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TSubclassOf<AResource>, int> ValueMap = TMap<TSubclassOf<AResource>, int>();
+};
 
 USTRUCT()
 struct FStructureSpawnData
@@ -46,6 +54,9 @@ struct FStructureSpawnData
 
 	UPROPERTY(EditDefaultsOnly)
 	FString MinionName =  "";
+
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TSubclassOf<AResource>, int> ResourceCost = TMap<TSubclassOf<AResource>, int>();
 };
 
 /*Forward Declaration*/
@@ -115,7 +126,7 @@ protected:
 
 public:
 
-	bool QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController = nullptr);
+	bool QueueMinion(TSubclassOf<ARTSMinion> minionclass, AController* InheritingController = nullptr);
 
 	virtual bool IsDropPointFor(TSubclassOf<AResource> ResourceType) const;
 
@@ -134,6 +145,8 @@ public:
 	uint32 GetMaxQueueSize() const;
 
 	bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar = nullptr);
+
+	bool PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass);
 
 protected:
 

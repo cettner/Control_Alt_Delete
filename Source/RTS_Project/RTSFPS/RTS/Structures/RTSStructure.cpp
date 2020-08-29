@@ -3,7 +3,6 @@
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 #include "UI/StructureSpawnQueueWidget.h"
 
-#include "GameFramework/PlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
 
@@ -163,7 +162,24 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 	return 	GS->AddTeamResource(GetTeam(), ResourceType, Amount);
 }
 
-bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AFPSServerController* InheritingController)
+bool ARTSStructure::PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass)
+{
+	UWorld * World = GetWorld();
+	if (World == nullptr) return false;
+
+	ARTFPSGameState* GS = World->GetGameState<ARTFPSGameState>();
+	if (GS == nullptr) return false;
+
+	int spawnindex = GetIndexByClass(minionclass);
+	if (spawnindex >= 0)
+	{
+		return(GS->RemoveTeamResource(GetTeam(), SpawnableUnits[spawnindex].ResourceCost));
+	}
+
+	return false;
+}
+
+bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AController* InheritingController)
 {
 	int index = GetIndexByClass(minionclass);
 	if (index < 0 || IsQueueFull()) return false;

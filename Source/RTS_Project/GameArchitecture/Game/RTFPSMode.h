@@ -12,12 +12,6 @@
 
 #define NUM_RESOURCES 1
 
-USTRUCT()
-struct FResourceData 
-{
-	GENERATED_USTRUCT_BODY()
-	TMap<TSubclassOf<AResource>,int> ValueMap = TMap<TSubclassOf<AResource>, int>();
-};
 
 UCLASS()
 class RTS_PROJECT_API ARTFPSMode : public ADefaultMode

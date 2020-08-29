@@ -5,11 +5,10 @@
 #include "CoreMinimal.h"
 #include "RTSHUD.h"
 #include "RTSMinion.h"
-#include "../RTS/Camera/RTSCamera.h"
-#include "../RTS/Camera/RTSSelectable.h"
-#include "../RTS/FOW/FogOfWarManager.h"
-#include "../../GameArchitecture/Game/DefaultPlayerController.h"
-#include "../../GameArchitecture/Game/RTFPSPlayerState.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSCamera.h"
+#include "RTS_Project/RTSFPS/RTS/FOW/FogOfWarManager.h"
+#include "RTS_Project/GameArchitecture/Game/DefaultPlayerController.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -22,8 +21,6 @@
 
 
 
-class ARTSStructure;
-class AWeapon;
 
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
@@ -32,15 +29,6 @@ class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
 	
 public:
 	ARTSPlayerController();
-	
-	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-	void UpdateUISelection();
-
-	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-	void UpdateUIResource();
-
-	UFUNCTION(BlueprintImplementableEvent, Category = UI)
-	void UpdateUISpawn(AActor * NewSpawn);
 
 	ARTSHUD * HudPtr;
 
@@ -53,21 +41,14 @@ public:
 	TArray <ARTSStructure*> SelectedStructures;
 /*************************************************************************/
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	TArray <int> Resource_Count;
-
-	UFUNCTION(Server, reliable,  WithValidation)
-	void PossessCommander(ACommander * commander);
-
-	UFUNCTION(Server, reliable, WithValidation)
-	void PossessRTSCamera(ARTSCamera * camera);
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void MoveMinions(ARTSPlayerController * PC, const TArray<ARTSMinion *>& Units, FHitResult Hit);
 
-	virtual void BeginPlay() override;
+	UFUNCTION(Server, reliable, WithValidation)
+	void ServerPurchaseMinion(ARTSStructure * SpawningStructure, TSubclassOf<ARTSMinion> RequestedClass);
 
-	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
 
@@ -89,8 +70,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fog Of War")
 	TSubclassOf<AFogOfWarManager> FOWManagerClass;
 	AFogOfWarManager * FOWManager;
-
-private:
-	void DebugEvent();
 
 };

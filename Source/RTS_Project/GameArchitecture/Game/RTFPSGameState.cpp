@@ -109,7 +109,7 @@ void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructur
 
 	ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass,FTransform(),nullptr,nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 
-	AFPSServerController* PC = Cast<AFPSServerController>(SpawnData.RecieveingController);
+	AController* PC = SpawnData.RecieveingController;
 
 	if (PC && Minion)
 	{
@@ -191,7 +191,7 @@ bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource>
 	if (IsTeamValid(TeamID))
 	{
 		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
-		if (currentval != nullptr && *currentval <= requestedamount)
+		if (currentval != nullptr && *currentval >= requestedamount)
 		{
 			retval = true;
 		}
@@ -205,13 +205,41 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TSubclassOf<AResource> Reso
 	if (IsTeamValid(TeamID))
 	{
 		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
-		if (currentval != nullptr && *currentval <= amount)
+		if (currentval != nullptr && *currentval >= amount)
 		{
 			*currentval -= amount;
 			retval = true;
 		}
 	}
 	return retval;
+}
+
+bool ARTFPSGameState::RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts)
+{
+	if (!IsTeamValid(TeamID)) return(false);
+
+	/*We can Only remove if we can afford all costs*/
+	bool CanAfford = true;
+	for (TPair<TSubclassOf<AResource>, int>  Elem : ResourceCosts)
+	{
+		CanAfford &= IsTeamResourceAvailable(TeamID,Elem.Key,Elem.Value);
+	}
+
+	if (!CanAfford) return(false);
+
+
+	bool ResourcesRemoved = true;
+	for (TPair<TSubclassOf<AResource>, int> Elem : ResourceCosts)
+	{
+		ResourcesRemoved &= RemoveTeamResource(TeamID, Elem.Key, Elem.Value);
+	}
+
+	if (!ResourcesRemoved)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::RemoveTeamResource] Failed to Remove all Team Resources!"));
+	}
+
+	return ResourcesRemoved;
 }
 
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass)
