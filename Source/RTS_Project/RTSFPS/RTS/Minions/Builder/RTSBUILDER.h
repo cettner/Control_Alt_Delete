@@ -38,6 +38,9 @@ public:
 	virtual int GetWeightof(TSubclassOf<AResource> ResourceType) const;
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
 	TMap<TSubclassOf<AResource>, int> CarriedResources;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -56,6 +59,7 @@ private:
 
 	FTimerHandle MineHandler;
 
+	UPROPERTY(Replicated)
 	bool bIsMining = false;
 
 	void Mine_Resource();

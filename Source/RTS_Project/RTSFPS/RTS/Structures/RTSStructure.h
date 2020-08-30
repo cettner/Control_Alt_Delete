@@ -87,14 +87,14 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
 	URTSSelectionComponent * Selection;
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	bool bIsConstructed = false;
-
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	UPROPERTY(EditDefaultsOnly, Replicated, Category = Gameplay)
 	int teamindex = -1;
 
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
@@ -109,7 +109,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	uint32 MaxQueueSize = 10;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	float queuestatus = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Spawning)

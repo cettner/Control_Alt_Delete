@@ -105,6 +105,7 @@ bool ALobbyGameState::RequestStartGame(ALobbyPlayerController * RequestingPlayer
 
 	if (GI == nullptr) return(false);
 	
+	bisGameStarting = true;
 	GI->StartGame();
 	return(true);
 }
@@ -157,6 +158,11 @@ bool ALobbyGameState::StoreLobbyData()
 	{
 		return false;
 	}
+}
+
+bool ALobbyGameState::IsGameStarting() const
+{
+	return bisGameStarting;
 }
 
 bool ALobbyGameState::StorePlayerData(ULobbyGameInstance * GI)

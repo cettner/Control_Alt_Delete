@@ -5,6 +5,7 @@
 
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
@@ -255,4 +256,12 @@ void ARTSStructure::SpawnUnit(FStructureQueueData QueueData)
 void ARTSStructure::CancelSpawn()
 {
 
+}
+
+void  ARTSStructure::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ARTSStructure, queuestatus);
+	DOREPLIFETIME(ARTSStructure, teamindex);
 }

@@ -13,6 +13,7 @@ AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(Object
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+	bReplicates = true;
 
 	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("SelectionComp"));
 	

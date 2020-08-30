@@ -77,6 +77,8 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		virtual bool RequestStartGame(ALobbyPlayerController * RequestingPlayer);
 		virtual bool CanPlayerStartGame(ALobbyPlayerController * Player);
 		virtual bool StoreLobbyData();
+		
+		virtual bool IsGameStarting() const;
 	
 	protected:
 		virtual bool StorePlayerData(ULobbyGameInstance * GI);
@@ -93,6 +95,8 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		UFUNCTION()
 		void OnRep_LobbyInfo();
 
+		bool bisGameStarting = false;
+
 	private:
 		bool FindPlayerinLobby(ALobbyPlayerController * player ,FSlotPlayerData& OutSlot);
 
@@ -103,7 +107,6 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		/*Data Copied from GameInstance for Server Use*/
 		uint32 NumTeams = 0;
 		uint32 NumPlayersPerTeam = 0;
-
 
 protected:
 		void PostInitializeComponents() override;

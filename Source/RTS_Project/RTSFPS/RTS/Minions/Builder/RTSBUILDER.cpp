@@ -8,7 +8,7 @@
 
 #include "Runtime/Engine/Public/TimerManager.h "
 #include "GameFramework/Actor.h"
-#include "Engine.h"
+#include "Net/UnrealNetwork.h"
 
 
 ARTSBUILDER::ARTSBUILDER()
@@ -97,6 +97,12 @@ int ARTSBUILDER::GetMaxWeight() const
 int ARTSBUILDER::GetWeightof(TSubclassOf<AResource> ResourceType) const
 {
 	return 1;
+}
+
+void ARTSBUILDER::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ARTSBUILDER, bIsMining);
 }
 
 bool ARTSBUILDER::IsMining()

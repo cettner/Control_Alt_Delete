@@ -29,9 +29,13 @@ void ALobbyGameMode::Logout(AController * Exiting)
 	ALobbyPlayerController* PC = Cast<ALobbyPlayerController>(Exiting);
 	if (GS == nullptr || PC == nullptr) return;
 
-	if (!GS->RemovePlayerFromLobby(PC))
+	/*Players "leave" the lobby ahead of the server when the game is started, so dont remove them if the game is starting*/
+	if (!GS->IsGameStarting())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode::[Logout] Failed to Remove Exiting Player to lobby!"));
+		if (!GS->RemovePlayerFromLobby(PC))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ALobbyGameMode::[Logout] Failed to Remove Exiting Player to lobby!"));
+		}
 	}
 }
 
