@@ -174,7 +174,7 @@ bool ARTSStructure::PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass)
 	int spawnindex = GetIndexByClass(minionclass);
 	if (spawnindex >= 0)
 	{
-		return(GS->RemoveTeamResource(GetTeam(), SpawnableUnits[spawnindex].ResourceCost));
+		return(GS->RemoveTeamResource(GetTeam(), SpawnableUnits[spawnindex].ResourceCost.GetMap()));
 	}
 
 	return false;

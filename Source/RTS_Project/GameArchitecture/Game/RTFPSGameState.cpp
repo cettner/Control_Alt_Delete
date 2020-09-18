@@ -3,6 +3,7 @@
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/FPS/Death/RespawnSelectionPawn.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -175,7 +176,7 @@ bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> Resourc
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr)
 		{
 			*currentval += amount;
@@ -190,7 +191,7 @@ bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource>
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr && *currentval >= requestedamount)
 		{
 			retval = true;
@@ -204,7 +205,7 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TSubclassOf<AResource> Reso
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		int* currentval = TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr && *currentval >= amount)
 		{
 			*currentval -= amount;
@@ -245,9 +246,9 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass)
 {
 	int retval = -1;
-	if (IsTeamValid(TeamID) && TeamResources[TeamID].ValueMap.Find(ResourceClass))
+	if (IsTeamValid(TeamID) && TeamResources[TeamID].Find(ResourceClass))
 	{
-		retval = *TeamResources[TeamID].ValueMap.Find(ResourceClass);
+		retval = *TeamResources[TeamID].Find(ResourceClass);
 	}
 
 	return(retval);
@@ -270,12 +271,12 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 			RTSTeamUnits newunitteam;
 			AllUnits.Emplace(newunitteam);
 
-			FResourceData Resources;
+			FReplicationResourceMap Resources;
 
 			for (int k = 0; k < MapResources.Num(); k++)
 			{
 				int startingval = Game->GetStartingResources(MapResources[k]);
-				Resources.ValueMap.Emplace(MapResources[k], startingval);
+				Resources.Emplace(MapResources[k], startingval);
 				Game->GetStartingResources(MapResources[k]);
 			}
 			TeamResources.Emplace(Resources);

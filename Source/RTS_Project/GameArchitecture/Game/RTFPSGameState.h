@@ -4,17 +4,84 @@
 
 #include "CoreMinimal.h"
 #include "DefaultGameState.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
-#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 #include "RTFPSMode.h"
 #include "RTFPSGameState.generated.h"
+
+
+/*Foward Declarations*/
+class  ARTSMinion;
+class  ARTSStructure;
+struct FStructureQueueData;
 
 struct RTSTeamUnits
 {
 	TArray<ARTSMinion*> Minions = TArray<ARTSMinion*>();
 	TArray<ARTSStructure*> Structures = TArray<ARTSStructure*>();
 };
+
+USTRUCT()
+struct FReplicationResourceMap
+{
+	GENERATED_USTRUCT_BODY()
+public: 
+	void Emplace(TSubclassOf<AResource> Key, int Value)
+	{
+		int index = Keys.IndexOfByKey(Key);
+
+		if (index == INDEX_NONE)
+		{
+			Keys.Emplace(Key);
+			Values.Emplace(Value);
+		}
+		else
+		{
+			Values[index] = Value;
+		}
+	}
+	int* Find(TSubclassOf<AResource> Key)
+	{
+		int index = Keys.IndexOfByKey(Key);
+		int* retval = nullptr;
+
+		if (index != INDEX_NONE)
+		{
+			retval = &Values[index];
+		}
+
+		return(retval);
+	}
+	int Num() const
+	{
+		return(Keys.Num());
+	}
+	TMap<TSubclassOf<AResource>, int> GetMap() const
+	{
+		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
+		if (IsValid())
+		{
+			for (int i = 0; i < Keys.Num(); i++)
+			{
+				Map.Emplace(Keys[i], Values[i]);
+			}
+		}
+
+		
+		return(Map);
+	}
+	bool IsValid() const
+	{
+		return(Keys.Num() == Values.Num());
+	}
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TArray<int> Values;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<AResource>> Keys;
+};
+
 
 UCLASS()
 class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
@@ -54,7 +121,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		RTSTeamUnits InvalidUnits;
 
 		UPROPERTY(Replicated)
-		TArray<FResourceData> TeamResources;
+		TArray<FReplicationResourceMap> TeamResources;
 
 		UPROPERTY(EditAnywhere)
 		TArray<FResourceUIData> MapResourceInfo;

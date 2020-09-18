@@ -46,7 +46,7 @@ bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
 	if (GS == nullptr || PC == nullptr) return(false);
 
 	/*For Each Resource Type needed determine if the team has enough*/
-	for (TPair<TSubclassOf<AResource>, int> Elem : BoundQueueData.ResourceCost)
+	for (TPair<TSubclassOf<AResource>, int> Elem : BoundQueueData.ResourceCost.GetMap())
 	{
 		CanTeamAfford &= GS->IsTeamResourceAvailable(PC->GetTeamID(), Elem.Key, Elem.Value);
 	}

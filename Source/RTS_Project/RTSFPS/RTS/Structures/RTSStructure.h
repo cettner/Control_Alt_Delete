@@ -10,11 +10,15 @@
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
 #include "RTS_Project/AssetHelpers/GameAssets.h"
 #include "RTSStructure.generated.h"
+
+
 
 
 USTRUCT()
@@ -24,15 +28,6 @@ struct FStructureQueueData
 	TSubclassOf<ARTSMinion> SpawnClass = nullptr;
 	AController* RecieveingController = nullptr;
 	float SpawnTime = 0.0f;
-};
-
-USTRUCT()
-struct FResourceData
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	TMap<TSubclassOf<AResource>, int> ValueMap = TMap<TSubclassOf<AResource>, int>();
 };
 
 USTRUCT()
@@ -46,7 +41,7 @@ struct FStructureSpawnData
 	UPROPERTY(EditDefaultsOnly)
 	float SpawnTime = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, NotReplicated)
 	UTexture* MinionThumbnail = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -56,7 +51,7 @@ struct FStructureSpawnData
 	FString MinionName =  "";
 
 	UPROPERTY(EditDefaultsOnly)
-	TMap<TSubclassOf<AResource>, int> ResourceCost = TMap<TSubclassOf<AResource>, int>();
+	FReplicationResourceMap ResourceCost;
 };
 
 /*Forward Declaration*/
