@@ -85,6 +85,10 @@ public:
 	bool SetServerSettings(FServerSettings settings);
 	FServerSettings GetServerSettings();
 
+	void StartOfflineGame();
+
+	bool IsPlayingOffline();
+
 	// Create menu called from the level blueprint
 	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu();
@@ -97,6 +101,7 @@ public:
 protected:
 	bool RestartSession;
 
+	bool bIsPlayingOffline;
 
 public:
 	///// ISessionMenuInterface /////////////////// 

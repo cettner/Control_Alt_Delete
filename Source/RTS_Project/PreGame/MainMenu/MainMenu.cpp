@@ -3,6 +3,7 @@
 
 #include "MainMenu.h"
 #include "MainMenuPlayerController.h"
+#include "RTS_Project/GameArchitecture/Instance/LobbyGameInstance.h"
 
 bool UMainMenu::Initialize()
 {
@@ -23,6 +24,13 @@ bool UMainMenu::Initialize()
 
 	if (JoinSelectedSessionButton == nullptr) return false;
 	JoinSelectedSessionButton->OnClicked.AddDynamic(this, &UMainMenu::OnJoinSelectedSession);
+
+	if (PlayOfflineButton != nullptr)
+	{
+		PlayOfflineButton->OnClicked.AddDynamic(this, &UMainMenu::OnPlayOfflineButtonPressed);
+	}
+
+
 
 	/*Setting this so that input can be set to UI only from controller*/
 	bIsFocusable = true;
@@ -85,6 +93,15 @@ void UMainMenu::OnJoinSessionPressed()
 	if (SessionMenuInterface == nullptr) return;
 
 	SessionMenuInterface->OpenSessionListMenu();
+}
+
+void UMainMenu::OnPlayOfflineButtonPressed()
+{
+	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
+	if (GI)
+	{
+		GI->StartOfflineGame();
+	}
 }
 
 void UMainMenu::OnCancelJoinSession()

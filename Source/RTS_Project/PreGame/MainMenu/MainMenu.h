@@ -65,6 +65,11 @@ protected:
 	UFUNCTION()
 	void OnJoinSessionPressed();
 
+	UPROPERTY(meta = (BindWidgetOptional))
+	UButton* PlayOfflineButton;
+
+	UFUNCTION()
+	void OnPlayOfflineButtonPressed();
 
 protected:
 	ISessionMenuInterface* SessionMenuInterface;

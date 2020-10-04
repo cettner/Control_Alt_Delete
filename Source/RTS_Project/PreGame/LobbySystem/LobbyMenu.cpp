@@ -91,7 +91,7 @@ void ULobbyMenu::Setup()
 	if (GS == nullptr) return;
 
 	/*Only the Lobby host can start the game*/
-	if (PC->GetNetMode() == NM_ListenServer)
+	if (PC->HasAuthority())
 	{
 		StartGameButton->SetIsEnabled(true);
 	}

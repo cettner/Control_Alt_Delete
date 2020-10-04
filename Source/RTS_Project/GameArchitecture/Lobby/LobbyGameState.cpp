@@ -113,6 +113,7 @@ bool ALobbyGameState::RequestStartGame(ALobbyPlayerController * RequestingPlayer
 bool ALobbyGameState::CanPlayerStartGame(ALobbyPlayerController * Player)
 {
 	if (HasAuthority() == false) return(false);
+	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
 
 	if (GetNetMode() == NM_ListenServer)
 	{
@@ -130,6 +131,10 @@ bool ALobbyGameState::CanPlayerStartGame(ALobbyPlayerController * Player)
 	{
 		/*Currently Unimplemented*/
 		return(false);
+	}
+	else if (GI && GI->IsPlayingOffline())
+	{
+		return(true);
 	}
 	return false;
 }
@@ -149,7 +154,7 @@ bool ALobbyGameState::StoreLobbyData()
 		/*Dedicated Server Only Store Server Data*/
 		return(StoreServerData(GI));
 	}
-	else if(GetNetMode() == NM_ListenServer)
+	else if(GetNetMode() == NM_ListenServer || GI->IsPlayingOffline())
 	{
 		/*Listen Server, Store Both Player And Server Data*/
 		return(StoreServerData(GI) && StorePlayerData(GI));

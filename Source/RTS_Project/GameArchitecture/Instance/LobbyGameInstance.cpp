@@ -17,6 +17,7 @@ ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializ
 	MenuClass = UMainMenu::StaticClass();
 	LobbyClass = ULobbyMenu::StaticClass();
 	RestartSession = false;
+	bIsPlayingOffline = false;
 	DesiredServerName = "Default Server";
 	PlayerName = "";
 	LobbyMapName = "/Game/Maps/LobbyMap";
@@ -117,6 +118,28 @@ FServerSettings ULobbyGameInstance::GetServerSettings()
 	return(ServerSettings);
 }
 
+void ULobbyGameInstance::StartOfflineGame()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+
+		if (MainMenu != nullptr)
+		{
+			MainMenu->Teardown();
+			MainMenu = nullptr;
+		}
+
+		bIsPlayingOffline = true;
+		UGameplayStatics::OpenLevel(World, FName(*LobbyMapName));
+	}
+}
+
+bool ULobbyGameInstance::IsPlayingOffline()
+{
+	return bIsPlayingOffline;
+}
+
 void ULobbyGameInstance::Host(FString ServerName)
 {
 	DesiredServerName = ServerName;
@@ -208,7 +231,7 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 
 	/*StartMap as Listen Server*/
 	FString modifier = "?listen";
-
+	bIsPlayingOffline = false;
 	World->ServerTravel(LobbyMapName + modifier);
 }
 
@@ -221,19 +244,16 @@ void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Succes
 			CreateSession();
 			RestartSession = false;
 		}
-		else
-		{
-			UWorld* World = GetWorld();
-			if (World != nullptr)
-			{
-				UGameplayStatics::OpenLevel(World, FName(*MainMenuMapName));
-			}
-
-		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnDestroySessionComplete] NO Success "));
+	}
+
+	UWorld* World = GetWorld();
+	if (World != nullptr)
+	{
+		UGameplayStatics::OpenLevel(World, FName(*MainMenuMapName));
 	}
 }
 
@@ -309,6 +329,7 @@ void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessio
 		return;
 	}
 
+	bIsPlayingOffline = false;
 	PlayerController->ClientTravel(Url, ETravelType::TRAVEL_Absolute);
 
 }
@@ -370,5 +391,13 @@ void ULobbyGameInstance::EndSession()
 		/*Should be false but just to be sure*/
 		RestartSession = false;
 		SessionInterface->DestroySession(SESSION_NAME);
+	}
+	else if (bIsPlayingOffline)
+	{
+		UWorld* World = GetWorld();
+		if (World != nullptr)
+		{
+			UGameplayStatics::OpenLevel(World, FName(*MainMenuMapName));
+		}
 	}
 }
