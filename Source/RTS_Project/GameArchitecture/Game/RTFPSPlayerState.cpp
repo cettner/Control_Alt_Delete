@@ -13,6 +13,16 @@ void ARTFPSPlayerState::BeginPlay()
 	Super::BeginPlay();
 }
 
+bool ARTFPSPlayerState::IsRTSPlayer() const
+{
+	return(isRtsPlayer);
+}
+
+void ARTFPSPlayerState::SetIsRTSPlayer(bool isrts)
+{
+	isRtsPlayer = isrts;
+}
+
 void ARTFPSPlayerState::ClientInitialize(AController * C)
 {
 	Super::ClientInitialize(C);

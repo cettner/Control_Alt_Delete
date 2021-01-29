@@ -60,11 +60,14 @@ public:
 	
 	virtual AFogOfWarManager * InitFOW();
 
+
+public: 
+	virtual void InitHUD();
+
 public:
 	virtual void OpenExternalMenu(UUserWidget * InMenu);
 	virtual void CloseExternalMenu();
 	UUserWidget* ExternalMenu;
-
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fog Of War")

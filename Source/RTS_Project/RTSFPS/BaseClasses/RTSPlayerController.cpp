@@ -5,6 +5,7 @@
 #include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/AssetHelpers/GameAssets.h"
+#include "EngineUtils.h"
  
 ARTSPlayerController::ARTSPlayerController()
 {
@@ -24,28 +25,6 @@ void ARTSPlayerController::BeginPlay()
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
-	
-
-	/*Client or Listen Server, Initilize the Hud Locally*/
-    /*Initialize Hud*/
-	HudPtr = Cast<ARTSHUD>(GetHUD());
-	if (HudPtr)
-	{
-		if (Cast<ACommander>(GetPawn()))
-		{
-			bShowMouseCursor = false;
-			HudPtr->ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
-		}
-		else if (Cast<ARTSCamera>(GetPawn()))
-		{
-			HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Pawn!")));
-		}
-		HudPtr->InitializeUI();
-	}
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -99,7 +78,7 @@ void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 	if (PS == nullptr) return;
 
 	TArray<AActor *> Units;
-	if (PS->isRtsPlayer && FOWManager)
+	if (PS->IsRTSPlayer() && FOWManager)
 	{
 		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
 		{
@@ -130,6 +109,27 @@ AFogOfWarManager * ARTSPlayerController::InitFOW()
 	}
 
 	return(FOWManager);
+}
+
+void ARTSPlayerController::InitHUD()
+{
+    /*Initialize Hud*/
+	HudPtr = Cast<ARTSHUD>(GetHUD());
+	ARTFPSPlayerState * PS = GetPlayerState<ARTFPSPlayerState>();
+	if (HudPtr && PS)
+	{
+		if (!PS->IsRTSPlayer())
+		{
+			bShowMouseCursor = false;
+			HudPtr->ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
+		}
+		else
+		{
+			HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
+		}
+
+		HudPtr->InitializeUI();
+	}
 }
 
 void ARTSPlayerController::OpenExternalMenu(UUserWidget* InMenu)

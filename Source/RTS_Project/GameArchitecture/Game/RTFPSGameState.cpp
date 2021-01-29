@@ -5,6 +5,7 @@
 #include "RTS_Project/RTSFPS/FPS/Death/RespawnSelectionPawn.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 
+#include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -21,7 +22,7 @@ int ARTFPSGameState::NumRTSPlayers(int Team_Index)
 		for (int i = 0; i < Teams[Team_Index].Num(); i++)
 		{
 			ARTFPSPlayerState * PS = Cast<ARTFPSPlayerState>(Teams[Team_Index][i]);
-			if (PS && PS->isRtsPlayer)
+			if (PS && PS->IsRTSPlayer())
 			{
 				retval++;
 			}

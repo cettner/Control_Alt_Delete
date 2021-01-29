@@ -34,7 +34,7 @@ UClass * ARTFPSMode::GetDefaultPawnClassForController_Implementation(AController
 
 		if (PlayerState == nullptr) return (nullptr);
 		
-		if (PlayerState->isRtsPlayer)
+		if (PlayerState->IsRTSPlayer())
 		{
 			return(DefaultRTSClass);
 		}
@@ -58,7 +58,7 @@ AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const 
 	for (TActorIterator<ARTFPSPlayerStart> It(World); It; ++It)
 	{
 		ARTFPSPlayerStart * Start = *It;
-		if (GS->IsTeamValid(Start->teamid) && Start->isRTSStart == PS->isRtsPlayer && Start->teamid == PS->TeamID)
+		if (GS->IsTeamValid(Start->teamid) && Start->isRTSStart == PS->IsRTSPlayer() && Start->teamid == PS->TeamID)
 		{
 			return(Start);
 		}
@@ -77,7 +77,7 @@ bool ARTFPSMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringP
 		
 		if (settings.CustomSettings.Contains(RTS_Project::IsRTSPlayerkey))
 		{
-			PS->isRtsPlayer = (bool)(*settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey));
+			PS->SetIsRTSPlayer((bool)(*settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey)));
 		}
 		else
 		{
