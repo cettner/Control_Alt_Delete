@@ -6,7 +6,7 @@
 
 #include "Engine.h"
 #include "RenderingThread.h"
-#include "Runtime/Engine/Classes/Engine/Texture2D.h"
+#include "Rendering/Texture2DResource.h"
 
 AFogOfWarManager::AFogOfWarManager(const FObjectInitializer &FOI) : Super(FOI) {
 	

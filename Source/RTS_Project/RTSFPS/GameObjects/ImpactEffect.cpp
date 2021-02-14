@@ -2,13 +2,15 @@
 
 
 #include "ImpactEffect.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void AImpactEffect::PostInitializeComponents()
 {
 
 	UPhysicalMaterial* HitPhysMat = SurfaceHit.PhysMaterial.Get();
-	EPhysicalSurface HitSurfaceType = UPhysicalMaterial::DetermineSurfaceType(HitPhysMat);
+	/*EPhysicalSurface HitSurfaceType = UPhysicalMaterial::DetermineSurfaceType(HitPhysMat);
 
 	// show particles
 	UParticleSystem* ImpactFX = GetImpactFX(HitSurfaceType);
@@ -16,6 +18,7 @@ void AImpactEffect::PostInitializeComponents()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactFX, GetActorLocation(), GetActorRotation());
 	}
+
 
 	// play sound
 	USoundCue* ImpactSound = GetImpactSound(HitSurfaceType);
@@ -34,6 +37,7 @@ void AImpactEffect::PostInitializeComponents()
 			SurfaceHit.ImpactPoint, RandomDecalRotation, EAttachLocation::KeepWorldPosition,
 			DefaultDecal.LifeSpan);
 	}
+		*/
 }
 
 UParticleSystem* AImpactEffect::GetImpactFX(TEnumAsByte<EPhysicalSurface> SurfaceType) const
