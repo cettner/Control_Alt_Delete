@@ -24,7 +24,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		UFUNCTION(Client, reliable)
 		void ClientRequestRegistration();
 
-		bool IsRegistered() { return(bisregistered); }
+		bool IsRegistered() const { return(bisregistered); }
 
 		virtual void ClientNotifyTeamChange(int newteamid);
 

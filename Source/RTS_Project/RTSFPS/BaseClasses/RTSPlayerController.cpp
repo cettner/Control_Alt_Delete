@@ -25,6 +25,7 @@ void ARTSPlayerController::BeginPlay()
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
+	InitHUD();
 }
 
 void ARTSPlayerController::SetupInputComponent()
