@@ -3,9 +3,9 @@
 
 #include "LobbyGameState.h"
 #include "Net/UnrealNetwork.h"
-#include "RTS_Project/PreGame/LobbySystem/LobbyPlayerController.h"
-#include "RTS_Project/GameArchitecture/Instance/LobbyGameInstance.h"
-#include "RTS_Project/PreGame/LobbySystem/LobbyMenu.h"
+#include "LobbyPlayerController.h"
+#include "Instance/LobbyGameInstance.h"
+#include "../UI/LobbyMenu.h"
 #include "GameFramework/PlayerState.h"
 
 

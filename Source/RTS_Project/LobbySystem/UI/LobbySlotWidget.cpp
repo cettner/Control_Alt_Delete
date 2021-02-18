@@ -2,7 +2,7 @@
 
 
 #include "LobbySlotWidget.h"
-#include "LobbyPlayerController.h"
+#include "..\GameArchitecture\LobbyPlayerController.h"
 
 bool ULobbySlotWidget::Initialize()
 {

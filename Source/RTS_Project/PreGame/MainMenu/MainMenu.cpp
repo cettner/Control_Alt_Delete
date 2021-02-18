@@ -3,7 +3,7 @@
 
 #include "MainMenu.h"
 #include "MainMenuPlayerController.h"
-#include "RTS_Project/GameArchitecture/Instance/LobbyGameInstance.h"
+#include "RTS_Project/LobbySystem/GameArchitecture/Instance/LobbyGameInstance.h"
 
 bool UMainMenu::Initialize()
 {

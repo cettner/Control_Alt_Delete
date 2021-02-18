@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../../GameArchitecture/Lobby/LobbyGameState.h"
+#include "RTS_Project/LobbySystem/GameArchitecture/LobbyGameState.h"
 #include "RTSFPSLobbyGameState.generated.h"
 
 /**

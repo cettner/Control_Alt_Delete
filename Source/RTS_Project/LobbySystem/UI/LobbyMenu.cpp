@@ -2,8 +2,8 @@
 
 
 #include "LobbyMenu.h"
-#include "LobbyPlayerController.h"
-#include "RTS_Project/GameArchitecture/Lobby/LobbyGameState.h"
+#include "../GameArchitecture/LobbyPlayerController.h"
+#include "../GameArchitecture/LobbyGameState.h"
 
 
 void ULobbyMenu::Teardown()

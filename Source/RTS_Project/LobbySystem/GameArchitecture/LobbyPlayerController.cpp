@@ -2,7 +2,7 @@
 
 
 #include "LobbyPlayerController.h"
-#include "LobbyMenu.h"
+#include "../UI/LobbyMenu.h"
 
 ALobbyPlayerController::ALobbyPlayerController(const FObjectInitializer& ObjectInitializer)
 {
