@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "OnlineSubsystem.h"
-#include "../../Interfaces/SessionMenuInterface.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Interfaces/OnlineFriendsInterface.h"
+
+#include "../../Interfaces/SessionMenuInterface.h"
 #include "LobbyGameInstance.generated.h"
 
 
@@ -59,6 +61,81 @@ struct FServerSettings
 	UPROPERTY(EditDefaultsOnly)
 	bool bIsValid = false;
 };
+
+USTRUCT(BlueprintType)
+struct FBPUniqueNetId
+{
+	GENERATED_USTRUCT_BODY()
+
+private:
+	bool bUseDirectPointer;
+
+
+public:
+	TSharedPtr<const FUniqueNetId> UniqueNetId;
+	const FUniqueNetId * UniqueNetIdPtr;
+
+	void SetUniqueNetId(const TSharedPtr<const FUniqueNetId> &ID)
+	{
+		bUseDirectPointer = false;
+		UniqueNetIdPtr = nullptr;
+		UniqueNetId = ID;
+	}
+
+	void SetUniqueNetId(const FUniqueNetId *ID)
+	{
+		bUseDirectPointer = true;
+		UniqueNetIdPtr = ID;
+	}
+
+	bool IsValid() const
+	{
+		if (bUseDirectPointer && UniqueNetIdPtr != nullptr)
+		{
+			return true;
+		}
+		else if (UniqueNetId.IsValid())
+		{
+			return true;
+		}
+		else
+			return false;
+
+	}
+
+	const FUniqueNetId* GetUniqueNetId() const
+	{
+		if (bUseDirectPointer && UniqueNetIdPtr != nullptr)
+		{
+			// No longer converting to non const as all functions now pass const UniqueNetIds
+			return /*const_cast<FUniqueNetId*>*/(UniqueNetIdPtr);
+		}
+		else if (UniqueNetId.IsValid())
+		{
+			return UniqueNetId.Get();
+		}
+		else
+			return nullptr;
+	}
+
+	FBPUniqueNetId()
+	{
+		bUseDirectPointer = false;
+		UniqueNetIdPtr = nullptr;
+	}
+};
+
+USTRUCT()
+struct FSubSytemFriendInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UTexture2D* PlayerAvatar;
+
+	FString PlayerName;
+
+	FBPUniqueNetId PlayerUniqueNetID;
+};
 	
 
 /*Forward Declarations*/
@@ -84,6 +161,8 @@ public:
 
 	bool SetServerSettings(FServerSettings settings);
 	FServerSettings GetServerSettings();
+
+	TArray<FName> GetAvailableSubsystems() const;
 
 	void StartOfflineGame();
 
@@ -126,6 +205,27 @@ private:
 	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	void CreateSession();
 
+/**********************************************************************************************/
+
+//Friend Events
+public:
+	void ReadFriendsList(FName SubSystemName);
+
+protected:
+
+	void OnReadFriendsListCompleted(int32 LocalUserNum, bool bWasSuccessful, const FString & ListName, const FString & ErrorString);
+
+	void SendSessionInviteToFriend(APlayerController* InvitingPlayer, const FBPUniqueNetId & Friend);
+
+	void OnSessionUserInviteAccepted(bool bWasSuccessful, int32 LocalUserNum, TSharedPtr<const FUniqueNetId> InvitingPlayer, const FOnlineSessionSearchResult & TheSessionInvitedTo);
+	
+	/*"Pure" Virtual Function, Override Per Implemented Subsystem IE Steam, Epic...etc*/
+	virtual UTexture2D * GetFriendAvatar(FBPUniqueNetId PlayerNetID);
+
+	FOnReadFriendsListComplete ReadFriendListCompleteDelagate;
+	FOnAcceptInviteComplete SessionInviteAcceptedDelegate;
+
+	FName LastReadSubSystem;
 
 /**********************************************************************************************/
 protected:
@@ -166,7 +266,10 @@ public:
 	FPlayerSettings PlayerSettings;
 	FServerSettings ServerSettings;
 
-private:
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Category = SubSystem)
+	TArray<FName> IntegratedSubSystems;
 
 	// Session
 	IOnlineSessionPtr SessionInterface;

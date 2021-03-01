@@ -4,6 +4,7 @@
 #include "LobbyGameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemTypes.h"
+
 #include "RTS_Project/PreGame/MainMenu/MainMenu.h"
 #include "Kismet/GameplayStatics.h"
 #include "../../UI/LobbyMenu.h"
@@ -43,6 +44,10 @@ void ULobbyGameInstance::Init()
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &ULobbyGameInstance::OnFindSessionsComplete);
 
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &ULobbyGameInstance::OnJoinSessionsComplete);
+
+			SessionInterface->OnSessionUserInviteAcceptedDelegates.AddUObject(this, &ULobbyGameInstance::OnSessionUserInviteAccepted);
+
+			ReadFriendListCompleteDelagate = FOnReadFriendsListComplete::CreateUObject(this, &ULobbyGameInstance::OnReadFriendsListCompleted);
 		}
 	}
 	else
@@ -118,6 +123,11 @@ FServerSettings ULobbyGameInstance::GetServerSettings()
 	return(ServerSettings);
 }
 
+TArray<FName> ULobbyGameInstance::GetAvailableSubsystems() const
+{
+	return IntegratedSubSystems;
+}
+
 void ULobbyGameInstance::StartOfflineGame()
 {
 	UWorld* World = GetWorld();
@@ -172,7 +182,9 @@ void ULobbyGameInstance::Host(FString ServerName)
 
 void ULobbyGameInstance::JoinSession(uint32 Index)
 {
-	if (!SessionInterface.IsValid() || (!SessionSearch.IsValid())) return;
+	ULocalPlayer* const Player = GetFirstGamePlayer();
+
+	if (!SessionInterface.IsValid() || (!SessionSearch.IsValid())  || !Player) return;
 
 	if (Index < (uint32)(SessionSearch->SearchResults.Num()))
 	{
@@ -334,6 +346,124 @@ void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessio
 
 }
 
+void ULobbyGameInstance::ReadFriendsList(FName SubSystemName)
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	IOnlineSubsystem * const OnlineSub = IOnlineSubsystem::Get(SubSystemName);
+
+	if (PlayerController && OnlineSub)
+	{
+		IOnlineFriendsPtr FriendInterface = OnlineSub->GetFriendsInterface();
+
+		if (FriendInterface.IsValid())
+		{
+			ULocalPlayer * LocalPlayer = PlayerController->GetLocalPlayer();
+
+			if (LocalPlayer)
+			{
+				/*Store the System we used to read the FriendsList and query the interface*/
+				LastReadSubSystem = SubSystemName;
+				FriendInterface->ReadFriendsList(LocalPlayer->GetControllerId(), EFriendsLists::ToString(EFriendsLists::OnlinePlayers), ReadFriendListCompleteDelagate);
+			}
+		}
+	}
+}
+
+void ULobbyGameInstance::OnReadFriendsListCompleted(int32 LocalUserNum, bool bWasSuccessful, const FString & ListName, const FString & ErrorString)
+{
+	if (bWasSuccessful)
+	{
+		//get the steam online subsystem from the last read
+		IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(LastReadSubSystem);
+
+		//check if the online subsystem is valid
+		if (OnlineSub)
+		{
+			IOnlineFriendsPtr FriendsInterface = OnlineSub->GetFriendsInterface();
+
+			//if the Friends Interface is valid
+			if (FriendsInterface.IsValid())
+			{
+				TArray< TSharedRef<FOnlineFriend> > FriendList;
+				//get a list on all online players and store them in the FriendList
+				FriendsInterface->GetFriendsList(LocalUserNum, ListName, FriendList);
+
+				GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Emerald, *FString::Printf(TEXT("Number of friends found is: %d"), FriendList.Num()));
+				
+				TArray<FSubSytemFriendInfo> FriendsList;
+				
+				//for each loop to convert the FOnlineFriend array into the cuteom BP struct
+				for (TSharedRef<FOnlineFriend> Friend : FriendList)
+				{
+					//temp FSteamFriendInfo variable to add to the array
+					FSubSytemFriendInfo TempSteamFriendInfo;
+					
+					//get the friend's User ID
+					TempSteamFriendInfo.PlayerUniqueNetID.SetUniqueNetId(Friend->GetUserId());
+					
+					//get the friend's avatar as texture 2D and store it
+					TempSteamFriendInfo.PlayerAvatar = GetFriendAvatar(TempSteamFriendInfo.PlayerUniqueNetID);
+					
+					//get the friend's display name
+					TempSteamFriendInfo.PlayerName = Friend->GetDisplayName();
+
+					//add the temp variable to the 
+					FriendsList.Add(TempSteamFriendInfo);
+				}
+				
+				//call blueprint to show the info on UMG
+				//OnGetSteamFriendRequestCompleteUMG(BPFriendsList);
+			}
+		}
+	}
+	else
+	{
+		//ShowErrorMessageUMG(FText::FromString(ErrorString));
+	}
+
+}
+
+void ULobbyGameInstance::SendSessionInviteToFriend(APlayerController * InvitingPlayer, const FBPUniqueNetId & Friend)
+{
+	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+	if (OnlineSub)
+	{
+		ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(InvitingPlayer->GetLocalPlayer());
+		if (LocalPlayer)
+		{
+			// Get SessionInterface from the OnlineSubsystem
+			IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+			if (Sessions.IsValid() && LocalPlayer->GetPreferredUniqueNetId().IsValid() && Friend.IsValid())
+			{
+				Sessions->SendSessionInviteToFriend(*LocalPlayer->GetPreferredUniqueNetId(), SESSION_NAME, *Friend.GetUniqueNetId());
+			}
+		}
+	}
+}
+
+void ULobbyGameInstance::OnSessionUserInviteAccepted(bool bWasSuccessful, int32 LocalUserNum, TSharedPtr<const FUniqueNetId> InvitingPlayer, const FOnlineSessionSearchResult & TheSessionInvitedTo)
+{
+	// Get OnlineSubsystem we want to work with
+	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
+	if (OnlineSub)
+	{
+		// Get SessionInterface from the OnlineSubsystem
+		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+		if (Sessions.IsValid())
+		{
+			Sessions->JoinSession(LocalUserNum, SESSION_NAME, TheSessionInvitedTo);
+
+			// Set the Handle again? Dont think this is needed
+            //OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
+		}
+	}
+}
+
+UTexture2D * ULobbyGameInstance::GetFriendAvatar(FBPUniqueNetId PlayerNetID)
+{
+	return nullptr;
+}
+
 void ULobbyGameInstance::CreateSession()
 {
 	UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::CreateSession] Creating %s"), *SESSION_NAME.ToString());
@@ -344,14 +474,14 @@ void ULobbyGameInstance::CreateSession()
 		FOnlineSessionSettings SessionSettings;
 
 		// Switch between bIsLANMatch when using NULL subsystem
-		//if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
-		//{
+		if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
+		{
 			SessionSettings.bIsLANMatch = true;
-		//}
-		//else
-		//{
-		//	SessionSettings.bIsLANMatch = false;
-		//}
+		}
+		else
+		{
+			SessionSettings.bIsLANMatch = false;
+		}
 
 		if (DesiredServerName == "")
 		{

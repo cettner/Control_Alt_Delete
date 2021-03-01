@@ -46,4 +46,5 @@ ALobbyGameMode::ALobbyGameMode(const FObjectInitializer& ObjectInitializer)
 	DefaultPawnClass = AMenuPawn::StaticClass();
 	GameSessionClass = ALobbyGameSession::StaticClass();
 	GameStateClass = ALobbyGameState::StaticClass();
+	bUseSeamlessTravel = false;
 }
