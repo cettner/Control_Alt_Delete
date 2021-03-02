@@ -402,7 +402,7 @@ void ULobbyGameInstance::OnReadFriendsListCompleted(int32 LocalUserNum, bool bWa
 					TempSteamFriendInfo.PlayerUniqueNetID.SetUniqueNetId(Friend->GetUserId());
 					
 					//get the friend's avatar as texture 2D and store it
-					TempSteamFriendInfo.PlayerAvatar = GetFriendAvatar(TempSteamFriendInfo.PlayerUniqueNetID);
+					TempSteamFriendInfo.PlayerAvatar = GetFriendAvatar(TempSteamFriendInfo.PlayerUniqueNetID, LastReadSubSystem);
 					
 					//get the friend's display name
 					TempSteamFriendInfo.PlayerName = Friend->GetDisplayName();
@@ -411,8 +411,8 @@ void ULobbyGameInstance::OnReadFriendsListCompleted(int32 LocalUserNum, bool bWa
 					FriendsList.Add(TempSteamFriendInfo);
 				}
 				
-				//call blueprint to show the info on UMG
-				//OnGetSteamFriendRequestCompleteUMG(BPFriendsList);
+				/*Fire the Delegate For Recieving UI*/
+				FriendsListReadyDelegate.ExecuteIfBound(FriendsList);
 			}
 		}
 	}
@@ -459,7 +459,7 @@ void ULobbyGameInstance::OnSessionUserInviteAccepted(bool bWasSuccessful, int32 
 	}
 }
 
-UTexture2D * ULobbyGameInstance::GetFriendAvatar(FBPUniqueNetId PlayerNetID)
+UTexture2D * ULobbyGameInstance::GetFriendAvatar(FBPUniqueNetId PlayerNetID, FName SubSystemName)
 {
 	return nullptr;
 }

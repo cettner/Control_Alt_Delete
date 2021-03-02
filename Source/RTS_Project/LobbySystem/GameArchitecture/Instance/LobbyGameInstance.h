@@ -99,16 +99,16 @@ public:
 			return true;
 		}
 		else
+		{
 			return false;
-
+		}
 	}
 
 	const FUniqueNetId* GetUniqueNetId() const
 	{
 		if (bUseDirectPointer && UniqueNetIdPtr != nullptr)
 		{
-			// No longer converting to non const as all functions now pass const UniqueNetIds
-			return /*const_cast<FUniqueNetId*>*/(UniqueNetIdPtr);
+			return (UniqueNetIdPtr);
 		}
 		else if (UniqueNetId.IsValid())
 		{
@@ -136,7 +136,8 @@ struct FSubSytemFriendInfo
 
 	FBPUniqueNetId PlayerUniqueNetID;
 };
-	
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>, Friendslist);
 
 /*Forward Declarations*/
 class UMainMenu;
@@ -210,6 +211,7 @@ private:
 //Friend Events
 public:
 	void ReadFriendsList(FName SubSystemName);
+	FFriendsListReadyDelegate FriendsListReadyDelegate;
 
 protected:
 
@@ -220,7 +222,7 @@ protected:
 	void OnSessionUserInviteAccepted(bool bWasSuccessful, int32 LocalUserNum, TSharedPtr<const FUniqueNetId> InvitingPlayer, const FOnlineSessionSearchResult & TheSessionInvitedTo);
 	
 	/*"Pure" Virtual Function, Override Per Implemented Subsystem IE Steam, Epic...etc*/
-	virtual UTexture2D * GetFriendAvatar(FBPUniqueNetId PlayerNetID);
+	virtual UTexture2D * GetFriendAvatar(FBPUniqueNetId PlayerNetID, FName SubSystemName);
 
 	FOnReadFriendsListComplete ReadFriendListCompleteDelagate;
 	FOnAcceptInviteComplete SessionInviteAcceptedDelegate;
