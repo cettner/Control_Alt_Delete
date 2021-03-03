@@ -210,23 +210,30 @@ private:
 
 //Friend Events
 public:
+	/*Call This to Poke the Given Subsytem and Request a Friends List, Request is Returned from FriendslistReadyDelegate Call if */
 	void ReadFriendsList(FName SubSystemName);
+
+	/*Bindable Delagate that is fired after the friends list for the selected SubSystem has been Retrieved*/
 	FFriendsListReadyDelegate FriendsListReadyDelegate;
 
-protected:
+	/*Call this to send a invite through the default SubSystem to the designated player*/
+	void SendSessionInviteToFriend(APlayerController* InvitingPlayer, const FBPUniqueNetId& FriendID);
 
+protected:
+	/*Callback Function when Subsystem Completes Request for Friends List*/
 	void OnReadFriendsListCompleted(int32 LocalUserNum, bool bWasSuccessful, const FString & ListName, const FString & ErrorString);
 
-	void SendSessionInviteToFriend(APlayerController* InvitingPlayer, const FBPUniqueNetId & Friend);
-
+	/*Function Called when Friend initally Accepts Invites, initiates Join Session Call*/
 	void OnSessionUserInviteAccepted(bool bWasSuccessful, int32 LocalUserNum, TSharedPtr<const FUniqueNetId> InvitingPlayer, const FOnlineSessionSearchResult & TheSessionInvitedTo);
 	
 	/*"Pure" Virtual Function, Override Per Implemented Subsystem IE Steam, Epic...etc*/
 	virtual UTexture2D * GetFriendAvatar(FBPUniqueNetId PlayerNetID, FName SubSystemName);
 
+	/*Delegates for Above Events*/
 	FOnReadFriendsListComplete ReadFriendListCompleteDelagate;
 	FOnAcceptInviteComplete SessionInviteAcceptedDelegate;
 
+	/*Last Called Subsystem through ReadFriendsList*/
 	FName LastReadSubSystem;
 
 /**********************************************************************************************/
