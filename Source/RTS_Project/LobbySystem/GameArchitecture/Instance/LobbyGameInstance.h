@@ -137,7 +137,7 @@ struct FSubSytemFriendInfo
 	FBPUniqueNetId PlayerUniqueNetID;
 };
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>, Friendslist);
+DECLARE_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>);
 
 /*Forward Declarations*/
 class UMainMenu;

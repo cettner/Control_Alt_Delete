@@ -3,12 +3,22 @@
 #include "ShooterWeapon.h"
 #include "RTS_Project/RTSFPS/FPS/CombatCommander.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "AIController.h"
 #define DEBUG_WEAPON
 
 AShooterWeapon::AShooterWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	CurrentAmmo = WeaponConfig.InitialClips * WeaponConfig.AmmoPerClip;
+
+	if (CurrentAmmo > WeaponConfig.AmmoPerClip)
+	{
+		CurrentAmmoInClip = WeaponConfig.AmmoPerClip;
+	}
+	else
+	{
+		CurrentAmmoInClip = CurrentAmmo;
+	}
 }
 
 void AShooterWeapon::StartFire()
