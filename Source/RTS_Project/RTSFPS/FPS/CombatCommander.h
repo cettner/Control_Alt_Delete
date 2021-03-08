@@ -152,6 +152,10 @@ protected:
 	UFUNCTION()
 	void OnRep_CurrentWeapon(AWeapon* LastWeapon);
 
+	/* if server has begun switching our weapon */
+	UFUNCTION()
+	void OnRep_bIsSwitchingWeapon();
+
 protected:
 	/** currently equipped weapon */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentWeapon)
@@ -168,6 +172,7 @@ protected:
 	const float SwitchWeaponDelayTime = 2.0;
 
 	/*True If User is currently cycling through available weapons*/
+	UPROPERTY(ReplicatedUsing = OnRep_bIsSwitchingWeapon)
 	bool bIsSwitching_Weapon = false;
 
 	/*Is a weapon Currently Equipped*/

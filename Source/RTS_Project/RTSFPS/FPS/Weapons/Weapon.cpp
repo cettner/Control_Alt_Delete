@@ -69,7 +69,7 @@ void AWeapon::OnEquip()
 			Duration = 0.5f;
 		}
 
-		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration - .2f, false);
 
 
 	if (MyPawn && MyPawn->IsLocallyControlled())
@@ -125,7 +125,7 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 			// failsafe
 			Duration = 0.5f;
 		}
-		GetWorldTimerManager().SetTimer(TimerHandle_OnUnEquipFinished, this, &AWeapon::OnUnEquipFinished, Duration, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_OnUnEquipFinished, this, &AWeapon::OnUnEquipFinished, Duration -.2f, false);
 	}
 
 	DetermineWeaponState();

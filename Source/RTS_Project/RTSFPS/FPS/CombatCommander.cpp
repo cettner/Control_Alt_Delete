@@ -119,7 +119,7 @@ void ACombatCommander::HandleSwitchWeapon(int direction)
 				const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
 				NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
 			}
-
+			
 			if (bIsSwitching_Weapon)
 			{
 				SetWeaponEquippedTimer();
@@ -174,7 +174,6 @@ void ACombatCommander::UnEquipWeapon()
 		if (GetLocalRole() == ROLE_Authority)
 		{
 			CurrentWeapon->OnUnEquip();
-			CurrentWeapon = nullptr;
 		}
 		else
 		{
@@ -189,6 +188,7 @@ void ACombatCommander::UnEquipComplete()
 	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsWeaponEquipped = false;
+		CurrentWeapon = nullptr;
 		SetWeaponStance();
 
 		if (!bIsSwitching_Weapon)
@@ -321,6 +321,7 @@ void ACombatCommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 
 	// everyone
 	DOREPLIFETIME(ACombatCommander, CurrentWeapon);
+	DOREPLIFETIME(ACombatCommander, bIsSwitching_Weapon);
 }
 
 void ACombatCommander::BeginDestroy()
@@ -392,7 +393,7 @@ void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon)
 
 void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 {
-	if (LastWeapon)
+	if (LastWeapon && GetLocalRole() == ROLE_Authority)
 	{
 		LastWeapon->SetOwningPawn(this);
 		LastWeapon->OnUnEquip(CurrentWeapon);
@@ -400,6 +401,14 @@ void ACombatCommander::OnRep_CurrentWeapon(AWeapon* LastWeapon)
 
 	SetCurrentWeapon(CurrentWeapon);
 	bIsWeaponEquipped = CurrentWeapon != nullptr;
+}
+
+void ACombatCommander::OnRep_bIsSwitchingWeapon()
+{
+	if (CurrentWeapon && bIsSwitching_Weapon)
+	{
+		CurrentWeapon->OnUnEquip();
+	}
 }
 
 
