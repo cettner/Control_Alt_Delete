@@ -196,11 +196,6 @@ void ACombatCommander::UnEquipComplete()
 			WeaponSwitchComplete();
 		}
 	}
-	else if(CurrentWeapon)
-	{
-
-	}
-
 }
 
 void ACombatCommander::RemoveWeapon(AWeapon* Weapon)

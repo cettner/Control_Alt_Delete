@@ -69,7 +69,7 @@ void AWeapon::OnEquip()
 			Duration = 0.5f;
 		}
 
-		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration - .2f, false);
+		GetWorldTimerManager().SetTimer(TimerHandle_OnEquipFinished, this, &AWeapon::OnEquipFinished, Duration, false);
 
 
 	if (MyPawn && MyPawn->IsLocallyControlled())
@@ -225,10 +225,10 @@ void AWeapon::AttachMeshToPawn()
 void AWeapon::DetachMeshFromPawn()
 {
 	FirstPersonMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	FirstPersonMesh->SetHiddenInGame(true);
+	FirstPersonMesh->SetHiddenInGame(true, true);
 
 	ThirdPersonMesh->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-	ThirdPersonMesh->SetHiddenInGame(true);
+	ThirdPersonMesh->SetHiddenInGame(true, true);
 }
 
 UAudioComponent* AWeapon::PlayWeaponSound(USoundCue* Sound)
