@@ -217,7 +217,7 @@ void AWeapon::AttachMeshToPawn()
 			USkeletalMeshComponent* UseWeaponMesh = GetWeaponMesh();
 			USkeletalMeshComponent* UsePawnMesh = MyPawn->GetPawnMesh();
 			UseWeaponMesh->AttachToComponent(UsePawnMesh, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
-			UseWeaponMesh->SetHiddenInGame(false);
+			UseWeaponMesh->SetHiddenInGame(false,true);
 		}
 	}
 }
