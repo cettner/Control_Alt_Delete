@@ -88,8 +88,7 @@ void ACombatCommander::WeaponSwitchComplete()
 	if (!bIsWeaponEquipped)
 	{
 		EquipWeapon(NextWeapon);
-		//Replication wont occur if we switched to our old weapon since nothing actually changed, so we kick off equipped locally
-		if (CurrentWeapon == NextWeapon && GetLocalRole() != ROLE_Authority)
+		if (CurrentWeapon == NextWeapon)
 		{
 			OnRep_CurrentWeapon(CurrentWeapon);
 		}
