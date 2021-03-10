@@ -25,7 +25,13 @@ void ARTSPlayerController::BeginPlay()
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
-	InitHUD();
+
+
+	if (GetLocalRole() == ROLE_Authority && GetPlayerState<ARTFPSPlayerState>())
+	{
+		FinishLocalPlayerSetup(GetPlayerState<ARTFPSPlayerState>());
+	}
+
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -43,8 +49,7 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 	{
 		int team_id = Cast<ADefaultPlayerState>(PlayerState)->TeamID;
 		Cast<ACommander>(InPawn)->SetTeam(team_id);
-	}
-	
+	}	
 }
 
 void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
@@ -77,7 +82,7 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 {
 	if (PS == nullptr) return;
-
+	/*
 	TArray<AActor *> Units;
 	if (PS->IsRTSPlayer() && FOWManager)
 	{
@@ -91,6 +96,10 @@ void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 		}
 		FOWManager->EnableFOW(Units);
 	}
+	*/
+
+
+	InitHUD();
 }
 
 AFogOfWarManager * ARTSPlayerController::InitFOW()
