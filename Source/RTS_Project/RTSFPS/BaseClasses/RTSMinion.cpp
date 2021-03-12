@@ -263,7 +263,11 @@ FRTSAIPerceptionConfig ARTSMinion::GetAIConfig() const
 //interface function for override;
 void ARTSMinion::ReleaseAssets()
 {
-
+	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
+	if (AIC != NULL)
+	{
+		AIC->ReleaseAssets();
+	}
 }
 
 bool ARTSMinion::HasAssets()

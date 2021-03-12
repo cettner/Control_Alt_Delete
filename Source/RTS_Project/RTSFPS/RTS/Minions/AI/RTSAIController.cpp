@@ -29,7 +29,6 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	PerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
 
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnTargetPerceptionUpdated);
-	//PerceptionComp->OnPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnPerceptionUpdated);
 
 	AIRequestId = 1U;
 }
@@ -101,6 +100,10 @@ AActor * ARTSAIController::GetTarget()
 void ARTSAIController::ClearTarget()
 {
 	BlackboardComp->ClearValue(Target);
+}
+
+void ARTSAIController::ReleaseAssets()
+{
 }
 
 void ARTSAIController::SetCommander(ACommander * Commander)

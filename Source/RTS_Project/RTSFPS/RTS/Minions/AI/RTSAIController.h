@@ -34,18 +34,6 @@ UCLASS()
 class RTS_PROJECT_API ARTSAIController : public AAIController
 {
 	GENERATED_BODY()
-
-		UPROPERTY(transient)
-		class UBlackboardComponent *BlackboardComp;
-
-	    UPROPERTY(transient)
-		class UBehaviorTreeComponent *BehaviorComp;
-
-		UPROPERTY(transient)
-		URTSAIPerceptionComponent * PerceptionComp;
-
-		UPROPERTY(transient)
-		UAISenseConfig_Sight* SightConfig;
 	
 public:
 
@@ -55,16 +43,18 @@ public:
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 public:
-	void SetTarget(AActor* newtarget);
-	AActor * GetTarget();
-	void ClearTarget();
-
 	class ACommander * GetCommander();
 	void ClearCommander();
 	void SetCommander(ACommander * Commander);
 
 	FORCEINLINE FAIRequestID GetAIRequestId() const { return AIRequestId; }
 	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status);
+
+public:
+	virtual void ReleaseAssets();
+	void SetTarget(AActor* newtarget);
+	AActor* GetTarget();
+	void ClearTarget();
 
 protected:
 	virtual void ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
@@ -75,11 +65,28 @@ protected:
 
 	virtual bool ConfigureRTSPerception(class ARTSMinion * Minion);
 
+
+
+
+
+
 public:
 	static const FName AIMessage_Finished;
 
 
 protected:
+	UPROPERTY(transient)
+	class UBlackboardComponent* BlackboardComp;
+
+	UPROPERTY(transient)
+	class UBehaviorTreeComponent* BehaviorComp;
+
+	UPROPERTY(transient)
+	URTSAIPerceptionComponent* PerceptionComp;
+
+	UPROPERTY(transient)
+	UAISenseConfig_Sight* SightConfig;
+
 	UPROPERTY(EditDefaultsOnly)
 	FName Target = "Target";
 

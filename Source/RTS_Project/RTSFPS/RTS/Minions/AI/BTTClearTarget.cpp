@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTTClearTarget::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
         if(Controller && minion)
         {
-            if(minion->HasAssets() || bShouldReleaseAssets)
+            if(minion->HasAssets() && bShouldReleaseAssets)
             {   
                 minion->ReleaseAssets();
             }

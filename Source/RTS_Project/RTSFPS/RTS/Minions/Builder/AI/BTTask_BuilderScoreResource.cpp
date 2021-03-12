@@ -22,7 +22,6 @@ EBTNodeResult::Type UBTTask_BuilderScoreResource::ExecuteTask(UBehaviorTreeCompo
 		{
 			result = EBTNodeResult::Succeeded;
 		}
-
 	}
 	return result;
 }

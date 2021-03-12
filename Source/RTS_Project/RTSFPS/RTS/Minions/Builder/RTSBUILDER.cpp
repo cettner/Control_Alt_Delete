@@ -61,7 +61,7 @@ void ARTSBUILDER::ReleaseAssets()
 
 bool ARTSBUILDER::CanInteract(AActor * Interactable)
 {
-	if(Cast<AResource>(Interactable))
+	if(Cast<AResource>(Interactable) || Cast<ARTSStructure>(Interactable))
 	{
 		return(true);
 	}

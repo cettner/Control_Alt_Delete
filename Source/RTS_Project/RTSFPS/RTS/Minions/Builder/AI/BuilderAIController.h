@@ -16,13 +16,23 @@ class RTS_PROJECT_API ABuilderAIController : public ARTSAIController
 {
 	GENERATED_BODY()
 
+private:
 	FAIRequestID MineRequestId;
 
 	FORCEINLINE void StoreMineRequestId() { MineRequestId = MineRequestId + 1; }
 
-public:
+protected:
 	ABuilderAIController();
+
+public:
 	FORCEINLINE FAIRequestID GetMineRequestId() const { return MineRequestId; }
 	void SendMineUpdateMessage();
 	static const FName AIMessage_Mine_Finished;
+
+public:
+	virtual void ReleaseAssets() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FName LastMinedLocation = "LastMinedLocation";
 };

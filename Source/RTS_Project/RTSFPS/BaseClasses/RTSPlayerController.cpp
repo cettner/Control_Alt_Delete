@@ -181,9 +181,8 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 		}
 		else if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
 		{
-			 ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(PlayerState);
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Moving %d, Im team %d"),Units[i]->GetTeam(), PS->TeamID));
-			if (Cast<ARTSMinion>(target) || Cast<ARTSSelectable>(target))
+
+			if (Cast<ARTSMinion>(target) || Cast<IRTSObjectInterface>(target))
 			{
 				Units[i]->SetTarget(target);
 			}
@@ -192,6 +191,7 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 				FVector MoveLocal = Hit.Location + FVector(i / 2 * 100, i % 2 * 100, 0);
 
 				Units[i]->ClearTarget(); /*Unit might be doing something, if he is, clear internal data*/
+				Units[i]->ReleaseAssets();
 				Units[i]->RtsMove(MoveLocal);
 			}
 		}
