@@ -9,6 +9,7 @@
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 
@@ -72,6 +73,7 @@ public:
 	virtual void SetDeselected() override;
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
+	virtual void SetTeamColors(FLinearColor TeamColor) override;
 
 public:
     /*IMenuInteractable Interface overrides*/
@@ -79,21 +81,33 @@ public:
 	virtual bool CanOpenMenu(APawn * InvokingPawn) const override;
 
 protected:
-	virtual void PostInitializeComponents() override;
+	UFUNCTION()
+	virtual void OnDeath();
 
 protected:
+	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+protected:
+	UFUNCTION()
+	virtual void OnRep_TeamIndex();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
 	URTSSelectionComponent * Selection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UHealthComponent* Health;
+
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	TArray<UAnimMontage*> DestroyAnimations = TArray<UAnimMontage*>();
 
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Replicated, Category = Gameplay)
-	int teamindex = -1;
-
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	bool isdroppoint = true;
+	int TeamIndex = -1;
 
 protected:
 	/*SPAWN DATA*/

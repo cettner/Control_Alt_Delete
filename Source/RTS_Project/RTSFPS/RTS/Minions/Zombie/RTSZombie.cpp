@@ -17,7 +17,9 @@ bool ARTSZombie::CanAttack(AActor* AttackMe)
 	{
 		bool distcheck = false;
 		float distance = GetDistanceTo(AttackMe);
-		distcheck = distance <= HitRange;
+		FVector pointofimpact = FVector(0, 0, 0);
+		float collisiondistance = AttackMe->ActorGetDistanceToCollision(GetActorLocation(), ECollisionChannel::ECC_Pawn, pointofimpact);
+		distcheck = collisiondistance <= HitRange;
 
 		bool dircheck = IsFacingActor(AttackMe, 15.0F);
 		attack = (distcheck && dircheck);

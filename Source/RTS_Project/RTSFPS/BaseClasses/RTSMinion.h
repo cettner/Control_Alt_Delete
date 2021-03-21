@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
+
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "BehaviorTree/BehaviorTree.h"
 #include "RTSMinion.generated.h"
 
 
@@ -16,7 +18,7 @@
 class ACommander;
 
 UCLASS(Blueprintable)
-class ARTSMinion : public ACharacter
+class ARTSMinion : public ACharacter, public IRTSObjectInterface
 {
 	GENERATED_BODY()
 
@@ -24,9 +26,6 @@ public:
 	ARTSMinion();
 	
 	virtual float TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
-
-	UFUNCTION(BlueprintCallable, Category = UI)
-	UTexture* GetThumbnail();
 
 	virtual bool CanInteract(AActor * Interactable);
 
@@ -50,11 +49,18 @@ public:
 
 	virtual void ClearTarget();
 
-	virtual void SetSelected();
+/**************IRTSObjectInterface****************/
+	virtual void SetSelected()  override;
 
-	virtual void SetDeselected();
+	virtual void SetDeselected() override;
 
-	virtual void SetTeamColors();
+	//TODO: Make this a Server Call
+	virtual void SetTeam(int team_id) override;
+
+	virtual int GetTeam() const override;
+
+	virtual void SetTeamColors(FLinearColor TeamColor) override; 
+/*************************************************/
 
 	virtual void ReleaseAssets();
 
@@ -69,11 +75,6 @@ public:
 	virtual void ClearCommander();
 
 	virtual void SetCommander(ACommander * Commander);
-
-	//TODO: Make this a Server Call
-	virtual void SetTeam(int team_id);
-
-	virtual int GetTeam() const;
 
 	UFUNCTION()
 	virtual void OnRep_TeamID();
@@ -106,11 +107,5 @@ protected:
 
 	UPROPERTY(Replicated)
 	ACommander * Cmdr;
-
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	UTexture* Thumbnail;
-
-
-
 };
 

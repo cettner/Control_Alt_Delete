@@ -20,10 +20,15 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Supe
 		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		Mesh->SetCanEverAffectNavigation(true);
 		Mesh->bFillCollisionUnderneathForNavmesh = true;
+		Mesh->bReceivesDecals = false;
+
 		Selection->SetDetection(Mesh);
 		Selection->SetRoot(Mesh);
 	}
 
+	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
+	Health->OnDeathStart.BindUFunction(this, "OnDeath");
+	Health->SetIsReplicated(true);
 
 	MenuClass = nullptr;
 	Menu = nullptr;
@@ -57,28 +62,71 @@ bool ARTSStructure::CanOpenMenu(APawn* InvokingPawn) const
 	return false;
 }
 
+void ARTSStructure::OnDeath()
+{
+	/*Unregister Minion to be percieved from AI perception*/
+	UWorld* World = GetWorld();
+	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+	PerceptionSystem->UnregisterSource(*this);
+}
+
 void ARTSStructure::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	/*Set Up perception so that it can be sensed by AI Pawnsensing Agents*/
+	UWorld* World = GetWorld();
+	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+	if (PerceptionSystem)
+	{
+		PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+	}
+
+	/*Pick a Random Destruction Animation to Play on Death*/
+	if (DestroyAnimations.Num())
+	{
+		UAnimMontage* DestroyAnimation;
+		uint8_t destroyindex = abs(rand() % DestroyAnimations.Num());
+		DestroyAnimation = DestroyAnimations[destroyindex];
+		Health->SetDeathanimMontage(DestroyAnimation);
+	}
+}
+
+float ARTSStructure::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float ProcessedDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
+
+	return (ProcessedDamage);
 }
 
 void ARTSStructure::SetSelected()
 {
+	Selection->SetSelected();
 }
 
 void ARTSStructure::SetDeselected()
 {
+	Selection->SetDeselected();
 }
 
 int ARTSStructure::GetTeam() const
 {
-	return teamindex;
+	return TeamIndex;
 }
 
 void ARTSStructure::SetTeam(int newteamindex)
 {
-	teamindex = newteamindex;
+	TeamIndex = newteamindex;
+}
+
+void ARTSStructure::SetTeamColors(FLinearColor TeamColor)
+{
+	if (Selection)
+	{
+		Selection->SetSelectionColor(TeamColor);
+	}
 }
 
 bool ARTSStructure::IsDropPointFor(TSubclassOf<AResource> ResourceType) const
@@ -258,10 +306,31 @@ void ARTSStructure::CancelSpawn()
 
 }
 
+void ARTSStructure::OnRep_TeamIndex()
+{
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+
+	ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+	if (PC == nullptr) return;
+
+	ADefaultPlayerState* PS = PC->GetPlayerState<ADefaultPlayerState>();
+	if (PS && PS->TeamID != TeamIndex)
+	{
+		SetTeamColors(FLinearColor::Red);
+		SetSelected();
+	}
+	else
+	{
+		SetDeselected();
+	}
+
+}
+
 void  ARTSStructure::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ARTSStructure, queuestatus);
-	DOREPLIFETIME(ARTSStructure, teamindex);
+	DOREPLIFETIME(ARTSStructure, TeamIndex);
 }

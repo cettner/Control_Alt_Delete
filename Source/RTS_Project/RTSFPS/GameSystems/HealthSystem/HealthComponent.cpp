@@ -23,6 +23,11 @@ void UHealthComponent::SetMaxHealth(float healthval)
 	MaxHealth = healthval;
 }
 
+void UHealthComponent::SetDeathanimMontage(UAnimMontage* InMontage)
+{
+	DeathAnimMontage = InMontage;
+}
+
 float UHealthComponent::GetMaxHealth() const
 {
 	return MaxHealth;
@@ -108,6 +113,8 @@ bool UHealthComponent::Die(float KillingDamage, FDamageEvent const & DamageEvent
 void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, APawn* InstigatingPawn, AActor* DamageCauser)
 {
 	ACharacter* CharacterOwner = Cast<ACharacter>(CompOwner);
+	USkeletalMeshComponent* SkeletalMeshComp = Cast<USkeletalMeshComponent>(CompOwner->FindComponentByClass(USkeletalMeshComponent::StaticClass()));
+
 	if (bIsDying)
 	{
 		return;
@@ -134,14 +141,16 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 
 	// Death anim
 	float DeathAnimDuration = 0.0f;
-	if (CharacterOwner && DeathAnim)
+	if (SkeletalMeshComp && DeathAnimMontage)
 	{
-		DeathAnimDuration = CharacterOwner->PlayAnimMontage(DeathAnim);
+		DeathAnimDuration = SkeletalMeshComp->GetAnimInstance()->Montage_Play(DeathAnimMontage);
+		/*Delete Actor just before the animation ends*/
+		DeathAnimDuration -= .3f;
 	}
 
-	if (ShouldRagdoll && CharacterOwner && CharacterOwner->GetMesh())
+	if (ShouldRagdoll && SkeletalMeshComp)
 	{
-		HandleRagDoll(CharacterOwner->GetMesh(), DeathAnimDuration);
+		HandleRagDoll(SkeletalMeshComp, DeathAnimDuration);
 	}
 	else
 	{

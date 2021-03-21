@@ -26,4 +26,5 @@ public:
 	virtual void SetDeselected();
 	virtual int GetTeam() const;
 	virtual void SetTeam(int teamid);
+	virtual void SetTeamColors(FLinearColor TeamColor);
 };

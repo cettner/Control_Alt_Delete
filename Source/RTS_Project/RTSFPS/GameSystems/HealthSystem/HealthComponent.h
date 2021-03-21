@@ -77,6 +77,8 @@ public:
 
 	virtual void SetMaxHealth(float healthval);
 
+	virtual void SetDeathanimMontage(UAnimMontage* InMontage);
+
 	virtual float GetMaxHealth() const;
 
 	virtual float GetCurrentHealth() const;
@@ -87,6 +89,7 @@ public:
 
 	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
+protected:
 	///////////////////////////////////////////////////////////////
 	//Death
 
@@ -174,7 +177,7 @@ protected:
 
 	/** Animation Played On Pawn Mesh Before Destruction/RagDoll*/
 	UPROPERTY(EditDefaultsOnly, Category = "Death")
-	UAnimMontage* DeathAnim;
+	UAnimMontage* DeathAnimMontage;
 
 	/** Sound played on death, local player only */
 	UPROPERTY(EditDefaultsOnly, Category = "Death")

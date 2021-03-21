@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "GenericTeamAgentInterface.h"
-#include "RTSAIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "BrainComponent.h"
+
+#include "Navigation/FlockPathFollowingComponent.h"
+#include "RTSAIPerceptionComponent.h"
 #include "RTSAIController.generated.h"
 
 USTRUCT()
@@ -41,6 +43,9 @@ public:
 
 	virtual void OnPossess(APawn *InPawn) override;
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+
+protected:
+	virtual void PostInitializeComponents() override;
 
 public:
 	class ACommander * GetCommander();
@@ -89,6 +94,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FName Target = "Target";
+
+protected:
+	UFlockPathFollowingComponent* FlockPathingComp;
+
 
 private:
 

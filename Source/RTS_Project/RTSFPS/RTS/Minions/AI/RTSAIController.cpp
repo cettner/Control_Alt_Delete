@@ -3,6 +3,7 @@
 #include "RTSAIController.h"
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
@@ -17,7 +18,9 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	FlockPathingComp = CreateDefaultSubobject<UFlockPathFollowingComponent>(TEXT("FlockPathFollowing Component"));
 	
+
 	SetPerceptionComponent(*PerceptionComp);
 
 	SightConfig->SightRadius = DefaultPerceptionConfig.SightRadius;
@@ -73,15 +76,22 @@ bool ARTSAIController::ConfigureRTSPerception(ARTSMinion* Minion)
 
 ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other) const
 {
-	const ARTSMinion* minion = Cast<ARTSMinion>(&Other);
-	const ARTSMinion* myminion = GetPawn<ARTSMinion>();
+	const IRTSObjectInterface* threat = Cast<IRTSObjectInterface>(&Other);
+	const IRTSObjectInterface* myminion = GetPawn<IRTSObjectInterface>();
 
-	if (minion && myminion && myminion->GetTeam() != minion->GetTeam())
+	if (threat && myminion && myminion->GetTeam() != threat->GetTeam())
 	{
 		return(ETeamAttitude::Hostile);
 	}
 
 	return ETeamAttitude::Neutral;
+}
+
+void ARTSAIController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	SetPathFollowingComponent(FlockPathingComp);
+	FlockPathingComp->OnRequestFinished.AddUObject(this, &AAIController::OnMoveCompleted);
 }
 
 void ARTSAIController::SetTarget(AActor * newtarget)

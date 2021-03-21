@@ -22,3 +22,7 @@ int IRTSObjectInterface::GetTeam() const
 void IRTSObjectInterface::SetTeam(int teamid)
 {
 }
+
+void IRTSObjectInterface::SetTeamColors(FLinearColor TeamColor)
+{
+}

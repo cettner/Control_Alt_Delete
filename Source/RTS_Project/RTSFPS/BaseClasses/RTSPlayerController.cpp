@@ -72,7 +72,7 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 			Minion->SetDeselected();
 			if (Minion->GetTeam() != newteam)
 			{
-				Minion->SetTeamColors();
+				Minion->SetTeamColors(FLinearColor::Red);
 				Minion->SetSelected();
 			}
 		}

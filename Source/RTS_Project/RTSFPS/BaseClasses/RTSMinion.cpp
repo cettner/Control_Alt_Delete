@@ -46,7 +46,7 @@ ARTSMinion::ARTSMinion()
 	Health->SetIsReplicated(true);
 
 	AIConfig.LoseSightRadius = 2000.0;
-	/*Radial from forward vector ie: 180 == 180 * 2*/
+	/*Radial from forward vector ie: 180 == abs(0 +- 90)*/
 	AIConfig.PeripheralVision = 180.0;
 	AIConfig.SightRadius = 1500;
 
@@ -110,14 +110,10 @@ bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 {
 	bool Enemy = false;
 	if (!FriendOrFoe->IsValidLowLevel()) return false;
-	ARTSMinion * InMinion = Cast<ARTSMinion>(FriendOrFoe);
-	ARTSStructure* InStructure = Cast<ARTSStructure>(FriendOrFoe);
 
-	if (InMinion && InMinion->GetTeam() != this->GetTeam() && InMinion->GetTeam() >= 0)
-	{
-		Enemy = true;
-	}
-	else if(InStructure && InStructure->GetTeam() != this->GetTeam() && InStructure->GetTeam() >= 0)
+	IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(FriendOrFoe);
+
+	if (rtsobj && rtsobj->GetTeam() != this->GetTeam() && rtsobj->GetTeam() >= 0)
 	{
 		Enemy = true;
 	}
@@ -174,11 +170,11 @@ void ARTSMinion::SetDeselected()
 	}
 }
 
-void ARTSMinion::SetTeamColors()
+void ARTSMinion::SetTeamColors(FLinearColor TeamColor)
 {
 	if (Selection)
 	{
-		Selection->SetSelectionColor(FLinearColor::Red);
+		Selection->SetSelectionColor(TeamColor);
 	}
 }
 
@@ -239,7 +235,7 @@ void ARTSMinion::OnRep_TeamID()
 	ADefaultPlayerState* PS = PC->GetPlayerState<ADefaultPlayerState>();
 	if (PS && PS->TeamID != team_index)
 	{
-		SetTeamColors();
+		SetTeamColors(FLinearColor::Red);
 		SetSelected();
 	}
 	else
@@ -304,11 +300,6 @@ float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, ACo
 	ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
 
 	return (ProcessedDamage);
-}
-
-UTexture * ARTSMinion::GetThumbnail()
-{
-	return Thumbnail;
 }
 
 void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
