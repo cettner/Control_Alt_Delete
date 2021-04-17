@@ -13,6 +13,7 @@ ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Supe
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("SelectionComp"));
+	bReplicates = true;
 
 	USkeletalMeshComponent * Mesh = GetSkeletalMeshComponent();
 	if (Mesh)
