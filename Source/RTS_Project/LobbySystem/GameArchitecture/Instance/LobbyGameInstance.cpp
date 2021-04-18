@@ -69,7 +69,6 @@ void ULobbyGameInstance::LoadMainMenu()
 	}
 	
 	MainMenu->Setup(this);
-	
 }
 
 void ULobbyGameInstance::LoadLobbyMenu()
@@ -85,6 +84,11 @@ void ULobbyGameInstance::LoadLobbyMenu()
 	}
 	
 	LobbyMenu->Setup();
+}
+
+ULobbyMenu * ULobbyGameInstance::GetLobbyMenu()
+{
+	return LobbyMenu;
 }
 
 void ULobbyGameInstance::StartGame()

@@ -176,6 +176,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void LoadLobbyMenu();
 
+	//template <typename WidgetT = UUserWidget, typename OwnerT = UObject>
+	ULobbyMenu * GetLobbyMenu();
+
 	void StartGame();
 
 protected:
