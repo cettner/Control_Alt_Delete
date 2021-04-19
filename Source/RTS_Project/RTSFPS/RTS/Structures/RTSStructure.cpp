@@ -69,6 +69,9 @@ void ARTSStructure::OnDeath()
 	UWorld* World = GetWorld();
 	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
 	PerceptionSystem->UnregisterSource(*this);
+
+	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+	GS->OnUnitDeath(this);
 }
 
 void ARTSStructure::PostInitializeComponents()

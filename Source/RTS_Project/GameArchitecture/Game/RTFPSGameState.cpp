@@ -60,19 +60,33 @@ void ARTFPSGameState::RefreshAllUnits()
 	}
 }
 
-void ARTFPSGameState::OnMinionDeath(ARTSMinion* Minion)
+void ARTFPSGameState::OnUnitDeath(IRTSObjectInterface * Unit)
 {
-	if (Minion && IsTeamValid(Minion->GetTeam()))
+	if (Unit && IsTeamValid(Unit->GetTeam()))
 	{
-		if (AllUnits[Minion->GetTeam()].Minions.Remove(Minion) != (int32)1)
+		ARTSMinion * minion = Cast<ARTSMinion>(Unit);
+		ARTSStructure * structure = Cast<ARTSStructure>(Unit);
+
+		if (minion)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnMinionDeath] Minion Removal Unsuccessful!"));
+			if (AllUnits[Unit->GetTeam()].Minions.Remove(minion) != (int32)1)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnUnitDeath] Minion Removal Unsuccessful!"));
+			}
+
+			AFPSServerController* PC = minion->GetController<AFPSServerController>();
+			if (PC)
+			{
+				HandlePlayerDeath(PC);
+			}
 		}
 
-		AFPSServerController* PC = Minion->GetController<AFPSServerController>();
-		if (PC)
+		else if(structure)
 		{
-			HandlePlayerDeath(PC);
+			if(AllUnits[Unit->GetTeam()].Structures.Remove(structure) != (int32)1)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnUnitDeath] Structure Removal was Unsuccessful!"));
+			}
 		}
 	}
 }

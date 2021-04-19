@@ -12,6 +12,7 @@
 /*Foward Declarations*/
 class  ARTSMinion;
 class  ARTSStructure;
+class IRTSObjectInterface;
 struct FStructureQueueData;
 
 struct RTSTeamUnits
@@ -92,7 +93,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		ARTFPSGameState(const FObjectInitializer & FOI);
 		int NumRTSPlayers(int Team_Index);
 		virtual void RefreshAllUnits();
-		virtual void OnMinionDeath(ARTSMinion* Minion);
+		virtual void OnUnitDeath(IRTSObjectInterface* Unit);
 		virtual void HandlePlayerDeath(AFPSServerController * Controller);
 		virtual void HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
 		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;

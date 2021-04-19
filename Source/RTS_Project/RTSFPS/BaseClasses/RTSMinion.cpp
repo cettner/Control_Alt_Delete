@@ -73,7 +73,7 @@ void ARTSMinion::PostInitializeComponents()
 bool ARTSMinion::CanInteract(AActor * Interactable)
 {
 	//By Default Can Only Interact with Minions and Structures
-	return(Cast<ARTSMinion>(Interactable) || Cast<ARTSStructure>(Interactable));
+	return(Cast<IRTSObjectInterface>(Interactable));
 }
 
 bool ARTSMinion::CanAttack(AActor * AttackMe)
@@ -103,7 +103,7 @@ void ARTSMinion::OnDeath()
 	PerceptionSystem->UnregisterSource(*this);
 
 	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
-	GS->OnMinionDeath(this);
+	GS->OnUnitDeath(this);
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)

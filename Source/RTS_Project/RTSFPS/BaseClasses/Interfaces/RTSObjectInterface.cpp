@@ -16,7 +16,7 @@ void IRTSObjectInterface::SetDeselected()
 
 int IRTSObjectInterface::GetTeam() const
 {
-	return 0;
+	return -1;
 }
 
 void IRTSObjectInterface::SetTeam(int teamid)
