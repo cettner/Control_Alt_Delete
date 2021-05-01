@@ -13,10 +13,10 @@ struct FGridTile
 {
 	GENERATED_USTRUCT_BODY()
 
-	int row;
-	int column;
+	int row = -1;
+	int column = -1;
+	FVector TileCenter = FVector();
 	bool IsValid = false;
-
 };
 
 UCLASS()
@@ -25,17 +25,15 @@ class RTS_PROJECT_API ASquareGameGrid : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ASquareGameGrid();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void PostInitializeComponents() override;
-	virtual void PostEditMove(bool done) override;
-	virtual void PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent) override;
+	virtual void OnConstruction(const FTransform & Transform) override;
+
 
 public:
-
+	
 	void SetSelectedTiles(TArray<FGridTile> SelectedTiles);
 	float GetGridWidth() const;
 	float GetGridHieght() const;

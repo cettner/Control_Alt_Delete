@@ -23,21 +23,13 @@ ASquareGameGrid::ASquareGameGrid()
 void ASquareGameGrid::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	DrawGrid();
 }
 
-void ASquareGameGrid::PostEditMove(bool done)
+void ASquareGameGrid::OnConstruction(const FTransform & Transform)
 {
-	Super::PostEditMove(done);
+	Super::OnConstruction(Transform);
 	DrawGrid();
 }
-
-void ASquareGameGrid::PostEditChangeProperty(FPropertyChangedEvent & PropertyChangedEvent)
-{
-	Super::PostEditChangeProperty(PropertyChangedEvent);
-	DrawGrid();
-}
-
 
 void ASquareGameGrid::SetSelectedTiles(TArray<FGridTile> SelectedTiles)
 {
@@ -103,13 +95,22 @@ bool ASquareGameGrid::IsTileValid(int Row, int Column) const
 FGridTile ASquareGameGrid::GetTileFromLocation(FVector Location) const
 {
 	FGridTile retval;
-	FVector StartGridLocation = GetActorLocation();
-	float approxrow = ((Location.Y - StartGridLocation.Y) / GetGridWidth()) * NumRows;
-	float approxcol = ((Location.X - StartGridLocation.X) / GetGridHieght()) * NumColumns;
-	
+	FVector gridstartlocation = GetActorLocation();
+	float approxcol = ((Location.Y - gridstartlocation.Y) / GetGridHieght()) * NumColumns;
+	float approxrow = ((Location.X - gridstartlocation.X) / GetGridWidth()) * NumRows;
+	float centeroffset = TileSize / 2.0f;
+
 	retval.row = floorf(approxrow);
 	retval.column = floorf(approxcol);
 	retval.IsValid = IsTileValid(retval.row, retval.column);
+
+	if (retval.IsValid)
+	{
+		retval.TileCenter.X = gridstartlocation.X + (retval.row * TileSize) + centeroffset;
+		retval.TileCenter.Y = gridstartlocation.Y + (retval.column * TileSize) + centeroffset;
+		retval.TileCenter.Z = GetGridElevation(retval);
+	}
+
 
 	return (retval);
 }
@@ -147,11 +148,11 @@ void ASquareGameGrid::DrawLine(FVector LineStart, FVector LineEnd, float LineThi
 	const float halfthickness = LineThickness / 2.0f;
 
 	/*A Line Segment is made of two triangles forming a rectangle, get the hypotenuse, then cross with z to get the grid direction*/
-	FVector trianglehypotenuse= (LineEnd - LineStart).GetSafeNormal();
-	FVector griddirection =   FVector::CrossProduct(trianglehypotenuse, FVector(0.0f, 0.0f, 1.0f));
+	const FVector trianglehypotenuse= (LineEnd - LineStart).GetSafeNormal();
+	const FVector griddirection =   FVector::CrossProduct(trianglehypotenuse, FVector(0.0f, 0.0f, 1.0f));
 	const FVector vertexadjustment = griddirection * halfthickness;
 
-	/*Create and Append the new triangle vertex map*/
+	/*Create and Append the new triangle vertex map so we know which verticies make up the two triangles*/
 	int * newtriangles = new int[6]();
 
 	const int numverts = Verts.Num();
