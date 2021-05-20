@@ -17,10 +17,6 @@
  * 
  */
 
-#define SELECTION_CHANNEL  ECC_GameTraceChannel1
-
-
-
 
 UCLASS()
 class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController

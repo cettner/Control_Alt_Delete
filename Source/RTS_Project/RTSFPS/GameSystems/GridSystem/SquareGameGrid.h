@@ -8,6 +8,8 @@
 #include "SquareGameGrid.generated.h"
 
 
+constexpr uint32_t INVALID_TILE_ID = 0xFFFFFFFF;
+
 USTRUCT()
 struct FGridTile
 {
@@ -18,6 +20,7 @@ struct FGridTile
 	FVector TileCenter = FVector();
 	bool IsValid = false;
 };
+
 
 UCLASS()
 class RTS_PROJECT_API ASquareGameGrid : public AActor
@@ -34,7 +37,7 @@ protected:
 
 public:
 	
-	void SetSelectedTiles(TArray<FGridTile> SelectedTiles);
+	void SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearColor SelectionColor = FLinearColor::Red, float SelectionOpacity = 0.5f);
 	float GetGridWidth() const;
 	float GetGridHieght() const;
 	virtual float GetGridElevation(FGridTile Tiledata) const;
@@ -42,11 +45,13 @@ public:
 	bool IsTileValid(int Row, int Column) const;
 	FGridTile GetTileFromLocation(FVector Location) const;
 	bool GetLocationFromTile(FGridTile Tiledata, FVector & OutLocation, bool Center = true) const;
+	uint32_t GetUniqueGridID(FGridTile Tiledata) const;
 
 protected:
 	virtual void DrawLine(FVector LineStart, FVector LineEnd, float LineThickness, TArray<FVector>& Verts, TArray<int>& Tris);
 	virtual void DrawGrid();
-
+	virtual void DrawTiles();
+	virtual bool BuildGridData();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
@@ -65,13 +70,13 @@ protected:
 	FLinearColor LineColor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	FLinearColor SelectionColor;
+	FLinearColor DefaultSelectionColor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float LineOpacity = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float SelectionOpacity = 1.0f;
+	float DefaultSelectionOpacity = 1.0f;
 
 
 protected:
@@ -94,7 +99,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FVector> LineVerticies = TArray<FVector>();
 
-
-
+	TArray<FGridTile> GridData = TArray<FGridTile>();
 
 };

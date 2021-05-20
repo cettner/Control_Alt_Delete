@@ -9,6 +9,11 @@
 #include "RTFPSGameState.generated.h"
 
 
+
+#define SELECTION_CHANNEL  ECC_GameTraceChannel1
+#define WEAPON_CHANNEL ECC_GameTraceChannel2
+#define GRID_CHANNEL ECC_GameTraceChannel3
+
 /*Foward Declarations*/
 class  ARTSMinion;
 class  ARTSStructure;

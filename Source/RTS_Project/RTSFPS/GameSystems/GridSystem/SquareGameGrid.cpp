@@ -28,42 +28,30 @@ void ASquareGameGrid::PostInitializeComponents()
 void ASquareGameGrid::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
+	
+	BuildGridData();
 	DrawGrid();
+	DrawTiles();
 }
 
-void ASquareGameGrid::SetSelectedTiles(TArray<FGridTile> SelectedTiles)
+void ASquareGameGrid::SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearColor SelectionColor, float SelectionOpacity)
 {
-	TArray<FVector> selectedverts = TArray<FVector>();
-	TArray<int> selectedtris = TArray<int>();
-
-	for (int i = 0; i < SelectedTiles.Num(); i++)
-	{
-		FGridTile currenttile = SelectedTiles[i];
-		if (IsTileValid(currenttile.row, currenttile.column))
-		{
-			float ystart = (TileSize / 2.0f) + (currenttile.column * TileSize);
-			float xstart = currenttile.row * TileSize;
-			float xend = TileSize + (TileSize * currenttile.row);
-			float yend = (TileSize / 2.0f) + (currenttile.column * TileSize);
-
-			FVector selectstart = FVector(xstart, ystart, 0.0f);
-			FVector selectend = FVector(xend, yend, 0.0f);
-
-			DrawLine(selectstart, selectend, TileSize, selectedverts, selectedtris);
-		}
-	}
-
 
 	if (SelectionProceduralMesh && GridMaterial)
 	{
 		UMaterialInstanceDynamic * selectionmaterial = UMaterialInstanceDynamic::Create(GridMaterial, this);
-
-
 		selectionmaterial->SetVectorParameterValue(ColorParameterName, SelectionColor);
 		selectionmaterial->SetScalarParameterValue(OpacityParameterName, SelectionOpacity);
 
-		SelectionProceduralMesh->CreateMeshSection(0, selectedverts, selectedtris, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
-		SelectionProceduralMesh->SetMaterial(0, selectionmaterial);
+		for (int i = 0; i < SelectedTiles.Num(); i++)
+		{
+			uint32_t gridid = GetUniqueGridID(SelectedTiles[i]);
+			if ((gridid < INVALID_TILE_ID))
+			{
+				SelectionProceduralMesh->SetMaterial(gridid, selectionmaterial);
+				SelectionProceduralMesh->SetMeshSectionVisible(gridid, true);
+			}
+		}
 	}
 }
 
@@ -143,6 +131,17 @@ bool ASquareGameGrid::GetLocationFromTile(FGridTile Tiledata ,FVector & OutLocat
 	return(true);
 }
 
+uint32_t ASquareGameGrid::GetUniqueGridID(FGridTile Tiledata) const
+{
+	uint32_t retval = INVALID_TILE_ID;
+	if (IsTileValid(Tiledata.row,Tiledata.column))
+	{
+		retval = (Tiledata.row * NumColumns) + Tiledata.column;
+	}
+
+	return retval;
+}
+
 void ASquareGameGrid::DrawLine(FVector LineStart, FVector LineEnd, float LineThickness, TArray<FVector>& Verts, TArray<int>& Tris)
 {
 	const float halfthickness = LineThickness / 2.0f;
@@ -218,21 +217,65 @@ void ASquareGameGrid::DrawGrid()
 			LinesProceduralMesh->CreateMeshSection(0, LineVerticies, LineTriangles, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 			LinesProceduralMesh->SetMaterial(0, linematerial);
 		}
-
-		
-		FGridTile testtile1;
-		testtile1.column = 0;
-		testtile1.row = 0;
-
-		FGridTile testtile2;
-		testtile2.column = 1;
-		testtile2.row = 1;
-
-		TArray<FGridTile> testselections = TArray<FGridTile>();
-		testselections.Emplace(testtile1);
-		testselections.Emplace(testtile2);
-
-		SetSelectedTiles(testselections);
 	}
 
+}
+
+void ASquareGameGrid::DrawTiles()
+{
+	for (int i = 0; i < GridData.Num(); i++)
+	{
+		TArray<FVector> selectedverts = TArray<FVector>();
+		TArray<int> selectedtris = TArray<int>();
+		FGridTile currenttile = GridData[i];
+
+		if (IsTileValid(currenttile.row, currenttile.column))
+		{
+			float ystart = (TileSize / 2.0f) + (currenttile.column * TileSize);
+			float xstart = currenttile.row * TileSize;
+			float xend = TileSize + (TileSize * currenttile.row);
+			float yend = (TileSize / 2.0f) + (currenttile.column * TileSize);
+
+			FVector selectstart = FVector(xstart, ystart, 0.0f);
+			FVector selectend = FVector(xend, yend, 0.0f);
+			
+			/*Draw a single fat "Line" with the width the size of the Tile*/
+			DrawLine(selectstart, selectend, TileSize, selectedverts, selectedtris);
+		}
+
+		if (SelectionProceduralMesh && GridMaterial)
+		{
+			UMaterialInstanceDynamic * selectionmaterial = UMaterialInstanceDynamic::Create(GridMaterial, this);
+			selectionmaterial->SetVectorParameterValue(ColorParameterName, DefaultSelectionColor);
+			selectionmaterial->SetScalarParameterValue(OpacityParameterName, DefaultSelectionOpacity);
+
+			SelectionProceduralMesh->CreateMeshSection(i, selectedverts, selectedtris, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+			SelectionProceduralMesh->SetMaterial(i, selectionmaterial);
+
+			SelectionProceduralMesh->SetMeshSectionVisible(i, false);
+			
+		}
+	}
+}
+
+bool ASquareGameGrid::BuildGridData()
+{
+	GridData.Empty();
+	bool buildsuccess = true;
+
+	for (int i = 0; i < NumRows; i++)
+	{
+		for (int k = 0; k < NumColumns; k++)
+		{
+			FGridTile Currentile;
+			Currentile.row = i;
+			Currentile.column = k;
+			Currentile.IsValid = GetLocationFromTile(Currentile, Currentile.TileCenter);
+			GridData.Emplace(Currentile);
+
+			buildsuccess |= Currentile.IsValid;
+		}
+	}
+
+	return(buildsuccess);
 }

@@ -56,7 +56,9 @@ bool AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASquareGameGrid 
 		if (foundtile.IsValid)
 		{
 			SetActorLocation(foundtile.TileCenter);
+			RootGridLocation = foundtile;
 		}
+		SetParentGrid(foundgrid);
 	}
 	else
 	{

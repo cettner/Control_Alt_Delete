@@ -10,8 +10,6 @@
 #include "RTFPSMode.generated.h"
 
 
-#define NUM_RESOURCES 1
-
 
 UCLASS()
 class RTS_PROJECT_API ARTFPSMode : public ADefaultMode
