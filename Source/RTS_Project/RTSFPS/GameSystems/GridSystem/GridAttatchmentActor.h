@@ -11,11 +11,7 @@
 
 
 
-struct FGridTileOffset
-{
-	int RowOffset = -1;
-	int ColumnOffset = -1;
-};
+
 
 
 UCLASS()
@@ -31,7 +27,7 @@ public:
 public:
 	
 	/*Attmpts to Attatch the Actor to the grid at the specified location, Assigns Grid Location and Parent Grid*/
-	virtual bool AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid = nullptr, bool SnapRoot = true);
+	virtual ASquareGameGrid * AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid = nullptr);
 	
 	/*Moves the Actor and all primitive componenets to the specified tile if Valid*/
 	virtual bool SetTileLocation(FGridTile Moveto);

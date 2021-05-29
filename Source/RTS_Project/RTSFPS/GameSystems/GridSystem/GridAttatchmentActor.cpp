@@ -46,13 +46,14 @@ void AGridAttatchmentActor::OnConstruction(const FTransform & Transform)
 	}
 }
 
-bool AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid, bool snaproot)
+ASquareGameGrid * AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid)
 {
 	ASquareGameGrid * foundgrid = nullptr;
 
 	if (InGrid)
 	{
-		FGridTile foundtile = InGrid->GetTileFromLocation(StartLocation);
+		foundgrid = InGrid;
+		FGridTile foundtile = foundgrid->GetTileFromLocation(StartLocation);
 		if (foundtile.IsValid)
 		{
 			SetActorLocation(foundtile.TileCenter);
@@ -71,11 +72,11 @@ bool AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASquareGameGrid 
 				SetActorLocation(foundtile.TileCenter);
 				RootGridLocation = foundtile;
 			}
-			SetParentGrid(foundgrid);
 		}
+		SetParentGrid(foundgrid);
 	}
 
-	return (InGrid || foundgrid);
+	return (foundgrid);
 }
 
 void AGridAttatchmentActor::UpdatePrimatives()
