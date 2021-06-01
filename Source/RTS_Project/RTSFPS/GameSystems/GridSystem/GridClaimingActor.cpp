@@ -4,7 +4,7 @@
 #include "GridClaimingActor.h"
 #include "ClaimableSquareGameGrid.h"
 
-void AGridClaimingActor::InitializeClaimSpace()
+void AGridClaimingActor::InitializeClaimSpace(ASquareGameGrid * InGrid)
 {
 
 }
@@ -17,12 +17,13 @@ TArray<TSubclassOf<UGridModifierType>> AGridClaimingActor::GetActiveModifiers(FG
 ASquareGameGrid * AGridClaimingActor::AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid)
 {
 	ASquareGameGrid * foundgrid = Super::AttachToGrid(StartLocation, InGrid);
+	InitializeClaimSpace(foundgrid);
 
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(foundgrid);
 
-	if (claimgrid)
+	if (claimgrid && claimgrid->AddGridActor(this, GetRootGridTile()))
 	{
-		claimgrid->AddGridActor(this, GetRootGridTile());
+		OnTileChange(GetRootGridTile());
 	}
 
 
@@ -36,15 +37,15 @@ bool AGridClaimingActor::SetTileLocation(FGridTile Moveto)
 
 TArray<FGridTileOffset> AGridClaimingActor::GetRelativeClaimSpace() const
 {
-	return ClaimSpace;
+	return RelativeClaimSpace;
 }
 
 void AGridClaimingActor::SetGridClaimSpace(TArray<FGridTile> ClaimedTiles, ASquareGameGrid * OwningGrid)
 {
-
+	GridClaimSpace = ClaimedTiles;
 }
 
 TArray<FGridTile> AGridClaimingActor::GetGridClaimSpace() const
 {
-	return TArray<FGridTile>();
+	return GridClaimSpace;
 }

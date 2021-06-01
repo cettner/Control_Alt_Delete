@@ -24,7 +24,8 @@ class RTS_PROJECT_API AGridClaimingActor : public AGridAttatchmentActor
 	GENERATED_BODY()
 
 protected:
-	virtual void InitializeClaimSpace();
+	virtual void InitializeClaimSpace(ASquareGameGrid * InGrid);
+	virtual void OnTileChange(FGridTile NewTile);
 
 protected:
 	virtual ASquareGameGrid * AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid = nullptr) override;
@@ -38,6 +39,7 @@ public:
 
 
 protected:
-	TArray<FGridTileOffset> ClaimSpace;
+    TArray<FGridTile> GridClaimSpace;
+	TArray<FGridTileOffset> RelativeClaimSpace;
 	TArray<TSubclassOf<UGridModifierType>> Modifiers;
 };

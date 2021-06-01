@@ -53,17 +53,21 @@ ASquareGameGrid * AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASq
 	if (InGrid)
 	{
 		foundgrid = InGrid;
+		SetParentGrid(foundgrid);
+
 		FGridTile foundtile = foundgrid->GetTileFromLocation(StartLocation);
 		if (foundtile.IsValid)
 		{
 			SetActorLocation(foundtile.TileCenter);
 			RootGridLocation = foundtile;
 		}
-		SetParentGrid(foundgrid);
+
 	}
 	else
 	{
 		foundgrid = FindGrid();
+		SetParentGrid(foundgrid);
+		
 		if (foundgrid != nullptr)
 		{
 			FGridTile foundtile = foundgrid->GetTileFromLocation(StartLocation);
@@ -73,7 +77,7 @@ ASquareGameGrid * AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASq
 				RootGridLocation = foundtile;
 			}
 		}
-		SetParentGrid(foundgrid);
+
 	}
 
 	return (foundgrid);
