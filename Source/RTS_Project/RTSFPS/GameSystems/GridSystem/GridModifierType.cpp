@@ -8,7 +8,7 @@
 
 FLinearColor UGridModifierType::GetTileColor() const
 {
-	return FLinearColor();
+	return FLinearColor::Red;
 }
 
 bool UGridModifierType::IsModifierActive() const
@@ -18,4 +18,12 @@ bool UGridModifierType::IsModifierActive() const
 
 void UGridModifierType::ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) const
 {
+	TArray<FGridTile> TileArray = TArray<FGridTile>(&TileLocation,1);
+	ParentGrid->SetSelectedTiles(TileArray,GetTileColor());
+}
+
+void UGridModifierType::OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) const
+{
+	TArray<FGridTile> TileArray = TArray<FGridTile>(&TileLocation, 1);
+	ParentGrid->HideSelectedTiles(TileArray);
 }

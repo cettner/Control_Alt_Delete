@@ -27,8 +27,11 @@ void AGridAttatchmentActor::PostInitializeComponents()
 
 void AGridAttatchmentActor::OnConstruction(const FTransform & Transform)
 {
+	Super::OnConstruction(Transform);
+
 	if (ParentGrid)
 	{
+		AttachToGrid(GetActorLocation(), ParentGrid);
 		UpdatePrimatives();
 	}
 	else

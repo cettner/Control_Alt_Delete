@@ -22,10 +22,12 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 	virtual FLinearColor GetTileColor() const;
 	virtual bool IsModifierActive() const;
 	virtual void ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) const;
+	virtual void OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) const;
+
 
   protected:
 	bool bIsActive = true;
-
+	bool bReplicateEffects = false;
 
 
 };

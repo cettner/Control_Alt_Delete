@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GridAttatchmentActor.h"
 #include "SquareGameGrid.h"
 #include "GridModifierType.h"
+
+#include "Components/BoxComponent.h"
 #include "GridClaimingActor.generated.h"
 
 
@@ -16,6 +17,14 @@ struct FGridTileOffset
 
 	int RowOffset = 0;
 	int ColOffset = 0;
+
+	friend bool operator == (const FGridTileOffset& Myself, const FGridTileOffset& Other)
+	{
+		bool isSame = Myself.RowOffset == Other.RowOffset;
+		isSame &= Myself.ColOffset == Other.ColOffset;
+
+		return(isSame);
+	}
 };
 
 UCLASS()
@@ -23,9 +32,18 @@ class RTS_PROJECT_API AGridClaimingActor : public AGridAttatchmentActor
 {
 	GENERATED_BODY()
 
+public:
+	AGridClaimingActor();
+
+
+protected:
+	virtual void OnConstruction(const FTransform & Transform) override;
+
 protected:
 	virtual void InitializeClaimSpace(ASquareGameGrid * InGrid);
-	virtual void OnTileChange(FGridTile NewTile);
+	virtual void PreTileChange(FGridTile NewTile);
+	virtual void PostTileChange(FGridTile NewTile, FGridTile PrevTile = FGridTile());
+	
 
 protected:
 	virtual ASquareGameGrid * AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid = nullptr) override;
@@ -37,6 +55,9 @@ public:
 	virtual void SetGridClaimSpace(TArray<FGridTile> ClaimedTiles, ASquareGameGrid * OwningGrid);
 	virtual TArray<FGridTile> GetGridClaimSpace() const;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Modifiers)
+	UBoxComponent * ClaimSpaceComp;
 
 protected:
     TArray<FGridTile> GridClaimSpace;

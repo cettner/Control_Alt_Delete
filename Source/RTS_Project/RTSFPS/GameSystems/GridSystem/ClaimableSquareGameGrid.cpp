@@ -18,10 +18,11 @@ bool AClaimableSquareGameGrid::AddGridActor(AGridClaimingActor * InActor, FGridT
 	if (success)
 	{
 		InActor->SetGridClaimSpace(gridtiles, this);
+		GridActors.AddUnique(InActor);
 	}
 
 
-	return false;
+	return success;
 }
 
 bool AClaimableSquareGameGrid::RemoveGridActor(AGridClaimingActor * InActor, bool TickOnRemoval)
@@ -34,6 +35,19 @@ bool AClaimableSquareGameGrid::MoveGridActor(AGridClaimingActor * InActor, FGrid
 	return false;
 }
 
+bool AClaimableSquareGameGrid::CanMoveTo(AGridClaimingActor * InActor, FGridTile TileLocation)
+{
+	if (!InActor) return false;
+	bool success = true;
+
+	TArray<FGridTileOffset> attemptedclaimspace = InActor->GetRelativeClaimSpace();
+	TArray<FGridTile> gridtiles;
+
+	success &= GetGridTilesFromOffset(InActor->GetRootGridTile(), attemptedclaimspace, gridtiles, true);
+
+	return success;
+}
+
 TArray<TSubclassOf<UGridModifierType>> AClaimableSquareGameGrid::GetActiveModifiers(FGridTile TileLocation) const
 {
 	TArray<TSubclassOf<UGridModifierType>> Mods = TArray<TSubclassOf<UGridModifierType>>();
@@ -42,9 +56,26 @@ TArray<TSubclassOf<UGridModifierType>> AClaimableSquareGameGrid::GetActiveModifi
 	return (Mods);
 }
 
-void AClaimableSquareGameGrid::OnModifierApplied(FGridTile TileLocation, TSubclassOf<UGridModifierType>, AGridClaimingActor * Source)
+bool AClaimableSquareGameGrid::ApplyModifier(FGridTile TileLocation, TSubclassOf<UGridModifierType> ModType, AGridClaimingActor * Source)
 {
+	UGridModifierType * modclass = Cast<UGridModifierType>(ModType->GetClass());
+	if (modclass != nullptr)
+	{
+		modclass->ApplyModifier(this, TileLocation, Source);
+		return(true);
+	}
+	return(false);
+}
 
+bool AClaimableSquareGameGrid::RemoveModifier(FGridTile TileLocation, TSubclassOf<UGridModifierType> ModType, AGridClaimingActor * Source)
+{
+	UGridModifierType * modclass = Cast<UGridModifierType>(ModType->GetClass());
+	if (modclass != nullptr)
+	{
+		modclass->OnModifierRemoved(this, TileLocation, Source);
+		return(true);
+	}
+	return(false);
 }
 
 bool AClaimableSquareGameGrid::GetGridTilesFromOffset(FGridTile StartTile, TArray<FGridTileOffset> Offsets, TArray<FGridTile>& OutTiles, bool bisstartinclusive) const
@@ -56,8 +87,8 @@ bool AClaimableSquareGameGrid::GetGridTilesFromOffset(FGridTile StartTile, TArra
 	for(int i = 0; i < Offsets.Num(); i++)
 	{
 		FGridTile newtile = FGridTile();
-		newtile.row = StartTile.row + Offsets[i].row;
-		newtile.column = StartTile.column + Offsets[i].column;
+		newtile.row = StartTile.row + Offsets[i].RowOffset;
+		newtile.column = StartTile.column + Offsets[i].ColOffset;
 
 		uint32_t gridid = GetUniqueGridID(newtile);
 		if(gridid != INVALID_TILE_ID)

@@ -19,6 +19,14 @@ struct FGridTile
 	int column = -1;
 	FVector TileCenter = FVector();
 	bool IsValid = false;
+
+	friend bool operator == (const FGridTile& Myself, const FGridTile& Other) 
+	{ 
+		bool isSame = Myself.row == Other.row;
+		isSame &= Myself.column == Other.column;
+
+		return(isSame); 
+	}
 };
 
 
@@ -38,8 +46,11 @@ protected:
 public:
 	
 	void SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearColor SelectionColor = FLinearColor::Red, float SelectionOpacity = 0.5f);
+	void HideSelectedTiles(TArray<FGridTile> SelectedTiles);
 	float GetGridWidth() const;
 	float GetGridHieght() const;
+	float GetTileSize() const;
+
 	virtual float GetGridElevation(FGridTile Tiledata) const;
 
 	bool IsTileValid(int Row, int Column) const;

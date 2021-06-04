@@ -55,6 +55,18 @@ void ASquareGameGrid::SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearC
 	}
 }
 
+void ASquareGameGrid::HideSelectedTiles(TArray<FGridTile> SelectedTiles)
+{
+	for (int i = 0; i < SelectedTiles.Num(); i++)
+	{
+		uint32_t gridid = GetUniqueGridID(SelectedTiles[i]);
+		if ((gridid < INVALID_TILE_ID))
+		{
+			SelectionProceduralMesh->SetMeshSectionVisible(gridid, false);
+		}
+	}
+}
+
 float ASquareGameGrid::GetGridWidth() const
 {
 	return NumColumns * TileSize;
@@ -63,6 +75,11 @@ float ASquareGameGrid::GetGridWidth() const
 float ASquareGameGrid::GetGridHieght() const
 {
 	return NumRows * TileSize;
+}
+
+float ASquareGameGrid::GetTileSize() const
+{
+	return TileSize;
 }
 
 float ASquareGameGrid::GetGridElevation(FGridTile Tiledata) const
