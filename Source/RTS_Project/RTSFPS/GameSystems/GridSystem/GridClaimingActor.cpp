@@ -7,18 +7,25 @@
 AGridClaimingActor::AGridClaimingActor() : Super()
 {
 	ClaimSpaceComp = CreateDefaultSubobject<UBoxComponent>(TEXT("ClaimSpaceHelper"));
-	Modifiers.AddUnique(UGridModifierType::StaticClass());
+	if (ClaimSpaceComp)
+	{
+		ClaimSpaceComp->SetCanEverAffectNavigation(false);
+	}
+
+	ModifierClasses.AddUnique(UGridModifierType::StaticClass());
 }
 
 
+void AGridClaimingActor::PostInitializeComponents()
+{
+	InitializeModifiers();
+	Super::PostInitializeComponents();
+}
+
 void AGridClaimingActor::OnConstruction(const FTransform & Transform)
 {
+	InitializeModifiers();
 	Super::OnConstruction(Transform);
-
-	if (GetParentGrid())
-	{
-		InitializeClaimSpace(GetParentGrid());
-	}
 }
 
 void AGridClaimingActor::InitializeClaimSpace(ASquareGameGrid * InGrid)
@@ -45,21 +52,31 @@ void AGridClaimingActor::InitializeClaimSpace(ASquareGameGrid * InGrid)
 	}
 }
 
-TArray<TSubclassOf<UGridModifierType>> AGridClaimingActor::GetActiveModifiers(FGridTile TileData)
+void AGridClaimingActor::InitializeModifiers()
 {
-	if (GridClaimSpace.Contains(TileData))
-	{
-		return(Modifiers);
-	}
+	Modifiers.Empty();
+	FName Modname = "DefaultModifierName";
 
-	return(TArray<TSubclassOf<UGridModifierType>>());
+	for (int j = 0; j < ModifierClasses.Num(); j++)
+	{
+		UGridModifierType * newmod = NewObject<UGridModifierType>(ModifierClasses[j], Modname);
+		if (newmod != nullptr)
+		{
+			Modifiers.Add(newmod);
+		}
+	}
+}
+
+TArray<UGridModifierType *> AGridClaimingActor::GetActiveModifiers(FGridTile TileData)
+{
+	return Modifiers;
 }
 
 
 void AGridClaimingActor::PreTileChange(FGridTile NewTile)
 {
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-	if (claimgrid == nullptr) return;
+	if (claimgrid == nullptr || !NewTile.IsValid) return;
 
 	for (int i = 0; i < GridClaimSpace.Num(); i++)
 	{
@@ -77,13 +94,10 @@ void AGridClaimingActor::PostTileChange(FGridTile NewTile, FGridTile PrevTile)
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (claimgrid == nullptr) return;
 
-	for (int i = 0; i < GridClaimSpace.Num(); i++)
-	{
 		for (int j = 0; j < Modifiers.Num(); j++)
 		{
-			claimgrid->ApplyModifier(GridClaimSpace[i], Modifiers[j], this);
+			 claimgrid->ApplyModifier(GridClaimSpace, Modifiers[j], this);
 		}
-	}
 }
 
 ASquareGameGrid * AGridClaimingActor::AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid)
@@ -95,7 +109,6 @@ ASquareGameGrid * AGridClaimingActor::AttachToGrid(FVector StartLocation, ASquar
 
 	if (claimgrid && claimgrid->AddGridActor(this, GetRootGridTile()))
 	{
-		PreTileChange(GetRootGridTile());
 		PostTileChange(GetRootGridTile());
 	}
 

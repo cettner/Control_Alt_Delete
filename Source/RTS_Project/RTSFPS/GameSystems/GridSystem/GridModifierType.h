@@ -18,16 +18,23 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 {
 	GENERATED_BODY()
 
+  protected:
+	virtual void BeginDestroy() override;
+
   public:
 	virtual FLinearColor GetTileColor() const;
 	virtual bool IsModifierActive() const;
-	virtual void ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) const;
-	virtual void OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) const;
-
+	virtual void ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker);
+	virtual void ApplyModifier(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker);
+	virtual bool OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker);
+	virtual bool OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker);
+	virtual void RemoveAll(AClaimableSquareGameGrid * ParentGrid, AGridClaimingActor * Invoker);
 
   protected:
 	bool bIsActive = true;
-	bool bReplicateEffects = false;
+	bool bCallsRemovalOnDestruction = true;
 
+	AClaimableSquareGameGrid * WorkingGrid = nullptr;
+	TArray<FGridTile> AppliedTiles = TArray<FGridTile>();
 
 };

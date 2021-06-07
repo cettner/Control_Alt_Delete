@@ -48,34 +48,41 @@ bool AClaimableSquareGameGrid::CanMoveTo(AGridClaimingActor * InActor, FGridTile
 	return success;
 }
 
-TArray<TSubclassOf<UGridModifierType>> AClaimableSquareGameGrid::GetActiveModifiers(FGridTile TileLocation) const
+TArray<UGridModifierType *> AClaimableSquareGameGrid::GetActiveModifiers(FGridTile TileLocation) const
 {
-	TArray<TSubclassOf<UGridModifierType>> Mods = TArray<TSubclassOf<UGridModifierType>>();
+	TArray<UGridModifierType *> Mods = TArray<UGridModifierType *>();
 
 
 	return (Mods);
 }
 
-bool AClaimableSquareGameGrid::ApplyModifier(FGridTile TileLocation, TSubclassOf<UGridModifierType> ModType, AGridClaimingActor * Source)
+bool AClaimableSquareGameGrid::ApplyModifier(FGridTile TileLocation, UGridModifierType * Modifier, AGridClaimingActor * Source)
 {
-	UGridModifierType * modclass = Cast<UGridModifierType>(ModType->GetClass());
-	if (modclass != nullptr)
+	if (Modifier != nullptr)
 	{
-		modclass->ApplyModifier(this, TileLocation, Source);
-		return(true);
+		Modifier->ApplyModifier(this, TileLocation, Source);
 	}
-	return(false);
+	return(true);
 }
 
-bool AClaimableSquareGameGrid::RemoveModifier(FGridTile TileLocation, TSubclassOf<UGridModifierType> ModType, AGridClaimingActor * Source)
+bool AClaimableSquareGameGrid::ApplyModifier(TArray<FGridTile> TileLocations, UGridModifierType * Modifier, AGridClaimingActor * Source)
 {
-	UGridModifierType * modclass = Cast<UGridModifierType>(ModType->GetClass());
-	if (modclass != nullptr)
+	if (Modifier != nullptr)
 	{
-		modclass->OnModifierRemoved(this, TileLocation, Source);
-		return(true);
+		Modifier->ApplyModifier(this, TileLocations, Source);
 	}
-	return(false);
+	return(true);
+}
+
+bool AClaimableSquareGameGrid::RemoveModifier(FGridTile TileLocation, UGridModifierType * Modifier, AGridClaimingActor * Source)
+{
+	bool retval = false;
+	if (Modifier)
+	{
+		retval = Modifier->OnModifierRemoved(this, TileLocation, Source);
+	}
+
+	return(retval);
 }
 
 bool AClaimableSquareGameGrid::GetGridTilesFromOffset(FGridTile StartTile, TArray<FGridTileOffset> Offsets, TArray<FGridTile>& OutTiles, bool bisstartinclusive) const

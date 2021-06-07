@@ -14,6 +14,7 @@ AGridAttatchmentActor::AGridAttatchmentActor()
 	if (SnapToComp)
 	{
 		SnapToComp->SetupAttachment(RootComponent);
+		SnapToComp->SetCanEverAffectNavigation(false);
 	}
 
 }
@@ -22,6 +23,16 @@ void AGridAttatchmentActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
+	AttachToGrid(GetActorLocation());
+
+	if (!bSavedOffsets)
+	{
+		/*Save the Original Local Offsets for all Prmitive Components*/
+		SavePrimitiveOffsets();
+		bSavedOffsets = SavedLocalOffsets.Num() > 0;
+	}
+
+	UpdatePrimatives();
 
 }
 

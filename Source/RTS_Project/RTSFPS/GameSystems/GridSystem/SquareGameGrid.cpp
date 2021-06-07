@@ -23,15 +23,28 @@ ASquareGameGrid::ASquareGameGrid()
 void ASquareGameGrid::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	BuildGridData();
+	DrawGrid();
+	DrawTiles();
+
 }
 
 void ASquareGameGrid::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
-	
-	BuildGridData();
-	DrawGrid();
-	DrawTiles();
+	UWorld * World = GetWorld();
+
+	if (World)
+	{
+		EWorldType::Type type = World->WorldType;
+		if (type >= EWorldType::Editor)
+		{
+			BuildGridData();
+			DrawGrid();
+			DrawTiles();
+		}
+	}
 }
 
 void ASquareGameGrid::SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearColor SelectionColor, float SelectionOpacity)

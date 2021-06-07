@@ -37,10 +37,12 @@ public:
 
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void OnConstruction(const FTransform & Transform) override;
 
 protected:
 	virtual void InitializeClaimSpace(ASquareGameGrid * InGrid);
+	virtual void InitializeModifiers();
 	virtual void PreTileChange(FGridTile NewTile);
 	virtual void PostTileChange(FGridTile NewTile, FGridTile PrevTile = FGridTile());
 	
@@ -50,7 +52,7 @@ protected:
 	virtual bool SetTileLocation(FGridTile Moveto) override;
 
 public:
-	virtual TArray<TSubclassOf<UGridModifierType>> GetActiveModifiers(FGridTile TileData);
+	virtual TArray<UGridModifierType *> GetActiveModifiers(FGridTile TileData);
 	virtual TArray<FGridTileOffset> GetRelativeClaimSpace() const;
 	virtual void SetGridClaimSpace(TArray<FGridTile> ClaimedTiles, ASquareGameGrid * OwningGrid);
 	virtual TArray<FGridTile> GetGridClaimSpace() const;
@@ -62,5 +64,11 @@ protected:
 protected:
     TArray<FGridTile> GridClaimSpace;
 	TArray<FGridTileOffset> RelativeClaimSpace;
-	TArray<TSubclassOf<UGridModifierType>> Modifiers;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<UGridModifierType>> ModifierClasses;
+
+	/*IMPORTANT: Array must be flagged as UPROPERTY or UObjects will be grabbed by garbage collector regardless of reference possession*/
+	UPROPERTY()
+	TArray<UGridModifierType *> Modifiers;
 };

@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSHUD.h"
-#include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 #include "RTSMinion.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/AssetHelpers/GameAssets.h"
+
+#include "EngineUtils.h"
 
 
 ARTSHUD::ARTSHUD() : Super()
@@ -215,6 +216,7 @@ void ARTSHUD::CleanSelectedActors()
 	{
 		for (int32 i = 0; i < Selected_Units.Num(); i++)
 		{
+			/*TODO: Crash if unit dies and is destroyed while selected*/
 			Selected_Units[i]->SetDeselected();
 		}
 	}
