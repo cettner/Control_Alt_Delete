@@ -57,6 +57,9 @@ public:
 	virtual void SetGridClaimSpace(TArray<FGridTile> ClaimedTiles, ASquareGameGrid * OwningGrid);
 	virtual TArray<FGridTile> GetGridClaimSpace() const;
 
+public:
+	virtual void SimulateModfiers();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Modifiers)
 	UBoxComponent * ClaimSpaceComp;

@@ -10,10 +10,13 @@
 void UGridModifierType::BeginDestroy()
 {
 	Super::BeginDestroy();
-
+	
 	if (bCallsRemovalOnDestruction && (WorkingGrid != nullptr))
 	{
-		RemoveAll(WorkingGrid, nullptr);
+		if (!WorkingGrid->ISSimulatingEffects())
+		{
+			RemoveAll(WorkingGrid, nullptr);
+		}
 	}
 }
 

@@ -4,6 +4,11 @@
 #include "ClaimableSquareGameGrid.h"
 #include "GridClaimingActor.h"
 
+void AClaimableSquareGameGrid::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+	SimulateGrid();
+}
 
 bool AClaimableSquareGameGrid::AddGridActor(AGridClaimingActor * InActor, FGridTile TileLocation, bool TickOnAdd)
 {
@@ -83,6 +88,31 @@ bool AClaimableSquareGameGrid::RemoveModifier(FGridTile TileLocation, UGridModif
 	}
 
 	return(retval);
+}
+
+void AClaimableSquareGameGrid::SimulateGrid()
+{
+	HideSelectedTiles(GridData);
+
+	for (int i = 0; i < GridActors.Num(); i++)
+	{
+		GridActors[i]->SimulateModfiers();
+	}
+}
+
+bool AClaimableSquareGameGrid::ISSimulatingEffects() const
+{
+	UWorld * World = GetWorld();
+	if (World == nullptr) return false;
+
+	EWorldType::Type worldtype = World->WorldType;
+
+	if (worldtype == EWorldType::EditorPreview || worldtype == EWorldType::GamePreview || worldtype == EWorldType::Editor)
+	{
+		return(true);
+	}
+
+	return(false);
 }
 
 bool AClaimableSquareGameGrid::GetGridTilesFromOffset(FGridTile StartTile, TArray<FGridTileOffset> Offsets, TArray<FGridTile>& OutTiles, bool bisstartinclusive) const

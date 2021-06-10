@@ -30,6 +30,7 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 	virtual bool OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker);
 	virtual void RemoveAll(AClaimableSquareGameGrid * ParentGrid, AGridClaimingActor * Invoker);
 
+	
   protected:
 	bool bIsActive = true;
 	bool bCallsRemovalOnDestruction = true;
