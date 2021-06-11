@@ -72,8 +72,8 @@ void ARTSMinion::PostInitializeComponents()
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
 {
-	//By Default Can Only Interact with Minions and Structures
-	return(Cast<IRTSObjectInterface>(Interactable));
+	bool retval = Cast<IRTSObjectInterface>(Interactable) != nullptr;
+	return(retval);
 }
 
 bool ARTSMinion::CanAttack(AActor * AttackMe)
@@ -97,13 +97,23 @@ bool ARTSMinion::IsAlive()
 
 void ARTSMinion::OnDeath()
 {
-	/*Unregister Minion to be percieved from AI perception*/
-	UWorld* World = GetWorld();
-	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
-	PerceptionSystem->UnregisterSource(*this);
+	if (HasAuthority())
+	{
+		/*Unregister Minion to be percieved from AI perception*/
+		UWorld* World = GetWorld();
+		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+		PerceptionSystem->UnregisterSource(*this);
 
-	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
-	GS->OnUnitDeath(this);
+		ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+		GS->OnUnitDeath(this);
+	}
+
+	ARTSHUD * hud = GetWorld()->GetFirstPlayerController()->GetHUD<ARTSHUD>();
+	if (hud)
+	{
+		hud->Selected_Units.Remove(this);
+	}
+
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
@@ -242,8 +252,6 @@ void ARTSMinion::OnRep_TeamID()
 	{
 		SetDeselected();
 	}
-
-
 }
 
 UBehaviorTree* ARTSMinion::GetBehavior()

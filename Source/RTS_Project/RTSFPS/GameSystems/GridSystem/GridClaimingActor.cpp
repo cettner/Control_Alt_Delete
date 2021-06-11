@@ -114,11 +114,10 @@ ASquareGameGrid * AGridClaimingActor::AttachToGrid(FVector StartLocation, ASquar
 
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(foundgrid);
 
-	if (claimgrid && claimgrid->AddGridActor(this, GetRootGridTile()))
+	if (claimgrid)
 	{
-		//PostTileChange(GetRootGridTile());
+		claimgrid->AddGridActor(this, GetRootGridTile());
 	}
-
 
 	return(claimgrid);
 }

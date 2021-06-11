@@ -214,20 +214,12 @@ void ARTSHUD::CleanSelectedActors()
 {
 	if (Selected_Units.Num() > 0)
 	{
-		for (int32 i = 0; i < Selected_Units.Num(); i++)
+		int endindex = Selected_Units.Num();
+		for (int32 i = 0; i < endindex; i++)
 		{
-			/*TODO: Crash if unit dies and is destroyed while selected*/
 			Selected_Units[i]->SetDeselected();
 		}
 	}
-	if (Selected_Structure.Num() > 0)
-	{
-		for (int32 i = 0; i < Selected_Structure.Num(); i++)
-		{
-			Selected_Structure[i]->SetDeselected();
-		}
-	}
-
 }
 
 

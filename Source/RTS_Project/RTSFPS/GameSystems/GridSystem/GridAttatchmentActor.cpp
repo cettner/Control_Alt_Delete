@@ -23,7 +23,7 @@ void AGridAttatchmentActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	AttachToGrid(GetActorLocation());
+	SetParentGrid(AttachToGrid(GetActorLocation()));
 
 	if (!bSavedOffsets)
 	{
@@ -47,7 +47,7 @@ void AGridAttatchmentActor::OnConstruction(const FTransform & Transform)
 	}
 	else
 	{
-		AttachToGrid(GetActorLocation());
+		SetParentGrid(AttachToGrid(GetActorLocation()));
 		
 		if (!bSavedOffsets)
 		{
@@ -67,7 +67,6 @@ ASquareGameGrid * AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASq
 	if (InGrid)
 	{
 		foundgrid = InGrid;
-		SetParentGrid(foundgrid);
 
 		FGridTile foundtile = foundgrid->GetTileFromLocation(StartLocation);
 		if (foundtile.IsValid)
@@ -80,7 +79,6 @@ ASquareGameGrid * AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASq
 	else
 	{
 		foundgrid = FindGrid();
-		SetParentGrid(foundgrid);
 		
 		if (foundgrid != nullptr)
 		{
