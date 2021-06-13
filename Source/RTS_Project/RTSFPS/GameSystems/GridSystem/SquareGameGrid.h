@@ -45,8 +45,12 @@ protected:
 
 public:
 	
-	void SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearColor SelectionColor = FLinearColor::Red, float SelectionOpacity = 0.5f);
-	void HideSelectedTiles(TArray<FGridTile> SelectedTiles);
+	void SetSelectedTile(TArray<FGridTile> SelectedTiles);
+	void SetSelectedTile(FGridTile SelectedTile);
+
+	void HideSelectedTile(TArray<FGridTile> SelectedTiles);
+	void HideSelectedTile(FGridTile SelectedTile);
+
 	float GetGridWidth() const;
 	float GetGridHieght() const;
 	float GetTileSize() const;
@@ -87,7 +91,7 @@ protected:
 	float LineOpacity = 1.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float DefaultSelectionOpacity = 1.0f;
+	float DefaultSelectionOpacity = 0.5f;
 
 
 protected:

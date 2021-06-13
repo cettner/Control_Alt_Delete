@@ -33,10 +33,17 @@ public:
 	virtual bool SetTileLocation(FGridTile Moveto);
 
 	/*Returns Currently Connected Grid*/
-	virtual ASquareGameGrid * GetParentGrid() const;
+	ASquareGameGrid * GetParentGrid() const;
+
+	template < class T >
+	T* GetParentGrid() const
+	{
+		return Cast<T>(GetParentGrid());
+	}
+
 	
 	/*Gets the Tile the root component is currently occupying*/
-	virtual FGridTile GetRootGridTile() const;
+	FGridTile GetRootGridTile() const;
 
 	/*Tests whether the Actor and all registered primitives can be placed at the target location and remain on the Grid return false if any primitaves or root tile would land on invalid tiles*/
 	virtual bool CanBePlacedAt(FGridTile TestTile) const;

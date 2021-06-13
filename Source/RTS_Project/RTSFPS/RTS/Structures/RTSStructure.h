@@ -11,6 +11,7 @@
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 
 
@@ -59,13 +60,13 @@ struct FStructureSpawnData
 class UStructureSpawnQueueWidget;
 
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public ASkeletalMeshActor, public IRTSObjectInterface, public IMenuInteractableInterface
+class RTS_PROJECT_API ARTSStructure : public AGridClaimingActor, public IRTSObjectInterface, public IMenuInteractableInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ARTSStructure(const FObjectInitializer& ObjectInitializer);
+	ARTSStructure();
 
 public:
 	/*RTSObject Interface Overrides*/
@@ -93,45 +94,6 @@ protected:
 	virtual void OnRep_TeamIndex();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = Selection)
-	URTSSelectionComponent * Selection;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UHealthComponent* Health;
-
-	UPROPERTY(EditDefaultsOnly, Category = Selection)
-	TArray<UAnimMontage*> DestroyAnimations = TArray<UAnimMontage*>();
-
-protected:
-
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = Gameplay)
-	int TeamIndex = -1;
-
-protected:
-	/*SPAWN DATA*/
-	FTimerHandle QueueHandler;
-
-	uint32 CurrentQueueSize = 0;
-
-	UPROPERTY(EditDefaultsOnly)
-	uint32 MaxQueueSize = 10;
-
-	UPROPERTY(BlueprintReadOnly, Replicated)
-	float queuestatus = 0.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = Spawning)
-	TArray< FStructureSpawnData> SpawnableUnits;
-
-	TQueue<FStructureQueueData> StructureQueue;
-
-
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UStructureSpawnQueueWidget> MenuClass;
-
-	UStructureSpawnQueueWidget * Menu;
 
 public:
 
@@ -162,4 +124,48 @@ protected:
 	void UpdateSpawnQueue();
 	void SpawnUnit(FStructureQueueData QueueData);
 	void CancelSpawn();
+
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	URTSSelectionComponent* Selection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UHealthComponent* Health;
+
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	TArray<UAnimMontage*> DestroyAnimations = TArray<UAnimMontage*>();
+
+	UPROPERTY(EditDefaultsOnly, Category = Mesh)
+	USkeletalMeshComponent* MeshComp;
+
+protected:
+
+	UPROPERTY(EditDefaultsOnly, Replicated, Category = Gameplay)
+	int TeamIndex = -1;
+
+protected:
+	/*SPAWN DATA*/
+	FTimerHandle QueueHandler;
+
+	uint32 CurrentQueueSize = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+	uint32 MaxQueueSize = 10;
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float queuestatus = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Spawning)
+	TArray< FStructureSpawnData> SpawnableUnits;
+
+	TQueue<FStructureQueueData> StructureQueue;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UStructureSpawnQueueWidget> MenuClass;
+
+	UStructureSpawnQueueWidget* Menu;
 };

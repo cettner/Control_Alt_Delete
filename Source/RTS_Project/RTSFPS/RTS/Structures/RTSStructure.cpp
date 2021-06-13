@@ -2,29 +2,30 @@
 #include "RTSStructure.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 #include "UI/StructureSpawnQueueWidget.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimableSquareGameGrid.h"
 
 #include "Components/DecalComponent.h"
 #include "Materials/Material.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
-ARTSStructure::ARTSStructure(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
+ARTSStructure::ARTSStructure() : Super() 
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("SelectionComp"));
 	bReplicates = true;
 
-	USkeletalMeshComponent * Mesh = GetSkeletalMeshComponent();
-	if (Mesh)
+	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
+	if (MeshComp)
 	{
-		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Mesh->SetCanEverAffectNavigation(true);
-		Mesh->bFillCollisionUnderneathForNavmesh = true;
-		Mesh->bReceivesDecals = false;
+		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		MeshComp->SetCanEverAffectNavigation(true);
+		MeshComp->bFillCollisionUnderneathForNavmesh = true;
+		MeshComp->bReceivesDecals = false;
 
-		Selection->SetDetection(Mesh);
-		Selection->SetRoot(Mesh);
+		Selection->SetDetection(MeshComp);
+		Selection->SetRoot(MeshComp);
 	}
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
@@ -72,6 +73,15 @@ void ARTSStructure::OnDeath()
 
 	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
 	GS->OnUnitDeath(this);
+
+	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	if (pgrid != nullptr)
+	{
+		for (int i = 0; i < Modifiers.Num(); i++)
+		{
+			pgrid->RemoveModifier(Modifiers[i],GridClaimSpace,this);
+		}
+	}
 }
 
 void ARTSStructure::PostInitializeComponents()

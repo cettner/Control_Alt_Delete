@@ -39,6 +39,7 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void OnConstruction(const FTransform & Transform) override;
+	virtual void BeginDestroy() override;
 
 protected:
 	virtual void InitializeClaimSpace(ASquareGameGrid * InGrid);

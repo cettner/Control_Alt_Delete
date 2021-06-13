@@ -32,7 +32,8 @@ bool AClaimableSquareGameGrid::AddGridActor(AGridClaimingActor * InActor, FGridT
 
 bool AClaimableSquareGameGrid::RemoveGridActor(AGridClaimingActor * InActor, bool TickOnRemoval)
 {
-	return false;
+	bool success = (GridActors.Remove(InActor) > 0U);
+	return (success);
 }
 
 bool AClaimableSquareGameGrid::MoveGridActor(AGridClaimingActor * InActor, FGridTile TileLocation)
@@ -61,7 +62,7 @@ TArray<UGridModifierType *> AClaimableSquareGameGrid::GetActiveModifiers(FGridTi
 	return (Mods);
 }
 
-bool AClaimableSquareGameGrid::ApplyModifier(FGridTile TileLocation, UGridModifierType * Modifier, AGridClaimingActor * Source)
+bool AClaimableSquareGameGrid::ApplyModifier(UGridModifierType* Modifier, FGridTile TileLocation,  AGridClaimingActor * Source)
 {
 	if (Modifier != nullptr)
 	{
@@ -70,7 +71,7 @@ bool AClaimableSquareGameGrid::ApplyModifier(FGridTile TileLocation, UGridModifi
 	return(true);
 }
 
-bool AClaimableSquareGameGrid::ApplyModifier(TArray<FGridTile> TileLocations, UGridModifierType * Modifier, AGridClaimingActor * Source)
+bool AClaimableSquareGameGrid::ApplyModifier(UGridModifierType* Modifier, TArray<FGridTile> TileLocations,  AGridClaimingActor * Source)
 {
 	if (Modifier != nullptr)
 	{
@@ -79,7 +80,7 @@ bool AClaimableSquareGameGrid::ApplyModifier(TArray<FGridTile> TileLocations, UG
 	return(true);
 }
 
-bool AClaimableSquareGameGrid::RemoveModifier(FGridTile TileLocation, UGridModifierType * Modifier, AGridClaimingActor * Source)
+bool AClaimableSquareGameGrid::RemoveModifier(UGridModifierType* Modifier, FGridTile TileLocation,  AGridClaimingActor * Source)
 {
 	bool retval = false;
 	if (Modifier)
@@ -90,9 +91,20 @@ bool AClaimableSquareGameGrid::RemoveModifier(FGridTile TileLocation, UGridModif
 	return(retval);
 }
 
+bool AClaimableSquareGameGrid::RemoveModifier(UGridModifierType* Modifier, TArray<FGridTile> TileLocations, AGridClaimingActor* Source)
+{
+	bool retval = false;
+	if (Modifier)
+	{
+		retval = Modifier->OnModifierRemoved(this, TileLocations, Source);
+	}
+
+	return(retval);
+}
+
 void AClaimableSquareGameGrid::SimulateGrid()
 {
-	HideSelectedTiles(GridData);
+	HideSelectedTile(GridData);
 
 	for (int i = 0; i < GridActors.Num(); i++)
 	{

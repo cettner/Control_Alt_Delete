@@ -15,7 +15,6 @@ AGridClaimingActor::AGridClaimingActor() : Super()
 	ModifierClasses.AddUnique(UGridModifierType::StaticClass());
 }
 
-
 void AGridClaimingActor::PostInitializeComponents()
 {
 	InitializeModifiers();
@@ -33,6 +32,18 @@ void AGridClaimingActor::OnConstruction(const FTransform & Transform)
 	if (claimgrid)
 	{
 		claimgrid->SimulateGrid();
+	}
+}
+
+void AGridClaimingActor::BeginDestroy()
+{
+	Super::BeginDestroy();
+	AClaimableSquareGameGrid* pgrid = GetParentGrid<AClaimableSquareGameGrid>();
+
+	if (pgrid && pgrid->ISSimulatingEffects())
+	{
+		pgrid->RemoveGridActor(this);
+		Modifiers.Empty();
 	}
 }
 
@@ -85,15 +96,10 @@ void AGridClaimingActor::PreTileChange(FGridTile NewTile)
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (claimgrid == nullptr || !NewTile.IsValid) return;
 
-	for (int i = 0; i < GridClaimSpace.Num(); i++)
+	for (int j = 0; j < Modifiers.Num(); j++)
 	{
-		for (int j = 0; j < Modifiers.Num(); j++)
-		{
-			claimgrid->RemoveModifier(GridClaimSpace[i], Modifiers[j], this);
-		}
+		claimgrid->RemoveModifier(Modifiers[j], GridClaimSpace, this);
 	}
-
-
 }
 
 void AGridClaimingActor::PostTileChange(FGridTile NewTile, FGridTile PrevTile)
@@ -103,7 +109,7 @@ void AGridClaimingActor::PostTileChange(FGridTile NewTile, FGridTile PrevTile)
 
 		for (int j = 0; j < Modifiers.Num(); j++)
 		{
-			 claimgrid->ApplyModifier(GridClaimSpace, Modifiers[j], this);
+			 claimgrid->ApplyModifier( Modifiers[j], GridClaimSpace, this);
 		}
 }
 
@@ -160,7 +166,7 @@ void AGridClaimingActor::SimulateModfiers()
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	for (int j = 0; j < Modifiers.Num(); j++)
 	{
-		claimgrid->ApplyModifier(GridClaimSpace, Modifiers[j], this);
+		claimgrid->ApplyModifier( Modifiers[j], GridClaimSpace, this);
 	}
 
 	Modifiers.Empty();

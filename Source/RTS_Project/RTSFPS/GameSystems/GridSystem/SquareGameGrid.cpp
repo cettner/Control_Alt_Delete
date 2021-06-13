@@ -47,36 +47,37 @@ void ASquareGameGrid::OnConstruction(const FTransform & Transform)
 	}
 }
 
-void ASquareGameGrid::SetSelectedTiles(TArray<FGridTile> SelectedTiles, FLinearColor SelectionColor, float SelectionOpacity)
+void ASquareGameGrid::SetSelectedTile(TArray<FGridTile> SelectedTiles)
 {
-
-	if (SelectionProceduralMesh && GridMaterial)
-	{
-		UMaterialInstanceDynamic * selectionmaterial = UMaterialInstanceDynamic::Create(GridMaterial, this);
-		selectionmaterial->SetVectorParameterValue(ColorParameterName, SelectionColor);
-		selectionmaterial->SetScalarParameterValue(OpacityParameterName, SelectionOpacity);
-
 		for (int i = 0; i < SelectedTiles.Num(); i++)
 		{
-			uint32_t gridid = GetUniqueGridID(SelectedTiles[i]);
-			if ((gridid < INVALID_TILE_ID))
-			{
-				SelectionProceduralMesh->SetMaterial(gridid, selectionmaterial);
-				SelectionProceduralMesh->SetMeshSectionVisible(gridid, true);
-			}
+			SetSelectedTile(SelectedTiles[i]);
 		}
+}
+
+void ASquareGameGrid::SetSelectedTile(FGridTile SelectedTile)
+{
+	uint32_t gridid = GetUniqueGridID(SelectedTile);
+	if ((gridid < INVALID_TILE_ID))
+	{
+		SelectionProceduralMesh->SetMeshSectionVisible(gridid, true);
 	}
 }
 
-void ASquareGameGrid::HideSelectedTiles(TArray<FGridTile> SelectedTiles)
+void ASquareGameGrid::HideSelectedTile(TArray<FGridTile> SelectedTiles)
 {
 	for (int i = 0; i < SelectedTiles.Num(); i++)
 	{
-		uint32_t gridid = GetUniqueGridID(SelectedTiles[i]);
-		if ((gridid < INVALID_TILE_ID))
-		{
-			SelectionProceduralMesh->SetMeshSectionVisible(gridid, false);
-		}
+		HideSelectedTile(SelectedTiles[i]);
+	}
+}
+
+void ASquareGameGrid::HideSelectedTile(FGridTile SelectedTile)
+{
+	uint32_t gridid = GetUniqueGridID(SelectedTile);
+	if ((gridid < INVALID_TILE_ID))
+	{
+		SelectionProceduralMesh->SetMeshSectionVisible(gridid, false);
 	}
 }
 
@@ -283,7 +284,6 @@ void ASquareGameGrid::DrawTiles()
 			SelectionProceduralMesh->SetMaterial(i, selectionmaterial);
 
 			SelectionProceduralMesh->SetMeshSectionVisible(i, false);
-			
 		}
 	}
 }

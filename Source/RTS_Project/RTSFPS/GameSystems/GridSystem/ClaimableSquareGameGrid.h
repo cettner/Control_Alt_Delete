@@ -28,9 +28,10 @@ public:
 	  
 	  virtual TArray<UGridModifierType *> GetActiveModifiers(FGridTile TileLocation) const;
 	  
-	  virtual bool ApplyModifier(FGridTile TileLocation, UGridModifierType * Modifier, AGridClaimingActor * Source);
-	  virtual bool ApplyModifier(TArray<FGridTile> TileLocations, UGridModifierType * Modifier, AGridClaimingActor * Source);
-	  virtual bool RemoveModifier(FGridTile TileLocation, UGridModifierType * Modifier, AGridClaimingActor * Source);
+	  virtual bool ApplyModifier(UGridModifierType* Modifier, FGridTile TileLocation,  AGridClaimingActor * Source);
+	  virtual bool ApplyModifier( UGridModifierType * Modifier, TArray<FGridTile> TileLocations, AGridClaimingActor * Source);
+	  virtual bool RemoveModifier(UGridModifierType* Modifier, FGridTile TileLocation,  AGridClaimingActor * Source);
+	  virtual bool RemoveModifier(UGridModifierType* Modifier, TArray<FGridTile> TileLocations,  AGridClaimingActor* Source);
 
 	  virtual void SimulateGrid();
 

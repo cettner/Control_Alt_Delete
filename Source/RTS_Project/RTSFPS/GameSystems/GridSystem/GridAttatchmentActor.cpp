@@ -23,31 +23,41 @@ void AGridAttatchmentActor::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	SetParentGrid(AttachToGrid(GetActorLocation()));
-
-	if (!bSavedOffsets)
+	bool attatchgridonentry = false;
+	if (GetWorld())
 	{
-		/*Save the Original Local Offsets for all Prmitive Components*/
-		SavePrimitiveOffsets();
-		bSavedOffsets = SavedLocalOffsets.Num() > 0;
+		EWorldType::Type worldtype = GetWorld()->WorldType;
+		attatchgridonentry = (worldtype != EWorldType::EditorPreview);
 	}
 
-	UpdatePrimatives();
+	if (attatchgridonentry)
+	{
+		SetParentGrid(AttachToGrid(GetActorLocation()));
 
+		if (!bSavedOffsets)
+		{
+			/*Save the Original Local Offsets for all Prmitive Components*/
+			SavePrimitiveOffsets();
+			bSavedOffsets = SavedLocalOffsets.Num() > 0;
+		}
+
+		UpdatePrimatives();
+	}
 }
 
 void AGridAttatchmentActor::OnConstruction(const FTransform & Transform)
 {
 	Super::OnConstruction(Transform);
-
-	if (ParentGrid)
+	bool attatchgridonentry = false;
+	if (GetWorld())
 	{
-		AttachToGrid(GetActorLocation(), ParentGrid);
-		UpdatePrimatives();
+		EWorldType::Type worldtype = GetWorld()->WorldType;
+		attatchgridonentry = (worldtype != EWorldType::EditorPreview);
 	}
-	else
+
+	if(attatchgridonentry)
 	{
-		SetParentGrid(AttachToGrid(GetActorLocation()));
+		SetParentGrid(AttachToGrid(GetActorLocation(),ParentGrid));
 		
 		if (!bSavedOffsets)
 		{

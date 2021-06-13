@@ -36,7 +36,7 @@ void UGridModifierType::ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGr
 	{
 		AppliedTiles.AddUnique(TileLocation);
 		WorkingGrid = ParentGrid;
-		ParentGrid->SetSelectedTiles(AppliedTiles, GetTileColor());
+		ParentGrid->SetSelectedTile(TileLocation);
 	}
 }
 
@@ -55,8 +55,7 @@ bool UGridModifierType::OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid,
 	if (index > INDEX_NONE)
 	{
 		AppliedTiles.RemoveAt(index);
-		TArray<FGridTile> TileArray = TArray<FGridTile>(&TileLocation, 1);
-		ParentGrid->HideSelectedTiles(TileArray);
+		ParentGrid->HideSelectedTile(TileLocation);
 	}
 
 	retval = index > INDEX_NONE;
