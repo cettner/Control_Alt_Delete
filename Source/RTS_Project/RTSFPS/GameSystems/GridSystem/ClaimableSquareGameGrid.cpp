@@ -33,12 +33,28 @@ bool AClaimableSquareGameGrid::AddGridActor(AGridClaimingActor * InActor, FGridT
 bool AClaimableSquareGameGrid::RemoveGridActor(AGridClaimingActor * InActor, bool TickOnRemoval)
 {
 	bool success = (GridActors.Remove(InActor) > 0U);
+	if (GridActors.Contains(InActor))
+	{
+		InActor->SetGridClaimSpace(TArray<FGridTile>(), nullptr);
+	}
+
 	return (success);
 }
 
 bool AClaimableSquareGameGrid::MoveGridActor(AGridClaimingActor * InActor, FGridTile TileLocation)
 {
-	return false;
+	bool success = false;
+	if (InActor == nullptr) return success;
+
+	TArray<FGridTileOffset> offsets = InActor->GetRelativeClaimSpace();
+
+	TArray<FGridTile> outtiles = TArray<FGridTile>();
+		
+	success = GetGridTilesFromOffset(TileLocation, offsets, outtiles);
+
+	InActor->SetGridClaimSpace(outtiles,this);
+
+	return success;
 }
 
 bool AClaimableSquareGameGrid::CanMoveTo(AGridClaimingActor * InActor, FGridTile TileLocation)
@@ -49,7 +65,7 @@ bool AClaimableSquareGameGrid::CanMoveTo(AGridClaimingActor * InActor, FGridTile
 	TArray<FGridTileOffset> attemptedclaimspace = InActor->GetRelativeClaimSpace();
 	TArray<FGridTile> gridtiles;
 
-	success &= GetGridTilesFromOffset(InActor->GetRootGridTile(), attemptedclaimspace, gridtiles, true);
+	success &= GetGridTilesFromOffset(TileLocation, attemptedclaimspace, gridtiles, true);
 
 	return success;
 }

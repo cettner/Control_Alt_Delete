@@ -3,7 +3,7 @@
 
 #include "RTSGridPlacementCamera.h"
 #include "Engine/SCS_Node.h"
-
+#include "Kismet/GameplayStatics.h"
 
 
 void ARTSGridPlacementCamera::PostInitializeComponents()
@@ -12,7 +12,7 @@ void ARTSGridPlacementCamera::PostInitializeComponents()
 	PlacementActor = CreatePlacementActor(StructureClass);
 }
 
-AGridAttatchmentActor * ARTSGridPlacementCamera::CreatePlacementActor(const TSubclassOf<AActor> InActorClass) const
+AGridAttatchmentActor * ARTSGridPlacementCamera::CreatePlacementActor(const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
 {
 	UWorld * World = GetWorld();
 	if (World == nullptr) return nullptr;
@@ -28,7 +28,7 @@ AGridAttatchmentActor * ARTSGridPlacementCamera::CreatePlacementActor(const TSub
 	UStaticMeshComponent * staticprimitive = Cast<UStaticMeshComponent>(defaultprimitive);
 	if (staticprimitive)
 	{
-		placeactor = World->SpawnActor<AGridAttatchmentActor>(GridActorClass);
+		placeactor = World->SpawnActorDeferred<AGridAttatchmentActor>(GridActorClass, SpawnTransform);
 		
 		UActorComponent * newcomp = placeactor->AddComponentByClass(staticprimitive->GetClass(), false, staticprimitive->GetRelativeTransform(), false);
 		UStaticMeshComponent * staticcomp = Cast<UStaticMeshComponent>(newcomp);
@@ -43,7 +43,7 @@ AGridAttatchmentActor * ARTSGridPlacementCamera::CreatePlacementActor(const TSub
 		USkeletalMeshComponent * skeletalprimitive = Cast<USkeletalMeshComponent>(defaultprimitive);
 		if (skeletalprimitive)
 		{
-			placeactor = World->SpawnActor<AGridAttatchmentActor>(GridActorClass);
+			placeactor = World->SpawnActorDeferred<AGridAttatchmentActor>(GridActorClass, SpawnTransform);
 			UActorComponent * newcomp = placeactor->AddComponentByClass(skeletalprimitive->GetClass(), false, skeletalprimitive->GetRelativeTransform(), false);
 			USkeletalMeshComponent * skeletalcomp = Cast<USkeletalMeshComponent>(newcomp);
 
@@ -53,6 +53,9 @@ AGridAttatchmentActor * ARTSGridPlacementCamera::CreatePlacementActor(const TSub
 			}
 		}
 	}
+
+	PreInitializeGridActor(placeactor, InActorClass, SpawnTransform);
+	UGameplayStatics::FinishSpawningActor(placeactor, SpawnTransform);
 
 	return(placeactor);
 }
@@ -122,6 +125,10 @@ UActorComponent * ARTSGridPlacementCamera::FindDefaultComponentByClass(const TSu
 	return nullptr;
 }
 
+void ARTSGridPlacementCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
+{
+}
+
 void ARTSGridPlacementCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -138,7 +145,14 @@ void ARTSGridPlacementCamera::Tick(float DeltaTime)
 	ASquareGameGrid * currentgrid = GetCurrentGrid();
 
 	FGridTile hittile = currentgrid->GetTileFromLocation(hit.Location);
-	if (hittile.IsValid && hit.bBlockingHit)
+
+	FGridTile actortile = PlacementActor->GetRootGridTile();
+	int32 tileid = currentgrid->GetUniqueGridID(actortile);
+
+
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Row: %d Col: %d ID: %d"), actortile.row, actortile.column, tileid));
+
+	if (hittile.IsValid && hit.bBlockingHit && !(PlacementActor->GetRootGridTile() == hittile))
 	{
 		PlacementActor->SetTileLocation(hittile);
 	}

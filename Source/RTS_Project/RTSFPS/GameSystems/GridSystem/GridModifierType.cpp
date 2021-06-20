@@ -32,9 +32,9 @@ bool UGridModifierType::IsModifierActive() const
 
 void UGridModifierType::ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
 {
-	if (TileLocation.IsValid)
+	if (TileLocation.IsValid && !AppliedTiles.Contains(TileLocation))
 	{
-		AppliedTiles.AddUnique(TileLocation);
+		AppliedTiles.Emplace(TileLocation);
 		WorkingGrid = ParentGrid;
 		ParentGrid->SetSelectedTile(TileLocation);
 	}

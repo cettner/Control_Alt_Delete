@@ -57,9 +57,10 @@ void ASquareGameGrid::SetSelectedTile(TArray<FGridTile> SelectedTiles)
 
 void ASquareGameGrid::SetSelectedTile(FGridTile SelectedTile)
 {
-	uint32_t gridid = GetUniqueGridID(SelectedTile);
-	if ((gridid < INVALID_TILE_ID))
+	int32 gridid = GetUniqueGridID(SelectedTile);
+	if ((gridid != INVALID_TILE_ID))
 	{
+	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Selecting Row: %d Col: %d ID: %d"), SelectedTile.row, SelectedTile.column, gridid));
 		SelectionProceduralMesh->SetMeshSectionVisible(gridid, true);
 	}
 }
@@ -74,9 +75,10 @@ void ASquareGameGrid::HideSelectedTile(TArray<FGridTile> SelectedTiles)
 
 void ASquareGameGrid::HideSelectedTile(FGridTile SelectedTile)
 {
-	uint32_t gridid = GetUniqueGridID(SelectedTile);
-	if ((gridid < INVALID_TILE_ID))
+	int32 gridid = GetUniqueGridID(SelectedTile);
+	if ((gridid != INVALID_TILE_ID))
 	{
+	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Hiding Row: %d Col: %d ID: %d"), SelectedTile.row, SelectedTile.column, gridid));
 		SelectionProceduralMesh->SetMeshSectionVisible(gridid, false);
 	}
 }
@@ -162,9 +164,9 @@ bool ASquareGameGrid::GetLocationFromTile(FGridTile Tiledata ,FVector & OutLocat
 	return(true);
 }
 
-uint32_t ASquareGameGrid::GetUniqueGridID(FGridTile Tiledata) const
+int32 ASquareGameGrid::GetUniqueGridID(FGridTile Tiledata) const
 {
-	uint32_t retval = INVALID_TILE_ID;
+	int32 retval = INVALID_TILE_ID;
 	if (IsTileValid(Tiledata.row,Tiledata.column))
 	{
 		retval = (Tiledata.row * NumColumns) + Tiledata.column;
@@ -254,7 +256,7 @@ void ASquareGameGrid::DrawGrid()
 
 void ASquareGameGrid::DrawTiles()
 {
-	for (int i = 0; i < GridData.Num(); i++)
+	for (int32 i = 0; i < GridData.Num(); i++)
 	{
 		TArray<FVector> selectedverts = TArray<FVector>();
 		TArray<int> selectedtris = TArray<int>();
@@ -303,7 +305,7 @@ bool ASquareGameGrid::BuildGridData()
 			Currentile.IsValid = GetLocationFromTile(Currentile, Currentile.TileCenter);
 			GridData.Emplace(Currentile);
 
-			buildsuccess |= Currentile.IsValid;
+			buildsuccess &= Currentile.IsValid;
 		}
 	}
 

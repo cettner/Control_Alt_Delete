@@ -57,6 +57,7 @@ public:
 	virtual TArray<FGridTileOffset> GetRelativeClaimSpace() const;
 	virtual void SetGridClaimSpace(TArray<FGridTile> ClaimedTiles, ASquareGameGrid * OwningGrid);
 	virtual TArray<FGridTile> GetGridClaimSpace() const;
+	virtual void SetBoxExtent(FVector Extent);
 
 public:
 	virtual void SimulateModfiers();

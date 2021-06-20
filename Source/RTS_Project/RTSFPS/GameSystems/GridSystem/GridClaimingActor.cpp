@@ -29,7 +29,7 @@ void AGridClaimingActor::OnConstruction(const FTransform & Transform)
 
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 
-	if (claimgrid)
+	if (claimgrid && claimgrid->ISSimulatingEffects())
 	{
 		claimgrid->SimulateGrid();
 	}
@@ -73,12 +73,15 @@ void AGridClaimingActor::InitializeClaimSpace(ASquareGameGrid * InGrid)
 
 void AGridClaimingActor::InitializeModifiers()
 {
+	UWorld* world = GetWorld();
+	if (world == nullptr) return;
+
 	Modifiers.Empty();
 	FName Modname = "DefaultModifierName";
 
 	for (int j = 0; j < ModifierClasses.Num(); j++)
 	{
-		UGridModifierType * newmod = NewObject<UGridModifierType>(ModifierClasses[j], Modname);
+		UGridModifierType* newmod = NewObject<UGridModifierType>(ModifierClasses[j], Modname);
 		if (newmod != nullptr)
 		{
 			Modifiers.Add(newmod);
@@ -100,6 +103,8 @@ void AGridClaimingActor::PreTileChange(FGridTile NewTile)
 	{
 		claimgrid->RemoveModifier(Modifiers[j], GridClaimSpace, this);
 	}
+
+	GridClaimSpace.Empty();
 }
 
 void AGridClaimingActor::PostTileChange(FGridTile NewTile, FGridTile PrevTile)
@@ -132,14 +137,14 @@ bool AGridClaimingActor::SetTileLocation(FGridTile Moveto)
 {
 	bool success = false;
 	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-	if (claimgrid)
+	if (claimgrid && claimgrid->CanMoveTo(this,Moveto))
 	{
 		FGridTile prev = GetRootGridTile();
 		PreTileChange(Moveto);
+		Super::SetTileLocation(Moveto);
 		success = claimgrid->MoveGridActor(this, Moveto);
 		PostTileChange(Moveto, prev);
 	}
-
 
 	return success;
 }
@@ -157,6 +162,15 @@ void AGridClaimingActor::SetGridClaimSpace(TArray<FGridTile> ClaimedTiles, ASqua
 TArray<FGridTile> AGridClaimingActor::GetGridClaimSpace() const
 {
 	return GridClaimSpace;
+}
+
+void AGridClaimingActor::SetBoxExtent(FVector Extent)
+{
+	ClaimSpaceComp->SetBoxExtent(Extent);
+
+	if (GetParentGrid() == nullptr) return;
+	InitializeClaimSpace(GetParentGrid());
+	PostTileChange(GetRootGridTile());
 }
 
 void AGridClaimingActor::SimulateModfiers()

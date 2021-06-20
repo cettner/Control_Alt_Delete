@@ -10,13 +10,6 @@ AGridAttatchmentActor::AGridAttatchmentActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
-	SnapToComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Test Actor"));
-	if (SnapToComp)
-	{
-		SnapToComp->SetupAttachment(RootComponent);
-		SnapToComp->SetCanEverAffectNavigation(false);
-	}
-
 }
 
 void AGridAttatchmentActor::PostInitializeComponents()
@@ -137,28 +130,28 @@ bool AGridAttatchmentActor::SetTileLocation(FGridTile Moveto)
 	FVector movelocation = GetActorLocation();
 		
 	bool success = ParentGrid->GetLocationFromTile(Moveto, movelocation);
-	SetActorLocation(movelocation);
+	
+	if (success)
+	{
+		SetActorLocation(movelocation);
+		SetRootGridTile(Moveto);
+		UpdatePrimatives();
+	}
 
-	UpdatePrimatives();
 	return(success);
 }
 
-ASquareGameGrid * AGridAttatchmentActor::FindGrid()
+ASquareGameGrid * AGridAttatchmentActor::FindGrid() const
 {
-	UWorld * World;
+	UWorld * World = GetWorld();
 
-	for (int i = 0; i < GEngine->GetWorldContexts().Num(); i++)
+	if (World == nullptr) return nullptr;
+
+	for (TActorIterator<ASquareGameGrid> ActorItr(World); ActorItr; ++ActorItr)
 	{
-		World = GEngine->GetWorldContexts()[i].World();
-		if (World == nullptr) continue;
-
-		for (TActorIterator<ASquareGameGrid> ActorItr(World); ActorItr; ++ActorItr)
-		{
-			ASquareGameGrid * found = *ActorItr;
-			return(found);
-		}
+		ASquareGameGrid * found = *ActorItr;
+		return(found);
 	}
-
 
 
 	return nullptr;

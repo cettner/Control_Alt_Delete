@@ -59,7 +59,7 @@ float UHealthComponent::HandleDamageEvent(float Damage, FDamageEvent const & Dam
 	{
 		ActualDamage = ModifyDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 		CurrentHealth -= ActualDamage;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s: Damage Taken: %.2f Health Remaining: %.2f"),*CompOwner->GetName(), ActualDamage, CurrentHealth));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("%s: Damage Taken: %.2f Health Remaining: %.2f"),*CompOwner->GetName(), ActualDamage, CurrentHealth));
 		if (CurrentHealth <= 0.0f)
 		{
 			Die(Damage, DamageEvent, EventInstigator, DamageCauser);

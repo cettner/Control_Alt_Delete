@@ -8,7 +8,7 @@
 #include "SquareGameGrid.generated.h"
 
 
-constexpr uint32_t INVALID_TILE_ID = 0xFFFFFFFF;
+constexpr int32 INVALID_TILE_ID = 0xFFFFFFFF;
 
 USTRUCT()
 struct FGridTile
@@ -60,7 +60,7 @@ public:
 	bool IsTileValid(int Row, int Column) const;
 	FGridTile GetTileFromLocation(FVector Location) const;
 	bool GetLocationFromTile(FGridTile Tiledata, FVector & OutLocation, bool Center = true) const;
-	uint32_t GetUniqueGridID(FGridTile Tiledata) const;
+	int32 GetUniqueGridID(FGridTile Tiledata) const;
 
 protected:
 	virtual void DrawLine(FVector LineStart, FVector LineEnd, float LineThickness, TArray<FVector>& Verts, TArray<int>& Tris);

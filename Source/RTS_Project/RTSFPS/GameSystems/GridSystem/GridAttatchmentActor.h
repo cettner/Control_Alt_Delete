@@ -49,11 +49,13 @@ public:
 	virtual bool CanBePlacedAt(FGridTile TestTile) const;
 
 
+	virtual ASquareGameGrid* FindGrid() const;
+
 protected:
 	virtual void SetParentGrid(ASquareGameGrid * InGrid);
 	virtual void SavePrimitiveOffsets();
 	virtual void SetRootGridTile(FGridTile InTile);
-	virtual ASquareGameGrid * FindGrid();
+
 
 	/*Updates Registered Primative Components based on thier relative location to Grid Space Sets normal Relative Offset if tile is invalid*/
 	virtual void UpdatePrimatives();
@@ -70,12 +72,6 @@ protected:
 	bool bSavedOffsets = false;
 	TMap<UPrimitiveComponent *, FVector> SavedLocalOffsets = TMap<UPrimitiveComponent *, FVector>();
 	TMap<UPrimitiveComponent *, FGridTile> PrimativeTileLocations = TMap <UPrimitiveComponent *, FGridTile>();
-
-
-public:	
-
-	UPROPERTY(EditDefaultsOnly)
-	UStaticMeshComponent * SnapToComp;
 
 
 
