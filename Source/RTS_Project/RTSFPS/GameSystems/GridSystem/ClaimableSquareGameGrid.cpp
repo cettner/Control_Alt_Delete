@@ -143,6 +143,19 @@ bool AClaimableSquareGameGrid::ISSimulatingEffects() const
 	return(false);
 }
 
+bool AClaimableSquareGameGrid::BuildGridData()
+{
+	bool success = Super::BuildGridData();
+	for (int i = 0; i < GridData.Num(); i++)
+	{
+		FGridModifierSet EmptySet = FGridModifierSet();
+		GridModifiers.Emplace(EmptySet);
+	}
+
+	success &= (GridModifiers.Num() == GridData.Num());
+	return (success);
+}
+
 bool AClaimableSquareGameGrid::GetGridTilesFromOffset(FGridTile StartTile, TArray<FGridTileOffset> Offsets, TArray<FGridTile>& OutTiles, bool bisstartinclusive) const
 {
 	if(!StartTile.IsValid) return false;

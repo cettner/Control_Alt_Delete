@@ -7,18 +7,6 @@
 
 
 
-void UGridModifierType::BeginDestroy()
-{
-	Super::BeginDestroy();
-	
-	if (bCallsRemovalOnDestruction && (WorkingGrid != nullptr))
-	{
-		if (!WorkingGrid->ISSimulatingEffects())
-		{
-			RemoveAll(WorkingGrid, nullptr);
-		}
-	}
-}
 
 FLinearColor UGridModifierType::GetTileColor() const
 {

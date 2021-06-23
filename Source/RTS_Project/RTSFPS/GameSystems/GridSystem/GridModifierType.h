@@ -18,9 +18,6 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 {
 	GENERATED_BODY()
 
-  protected:
-	virtual void BeginDestroy() override;
-
   public:
 	virtual FLinearColor GetTileColor() const;
 	virtual bool IsModifierActive() const;

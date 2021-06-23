@@ -40,11 +40,11 @@ void AGridClaimingActor::BeginDestroy()
 	Super::BeginDestroy();
 	AClaimableSquareGameGrid* pgrid = GetParentGrid<AClaimableSquareGameGrid>();
 
-	if (pgrid && pgrid->ISSimulatingEffects())
+	if (pgrid && pgrid->RemoveGridActor(this))
 	{
-		pgrid->RemoveGridActor(this);
 		Modifiers.Empty();
 	}
+
 }
 
 void AGridClaimingActor::InitializeClaimSpace(ASquareGameGrid * InGrid)

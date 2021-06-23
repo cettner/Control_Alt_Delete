@@ -12,6 +12,15 @@
 class AGridClaimingActor;
 struct FGridTileOffset;
 
+USTRUCT()
+struct FGridModifierSet
+{
+	GENERATED_USTRUCT_BODY()
+	TArray<UGridModifierType*> TileModifiers = TArray<UGridModifierType*>();
+};
+
+
+
 UCLASS()
 class RTS_PROJECT_API AClaimableSquareGameGrid : public ASquareGameGrid
 {
@@ -35,6 +44,10 @@ public:
 
 	  virtual void SimulateGrid();
 
+
+protected:
+	virtual bool BuildGridData() override;
+
 protected:
 	virtual bool GetGridTilesFromOffset(FGridTile StartTile, TArray<FGridTileOffset> Offsets,  TArray<FGridTile> & OutTiles, bool bisstartinclusive = false) const;
 
@@ -43,4 +56,5 @@ public:
 
 protected:
 	TArray<AGridClaimingActor *> GridActors;
+	TArray<FGridModifierSet> GridModifiers;
 };
