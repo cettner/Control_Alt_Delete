@@ -19,8 +19,7 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 	GENERATED_BODY()
 
   public:
-	virtual FLinearColor GetTileColor() const;
-	virtual bool IsModifierActive() const;
+	virtual bool IsModifierActive(FGridTile TileLocation) const;
 	virtual void ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker);
 	virtual void ApplyModifier(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker);
 	virtual bool OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker);

@@ -72,50 +72,60 @@ bool AClaimableSquareGameGrid::CanMoveTo(AGridClaimingActor * InActor, FGridTile
 
 TArray<UGridModifierType *> AClaimableSquareGameGrid::GetActiveModifiers(FGridTile TileLocation) const
 {
-	TArray<UGridModifierType *> Mods = TArray<UGridModifierType *>();
+	int32 gridid = GetUniqueGridID(TileLocation);
+	if (gridid != INVALID_TILE_ID)
+	{
+		return(GridModifiers[gridid].TileModifiers);
+	}
 
-
-	return (Mods);
+	return (TArray<UGridModifierType*>());
 }
 
 bool AClaimableSquareGameGrid::ApplyModifier(UGridModifierType* Modifier, FGridTile TileLocation,  AGridClaimingActor * Source)
 {
-	if (Modifier != nullptr)
+	bool success = false;
+	int32 gridid = GetUniqueGridID(TileLocation);
+	if (Modifier != nullptr && gridid != INVALID_TILE_ID)
 	{
 		Modifier->ApplyModifier(this, TileLocation, Source);
+		GridModifiers[gridid].TileModifiers.Emplace(Modifier);
+		success = true;
 	}
-	return(true);
+	return(success);
 }
 
 bool AClaimableSquareGameGrid::ApplyModifier(UGridModifierType* Modifier, TArray<FGridTile> TileLocations,  AGridClaimingActor * Source)
 {
-	if (Modifier != nullptr)
+	bool success = true;
+	for(int i = 0; i < TileLocations.Num(); i++)
 	{
-		Modifier->ApplyModifier(this, TileLocations, Source);
+		success &= ApplyModifier(Modifier, TileLocations[i], Source);
 	}
-	return(true);
+	return(success);
 }
 
 bool AClaimableSquareGameGrid::RemoveModifier(UGridModifierType* Modifier, FGridTile TileLocation,  AGridClaimingActor * Source)
 {
-	bool retval = false;
-	if (Modifier)
+	bool success = false;
+	int32 gridid = GetUniqueGridID(TileLocation);
+	
+	if ((Modifier != nullptr) && (gridid != INVALID_TILE_ID))
 	{
-		retval = Modifier->OnModifierRemoved(this, TileLocation, Source);
+		success = (GridModifiers[gridid].TileModifiers.RemoveSingle(Modifier) == 1U);
+		success &= Modifier->OnModifierRemoved(this, TileLocation, Source);
 	}
 
-	return(retval);
+	return(success);
 }
 
 bool AClaimableSquareGameGrid::RemoveModifier(UGridModifierType* Modifier, TArray<FGridTile> TileLocations, AGridClaimingActor* Source)
 {
-	bool retval = false;
-	if (Modifier)
+	bool success = true;
+	for (int i = 0; i < TileLocations.Num(); i++)
 	{
-		retval = Modifier->OnModifierRemoved(this, TileLocations, Source);
+		success &= RemoveModifier(Modifier, TileLocations[i], Source);
 	}
-
-	return(retval);
+	return(success);
 }
 
 void AClaimableSquareGameGrid::SimulateGrid()

@@ -8,14 +8,10 @@
 
 
 
-FLinearColor UGridModifierType::GetTileColor() const
-{
-	return FLinearColor::Red;
-}
 
-bool UGridModifierType::IsModifierActive() const
+bool UGridModifierType::IsModifierActive(FGridTile TileLocation) const
 {
-	return bIsActive;
+	return AppliedTiles.Contains(TileLocation);
 }
 
 void UGridModifierType::ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
@@ -43,7 +39,11 @@ bool UGridModifierType::OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid,
 	if (index > INDEX_NONE)
 	{
 		AppliedTiles.RemoveAt(index);
-		ParentGrid->HideSelectedTile(TileLocation);
+		TArray<UGridModifierType*> othermods = ParentGrid->GetActiveModifiers(TileLocation);
+		if (othermods.Num() == 0)
+		{
+			ParentGrid->HideSelectedTile(TileLocation);
+		}
 	}
 
 	retval = index > INDEX_NONE;
