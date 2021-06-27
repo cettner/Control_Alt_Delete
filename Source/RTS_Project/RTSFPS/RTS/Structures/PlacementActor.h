@@ -2,27 +2,30 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
+
+
 #include "PlacementActor.generated.h"
 
 UCLASS()
-class RTS_PROJECT_API APlacementActor : public AActor
+class RTS_PROJECT_API APlacementActor : public AGridClaimingActor
 {
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	APlacementActor();
 
+	void SetPrimitiveComp(UPrimitiveComponent * InMeshComp);
+	UPrimitiveComponent * GetPrimitive() const;
+
+	template < class T >
+	T* GetPrimitive() const
+	{
+		return Cast<T>(GetPrimitive());
+	}
+
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	
+	UPrimitiveComponent * PlacementMeshComp = nullptr;
 	
 };

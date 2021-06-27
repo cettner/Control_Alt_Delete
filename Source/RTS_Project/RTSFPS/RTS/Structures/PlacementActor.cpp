@@ -4,24 +4,17 @@
 
 
 // Sets default values
-APlacementActor::APlacementActor()
+APlacementActor::APlacementActor() : Super()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PlacementMeshComp = CreateDefaultSubobject<UPrimitiveComponent>(TEXT("DefaultMesh"));
 }
 
-// Called when the game starts or when spawned
-void APlacementActor::BeginPlay()
+void APlacementActor::SetPrimitiveComp(UPrimitiveComponent* InMeshComp)
 {
-	Super::BeginPlay();
-	
+	PlacementMeshComp = InMeshComp;
 }
 
-// Called every frame
-void APlacementActor::Tick(float DeltaTime)
+UPrimitiveComponent* APlacementActor::GetPrimitive() const
 {
-	Super::Tick(DeltaTime);
-
+	return PlacementMeshComp;
 }
-

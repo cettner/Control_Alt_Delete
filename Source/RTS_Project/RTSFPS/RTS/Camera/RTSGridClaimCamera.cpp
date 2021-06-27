@@ -19,6 +19,9 @@ void ARTSGridClaimCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActo
 	FVector defaultextent = defaultbox->GetScaledBoxExtent();
 
 	claimactor->SetBoxExtent(defaultextent);
+
+
+
 }
 
 

@@ -18,4 +18,14 @@ class RTS_PROJECT_API ARTSGridClaimCamera : public ARTSGridPlacementCamera
 	protected:
 		virtual void PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const override;
 		virtual void Tick(float Deltatime) override;
+
+	protected:
+		UPROPERTY(EditDefaultsOnly, Category = "Placement")
+		UMaterial * GridMaterial;
+
+		UPROPERTY(EditDefaultsOnly, Category = "Placement")
+		FName ColorParameterName = "Color";
+
+		UPROPERTY(EditDefaultsOnly, Category = "Placement")
+		FName OpacityParameterName = "Opacity";
 };

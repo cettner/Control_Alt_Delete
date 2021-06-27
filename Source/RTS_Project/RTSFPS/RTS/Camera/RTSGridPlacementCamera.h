@@ -21,6 +21,13 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
 	public:
 		AGridAttatchmentActor * CreatePlacementActor(const TSubclassOf<AActor> InActorClass,FTransform SpawnTransform = FTransform()) const;
 		AGridAttatchmentActor * GetPlacementActor() const;
+
+		template < class T >
+		T* GetPlacementActor() const
+		{
+			return Cast<T>(GetPlacementActor());
+		}
+
 		bool IsPlacingActor() const;
 		ASquareGameGrid * GetCurrentGrid() const;
 
