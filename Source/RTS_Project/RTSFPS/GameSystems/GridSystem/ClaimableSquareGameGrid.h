@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "SquareGameGrid.h"
-#include "GridModifierType.h"
 #include "ClaimableSquareGameGrid.generated.h"
 
 
 /*Forward Declaration*/
 class AGridClaimingActor;
+class UGridModifierType;
 struct FGridTileOffset;
 
 USTRUCT()

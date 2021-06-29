@@ -11,8 +11,6 @@ AGridClaimingActor::AGridClaimingActor() : Super()
 	{
 		ClaimSpaceComp->SetCanEverAffectNavigation(false);
 	}
-
-	ModifierClasses.AddUnique(UGridModifierType::StaticClass());
 }
 
 void AGridClaimingActor::PostInitializeComponents()

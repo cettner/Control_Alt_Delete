@@ -20,7 +20,8 @@ void UGridModifierType::ApplyModifier(AClaimableSquareGameGrid * ParentGrid, FGr
 	{
 		AppliedTiles.Emplace(TileLocation);
 		WorkingGrid = ParentGrid;
-		ParentGrid->SetSelectedTile(TileLocation);
+
+		OnModifierApply(ParentGrid, TileLocation, Invoker);
 	}
 }
 
@@ -32,30 +33,27 @@ void UGridModifierType::ApplyModifier(AClaimableSquareGameGrid * ParentGrid, TAr
 	}
 }
 
-bool UGridModifierType::OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
+bool UGridModifierType::RemoveModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
 {
 	bool retval = false;
 	int32 index = AppliedTiles.IndexOfByKey(TileLocation);
 	if (index > INDEX_NONE)
 	{
 		AppliedTiles.RemoveAt(index);
-		TArray<UGridModifierType*> othermods = ParentGrid->GetActiveModifiers(TileLocation);
-		if (othermods.Num() == 0)
-		{
-			ParentGrid->HideSelectedTile(TileLocation);
-		}
+
+		OnModiferRemoved(ParentGrid,TileLocation,Invoker);
 	}
 
 	retval = index > INDEX_NONE;
 	return(retval);
 }
 
-bool UGridModifierType::OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker)
+bool UGridModifierType::RemoveModifier(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker)
 {
 	bool retval = true;
 	for (int i = 0; i < TileLocations.Num(); i++)
 	{
-		retval &= OnModifierRemoved(ParentGrid, TileLocations[i], Invoker);
+		retval &= RemoveModifier(ParentGrid, TileLocations[i], Invoker);
 	}
 
 	return(retval);
@@ -63,6 +61,14 @@ bool UGridModifierType::OnModifierRemoved(AClaimableSquareGameGrid * ParentGrid,
 
 void UGridModifierType::RemoveAll(AClaimableSquareGameGrid * ParentGrid, AGridClaimingActor * Invoker)
 {
-		OnModifierRemoved(ParentGrid, AppliedTiles, Invoker);
+		RemoveModifier(ParentGrid, AppliedTiles, Invoker);
+}
+
+void UGridModifierType::OnModifierApply(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
+{
+}
+
+void UGridModifierType::OnModiferRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
+{
 }
 

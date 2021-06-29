@@ -2,6 +2,7 @@
 
 
 #include "ClaimableSquareGameGrid.h"
+#include "GridModifierType.h"
 #include "GridClaimingActor.h"
 
 void AClaimableSquareGameGrid::OnConstruction(const FTransform & Transform)
@@ -112,7 +113,7 @@ bool AClaimableSquareGameGrid::RemoveModifier(UGridModifierType* Modifier, FGrid
 	if ((Modifier != nullptr) && (gridid != INVALID_TILE_ID))
 	{
 		success = (GridModifiers[gridid].TileModifiers.RemoveSingle(Modifier) == 1U);
-		success &= Modifier->OnModifierRemoved(this, TileLocation, Source);
+		success &= Modifier->RemoveModifier(this, TileLocation, Source);
 	}
 
 	return(success);

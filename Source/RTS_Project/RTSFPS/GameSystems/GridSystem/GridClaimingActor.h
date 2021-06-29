@@ -70,7 +70,7 @@ protected:
     TArray<FGridTile> GridClaimSpace;
 	TArray<FGridTileOffset> RelativeClaimSpace;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Modifiers)
 	TArray<TSubclassOf<UGridModifierType>> ModifierClasses;
 
 	/*IMPORTANT: Array must be flagged as UPROPERTY or UObjects will be grabbed by garbage collector regardless of reference possession*/
