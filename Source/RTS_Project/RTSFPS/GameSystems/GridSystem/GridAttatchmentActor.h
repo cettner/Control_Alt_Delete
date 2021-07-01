@@ -64,7 +64,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void OnConstruction(const FTransform & Transform) override;
 
-
 protected:
 	ASquareGameGrid * ParentGrid = nullptr;
 	FGridTile RootGridLocation = FGridTile();

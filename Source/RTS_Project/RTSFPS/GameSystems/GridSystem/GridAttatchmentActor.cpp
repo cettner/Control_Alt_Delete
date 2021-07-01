@@ -10,6 +10,7 @@ AGridAttatchmentActor::AGridAttatchmentActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
+	bRunConstructionScriptOnDrag = false;
 }
 
 void AGridAttatchmentActor::PostInitializeComponents()

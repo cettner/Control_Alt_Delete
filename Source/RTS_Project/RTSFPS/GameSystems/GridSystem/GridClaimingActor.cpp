@@ -11,6 +11,7 @@ AGridClaimingActor::AGridClaimingActor() : Super()
 	{
 		ClaimSpaceComp->SetCanEverAffectNavigation(false);
 	}
+
 }
 
 void AGridClaimingActor::PostInitializeComponents()
@@ -22,10 +23,11 @@ void AGridClaimingActor::PostInitializeComponents()
 
 void AGridClaimingActor::OnConstruction(const FTransform & Transform)
 {
+	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+
 	InitializeModifiers();
 	Super::OnConstruction(Transform);
-
-	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	PostTileChange(GetRootGridTile());
 
 	if (claimgrid && claimgrid->ISSimulatingEffects())
 	{
@@ -79,10 +81,13 @@ void AGridClaimingActor::InitializeModifiers()
 
 	for (int j = 0; j < ModifierClasses.Num(); j++)
 	{
-		UGridModifierType* newmod = NewObject<UGridModifierType>(ModifierClasses[j], Modname);
-		if (newmod != nullptr)
+		if (IsValid(ModifierClasses[j]))
 		{
-			Modifiers.Add(newmod);
+			UGridModifierType* newmod = NewObject<UGridModifierType>(UGridModifierType::StaticClass(), ModifierClasses[j]);
+			if (newmod != nullptr)
+			{
+				Modifiers.Add(newmod);
+			}
 		}
 	}
 }
