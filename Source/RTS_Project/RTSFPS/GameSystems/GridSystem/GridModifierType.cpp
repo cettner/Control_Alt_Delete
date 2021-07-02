@@ -64,11 +64,23 @@ void UGridModifierType::RemoveAll(AClaimableSquareGameGrid * ParentGrid, AGridCl
 		RemoveModifier(ParentGrid, AppliedTiles, Invoker);
 }
 
+void UGridModifierType::SetSourceActor(AActor * InSource)
+{
+	ModSource = InSource;
+}
+
+AActor * UGridModifierType::GetSourceActor() const
+{
+	return ModSource;
+}
+
 void UGridModifierType::OnModifierApply(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
 {
+
 }
 
 void UGridModifierType::OnModiferRemoved(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker)
 {
+
 }
 

@@ -77,7 +77,6 @@ void AGridClaimingActor::InitializeModifiers()
 	if (world == nullptr) return;
 
 	Modifiers.Empty();
-	FName Modname = "DefaultModifierName";
 
 	for (int j = 0; j < ModifierClasses.Num(); j++)
 	{
@@ -86,6 +85,7 @@ void AGridClaimingActor::InitializeModifiers()
 			UGridModifierType* newmod = NewObject<UGridModifierType>(UGridModifierType::StaticClass(), ModifierClasses[j]);
 			if (newmod != nullptr)
 			{
+				newmod->SetSourceActor(this);
 				Modifiers.Add(newmod);
 			}
 		}
@@ -112,7 +112,7 @@ void AGridClaimingActor::PreTileChange(FGridTile NewTile)
 
 void AGridClaimingActor::PostTileChange(FGridTile NewTile, FGridTile PrevTile)
 {
-	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	AClaimableSquareGameGrid * claimgrid = GetParentGrid<AClaimableSquareGameGrid>();
 	if (claimgrid == nullptr) return;
 
 		for (int j = 0; j < Modifiers.Num(); j++)
@@ -180,7 +180,7 @@ void AGridClaimingActor::SimulateModfiers()
 {
 	InitializeModifiers();
 
-	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	AClaimableSquareGameGrid * claimgrid = GetParentGrid<AClaimableSquareGameGrid>();
 	for (int j = 0; j < Modifiers.Num(); j++)
 	{
 		claimgrid->ApplyModifier( Modifiers[j], GridClaimSpace, this);

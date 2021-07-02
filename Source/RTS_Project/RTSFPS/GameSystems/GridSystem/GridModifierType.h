@@ -25,6 +25,15 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 	bool RemoveModifier(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker);
 	bool RemoveModifier(AClaimableSquareGameGrid * ParentGrid, TArray<FGridTile> TileLocations, AGridClaimingActor * Invoker);
 	virtual void RemoveAll(AClaimableSquareGameGrid * ParentGrid, AGridClaimingActor * Invoker);
+	void SetSourceActor(AActor * InSource);
+
+	AActor * GetSourceActor() const;
+
+	template < class T >
+	T*  GetSourceActor() const
+	{
+		return Cast<T>(GetSourceActor());
+	}
   
   protected:
 	  virtual void OnModifierApply(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker);
@@ -35,6 +44,7 @@ class RTS_PROJECT_API UGridModifierType : public UObject
 	bool bCallsRemovalOnDestruction = true;
 
 	AClaimableSquareGameGrid * WorkingGrid = nullptr;
+	AActor * ModSource = nullptr;
 	TArray<FGridTile> AppliedTiles = TArray<FGridTile>();
 
 };

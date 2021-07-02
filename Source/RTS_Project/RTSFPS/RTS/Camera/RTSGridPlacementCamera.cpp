@@ -150,8 +150,6 @@ void ARTSGridPlacementCamera::Tick(float DeltaTime)
 	int32 tileid = currentgrid->GetUniqueGridID(actortile);
 
 
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Row: %d Col: %d ID: %d"), actortile.row, actortile.column, tileid));
-
 	if (hittile.IsValid && hit.bBlockingHit && !(PlacementActor->GetRootGridTile() == hittile))
 	{
 		PlacementActor->SetTileLocation(hittile);

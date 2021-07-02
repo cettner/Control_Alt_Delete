@@ -20,12 +20,5 @@ class RTS_PROJECT_API ARTSGridClaimCamera : public ARTSGridPlacementCamera
 		virtual void Tick(float Deltatime) override;
 
 	protected:
-		UPROPERTY(EditDefaultsOnly, Category = "Placement")
-		UMaterial * GridMaterial;
 
-		UPROPERTY(EditDefaultsOnly, Category = "Placement")
-		FName ColorParameterName = "Color";
-
-		UPROPERTY(EditDefaultsOnly, Category = "Placement")
-		FName OpacityParameterName = "Opacity";
 };
