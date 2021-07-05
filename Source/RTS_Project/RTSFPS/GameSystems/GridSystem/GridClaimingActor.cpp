@@ -23,12 +23,21 @@ void AGridClaimingActor::PostInitializeComponents()
 
 void AGridClaimingActor::OnConstruction(const FTransform & Transform)
 {
-	AClaimableSquareGameGrid * claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-
-	InitializeModifiers();
 	Super::OnConstruction(Transform);
+	AClaimableSquareGameGrid* claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	if (claimgrid && claimgrid->ISSimulatingEffects())
+	{
+		claimgrid->SimulateGrid();
+	}
+}
+
+void AGridClaimingActor::PostEditChangeProperty(FPropertyChangedEvent& PropChange)
+{
+	InitializeModifiers();
+	Super::PostEditChangeProperty(PropChange);
 	PostTileChange(GetRootGridTile());
 
+	AClaimableSquareGameGrid* claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (claimgrid && claimgrid->ISSimulatingEffects())
 	{
 		claimgrid->SimulateGrid();

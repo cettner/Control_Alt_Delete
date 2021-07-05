@@ -39,6 +39,7 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void OnConstruction(const FTransform & Transform) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropChange) override;
 	virtual void BeginDestroy() override;
 
 protected:
@@ -47,10 +48,13 @@ protected:
 	virtual void PreTileChange(FGridTile NewTile);
 	virtual void PostTileChange(FGridTile NewTile, FGridTile PrevTile = FGridTile());
 	
-
+public:
+	virtual bool SetTileLocation(FGridTile Moveto) override;
 protected:
 	virtual ASquareGameGrid * AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid = nullptr) override;
-	virtual bool SetTileLocation(FGridTile Moveto) override;
+
+	template <class T>
+	T* GetActiveModifierOfClass() const;
 
 public:
 	virtual TArray<UGridModifierType *> GetActiveModifiers(FGridTile TileData);
@@ -77,3 +81,18 @@ protected:
 	UPROPERTY()
 	TArray<UGridModifierType *> Modifiers;
 };
+
+template<class T>
+inline T* AGridClaimingActor::GetActiveModifierOfClass() const
+{
+	T* retval = nullptr;
+	for (int i = 0; i < Modifiers.Num(); i++)
+	{
+		if (Cast<T>(Modifiers[i]) != nullptr)
+		{
+			retval = Cast<T>(Modifiers[i]);
+			break;
+		}
+	}
+	return retval;
+}

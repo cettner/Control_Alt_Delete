@@ -9,19 +9,6 @@
 
 void ARTSGridClaimCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
 {
-	AGridClaimingActor * claimactor = Cast<AGridClaimingActor>(GridActor);
-	if (claimactor == nullptr) return;
-
-	UBoxComponent * defaultbox = Cast<UBoxComponent>(FindDefaultComponentByClass(InActorClass, UBoxComponent::StaticClass()));
-
-	if (defaultbox == nullptr) return;
-
-	FVector defaultextent = defaultbox->GetScaledBoxExtent();
-
-	claimactor->SetBoxExtent(defaultextent);
-
-
-
 }
 
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "RTSSelectionCamera.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttatchmentActor.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/PlacementActor.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 
 
@@ -19,8 +19,8 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
 	GENERATED_BODY()
 
 	public:
-		AGridAttatchmentActor * CreatePlacementActor(const TSubclassOf<AActor> InActorClass,FTransform SpawnTransform = FTransform()) const;
-		AGridAttatchmentActor * GetPlacementActor() const;
+		APlacementActor * CreatePlacementActor(const TSubclassOf<AActor> InActorClass,FTransform SpawnTransform = FTransform()) const;
+		APlacementActor * GetPlacementActor() const;
 
 		template < class T >
 		T* GetPlacementActor() const
@@ -32,7 +32,6 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
 		ASquareGameGrid * GetCurrentGrid() const;
 
 	protected:
-		UActorComponent* FindDefaultComponentByClass(const TSubclassOf<AActor> InActorClass, const TSubclassOf<UActorComponent> InComponentClass) const;
 		virtual void PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const;
 
     protected:
@@ -44,9 +43,9 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
     protected:
 		/*Class of Grid Actor Used, Spawned and then set to */
 		UPROPERTY(EditDefaultsOnly, Category = Grid)
-		TSubclassOf<AGridAttatchmentActor> GridActorClass;
+		TSubclassOf<APlacementActor> PlacementActorClass;
 
-		AGridAttatchmentActor * PlacementActor = nullptr;
+		APlacementActor * PlacementActor = nullptr;
 
 	protected:
 		/*TEMPSTUFF*/

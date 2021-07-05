@@ -26,8 +26,9 @@ public:
 	}
 
 public:
-	virtual void PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform());
-
+	virtual void PreInitializePlacementActor(const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform());
+	virtual bool IsPlaceable() const;
+	virtual void SetMeshColor(FLinearColor InColor);
 
 protected:
 	UActorComponent* FindDefaultComponentByClass(const TSubclassOf<AActor> InActorClass, const TSubclassOf<UActorComponent> InComponentClass) const;
@@ -44,5 +45,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Placement")
 	FName OpacityParameterName = "Opacity";
-	
+
+private:
+	FLinearColor ActiveMeshColor = FLinearColor::Black;
 };

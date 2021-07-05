@@ -14,6 +14,10 @@ class RTS_PROJECT_API UClaimModifierType : public UGridModifierType
 {
 	GENERATED_BODY()
 	
+	public:
+		int GetOverlapCount() const;
+		bool IsOverlapping() const;
+//		TArray<TWeakPtr<UGridModifierType>> GetOverlappingModifiers(TArray<FGridTile> &outtiles = TArray<FGridTile>()) const;
 
 	protected:
 		virtual void OnModifierApply(AClaimableSquareGameGrid * ParentGrid, FGridTile TileLocation, AGridClaimingActor * Invoker) override;
