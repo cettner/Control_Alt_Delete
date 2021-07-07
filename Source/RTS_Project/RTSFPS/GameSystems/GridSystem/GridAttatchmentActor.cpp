@@ -38,31 +38,6 @@ void AGridAttatchmentActor::PostInitializeComponents()
 	}
 }
 
-void AGridAttatchmentActor::OnConstruction(const FTransform & Transform)
-{
-	Super::OnConstruction(Transform);
-	bool attatchgridonentry = false;
-	if (GetWorld())
-	{
-		EWorldType::Type worldtype = GetWorld()->WorldType;
-		attatchgridonentry = (worldtype != EWorldType::EditorPreview);
-	}
-
-	if(attatchgridonentry)
-	{
-		SetParentGrid(AttachToGrid(GetActorLocation(),ParentGrid));
-		
-		if (!bSavedOffsets)
-		{
-			/*Save the Original Local Offsets for all Prmitive Components*/
-			SavePrimitiveOffsets();
-			bSavedOffsets = SavedLocalOffsets.Num() > 0;
-		}
-
-		UpdatePrimatives();
-	}
-}
-
 ASquareGameGrid * AGridAttatchmentActor::AttachToGrid(FVector StartLocation, ASquareGameGrid * InGrid)
 {
 	ASquareGameGrid * foundgrid = nullptr;
@@ -212,3 +187,31 @@ void AGridAttatchmentActor::SetRootGridTile(FGridTile InTile)
 {
 	RootGridLocation = InTile;
 }
+
+
+#ifdef WITH_EDITOR
+void AGridAttatchmentActor::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+	bool attatchgridonentry = false;
+	if (GetWorld())
+	{
+		EWorldType::Type worldtype = GetWorld()->WorldType;
+		attatchgridonentry = (worldtype != EWorldType::EditorPreview);
+	}
+
+	if (attatchgridonentry)
+	{
+		SetParentGrid(AttachToGrid(GetActorLocation(), ParentGrid));
+
+		if (!bSavedOffsets)
+		{
+			/*Save the Original Local Offsets for all Prmitive Components*/
+			SavePrimitiveOffsets();
+			bSavedOffsets = SavedLocalOffsets.Num() > 0;
+		}
+
+		UpdatePrimatives();
+	}
+}
+#endif

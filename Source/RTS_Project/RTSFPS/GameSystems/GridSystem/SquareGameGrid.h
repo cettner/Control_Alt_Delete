@@ -40,7 +40,7 @@ public:
 
 protected:
 	virtual void PostInitializeComponents() override;
-	virtual void OnConstruction(const FTransform & Transform) override;
+
 
 
 public:
@@ -115,5 +115,12 @@ protected:
 	TArray<FVector> LineVerticies = TArray<FVector>();
 
 	TArray<FGridTile> GridData = TArray<FGridTile>();
+
+
+
+#ifdef WITH_EDITOR
+protected:
+	virtual void OnConstruction(const FTransform & Transform) override;
+#endif
 
 };

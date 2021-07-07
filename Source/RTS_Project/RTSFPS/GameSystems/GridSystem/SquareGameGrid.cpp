@@ -30,23 +30,6 @@ void ASquareGameGrid::PostInitializeComponents()
 
 }
 
-void ASquareGameGrid::OnConstruction(const FTransform & Transform)
-{
-	Super::OnConstruction(Transform);
-	UWorld * World = GetWorld();
-
-	if (World)
-	{
-		EWorldType::Type type = World->WorldType;
-		if (type >= EWorldType::Editor)
-		{
-			BuildGridData();
-			DrawGrid();
-			DrawTiles();
-		}
-	}
-}
-
 void ASquareGameGrid::SetSelectedTile(TArray<FGridTile> SelectedTiles)
 {
 		for (int i = 0; i < SelectedTiles.Num(); i++)
@@ -60,7 +43,6 @@ void ASquareGameGrid::SetSelectedTile(FGridTile SelectedTile)
 	int32 gridid = GetUniqueGridID(SelectedTile);
 	if ((gridid != INVALID_TILE_ID))
 	{
-	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Selecting Row: %d Col: %d ID: %d"), SelectedTile.row, SelectedTile.column, gridid));
 		SelectionProceduralMesh->SetMeshSectionVisible(gridid, true);
 	}
 }
@@ -78,7 +60,6 @@ void ASquareGameGrid::HideSelectedTile(FGridTile SelectedTile)
 	int32 gridid = GetUniqueGridID(SelectedTile);
 	if ((gridid != INVALID_TILE_ID))
 	{
-	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Hiding Row: %d Col: %d ID: %d"), SelectedTile.row, SelectedTile.column, gridid));
 		SelectionProceduralMesh->SetMeshSectionVisible(gridid, false);
 	}
 }
@@ -311,3 +292,23 @@ bool ASquareGameGrid::BuildGridData()
 
 	return(buildsuccess);
 }
+
+
+#ifdef WITH_EDITOR
+void ASquareGameGrid::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+	UWorld * World = GetWorld();
+
+	if (World)
+	{
+		EWorldType::Type type = World->WorldType;
+		if (type >= EWorldType::Editor)
+		{
+			BuildGridData();
+			DrawGrid();
+			DrawTiles();
+		}
+	}
+}
+#endif

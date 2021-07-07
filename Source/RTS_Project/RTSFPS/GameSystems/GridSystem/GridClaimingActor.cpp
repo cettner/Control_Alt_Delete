@@ -21,29 +21,6 @@ void AGridClaimingActor::PostInitializeComponents()
 	PostTileChange(GetRootGridTile());
 }
 
-void AGridClaimingActor::OnConstruction(const FTransform & Transform)
-{
-	Super::OnConstruction(Transform);
-	AClaimableSquareGameGrid* claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-	if (claimgrid && claimgrid->ISSimulatingEffects())
-	{
-		claimgrid->SimulateGrid();
-	}
-}
-
-void AGridClaimingActor::PostEditChangeProperty(FPropertyChangedEvent& PropChange)
-{
-	InitializeModifiers();
-	Super::PostEditChangeProperty(PropChange);
-	PostTileChange(GetRootGridTile());
-
-	AClaimableSquareGameGrid* claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-	if (claimgrid && claimgrid->ISSimulatingEffects())
-	{
-		claimgrid->SimulateGrid();
-	}
-}
-
 void AGridClaimingActor::BeginDestroy()
 {
 	Super::BeginDestroy();
@@ -197,3 +174,29 @@ void AGridClaimingActor::SimulateModfiers()
 
 	Modifiers.Empty();
 }
+
+
+#if WITH_EDITOR
+void AGridClaimingActor::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+	AClaimableSquareGameGrid* claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	if (claimgrid && claimgrid->ISSimulatingEffects())
+	{
+		claimgrid->SimulateGrid();
+	}
+}
+
+void AGridClaimingActor::PostEditChangeProperty(FPropertyChangedEvent& PropChange)
+{
+	InitializeModifiers();
+	Super::PostEditChangeProperty(PropChange);
+	PostTileChange(GetRootGridTile());
+
+	AClaimableSquareGameGrid* claimgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	if (claimgrid && claimgrid->ISSimulatingEffects())
+	{
+		claimgrid->SimulateGrid();
+	}
+}
+#endif

@@ -5,12 +5,6 @@
 #include "GridModifierType.h"
 #include "GridClaimingActor.h"
 
-void AClaimableSquareGameGrid::OnConstruction(const FTransform & Transform)
-{
-	Super::OnConstruction(Transform);
-	SimulateGrid();
-}
-
 bool AClaimableSquareGameGrid::AddGridActor(AGridClaimingActor * InActor, FGridTile TileLocation, bool TickOnAdd)
 {
 	if (!InActor) return false;
@@ -129,31 +123,6 @@ bool AClaimableSquareGameGrid::RemoveModifier(UGridModifierType* Modifier, TArra
 	return(success);
 }
 
-void AClaimableSquareGameGrid::SimulateGrid()
-{
-	HideSelectedTile(GridData);
-
-	for (int i = 0; i < GridActors.Num(); i++)
-	{
-		GridActors[i]->SimulateModfiers();
-	}
-}
-
-bool AClaimableSquareGameGrid::ISSimulatingEffects() const
-{
-	UWorld * World = GetWorld();
-	if (World == nullptr) return false;
-
-	EWorldType::Type worldtype = World->WorldType;
-
-	if (worldtype == EWorldType::EditorPreview || worldtype == EWorldType::GamePreview || worldtype == EWorldType::Editor)
-	{
-		return(true);
-	}
-
-	return(false);
-}
-
 bool AClaimableSquareGameGrid::BuildGridData()
 {
 	bool success = Super::BuildGridData();
@@ -197,3 +166,36 @@ bool AClaimableSquareGameGrid::GetGridTilesFromOffset(FGridTile StartTile, TArra
 
 	return(success);
 }
+
+#if WITH_EDITOR
+void AClaimableSquareGameGrid::OnConstruction(const FTransform & Transform)
+{
+	Super::OnConstruction(Transform);
+	SimulateGrid();
+}
+
+void AClaimableSquareGameGrid::SimulateGrid()
+{
+	HideSelectedTile(GridData);
+
+	for (int i = 0; i < GridActors.Num(); i++)
+	{
+		GridActors[i]->SimulateModfiers();
+	}
+}
+
+bool AClaimableSquareGameGrid::ISSimulatingEffects() const
+{
+	UWorld * World = GetWorld();
+	if (World == nullptr) return false;
+
+	EWorldType::Type worldtype = World->WorldType;
+
+	if (worldtype == EWorldType::EditorPreview || worldtype == EWorldType::GamePreview || worldtype == EWorldType::Editor)
+	{
+		return(true);
+	}
+
+	return(false);
+}
+#endif

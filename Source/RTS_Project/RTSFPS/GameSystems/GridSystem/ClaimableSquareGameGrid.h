@@ -26,9 +26,6 @@ class RTS_PROJECT_API AClaimableSquareGameGrid : public ASquareGameGrid
 {
 	GENERATED_BODY()
 
-protected:
-	  virtual void OnConstruction(const FTransform & Transform) override;
-
 public:
 	  virtual bool AddGridActor(AGridClaimingActor * InActor, FGridTile TileLocation, bool TickOnAdd = true);
 	  virtual bool RemoveGridActor(AGridClaimingActor * InActor, bool TickOnRemoval = false);
@@ -42,19 +39,28 @@ public:
 	  virtual bool RemoveModifier(UGridModifierType * Modifier, FGridTile TileLocation,  AGridClaimingActor * Source);
 	  virtual bool RemoveModifier(UGridModifierType * Modifier, TArray<FGridTile> TileLocations,  AGridClaimingActor* Source);
 
-	  virtual void SimulateGrid();
-
-
 protected:
 	virtual bool BuildGridData() override;
 
 protected:
 	virtual bool GetGridTilesFromOffset(FGridTile StartTile, TArray<FGridTileOffset> Offsets,  TArray<FGridTile> & OutTiles, bool bisstartinclusive = false) const;
 
-public:
-	bool ISSimulatingEffects() const;
+
 
 protected:
 	TArray<AGridClaimingActor *> GridActors;
 	TArray<FGridModifierSet> GridModifiers;
+
+
+
+
+
+#if WITH_EDITOR
+public:
+	bool ISSimulatingEffects() const;
+	virtual void SimulateGrid();
+
+protected:
+	virtual void OnConstruction(const FTransform & Transform) override;
+#endif
 };

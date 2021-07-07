@@ -38,9 +38,13 @@ public:
 
 protected:
 	virtual void PostInitializeComponents() override;
+
+	virtual void BeginDestroy() override;
+
+#if WITH_EDITOR
 	virtual void OnConstruction(const FTransform & Transform) override;
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropChange) override;
-	virtual void BeginDestroy() override;
+#endif
 
 protected:
 	virtual void InitializeClaimSpace(ASquareGameGrid * InGrid);
@@ -80,6 +84,8 @@ protected:
 	/*IMPORTANT: Array must be flagged as UPROPERTY or UObjects will be grabbed by garbage collector regardless of reference possession*/
 	UPROPERTY()
 	TArray<UGridModifierType *> Modifiers;
+
+
 };
 
 template<class T>
