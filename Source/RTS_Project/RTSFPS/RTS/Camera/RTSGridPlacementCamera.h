@@ -30,6 +30,8 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
 
 		bool IsPlacingActor() const;
 		ASquareGameGrid * GetCurrentGrid() const;
+		
+		virtual void ToggleBuildGrid();
 
 	protected:
 		virtual void PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const;
@@ -38,7 +40,7 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
 
 		virtual void Tick(float DeltaTime) override;
 		virtual void PostInitializeComponents() override;
-
+		virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
     protected:
 		/*Class of Grid Actor Used, Spawned and then set to */
@@ -51,4 +53,7 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
 		/*TEMPSTUFF*/
 		UPROPERTY(EditDefaultsOnly, Category = Grid)
 		TSubclassOf<ARTSStructure> StructureClass;
+
+	private:
+		bool bIsBuildGridVisible = false;
 };

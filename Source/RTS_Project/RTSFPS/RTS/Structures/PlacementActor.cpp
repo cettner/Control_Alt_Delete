@@ -9,6 +9,7 @@
 APlacementActor::APlacementActor() : Super()
 {
 	MeshComp = CreateDefaultSubobject<UMeshComponent>(TEXT("DefaultMesh"));
+	bNetLoadOnClient = false;
 }
 
 void APlacementActor::SetMeshComp(UMeshComponent* InMeshComp)

@@ -64,6 +64,18 @@ void ASquareGameGrid::HideSelectedTile(FGridTile SelectedTile)
 	}
 }
 
+void ASquareGameGrid::HideGrid()
+{
+	LinesProceduralMesh->SetHiddenInGame(true, true);
+	SelectionProceduralMesh->SetHiddenInGame(true, true);
+}
+
+void ASquareGameGrid::ShowGrid()
+{
+	LinesProceduralMesh->SetHiddenInGame(false, true);
+	SelectionProceduralMesh->SetHiddenInGame(false, true);
+}
+
 float ASquareGameGrid::GetGridWidth() const
 {
 	return NumColumns * TileSize;

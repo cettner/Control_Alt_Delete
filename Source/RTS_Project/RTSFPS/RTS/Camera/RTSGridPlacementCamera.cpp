@@ -2,17 +2,25 @@
 
 
 #include "RTSGridPlacementCamera.h"
-#include "Engine/SCS_Node.h"
 #include "Kismet/GameplayStatics.h"
 
 
 void ARTSGridPlacementCamera::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	bOnlyRelevantToOwner = true;
 	if (!IsPlacingActor())
 	{
 		PlacementActor = CreatePlacementActor(StructureClass);
 	}
+
+}
+
+void ARTSGridPlacementCamera::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	InputComponent->BindAction("BKey", IE_Pressed, this, &ARTSGridPlacementCamera::ToggleBuildGrid);
+	//InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSSelectionCamera::SelectReleased);
 
 }
 
@@ -48,6 +56,22 @@ ASquareGameGrid * ARTSGridPlacementCamera::GetCurrentGrid() const
 	return(PlacementActor->GetParentGrid());
 
 }
+
+void ARTSGridPlacementCamera::ToggleBuildGrid()
+{
+	if (bIsBuildGridVisible)
+	{
+		PlacementActor->GetParentGrid()->HideGrid();
+		bIsBuildGridVisible = false;
+	}
+	else
+	{
+		PlacementActor->GetParentGrid()->ShowGrid();
+		bIsBuildGridVisible = true;
+	}
+
+}
+
 
 void ARTSGridPlacementCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
 {

@@ -51,6 +51,9 @@ public:
 	void HideSelectedTile(TArray<FGridTile> SelectedTiles);
 	void HideSelectedTile(FGridTile SelectedTile);
 
+	void HideGrid();
+	void ShowGrid();
+
 	float GetGridWidth() const;
 	float GetGridHieght() const;
 	float GetTileSize() const;
