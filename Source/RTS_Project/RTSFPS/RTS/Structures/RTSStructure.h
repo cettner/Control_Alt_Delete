@@ -13,7 +13,7 @@
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
-
+#include "Interfaces/BuildableInterface.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
@@ -60,7 +60,7 @@ struct FStructureSpawnData
 class UStructureSpawnQueueWidget;
 
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public AGridClaimingActor, public IRTSObjectInterface, public IMenuInteractableInterface
+class RTS_PROJECT_API ARTSStructure : public AGridClaimingActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface
 {
 	GENERATED_BODY()
 	
@@ -68,19 +68,34 @@ public:
 	// Sets default values for this actor's properties
 	ARTSStructure();
 
+	/*************RTSObject Interface Overrides******************/
 public:
-	/*RTSObject Interface Overrides*/
 	virtual void SetSelected() override;
 	virtual void SetDeselected() override;
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
 	virtual void SetTeamColors(FLinearColor TeamColor) override;
+	/************************************************************/
 
+	/***********IMenuInteractable Interface overrides************/
 public:
-    /*IMenuInteractable Interface overrides*/
 	virtual UUserWidget* GetMenu() override;
 	virtual bool CanOpenMenu(APawn * InvokingPawn) const override;
 
+	/************************************************************/
+
+	/**************IBuildable Interface Overrides****************/
+public:
+	virtual float GetPercentConstructed() const override;
+	virtual bool IsConstructed() const override;
+	virtual void BeginConstruction() override;
+	
+	UFUNCTION()
+	virtual void IncrementConstruction(float DeltaConstruction, AActor * Contributor = nullptr) override;
+
+protected:
+	virtual void OnConstructionComplete() override;
+	/************************************************************/
 protected:
 	UFUNCTION()
 	virtual void OnDeath();
@@ -126,16 +141,35 @@ protected:
 	void CancelSpawn();
 
 
+protected:
+	UPROPERTY(EditAnywhere, Category = Construction)
+	bool bSkipsConstruction = HasAnyFlags(RF_WasLoaded);
+
+	UPROPERTY(EditAnywhere, Category = Construction, meta = (EditCondition = "!bSkipsConstruction"))
+	bool bAutoBuilds = false;
+
+	UPROPERTY(EditAnywhere, Category = Construction, meta = (EditCondition = "bAutoBuilds && !bSkipsConstruction"))
+	float AutoBuildRate = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category = Construction, meta = (EditCondition = "bAutoBuilds && !bSkipsConstruction"))
+	float AutoBuildPerTick = 0.10f;
+
+	FTimerHandle BuildUpdateHandler;
+	FTimerDelegate BuildUpdateDelegate;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health)
+	UHealthComponent* Health;
+
+	UPROPERTY(EditDefaultsOnly, Category = Health)
+	float UnConstructedHealth = 100.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Health)
+	TArray<UAnimMontage*> DestroyAnimations = TArray<UAnimMontage*>();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Selection)
 	URTSSelectionComponent* Selection;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UHealthComponent* Health;
-
-	UPROPERTY(EditDefaultsOnly, Category = Selection)
-	TArray<UAnimMontage*> DestroyAnimations = TArray<UAnimMontage*>();
 
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* MeshComp;

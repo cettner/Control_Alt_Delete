@@ -83,6 +83,8 @@ public:
 
 	virtual float GetCurrentHealth() const;
 
+	virtual void SetCurrentHealth(float InHealth);
+
 	virtual float GetHealthPercentage() const;
 
 	virtual bool IsAlive() const;

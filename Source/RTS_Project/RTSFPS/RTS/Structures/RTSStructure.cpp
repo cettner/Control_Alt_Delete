@@ -36,54 +36,6 @@ ARTSStructure::ARTSStructure() : Super()
 	Menu = nullptr;
 }
 
-UUserWidget* ARTSStructure::GetMenu()
-{
-	UWorld* World = GetWorld();
-
-	if (World == nullptr) return nullptr;
-
-	if (MenuClass)
-	{
-		Menu = CreateWidget <UStructureSpawnQueueWidget>(World, MenuClass);
-		if (Menu)
-		{
-			Menu->Setup(this);
-		}
-	}
-
-	return(Menu);
-}
-
-bool ARTSStructure::CanOpenMenu(APawn* InvokingPawn) const
-{
-	ARTSMinion * minion = Cast<ARTSMinion>(InvokingPawn);
-	if (minion)
-	{
-		return(GetTeam() == minion->GetTeam());
-	}
-	return false;
-}
-
-void ARTSStructure::OnDeath()
-{
-	/*Unregister Minion to be percieved from AI perception*/
-	UWorld* World = GetWorld();
-	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
-	PerceptionSystem->UnregisterSource(*this);
-
-	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
-	GS->OnUnitDeath(this);
-
-	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-	if (pgrid != nullptr)
-	{
-		for (int i = 0; i < Modifiers.Num(); i++)
-		{
-			pgrid->RemoveModifier(Modifiers[i],GridClaimSpace,this);
-		}
-	}
-}
-
 void ARTSStructure::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -103,6 +55,102 @@ void ARTSStructure::PostInitializeComponents()
 		uint8_t destroyindex = abs(rand() % DestroyAnimations.Num());
 		DestroyAnimation = DestroyAnimations[destroyindex];
 		Health->SetDeathanimMontage(DestroyAnimation);
+	}
+
+	if (!bSkipsConstruction)
+	{
+		Health->SetCurrentHealth(UnConstructedHealth);
+		bISConstructed = false;
+		BeginConstruction();
+	}
+	else
+	{
+		OnConstructionComplete();
+	}
+
+}
+
+UUserWidget* ARTSStructure::GetMenu()
+{
+	UWorld* World = GetWorld();
+
+	if (World == nullptr || !IsConstructed()) return nullptr;
+
+	if (MenuClass)
+	{
+		Menu = CreateWidget <UStructureSpawnQueueWidget>(World, MenuClass);
+		if (Menu)
+		{
+			Menu->Setup(this);
+		}
+	}
+
+	return(Menu);
+}
+
+bool ARTSStructure::CanOpenMenu(APawn* InvokingPawn) const
+{
+	ARTSMinion * minion = Cast<ARTSMinion>(InvokingPawn);
+	if (minion && IsConstructed())
+	{
+		return(GetTeam() == minion->GetTeam());
+	}
+	return false;
+}
+
+float ARTSStructure::GetPercentConstructed() const
+{
+	return PercentConstructed;
+}
+
+bool ARTSStructure::IsConstructed() const
+{
+	return bISConstructed;
+}
+
+void ARTSStructure::BeginConstruction()
+{
+	if (bAutoBuilds)
+	{
+		BuildUpdateDelegate = FTimerDelegate::CreateUObject(this, &ARTSStructure::IncrementConstruction, (float)AutoBuildPerTick, (AActor*)this);
+		GetWorldTimerManager().SetTimer(BuildUpdateHandler, BuildUpdateDelegate, AutoBuildRate, true);
+	}
+}
+
+void ARTSStructure::IncrementConstruction(float DeltaConstruction, AActor * Contributor)
+{
+	PercentConstructed += DeltaConstruction;
+
+	if (PercentConstructed >= CONSTRUCTION_COMPLETE_THRESHOLD)
+	{
+		GetWorldTimerManager().ClearTimer(BuildUpdateHandler);
+		OnConstructionComplete();
+	}
+}
+
+void ARTSStructure::OnConstructionComplete()
+{
+	bISConstructed = true;
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Structure Complete!!")));
+}
+
+void ARTSStructure::OnDeath()
+{
+	/*Unregister Minion to be percieved from AI perception*/
+	UWorld* World = GetWorld();
+	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+	PerceptionSystem->UnregisterSource(*this);
+
+	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+	GS->OnUnitDeath(this);
+
+	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	if (pgrid != nullptr)
+	{
+		for (int i = 0; i < Modifiers.Num(); i++)
+		{
+			pgrid->RemoveModifier(Modifiers[i],GridClaimSpace,this);
+		}
 	}
 }
 
@@ -145,7 +193,7 @@ void ARTSStructure::SetTeamColors(FLinearColor TeamColor)
 
 bool ARTSStructure::IsDropPointFor(TSubclassOf<AResource> ResourceType) const
 {
-	return (true);
+	return (Health->IsAlive());
 }
 
 bool ARTSStructure::IsQueueFull() const

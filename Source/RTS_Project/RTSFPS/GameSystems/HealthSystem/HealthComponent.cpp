@@ -21,6 +21,11 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::SetMaxHealth(float healthval)
 {
 	MaxHealth = healthval;
+
+	if (CurrentHealth > MaxHealth)
+	{
+		SetCurrentHealth(MaxHealth);
+	}
 }
 
 void UHealthComponent::SetDeathanimMontage(UAnimMontage* InMontage)
@@ -36,6 +41,16 @@ float UHealthComponent::GetMaxHealth() const
 float UHealthComponent::GetCurrentHealth() const 
 {
 	return CurrentHealth;
+}
+
+void UHealthComponent::SetCurrentHealth(float InHealth)
+{
+	CurrentHealth = InHealth;
+
+	if (CurrentHealth <= 0.0f)
+	{
+		Die(0.0f, FDamageEvent(), nullptr, nullptr);
+	}
 }
 
 float UHealthComponent::GetHealthPercentage() const
