@@ -40,7 +40,7 @@ void AFPSServerController::SelectRespawnStructure(ARTSStructure* RespawnStructur
 	{
 		if (RespawnStructure->CanSpawn(ACommander::StaticClass()) && !isSpawningMinion)
 		{
-			isSpawningMinion = RespawnStructure->QueueMinion(ACommander::StaticClass(), this);
+			isSpawningMinion = RespawnStructure->QueueActor(ACommander::StaticClass(), this);
 		}
 	}
 }

@@ -68,7 +68,7 @@ void UStructureSpawnQueueWidget::OnCloseButtonClicked()
 bool UStructureSpawnQueueWidget::CanQueueFromMenu(FStructureSpawnData QueueData)
 {
 	/*Even though Some buildings can spawn Commanders, players shouldn't be able to request it, thats done on death from the game state*/
-	if (!QueueData.MinionClass.Get() || QueueData.MinionClass.Get()->IsChildOf(ACommander::StaticClass()))
+	if (!QueueData.SpawnClass.Get() || QueueData.SpawnClass.Get()->IsChildOf(ACommander::StaticClass()))
 	{
 		return(false);
 	}

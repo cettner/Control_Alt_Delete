@@ -20,7 +20,7 @@ void ARTSGridPlacementCamera::SetupPlayerInputComponent(UInputComponent * Player
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	InputComponent->BindAction("BKey", IE_Pressed, this, &ARTSGridPlacementCamera::ToggleBuildGrid);
-	//InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSSelectionCamera::SelectReleased);
+	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSGridPlacementCamera::PlaceActor);
 
 }
 
@@ -72,6 +72,39 @@ void ARTSGridPlacementCamera::ToggleBuildGrid()
 
 }
 
+void ARTSGridPlacementCamera::EnableBuildControls()
+{
+	if (InputComponent != nullptr)
+	{
+		InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSGridPlacementCamera::PlaceActor);
+		InputComponent->RemoveActionBinding(FName("LeftMouse"),IE_Released);
+	}
+}
+
+void ARTSGridPlacementCamera::DisableBuildControls()
+{
+}
+
+bool ARTSGridPlacementCamera::CanPlaceActor(TSubclassOf<AActor> RealActorClass)
+{
+	return true;
+}
+
+void ARTSGridPlacementCamera::PlaceActor()
+{
+	check(PlacementActor);
+
+	if (PlacementActor->IsPlaceable() && CanPlaceActor(PlacementActor->GetEmulatedClass()))
+	{
+		TSubclassOf<AActor> spawnclass = PlacementActor->GetEmulatedClass();
+		FTransform SpawnTransform = PlacementActor->GetTransform();
+		ARTSPlayerController * pc = GetController<ARTSPlayerController>();
+		
+		check(pc);
+		pc->ServerPurchaseStructure(spawnclass, SpawnTransform);
+
+	}
+}
 
 void ARTSGridPlacementCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
 {
@@ -102,7 +135,7 @@ void ARTSGridPlacementCamera::Tick(float DeltaTime)
 	{
 		PlacementActor->SetTileLocation(hittile);
 
-		if (PlacementActor->IsPlaceable())
+		if (PlacementActor->IsPlaceable() && CanPlaceActor(PlacementActor->GetEmulatedClass()))
 		{
 			PlacementActor->SetMeshColor(FLinearColor::Green);
 		}

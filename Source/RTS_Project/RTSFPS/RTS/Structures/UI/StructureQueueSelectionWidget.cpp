@@ -17,7 +17,7 @@ void UStructureQueueSelectionWidget::SynchronizeProperties()
 
 void UStructureQueueSelectionWidget::OnSelectionClicked()
 {
-	if (Structure == nullptr || BoundQueueData.MinionClass == nullptr)  return;
+	if (Structure == nullptr || BoundQueueData.SpawnClass == nullptr)  return;
 	
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
@@ -25,7 +25,7 @@ void UStructureQueueSelectionWidget::OnSelectionClicked()
 	ARTSPlayerController * PC = World->GetFirstPlayerController<ARTSPlayerController>();
 	if (PC == nullptr) return;
 
-	PC->ServerPurchaseMinion(Structure, BoundQueueData.MinionClass);
+	PC->ServerPurchaseMinion(Structure, BoundQueueData.SpawnClass);
 }
 
 bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()

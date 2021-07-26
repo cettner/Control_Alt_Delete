@@ -19,6 +19,7 @@ void APlacementActor::SetMeshComp(UMeshComponent* InMeshComp)
 
 void APlacementActor::PreInitializePlacementActor(const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform)
 {
+	EmulatedClass = InActorClass;
 
 	/*Check the default actor for the class, find the first component that contains a mesh if there's no mesh we have nothing to place in the world*/
     /*TODO: Find a way so it grabs the "Correct" mesh and not just the first one*/
@@ -80,6 +81,11 @@ void APlacementActor::SetMeshColor(FLinearColor InColor)
 		MeshComp->SetMaterial(i, dynamicMat);
 	}
 
+}
+
+TSubclassOf<AActor> APlacementActor::GetEmulatedClass() const
+{
+	return EmulatedClass;
 }
 
 UActorComponent * APlacementActor::FindDefaultComponentByClass(const TSubclassOf<AActor> InActorClass, const TSubclassOf<UActorComponent> InComponentClass) const

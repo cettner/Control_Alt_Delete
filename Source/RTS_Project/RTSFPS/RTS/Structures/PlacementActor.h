@@ -29,6 +29,7 @@ public:
 	virtual void PreInitializePlacementActor(const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform());
 	virtual bool IsPlaceable() const;
 	virtual void SetMeshColor(FLinearColor InColor);
+	virtual TSubclassOf<AActor> GetEmulatedClass() const;
 
 protected:
 	UActorComponent* FindDefaultComponentByClass(const TSubclassOf<AActor> InActorClass, const TSubclassOf<UActorComponent> InComponentClass) const;
@@ -36,6 +37,8 @@ protected:
 
 protected:
 	UMeshComponent * MeshComp = nullptr;
+
+	TSubclassOf<AActor> EmulatedClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Placement")
 	UMaterial * PlacementMaterial;

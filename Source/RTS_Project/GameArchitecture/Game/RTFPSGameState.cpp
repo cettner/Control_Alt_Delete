@@ -143,7 +143,24 @@ void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructur
 	}
 
 	UGameplayStatics::FinishSpawningActor(Minion, FTransform());
+	AllUnits[Minion->GetTeam()].Minions.Emplace(Minion);
+}
 
+void ARTFPSGameState::HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController* InvokedController)
+{
+	UWorld* world = GetWorld();
+	check(world);
+
+	ARTSStructure* structure = world->SpawnActorDeferred<ARTSStructure>(StructureClass, SpawnTransform);
+
+	check(structure);
+
+	const int teamid = InvokedController->GetTeamID();
+	structure->SetTeam(teamid);
+
+	
+	UGameplayStatics::FinishSpawningActor(structure,SpawnTransform);
+	AllUnits[teamid].Structures.Emplace(structure);
 }
 
 TArray<ARTSMinion*> ARTFPSGameState::GetAllMinionsOfTeam(int teamindex) const
@@ -191,22 +208,24 @@ bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> Resourc
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		int* currentval = TeamResources[TeamID].Find(ResourceClass);
+		const int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr)
 		{
-			*currentval += amount;
+			int newval = *currentval + amount;
+			TeamResources[TeamID].Emplace(ResourceClass, newval);
+
 			retval = true;
 		}
 	}
 	return retval;
 }
 
-bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount)
+bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount) const
 {
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		int* currentval = TeamResources[TeamID].Find(ResourceClass);
+		auto currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr && *currentval >= requestedamount)
 		{
 			retval = true;
@@ -220,10 +239,11 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TSubclassOf<AResource> Reso
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		int* currentval = TeamResources[TeamID].Find(ResourceClass);
+		const int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr && *currentval >= amount)
 		{
-			*currentval -= amount;
+			int newval = *currentval - amount;
+			TeamResources[TeamID].Emplace(ResourceClass, newval);
 			retval = true;
 		}
 	}
@@ -258,7 +278,7 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>
 	return ResourcesRemoved;
 }
 
-int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass)
+int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const
 {
 	int retval = -1;
 	if (IsTeamValid(TeamID) && TeamResources[TeamID].Find(ResourceClass))
@@ -267,6 +287,41 @@ int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> Res
 	}
 
 	return(retval);
+}
+
+bool ARTFPSGameState::PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayerController * Purchaser)
+{
+	bool retval = false;
+	if (IsUnitPurchaseable(PurchaseClass, Purchaser))
+	{
+		FReplicationResourceMap costs = GetUnitPrice(PurchaseClass);
+		retval = RemoveTeamResource(Purchaser->GetTeamID(), costs.GetMap());
+	}
+
+	return(retval);
+
+}
+
+FReplicationResourceMap ARTFPSGameState::RefundUnit(TSubclassOf<AActor> RefundClass, ARTSPlayerController * Purchaser)
+{
+	return FReplicationResourceMap();
+}
+
+bool ARTFPSGameState::IsUnitPurchaseable(TSubclassOf<AActor> PurchaseClass, AController* Purchaser) const
+{
+	const FReplicationResourceMap* findme = UnitCosts.Find(PurchaseClass);
+	bool retval = findme != nullptr;
+	return (retval);
+}
+
+FReplicationResourceMap ARTFPSGameState::GetUnitPrice(TSubclassOf<AActor> PurchaseClass) const
+{
+	return *UnitCosts.Find(PurchaseClass);
+}
+
+bool ARTFPSGameState::ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, IRTSObjectInterface* Donar)
+{
+	return AddTeamResource(Donar->GetTeam(),ResourceType,Amount);
 }
 
 bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)

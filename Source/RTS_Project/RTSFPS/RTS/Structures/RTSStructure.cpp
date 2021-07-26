@@ -201,17 +201,17 @@ bool ARTSStructure::IsQueueFull() const
 	return (CurrentQueueSize >= MaxQueueSize);
 }
 
-bool ARTSStructure::CanSpawn(TSubclassOf<ARTSMinion> minionclass) const
+bool ARTSStructure::CanSpawn(TSubclassOf<AActor> minionclass) const
 {
 	return (GetIndexByClass(minionclass) > -1);
 }
 
-int ARTSStructure::GetIndexByClass(TSubclassOf<ARTSMinion> minionclass) const
+int ARTSStructure::GetIndexByClass(TSubclassOf<AActor> minionclass) const
 {
 	int index = -1;
 	for (int i = 0; i < SpawnableUnits.Num(); i++)
 	{
-		TSubclassOf<ARTSMinion> availableclasses = SpawnableUnits[i].MinionClass;
+		TSubclassOf<AActor> availableclasses = SpawnableUnits[i].SpawnClass;
 
 		if (availableclasses.Get()->IsChildOf(minionclass.Get()))
 		{
@@ -270,9 +270,10 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 
 	if (GS == nullptr) return false;
 
-	return 	GS->AddTeamResource(GetTeam(), ResourceType, Amount);
+	return 	GS->ScoreResource(ResourceType, Amount,this);
 }
 
+/*
 bool ARTSStructure::PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass)
 {
 	UWorld * World = GetWorld();
@@ -284,13 +285,14 @@ bool ARTSStructure::PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass)
 	int spawnindex = GetIndexByClass(minionclass);
 	if (spawnindex >= 0)
 	{
-		return(GS->RemoveTeamResource(GetTeam(), SpawnableUnits[spawnindex].ResourceCost.GetMap()));
+		return(GS->PurchaseUnit(minionclass));
 	}
 
 	return false;
 }
+*/
 
-bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AController* InheritingController)
+bool ARTSStructure::QueueActor(TSubclassOf<AActor> minionclass, AController* InheritingController)
 {
 	int index = GetIndexByClass(minionclass);
 	if (index < 0 || IsQueueFull()) return false;
@@ -299,7 +301,7 @@ bool ARTSStructure::QueueMinion(TSubclassOf<ARTSMinion> minionclass, AController
 		
 	FStructureQueueData Queuedata;
 	Queuedata.RecieveingController = InheritingController;
-	Queuedata.SpawnClass = Spawndata.MinionClass;
+	Queuedata.SpawnClass = Spawndata.SpawnClass;
 	Queuedata.SpawnTime = SpawnableUnits[index].SpawnTime;
 	
 	if (StructureQueue.IsEmpty())

@@ -45,17 +45,17 @@ public:
 			Values[index] = Value;
 		}
 	}
-	int* Find(TSubclassOf<AResource> Key)
+	const int* Find(TSubclassOf<AResource> Key) const
 	{
 		int index = Keys.IndexOfByKey(Key);
-		int* retval = nullptr;
 
 		if (index != INDEX_NONE)
 		{
-			retval = &Values[index];
+			const int * retval = &Values[index];
+			return(retval);
 		}
 
-		return(retval);
+		return(nullptr);
 	}
 	int Num() const
 	{
@@ -101,17 +101,29 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void OnUnitDeath(IRTSObjectInterface* Unit);
 		virtual void HandlePlayerDeath(AFPSServerController * Controller);
 		virtual void HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
+		virtual void HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController * InvokedController = nullptr);
+
 		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
 		virtual TArray<ARTSStructure *> GetAllStructuresOfTeam(int teamindex) const;
 		
 		virtual TArray<TSubclassOf<AResource>> GetResourceTypes() const;
 		virtual TArray<FResourceUIData> GetMapResourceInfo() const;
+		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount) const;
+		virtual int GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const;
 
+		virtual bool PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayerController* Purchaser = nullptr);
+		virtual FReplicationResourceMap RefundUnit(TSubclassOf<AActor> RefundClass, ARTSPlayerController* Purchaser = nullptr);
+		virtual bool IsUnitPurchaseable(TSubclassOf<AActor> PurchaseClass, AController * Purchaser = nullptr) const;
+		virtual FReplicationResourceMap GetUnitPrice(TSubclassOf<AActor> PurchaseClass) const;
+		virtual bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, IRTSObjectInterface* Donar);
+
+	protected:
 		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
-		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount);
+
 		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
-		virtual int GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass);
+
+
 
     public:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
@@ -128,6 +140,9 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 
 		UPROPERTY(Replicated)
 		TArray<FReplicationResourceMap> TeamResources;
+
+		UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
+		TMap<TSubclassOf<AActor>, FReplicationResourceMap> UnitCosts;
 
 		UPROPERTY(EditAnywhere)
 		TArray<FResourceUIData> MapResourceInfo;

@@ -202,16 +202,38 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 	}
 }
 
-bool ARTSPlayerController::ServerPurchaseMinion_Validate(ARTSStructure * SpawningStructure, TSubclassOf<ARTSMinion> RequestedClass)
+bool ARTSPlayerController::ServerPurchaseMinion_Validate(ARTSStructure * SpawningStructure, TSubclassOf<AActor> RequestedClass)
 {
 	return(true);
 }
 
-void ARTSPlayerController::ServerPurchaseMinion_Implementation(ARTSStructure * SpawningStructure, TSubclassOf<ARTSMinion> RequestedClass)
+void ARTSPlayerController::ServerPurchaseMinion_Implementation(ARTSStructure * SpawningStructure, TSubclassOf<AActor> RequestedClass)
 {
-	if (SpawningStructure && SpawningStructure->PurchaseQueueItem(RequestedClass))
+	UWorld* world = GetWorld();
+	check(world);
+
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+
+	if (gs && gs->PurchaseUnit(RequestedClass))
 	{
-		SpawningStructure->QueueMinion(RequestedClass);
+		SpawningStructure->QueueActor(RequestedClass);
 	}
 }
 
+bool ARTSPlayerController::ServerPurchaseStructure_Validate(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation)
+{
+	return(true);
+}
+
+void ARTSPlayerController::ServerPurchaseStructure_Implementation(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation)
+{
+	UWorld* world = GetWorld();
+	check(world);
+
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+
+	if (gs && gs->PurchaseUnit(RequestedClass,this))
+	{
+		gs->HandleStructureSpawn(RequestedClass, BuildLocation, this);
+	}
+}

@@ -42,7 +42,10 @@ public:
 	void MoveMinions(ARTSPlayerController * PC, const TArray<ARTSMinion *>& Units, FHitResult Hit);
 
 	UFUNCTION(Server, reliable, WithValidation)
-	void ServerPurchaseMinion(ARTSStructure * SpawningStructure, TSubclassOf<ARTSMinion> RequestedClass);
+	void ServerPurchaseMinion(ARTSStructure * SpawningStructure, TSubclassOf<AActor> RequestedClass);
+
+	UFUNCTION(Server, reliable, WithValidation)
+	void ServerPurchaseStructure(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation);
 
 	virtual void BeginPlay() override;
 

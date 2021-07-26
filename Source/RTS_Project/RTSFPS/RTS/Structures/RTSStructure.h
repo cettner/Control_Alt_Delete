@@ -38,7 +38,7 @@ struct FStructureSpawnData
 	GENERATED_USTRUCT_BODY()
 	
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<ARTSMinion> MinionClass = nullptr;
+	TSubclassOf<AActor> SpawnClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	float SpawnTime = 0.0f;
@@ -112,15 +112,15 @@ protected:
 
 public:
 
-	bool QueueMinion(TSubclassOf<ARTSMinion> minionclass, AController* InheritingController = nullptr);
+	bool QueueActor(TSubclassOf<AActor> minionclass, AController* InheritingController = nullptr);
 
 	virtual bool IsDropPointFor(TSubclassOf<AResource> ResourceType) const;
 
 	bool IsQueueFull() const;
 
-	bool CanSpawn(TSubclassOf<ARTSMinion> minionclass) const;
+	bool CanSpawn(TSubclassOf<AActor> minionclass) const;
 
-	int GetIndexByClass(TSubclassOf<ARTSMinion> minionclass) const;
+	int GetIndexByClass(TSubclassOf<AActor> minionclass) const;
 
 	TArray< FStructureSpawnData> GetSpawnData() const;
 
@@ -132,7 +132,7 @@ public:
 
 	bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar = nullptr);
 
-	bool PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass);
+	//bool PurchaseQueueItem(TSubclassOf<AActor> minionclass);
 
 protected:
 
