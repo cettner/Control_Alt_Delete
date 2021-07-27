@@ -109,6 +109,8 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual TArray<TSubclassOf<AResource>> GetResourceTypes() const;
 		virtual TArray<FResourceUIData> GetMapResourceInfo() const;
 		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount) const;
+		virtual bool IsTeamResourceAvailable(int TeamID, FReplicationResourceMap requestedamount) const;
+
 		virtual int GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const;
 
 		virtual bool PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayerController* Purchaser = nullptr);

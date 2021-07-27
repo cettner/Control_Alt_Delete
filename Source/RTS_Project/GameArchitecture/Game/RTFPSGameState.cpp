@@ -234,6 +234,17 @@ bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource>
 	return retval;
 }
 
+bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, FReplicationResourceMap RequestedAmount) const
+{
+	bool retval = true;
+	for (TPair<TSubclassOf<AResource>, int> Elem : RequestedAmount.GetMap())
+	{
+		retval &= IsTeamResourceAvailable(TeamID, Elem.Key, Elem.Value);
+	}
+
+	return retval;
+}
+
 bool ARTFPSGameState::RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
 {
 	bool retval = false;

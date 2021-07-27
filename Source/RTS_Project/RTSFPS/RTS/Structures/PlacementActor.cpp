@@ -2,6 +2,7 @@
 
 #include "PlacementActor.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimModifierType.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimableSquareGameGrid.h"
 
 #include "Engine/SCS_Node.h"
 
@@ -133,6 +134,19 @@ UActorComponent * APlacementActor::FindDefaultComponentByClass(const TSubclassOf
 	} while (ActorClass != AActor::StaticClass());
 
 	return nullptr;
+}
+
+void APlacementActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
+	if (pgrid != nullptr)
+	{
+		for (int i = 0; i < Modifiers.Num(); i++)
+		{
+			pgrid->RemoveModifier(Modifiers[i], GridClaimSpace, this);
+		}
+	}
 }
 
 UMeshComponent * APlacementActor::GetMesh() const

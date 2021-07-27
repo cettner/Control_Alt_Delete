@@ -34,6 +34,8 @@ public:
 protected:
 	UActorComponent* FindDefaultComponentByClass(const TSubclassOf<AActor> InActorClass, const TSubclassOf<UActorComponent> InComponentClass) const;
 
+protected:
+	virtual void EndPlay (const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
 	UMeshComponent * MeshComp = nullptr;

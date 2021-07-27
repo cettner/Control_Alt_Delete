@@ -9,19 +9,12 @@ void ARTSGridPlacementCamera::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	bOnlyRelevantToOwner = true;
-	if (!IsPlacingActor())
-	{
-		PlacementActor = CreatePlacementActor(StructureClass);
-	}
-
 }
 
 void ARTSGridPlacementCamera::SetupPlayerInputComponent(UInputComponent * PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	InputComponent->BindAction("BKey", IE_Pressed, this, &ARTSGridPlacementCamera::ToggleBuildGrid);
-	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSGridPlacementCamera::PlaceActor);
-
+	InputComponent->BindAction("BKey", IE_Pressed, this, &ARTSGridPlacementCamera::TEMP_FUNC);
 }
 
 APlacementActor * ARTSGridPlacementCamera::CreatePlacementActor(const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
@@ -59,6 +52,8 @@ ASquareGameGrid * ARTSGridPlacementCamera::GetCurrentGrid() const
 
 void ARTSGridPlacementCamera::ToggleBuildGrid()
 {
+	if (PlacementActor == nullptr) return;
+
 	if (bIsBuildGridVisible)
 	{
 		PlacementActor->GetParentGrid()->HideGrid();
@@ -74,20 +69,56 @@ void ARTSGridPlacementCamera::ToggleBuildGrid()
 
 void ARTSGridPlacementCamera::EnableBuildControls()
 {
-	if (InputComponent != nullptr)
-	{
-		InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSGridPlacementCamera::PlaceActor);
-		InputComponent->RemoveActionBinding(FName("LeftMouse"),IE_Released);
-	}
+	check(InputComponent)
+
+	InputComponent->RemoveActionBinding("LeftMouse", IE_Pressed);
+	InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSGridPlacementCamera::PlaceActor);
+
+	InputComponent->RemoveActionBinding(FName("LeftMouse"),IE_Released);
 }
 
 void ARTSGridPlacementCamera::DisableBuildControls()
 {
+	InputComponent->RemoveActionBinding("LeftMouse", IE_Pressed);
+	Super::SetupPlayerInputComponent(InputComponent);
 }
 
-bool ARTSGridPlacementCamera::CanPlaceActor(TSubclassOf<AActor> RealActorClass)
+bool ARTSGridPlacementCamera::CanPlaceActor(TSubclassOf<AActor> RealActorClass) const
 {
-	return true;
+	bool retval = false;
+
+	UWorld * world = GetWorld();
+	check(world);
+
+	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+	check(gs)
+	
+	ADefaultPlayerController * pc = GetController<ADefaultPlayerController>();
+	check(pc)
+
+	retval = gs->IsTeamResourceAvailable(pc->GetTeamID(), gs->GetUnitPrice(RealActorClass));
+
+
+	return retval;
+}
+
+void ARTSGridPlacementCamera::TEMP_FUNC()
+{
+	if (!IsPlacingActor())
+	{
+		PlacementActor = CreatePlacementActor(StructureClass);
+		ToggleBuildGrid();
+		EnableBuildControls();
+	}
+	else
+	{
+		ToggleBuildGrid();
+		PlacementActor->Destroy();
+		PlacementActor = nullptr;
+		DisableBuildControls();
+	}
+
+
 }
 
 void ARTSGridPlacementCamera::PlaceActor()
@@ -103,6 +134,10 @@ void ARTSGridPlacementCamera::PlaceActor()
 		check(pc);
 		pc->ServerPurchaseStructure(spawnclass, SpawnTransform);
 
+		ToggleBuildGrid();
+		PlacementActor->Destroy();
+		PlacementActor = nullptr;
+		DisableBuildControls();
 	}
 }
 
