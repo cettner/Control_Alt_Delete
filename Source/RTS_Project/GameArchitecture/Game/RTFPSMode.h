@@ -11,6 +11,69 @@
 
 
 
+USTRUCT()
+struct FReplicationResourceMap
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	void Emplace(TSubclassOf<AResource> Key, int Value)
+	{
+		int index = Keys.IndexOfByKey(Key);
+
+		if (index == INDEX_NONE)
+		{
+			Keys.Emplace(Key);
+			Values.Emplace(Value);
+		}
+		else
+		{
+			Values[index] = Value;
+		}
+	}
+	const int* Find(TSubclassOf<AResource> Key) const
+	{
+		int index = Keys.IndexOfByKey(Key);
+
+		if (index != INDEX_NONE)
+		{
+			const int * retval = &Values[index];
+			return(retval);
+		}
+
+		return(nullptr);
+	}
+	int Num() const
+	{
+		return(Keys.Num());
+	}
+	TMap<TSubclassOf<AResource>, int> GetMap() const
+	{
+		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
+		if (IsValid())
+		{
+			for (int i = 0; i < Keys.Num(); i++)
+			{
+				Map.Emplace(Keys[i], Values[i]);
+			}
+		}
+
+
+		return(Map);
+	}
+	bool IsValid() const
+	{
+		return(Keys.Num() == Values.Num());
+	}
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+		TArray<int> Values;
+
+	UPROPERTY(EditDefaultsOnly)
+		TArray<TSubclassOf<AResource>> Keys;
+};
+
+
 UCLASS()
 class RTS_PROJECT_API ARTFPSMode : public ADefaultMode
 {
@@ -34,8 +97,10 @@ protected:
 	virtual void StartMatch() override;
 
 public:
-	int GetStartingResources(TSubclassOf<AResource> ResourceClass);
+	virtual int GetStartingResources(TSubclassOf<AResource> ResourceClass);
 	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
+	TMap<TSubclassOf<AActor>, FReplicationResourceMap> GetDefaultUnitCosts() const;
+
 
 protected:
 	int MaxRTSPlayersPerTeam = 1;
@@ -46,5 +111,8 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<AResource>> ResourceTypes;
+
+	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
+	TMap<TSubclassOf<AActor>, FReplicationResourceMap> DefaultUnitCosts;
 
 };

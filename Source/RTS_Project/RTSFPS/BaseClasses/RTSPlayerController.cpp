@@ -214,7 +214,7 @@ void ARTSPlayerController::ServerPurchaseMinion_Implementation(ARTSStructure * S
 
 	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
 
-	if (gs && gs->PurchaseUnit(RequestedClass))
+	if (gs && gs->PurchaseUnit(RequestedClass, this))
 	{
 		SpawningStructure->QueueActor(RequestedClass);
 	}

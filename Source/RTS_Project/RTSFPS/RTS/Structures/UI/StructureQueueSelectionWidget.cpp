@@ -33,9 +33,6 @@ bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
 	/*If the bound structures Queue is already full or the item isnt unlocked yet*/
 	if (Structure->IsQueueFull() || !BoundQueueData.bIsEnabled) return(false);
 
-	/*Small Optimization, if there's no costs in the map, its enabled*/
-	if (BoundQueueData.ResourceCost.Num() == 0) return(true);
-
 	bool CanTeamAfford = true;
 
 	UWorld* World = GetWorld();
@@ -46,10 +43,8 @@ bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
 	if (GS == nullptr || PC == nullptr) return(false);
 
 	/*For Each Resource Type needed determine if the team has enough*/
-	for (TPair<TSubclassOf<AResource>, int> Elem : BoundQueueData.ResourceCost.GetMap())
-	{
-		CanTeamAfford &= GS->IsTeamResourceAvailable(PC->GetTeamID(), Elem.Key, Elem.Value);
-	}
+	FReplicationResourceMap cost = GS->GetUnitPrice(BoundQueueData.SpawnClass);
+	CanTeamAfford &= GS->IsTeamResourceAvailable(PC->GetTeamID(), cost);
 
 	return CanTeamAfford;
 }

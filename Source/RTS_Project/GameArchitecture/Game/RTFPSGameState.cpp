@@ -203,6 +203,34 @@ TArray<FResourceUIData> ARTFPSGameState::GetMapResourceInfo() const
 	return MapResourceInfo;
 }
 
+void ARTFPSGameState::InitializeResources(ARTFPSMode * GameMode)
+{
+	check(GameMode);
+
+	/*Scan the Map and Add one of each type of Resource to the list of available resources*/
+	TArray<TSubclassOf<AResource>> MapResources = GetResourceTypes();
+	if (!InitializeMapResourceInfo(MapResources))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ARTFPSGameState::InitializeResources : Failed to Obtain Map Resources"));
+	}
+
+	for (int i = 0; i < GameMode->GetNumTeams(); i++)
+	{
+		FReplicationResourceMap Resources;
+
+		for (int k = 0; k < MapResources.Num(); k++)
+		{
+			int startingval = GameMode->GetStartingResources(MapResources[k]);
+			Resources.Emplace(MapResources[k], startingval);
+			GameMode->GetStartingResources(MapResources[k]);
+		}
+		TeamResources.Emplace(Resources);
+	}
+
+	UnitCosts = GameMode->GetDefaultUnitCosts();
+
+}
+
 bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
 {
 	bool retval = false;
@@ -340,30 +368,19 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	bool result = Super::TeamInitialize(GameMode);
 
 	ARTFPSMode * Game = Cast<ARTFPSMode>(GameMode);
+	check(Game);
 	
-	if (result)
+	/*Give Each Player their Starting Resources and Unit Pricing*/
+	InitializeResources(Game);
+	
+	/*For Each Team, Create a Set Of Units*/
+	for (int i = 0; i < GameMode->GetNumTeams(); i++)
 	{
-		TArray<TSubclassOf<AResource>> MapResources = GetResourceTypes();
-
-		InitializeMapResourceInfo(MapResources);
-
-		for (int i = 0; i < GameMode->GetNumTeams(); i++)
-		{
-			RTSTeamUnits newunitteam;
-			AllUnits.Emplace(newunitteam);
-
-			FReplicationResourceMap Resources;
-
-			for (int k = 0; k < MapResources.Num(); k++)
-			{
-				int startingval = Game->GetStartingResources(MapResources[k]);
-				Resources.Emplace(MapResources[k], startingval);
-				Game->GetStartingResources(MapResources[k]);
-			}
-			TeamResources.Emplace(Resources);
-		}
+		RTSTeamUnits newunitteam;
+		AllUnits.Emplace(newunitteam);
 	}
 
+	/*Find the Units in the gameWorld and add them to thier respective teams*/
 	RefreshAllUnits();
 
 	return result;

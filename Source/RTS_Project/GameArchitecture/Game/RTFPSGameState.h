@@ -26,68 +26,6 @@ struct RTSTeamUnits
 	TArray<ARTSStructure*> Structures = TArray<ARTSStructure*>();
 };
 
-USTRUCT()
-struct FReplicationResourceMap
-{
-	GENERATED_USTRUCT_BODY()
-public: 
-	void Emplace(TSubclassOf<AResource> Key, int Value)
-	{
-		int index = Keys.IndexOfByKey(Key);
-
-		if (index == INDEX_NONE)
-		{
-			Keys.Emplace(Key);
-			Values.Emplace(Value);
-		}
-		else
-		{
-			Values[index] = Value;
-		}
-	}
-	const int* Find(TSubclassOf<AResource> Key) const
-	{
-		int index = Keys.IndexOfByKey(Key);
-
-		if (index != INDEX_NONE)
-		{
-			const int * retval = &Values[index];
-			return(retval);
-		}
-
-		return(nullptr);
-	}
-	int Num() const
-	{
-		return(Keys.Num());
-	}
-	TMap<TSubclassOf<AResource>, int> GetMap() const
-	{
-		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
-		if (IsValid())
-		{
-			for (int i = 0; i < Keys.Num(); i++)
-			{
-				Map.Emplace(Keys[i], Values[i]);
-			}
-		}
-
-		
-		return(Map);
-	}
-	bool IsValid() const
-	{
-		return(Keys.Num() == Values.Num());
-	}
-
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	TArray<int> Values;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<AResource>> Keys;
-};
-
 
 UCLASS()
 class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
@@ -113,15 +51,16 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 
 		virtual int GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const;
 
-		virtual bool PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayerController* Purchaser = nullptr);
+		virtual bool PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayerController* Purchaser);
 		virtual FReplicationResourceMap RefundUnit(TSubclassOf<AActor> RefundClass, ARTSPlayerController* Purchaser = nullptr);
 		virtual bool IsUnitPurchaseable(TSubclassOf<AActor> PurchaseClass, AController * Purchaser = nullptr) const;
 		virtual FReplicationResourceMap GetUnitPrice(TSubclassOf<AActor> PurchaseClass) const;
 		virtual bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, IRTSObjectInterface* Donar);
 
 	protected:
+		
+		virtual void InitializeResources(ARTFPSMode * GM);
 		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
-
 		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
 
@@ -129,6 +68,8 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 
     public:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
+
+
 
     protected:
 		virtual bool InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> ResourceClasses);
@@ -143,7 +84,6 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		UPROPERTY(Replicated)
 		TArray<FReplicationResourceMap> TeamResources;
 
-		UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
 		TMap<TSubclassOf<AActor>, FReplicationResourceMap> UnitCosts;
 
 		UPROPERTY(EditAnywhere)

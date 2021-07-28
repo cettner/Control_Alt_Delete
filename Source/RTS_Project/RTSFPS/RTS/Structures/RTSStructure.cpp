@@ -273,25 +273,6 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 	return 	GS->ScoreResource(ResourceType, Amount,this);
 }
 
-/*
-bool ARTSStructure::PurchaseQueueItem(TSubclassOf<ARTSMinion> minionclass)
-{
-	UWorld * World = GetWorld();
-	if (World == nullptr) return false;
-
-	ARTFPSGameState* GS = World->GetGameState<ARTFPSGameState>();
-	if (GS == nullptr) return false;
-
-	int spawnindex = GetIndexByClass(minionclass);
-	if (spawnindex >= 0)
-	{
-		return(GS->PurchaseUnit(minionclass));
-	}
-
-	return false;
-}
-*/
-
 bool ARTSStructure::QueueActor(TSubclassOf<AActor> minionclass, AController* InheritingController)
 {
 	int index = GetIndexByClass(minionclass);

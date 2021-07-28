@@ -37,7 +37,7 @@ struct FStructureSpawnData
 {
 	GENERATED_USTRUCT_BODY()
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
 	TSubclassOf<AActor> SpawnClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -51,9 +51,6 @@ struct FStructureSpawnData
 
 	UPROPERTY(EditDefaultsOnly)
 	FString MinionName =  "";
-
-	UPROPERTY(EditDefaultsOnly)
-	FReplicationResourceMap ResourceCost;
 };
 
 /*Forward Declaration*/
