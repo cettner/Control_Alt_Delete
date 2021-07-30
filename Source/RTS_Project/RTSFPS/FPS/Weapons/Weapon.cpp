@@ -12,7 +12,7 @@
 
 
 // Sets default values
-AWeapon::AWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+AWeapon::AWeapon() : Super()
 {
  	CollisionComp =  CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
 	RootComponent = CollisionComp;

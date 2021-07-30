@@ -7,7 +7,7 @@
 #include "AIController.h"
 #define DEBUG_WEAPON
 
-AShooterWeapon::AShooterWeapon(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+AShooterWeapon::AShooterWeapon() : Super()
 {
 	CurrentAmmo = WeaponConfig.InitialClips * WeaponConfig.AmmoPerClip;
 

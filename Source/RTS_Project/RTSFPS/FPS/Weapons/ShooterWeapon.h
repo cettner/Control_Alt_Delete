@@ -74,7 +74,7 @@ public:
 	};
 
 public:
-	AShooterWeapon(const FObjectInitializer& ObjectInitializer);
+	AShooterWeapon();
 
 /////////////// Input
 	

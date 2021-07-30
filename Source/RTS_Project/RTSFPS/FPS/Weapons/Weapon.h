@@ -69,7 +69,7 @@ class RTS_PROJECT_API AWeapon : public AActor
 	
 public:	
 	// Sets default values for this actor's properties
-	AWeapon(const FObjectInitializer& ObjectInitializer);
+	AWeapon();
 
 public:	
 	Weapon_Grip_Type GetType();
