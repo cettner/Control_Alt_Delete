@@ -7,6 +7,7 @@
 #include "Ability.h"
 #include "AbilityComponent.generated.h"
 
+constexpr int INVALID_ABILITY_COST = -1;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTS_PROJECT_API UAbilityComponent : public UActorComponent
@@ -17,22 +18,67 @@ public:
 	// Sets default values for this component's properties
 	UAbilityComponent();
 
+
+
 public:
-	virtual TWeakObjectPtr<UAbility> GetCurrentAbility();
-	virtual bool IsAbilityUsingCrosshair();
-	virtual bool IsUsingAbility();
-	virtual float GetManaCost();
-	virtual bool GetIsCasting();
-	virtual bool IsAbilityValid();
+	/*Called by Comp Owner on inital attempt to use ability*/
+	virtual void StartAbility();
+	/*Called by the ability to notify the component that casting has started*/
+	virtual void OnCastNotify();
+	/*Called by Comp Owner on end of attempt to use abiltiy*/
+	virtual void ReleaseAbility();
+	/*Called by Ability or AnimNotify to trigger the effect*/
+	virtual void AbilityEffect();
+	/*Called by Ability or AnimNoitify when the entire effect Completes*/
+	virtual void EndAbility();
+
+	virtual void ChangeAbility();
+
+
+public:
+	virtual void OnReadyNotify();
+	virtual void OnLoopNotify();
+	//virtual void OnEffectNotify();
+
+public:
+	virtual TWeakObjectPtr<UAbility> GetCurrentAbility() const;
+	virtual bool IsAbilityUsingCrosshair() const;
+	virtual bool IsUsingAbility() const;
+
+	/*Creates The Abilty and adds it to the list of available ones this component recieves*/
+	virtual TWeakObjectPtr<UAbility> AddAbility(TSubclassOf<UAbility> AbilityClass);
+
+	/*True if the user is currenlty casting or in interim to using the ability, set by the ability after */
+	bool IsCasting() const;
+
+	/*True if the user is attempting to use the current ability regardless of mana or other considerations such as timing*/
+	bool WantstoCast() const;
+
+	virtual bool IsAbilityValid() const;
+	int GetAbilityCost() const;
+	bool ConsumeMana(int amount);
+
+public:
+	float PlayAbilityMontage(FAbilityAnim PlayAnim);
 
 protected:
 	virtual FVector GetControlRotation();
-	
+	virtual bool CanUseAbility() const;
+	void SetIsCasting(bool CastingState);
+	void SetWantsToCast(bool InState);
+	void SetCurrentAbility(UAbility * InAbility);
 
 protected:
 	virtual FTransform GetSurfaceTransform();
 
 
 protected:
+	UPROPERTY()
 	UAbility * CurrentAbility = nullptr;
+	
+	UPROPERTY()
+	TArray<UAbility *> AllAbilites;
+
+	bool bWantstoCast = false;
+	bool bIsCasting = false;
 };

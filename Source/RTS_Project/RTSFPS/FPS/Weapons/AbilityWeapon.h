@@ -5,37 +5,62 @@
 #include "CoreMinimal.h"
 #include "Weapon.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/AbilityComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 #include "AbilityWeapon.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API AAbilityWeapon : public AWeapon
+class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterface
 {
 	GENERATED_BODY()
 
 		AAbilityWeapon();
 
-public:
-	/*Weapon Overrides*/
-	/**********************Weapon Overrides***************************/
-	virtual void StartFire() override;
+	public:
+	/**********************AWeapon Overrides***************************/
+		virtual void StartFire() override;
 
-	virtual void StopFire() override;
+		virtual void StopFire() override;
 
-	virtual void StartReload(bool bFromReplication = false) override;
+		virtual void StartReload(bool bFromReplication = false) override;
 
-	virtual void StopReload() override;
+		virtual void StopReload() override;
 	/*****************************************************************/
 
-	UFUNCTION(reliable, server, WithValidation)
-	void ServerStartUseAbility();
+	/***********************IAbilityUserInterface*********************/
+		virtual bool CanCastAbility() override;
+		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay) override;
+	/*****************************************************************/
 
-	UFUNCTION(reliable, server, WithValidation)
-	void ServerStopUseAbility();
+
+	public:
+		virtual int GetCurrentMana() const;
+
+	protected:
+		virtual void InitAbilities();
+
+	protected:
+		virtual void PostInitializeComponents() override;
+
+	protected:
+
+		UFUNCTION(reliable, server, WithValidation)
+		void ServerStartUseAbility();
+
+		UFUNCTION(reliable, server, WithValidation)
+		void ServerStopUseAbility();
+
+		void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
+
+		UPROPERTY(EditDefaultsOnly)
+		TArray<TSubclassOf<UAbility>> AbilityClasses;
+
+		UPROPERTY(replicated)
+		int Mana = 0;
 
 };
