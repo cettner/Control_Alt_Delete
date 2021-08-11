@@ -25,4 +25,6 @@ class RTS_PROJECT_API IAbilityUserInterface
 	public:
 		virtual bool CanCastAbility();
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay);
+		virtual FVector GetAbilitySocketLocation(FName SocketName);
+		virtual FVector GetAbilityAimVector() const;
 };

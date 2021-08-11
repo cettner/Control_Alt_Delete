@@ -16,6 +16,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 {
 	GENERATED_BODY()
 
+	protected:
 		AAbilityWeapon();
 
 	public:
@@ -32,6 +33,8 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	/***********************IAbilityUserInterface*********************/
 		virtual bool CanCastAbility() override;
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay) override;
+		virtual FVector GetAbilitySocketLocation(FName SocketName) override;
+		virtual FVector GetAbilityAimVector() const override;
 	/*****************************************************************/
 
 
@@ -63,4 +66,5 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		UPROPERTY(replicated)
 		int Mana = 0;
 
+		float WeaponRange = 10000.0f;
 };

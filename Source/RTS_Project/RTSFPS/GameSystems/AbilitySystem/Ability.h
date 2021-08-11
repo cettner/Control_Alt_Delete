@@ -41,10 +41,11 @@ class RTS_PROJECT_API UAbility : public UObject
 	public:
 		/*Called from AnimNotify to Set Ability is Ready for release*/
 		virtual void NotifyOnReady();
-
+		virtual void NotifyOnLoop();
 
 	public:
-		virtual int GetManaCost() const;
+		int GetManaCost() const;
+		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel();
 		virtual bool ConsumeMana(int amount);
 
 	protected:
@@ -68,10 +69,19 @@ class RTS_PROJECT_API UAbility : public UObject
 		UPROPERTY(EditDefaultsOnly)
 		TArray<FAbilityAnim> ReleaseAbilityMontages;
 
+		UPROPERTY(EditDefaultsOnly)
+		FName EffectSocketName;
+
+		UPROPERTY(EditDefaultsOnly)
+		TEnumAsByte<ECollisionChannel>  AbilityEffectChannel;
+
 
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
 
 		bool bIsCastReady = false;
+
+	protected:
+		FTransform Transform = FTransform();
 
 };

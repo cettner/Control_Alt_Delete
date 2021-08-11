@@ -22,14 +22,16 @@ protected:
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
 	UPROPERTY(EditAnyWhere, Category = Ability)
-	bool LoopNotify = false;
+	bool bLoopNotify = false;
 
 	UPROPERTY(EditAnyWhere, Category = Ability)
-	bool ReadyNotify = false;
+	bool bReadyNotify = false;
 
 	UPROPERTY(EditAnyWhere, Category = Ability)
-	bool EffectNotify = false;
+	bool bEffectNotify = false;
 
+	UPROPERTY(EditAnyWhere, Category = Ability)
+	bool bEndNotify = false;
 
 protected:
 	UAbilityComponent * AbilityComp = nullptr;

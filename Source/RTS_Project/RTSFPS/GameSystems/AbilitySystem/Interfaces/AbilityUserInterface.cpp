@@ -14,3 +14,13 @@ float IAbilityUserInterface::PlayAbilityMontage(FAbilityAnim AnimToPlay)
 {
 	return 0.0f;
 }
+
+FVector IAbilityUserInterface::GetAbilitySocketLocation(FName SocketName)
+{
+	return FVector();
+}
+
+FVector IAbilityUserInterface::GetAbilityAimVector() const
+{
+	return FVector();
+}

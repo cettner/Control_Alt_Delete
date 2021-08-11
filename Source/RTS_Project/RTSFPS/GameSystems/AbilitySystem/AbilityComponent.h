@@ -18,8 +18,6 @@ public:
 	// Sets default values for this component's properties
 	UAbilityComponent();
 
-
-
 public:
 	/*Called by Comp Owner on inital attempt to use ability*/
 	virtual void StartAbility();
@@ -38,7 +36,8 @@ public:
 public:
 	virtual void OnReadyNotify();
 	virtual void OnLoopNotify();
-	//virtual void OnEffectNotify();
+	virtual void OnEffectNotify();
+	virtual void OnEndNotify();
 
 public:
 	virtual TWeakObjectPtr<UAbility> GetCurrentAbility() const;
@@ -60,6 +59,9 @@ public:
 
 public:
 	float PlayAbilityMontage(FAbilityAnim PlayAnim);
+	AActor * SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform = FTransform());
+	AActor * FinishSpawningActor(AActor * InitializedActor, const FTransform& SpawnTransform);
+
 
 protected:
 	virtual FVector GetControlRotation();
@@ -68,9 +70,9 @@ protected:
 	void SetWantsToCast(bool InState);
 	void SetCurrentAbility(UAbility * InAbility);
 
-protected:
+public:
 	virtual FTransform GetSurfaceTransform();
-
+	virtual FTransform GetCrosshairTransform(FName Socketname);
 
 protected:
 	UPROPERTY()

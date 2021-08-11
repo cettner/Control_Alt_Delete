@@ -4,6 +4,8 @@
 #include "AbilityComponent.h"
 #include "Interfaces/AbilityUserInterface.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values for this component's properties
 UAbilityComponent::UAbilityComponent()
 {
@@ -69,7 +71,10 @@ void UAbilityComponent::ReleaseAbility()
 
 void UAbilityComponent::AbilityEffect()
 {
-
+	if (IsAbilityValid())
+	{
+		CurrentAbility->OnEffect();
+	}
 }
 
 void UAbilityComponent::ChangeAbility()
@@ -79,15 +84,36 @@ void UAbilityComponent::ChangeAbility()
 
 void UAbilityComponent::OnReadyNotify()
 {
+	if (IsAbilityValid())
+	{
+		CurrentAbility->NotifyOnReady();
+	}
 }
 
 void UAbilityComponent::OnLoopNotify()
 {
+	if (IsAbilityValid())
+	{
+		CurrentAbility->NotifyOnLoop();
+	}
+}
+
+void UAbilityComponent::OnEffectNotify()
+{
+	AbilityEffect();
+}
+
+void UAbilityComponent::OnEndNotify()
+{
+	EndAbility();
 }
 
 void UAbilityComponent::EndAbility()
 {
-
+	if (IsAbilityValid())
+	{
+		CurrentAbility->OnAbilityEnd();
+	}
 }
 
 TWeakObjectPtr<UAbility> UAbilityComponent::GetCurrentAbility() const
@@ -161,6 +187,21 @@ float UAbilityComponent::PlayAbilityMontage(FAbilityAnim PlayAnim)
 	return -1.0f;
 }
 
+AActor* UAbilityComponent::SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform)
+{
+	UWorld* world = GetWorld();
+	const FTransform reference = SpawnTransform;
+	AActor * spawnedactor = world->SpawnActorDeferred<AActor>(ActorClass, SpawnTransform, GetOwner(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	
+	
+	return spawnedactor;
+}
+
+AActor* UAbilityComponent::FinishSpawningActor(AActor* InitializedActor, const FTransform &SpawnTransform)
+{
+	return 	UGameplayStatics::FinishSpawningActor(InitializedActor, SpawnTransform);
+}
+
 FVector UAbilityComponent::GetControlRotation()
 {
 	return FVector();
@@ -169,4 +210,41 @@ FVector UAbilityComponent::GetControlRotation()
 FTransform UAbilityComponent::GetSurfaceTransform()
 {
 	return FTransform();
+}
+
+FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
+{
+	IAbilityUserInterface* AbilityUser = GetOwner<IAbilityUserInterface>();
+	FVector spawnlocation = FVector();
+	FVector aimdirection = FVector();
+
+	if (AbilityUser != nullptr)
+	{
+		spawnlocation = AbilityUser->GetAbilitySocketLocation(Socketname);
+		aimdirection = AbilityUser->GetAbilityAimVector();
+	}
+	else
+	{
+		spawnlocation = GetOwner()->GetActorLocation();
+		aimdirection = GetOwner()->GetActorForwardVector();
+	}
+	
+	FVector starttrace = spawnlocation;
+	FVector endtrace = starttrace * 1000.0f;
+	FHitResult outhit;
+	const FCollisionShape traceshape = FCollisionShape::MakeCapsule(1.0, 1.0);
+	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
+	queryparams.AddIgnoredActor(GetOwner()); 
+
+	UWorld * world = GetWorld();
+
+	world->SweepSingleByChannel(outhit, starttrace, endtrace, FQuat(),CurrentAbility->GetAbilityCollisionChannel(), traceshape, queryparams);
+	FVector hitlocation = outhit.Location;
+	FVector hitdir = hitlocation.GetSafeNormal();
+	
+	hitdir.Rotation();
+
+	FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
+
+	return retval;
 }

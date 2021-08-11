@@ -17,7 +17,22 @@ void UAbilityAnimNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequence
 	
 	if (IsValid(AbilityComp))
 	{
-
+		if(bReadyNotify == true)
+		{
+			AbilityComp->OnReadyNotify();
+		}
+		if (bLoopNotify == true)
+		{
+			AbilityComp->OnLoopNotify();
+		}
+		if (bEffectNotify == true)
+		{
+			AbilityComp->OnEffectNotify();
+		}
+		if(bEndNotify == true)
+		{
+			AbilityComp->OnEndNotify();
+		}
 	}
 
 

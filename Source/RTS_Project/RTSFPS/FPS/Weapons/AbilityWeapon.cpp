@@ -2,6 +2,7 @@
 
 
 #include "AbilityWeapon.h"
+#include "../CombatCommander.h"
 #include "Net/UnrealNetwork.h"
 
 AAbilityWeapon::AAbilityWeapon() : Super()
@@ -40,6 +41,40 @@ float AAbilityWeapon::PlayAbilityMontage(FAbilityAnim AnimToPlay)
 	converter.AnimThirdPerson = AnimToPlay.AnimThirdPerson;
 
 	return PlayWeaponAnimation(converter);
+}
+
+FVector AAbilityWeapon::GetAbilitySocketLocation(FName SocketName)
+{
+	FVector retval = GetActorLocation();
+	if (GetWeaponMesh() && GetWeaponMesh()->DoesSocketExist(SocketName))
+	{
+		retval = GetWeaponMesh()->GetSocketLocation(SocketName);
+	}
+
+	return retval;
+}
+
+FVector AAbilityWeapon::GetAbilityAimVector() const
+{
+	FVector adjustedaim = GetAdjustedAim();
+	FTransform retval;
+	APlayerController* PC = MyPawn ? Cast<APlayerController>(MyPawn->Controller) : NULL;
+	
+	UWorld* world = GetWorld();
+	check(world);
+
+	FVector StartTrace = this->GetActorLocation();
+	if (PC)
+	{
+		// use player's camera
+		FRotator UnusedRot;
+		PC->GetPlayerViewPoint(StartTrace, UnusedRot);
+		
+		// Adjust trace so there is nothing blocking the ray between the camera and the pawn, and calculate distance from adjusted start
+		StartTrace = StartTrace + adjustedaim * ((GetInstigator()->GetActorLocation() - StartTrace) | adjustedaim);
+	}
+	
+	return(StartTrace);
 }
 
 int AAbilityWeapon::GetCurrentMana() const
