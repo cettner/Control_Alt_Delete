@@ -25,6 +25,8 @@ class RTS_PROJECT_API IAbilityUserInterface
 	public:
 		virtual bool CanCastAbility();
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay);
+		virtual void StopAbilityMontage(FAbilityAnim AnimToStop);
 		virtual FVector GetAbilitySocketLocation(FName SocketName);
 		virtual FVector GetAbilityAimVector() const;
+		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
 };

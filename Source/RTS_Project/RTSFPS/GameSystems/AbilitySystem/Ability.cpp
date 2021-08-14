@@ -110,7 +110,7 @@ void UAbility::OnAbilityStart()
 		float playtime = AbilityComp->PlayAbilityMontage(StartAbilityMontages[0]);
 		if (playtime > 0.0f)
 		{
-			AbilityComp->OnCastNotify();
+			AbilityComp->OnCastStart();
 		}
 	}
 }
@@ -128,12 +128,17 @@ void UAbility::OnAbilityReleased()
 	{
 		float playtime = AbilityComp->PlayAbilityMontage(ReleaseAbilityMontages[0]);
 	}
+	else
+	{
+		AbilityComp->StopCurrentAnimation();
+		AbilityComp->OnCastEnd();
+	}
 	bIsCastReady = false;
 }
 
 void UAbility::OnAbilityEnd()
 {
-
+	AbilityComp->OnCastEnd();
 }
 
 void UAbility::NotifyOnReady()

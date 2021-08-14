@@ -6,6 +6,8 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#define DEBUG_WEAPON
+
 // Sets default values for this component's properties
 UAbilityComponent::UAbilityComponent()
 {
@@ -55,18 +57,28 @@ void UAbilityComponent::StartAbility()
 	}
 }
 
-void UAbilityComponent::OnCastNotify()
+void UAbilityComponent::OnCastStart()
 {
 	SetIsCasting(true);
 }
 
 void UAbilityComponent::ReleaseAbility()
 {
-	if (IsAbilityValid() && WantstoCast())
+	SetWantsToCast(false);
+	if (IsAbilityValid())
 	{
 		CurrentAbility->OnAbilityReleased();
 	}
-	SetWantsToCast(false);
+
+}
+
+void UAbilityComponent::OnCastEnd()
+{
+	SetIsCasting(false);
+	if (WantstoCast())
+	{
+		StartAbility();
+	}
 }
 
 void UAbilityComponent::AbilityEffect()
@@ -178,13 +190,30 @@ bool UAbilityComponent::ConsumeMana(int amount)
 float UAbilityComponent::PlayAbilityMontage(FAbilityAnim PlayAnim)
 {
 	IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
+	float playtime = -1.0f;
+
 	if (user != nullptr)
 	{
-		user->PlayAbilityMontage(PlayAnim);
+		playtime = user->PlayAbilityMontage(PlayAnim);
+		CurrentMontage = PlayAnim;
 	}
 
 
-	return -1.0f;
+	return playtime;
+}
+
+bool UAbilityComponent::StopCurrentAnimation()
+{
+	bool retval = CurrentMontage.AnimFirstPerson != nullptr || CurrentMontage.AnimThirdPerson != nullptr;
+	
+	IAbilityUserInterface  * user = GetOwner<IAbilityUserInterface>();
+	retval &= (user != nullptr);
+	if (retval == true)
+	{
+		user->StopAbilityMontage(CurrentMontage);
+	}
+	CurrentMontage = FAbilityAnim();
+	return retval;
 }
 
 AActor* UAbilityComponent::SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform)
@@ -217,32 +246,35 @@ FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 	IAbilityUserInterface* AbilityUser = GetOwner<IAbilityUserInterface>();
 	FVector spawnlocation = FVector();
 	FVector aimdirection = FVector();
+	const FCollisionShape traceshape = FCollisionShape::MakeCapsule(1.0, 1.0);
+	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
 
 	if (AbilityUser != nullptr)
 	{
 		spawnlocation = AbilityUser->GetAbilitySocketLocation(Socketname);
 		aimdirection = AbilityUser->GetAbilityAimVector();
+		queryparams.AddIgnoredActors(AbilityUser->GetIgnoredTraceActors());
 	}
 	else
 	{
 		spawnlocation = GetOwner()->GetActorLocation();
 		aimdirection = GetOwner()->GetActorForwardVector();
+		queryparams.AddIgnoredActor(GetOwner());
 	}
 	
 	FVector starttrace = spawnlocation;
-	FVector endtrace = starttrace * 1000.0f;
-	FHitResult outhit;
-	const FCollisionShape traceshape = FCollisionShape::MakeCapsule(1.0, 1.0);
-	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
-	queryparams.AddIgnoredActor(GetOwner()); 
+	FVector endtrace = starttrace + (aimdirection * 1000.0f);
 
-	UWorld * world = GetWorld();
 
-	world->SweepSingleByChannel(outhit, starttrace, endtrace, FQuat(),CurrentAbility->GetAbilityCollisionChannel(), traceshape, queryparams);
-	FVector hitlocation = outhit.Location;
-	FVector hitdir = hitlocation.GetSafeNormal();
-	
-	hitdir.Rotation();
+	#ifdef DEBUG_WEAPON
+		UWorld * world = GetWorld();
+		FHitResult outhit;
+		const FName TraceTag("DebugShooterTag");
+		world->DebugDrawTraceTag = TraceTag;
+		queryparams.TraceTag = TraceTag;
+		world->SweepSingleByChannel(outhit, starttrace, endtrace, aimdirection.ToOrientationQuat(), CurrentAbility->GetAbilityCollisionChannel(), traceshape, queryparams);
+	#endif // Define to view weapon trace
+
 
 	FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
 

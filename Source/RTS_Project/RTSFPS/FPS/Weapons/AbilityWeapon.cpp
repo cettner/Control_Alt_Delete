@@ -40,7 +40,16 @@ float AAbilityWeapon::PlayAbilityMontage(FAbilityAnim AnimToPlay)
 	converter.AnimFirstPerson = AnimToPlay.AnimFirstPerson;
 	converter.AnimThirdPerson = AnimToPlay.AnimThirdPerson;
 
-	return PlayWeaponAnimation(converter);
+	return PlayWeaponAnimation(converter); 
+}
+
+void AAbilityWeapon::StopAbilityMontage(FAbilityAnim AnimToStop)
+{
+	FWeaponAnim converter;
+	converter.AnimFirstPerson = AnimToStop.AnimFirstPerson;
+	converter.AnimThirdPerson = AnimToStop.AnimThirdPerson;
+
+	StopWeaponAnimation(converter);
 }
 
 FVector AAbilityWeapon::GetAbilitySocketLocation(FName SocketName)
@@ -56,25 +65,17 @@ FVector AAbilityWeapon::GetAbilitySocketLocation(FName SocketName)
 
 FVector AAbilityWeapon::GetAbilityAimVector() const
 {
-	FVector adjustedaim = GetAdjustedAim();
-	FTransform retval;
-	APlayerController* PC = MyPawn ? Cast<APlayerController>(MyPawn->Controller) : NULL;
+	FVector retval = GetAdjustedAim();
 	
-	UWorld* world = GetWorld();
-	check(world);
+	return(retval);
+}
 
-	FVector StartTrace = this->GetActorLocation();
-	if (PC)
-	{
-		// use player's camera
-		FRotator UnusedRot;
-		PC->GetPlayerViewPoint(StartTrace, UnusedRot);
-		
-		// Adjust trace so there is nothing blocking the ray between the camera and the pawn, and calculate distance from adjusted start
-		StartTrace = StartTrace + adjustedaim * ((GetInstigator()->GetActorLocation() - StartTrace) | adjustedaim);
-	}
-	
-	return(StartTrace);
+TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility)
+{
+	TArray<AActor*> outvec = TArray<AActor*>();
+	outvec.Emplace(MyPawn);
+	outvec.Emplace(this);
+	return outvec;
 }
 
 int AAbilityWeapon::GetCurrentMana() const

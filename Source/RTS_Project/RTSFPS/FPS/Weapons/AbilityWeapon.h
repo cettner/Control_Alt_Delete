@@ -33,8 +33,10 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	/***********************IAbilityUserInterface*********************/
 		virtual bool CanCastAbility() override;
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay) override;
+		virtual void StopAbilityMontage(FAbilityAnim AnimToStop) override;
 		virtual FVector GetAbilitySocketLocation(FName SocketName) override;
 		virtual FVector GetAbilityAimVector() const override;
+		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr) override;
 	/*****************************************************************/
 
 

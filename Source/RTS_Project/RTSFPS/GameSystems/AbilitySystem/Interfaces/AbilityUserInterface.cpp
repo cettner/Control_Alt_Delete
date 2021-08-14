@@ -15,6 +15,11 @@ float IAbilityUserInterface::PlayAbilityMontage(FAbilityAnim AnimToPlay)
 	return 0.0f;
 }
 
+void IAbilityUserInterface::StopAbilityMontage(FAbilityAnim AnimToStop)
+{
+
+}
+
 FVector IAbilityUserInterface::GetAbilitySocketLocation(FName SocketName)
 {
 	return FVector();
@@ -23,4 +28,9 @@ FVector IAbilityUserInterface::GetAbilitySocketLocation(FName SocketName)
 FVector IAbilityUserInterface::GetAbilityAimVector() const
 {
 	return FVector();
+}
+
+TArray<AActor*> IAbilityUserInterface::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility)
+{
+	return TArray<AActor*>();
 }

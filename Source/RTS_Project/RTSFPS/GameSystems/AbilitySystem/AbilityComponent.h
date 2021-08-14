@@ -21,13 +21,17 @@ public:
 public:
 	/*Called by Comp Owner on inital attempt to use ability*/
 	virtual void StartAbility();
-	/*Called by the ability to notify the component that casting has started*/
-	virtual void OnCastNotify();
-	/*Called by Comp Owner on end of attempt to use abiltiy*/
+	/*Called by Comp Owner on end of attempt to use ability*/
 	virtual void ReleaseAbility();
-	/*Called by Ability or AnimNotify to trigger the effect*/
+
+	/*Called by the ability to notify the component that casting has started*/
+	virtual void OnCastStart();
+	/*Called by the ability to notify the component that casting has ended*/
+	virtual void OnCastEnd();
+
+	/*Start the Abilities Effect*/
 	virtual void AbilityEffect();
-	/*Called by Ability or AnimNoitify when the entire effect Completes*/
+	/*Notify the ability that it has ended*/
 	virtual void EndAbility();
 
 	virtual void ChangeAbility();
@@ -59,6 +63,7 @@ public:
 
 public:
 	float PlayAbilityMontage(FAbilityAnim PlayAnim);
+	virtual bool StopCurrentAnimation();
 	AActor * SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform = FTransform());
 	AActor * FinishSpawningActor(AActor * InitializedActor, const FTransform& SpawnTransform);
 
@@ -80,6 +85,8 @@ protected:
 	
 	UPROPERTY()
 	TArray<UAbility *> AllAbilites;
+
+	FAbilityAnim CurrentMontage;
 
 	bool bWantstoCast = false;
 	bool bIsCasting = false;
