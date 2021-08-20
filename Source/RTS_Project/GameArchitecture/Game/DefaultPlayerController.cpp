@@ -17,7 +17,7 @@ bool ADefaultPlayerController::ServerRegisterPlayerInfo_Validate(FPlayerSettings
 
 void ADefaultPlayerController::ServerRegisterPlayerInfo_Implementation(FPlayerSettings settings)
 {
-	RegisterPlayerInfo(settings);
+		RegisterPlayerInfo(settings);
 }
 
 void ADefaultPlayerController::ClientRequestRegistration_Implementation()
@@ -62,14 +62,12 @@ void ADefaultPlayerController::RequestRegistration()
 	if (GetLocalRole() == ROLE_AutonomousProxy)
 	{
 		FPlayerSettings mysettings;
-		if (GetPlayerInfo(mysettings))
-		{
-			ServerRegisterPlayerInfo(mysettings);
-		}
-		else
+		if (!GetPlayerInfo(mysettings)) /*NOT WORKING IN EDITOR BECAUSE DATA IS INVALID*/
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[DefaultPlayerController::RequestRegistration] Failed to get player settings"));
 		}
+
+		ServerRegisterPlayerInfo(mysettings);
 	}
 }
 

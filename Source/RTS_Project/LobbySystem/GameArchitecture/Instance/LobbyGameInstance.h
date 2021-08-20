@@ -31,8 +31,7 @@ struct FPlayerSettings
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditDefaultsOnly)
-	int PlayerId = -1;
+	TSharedPtr<const FUniqueNetId> PlayerId = TSharedPtr<const FUniqueNetId>();
 
 	UPROPERTY(EditDefaultsOnly)
 	int TeamId = -1;
@@ -161,9 +160,11 @@ public:
 	FPlayerSettings GetPlayerSettings();
 
 	bool SetServerSettings(FServerSettings settings);
-	FServerSettings GetServerSettings();
+	FServerSettings GetServerSettings() const;
 
 	TArray<FName> GetAvailableSubsystems() const;
+
+	static FUniqueNetIdRepl GetUniquePlayerNetId(APlayerController* InPlayer);
 
 	void StartOfflineGame();
 

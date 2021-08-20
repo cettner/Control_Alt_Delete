@@ -11,10 +11,12 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 	Super::ClientInitialize(Controller);
 
 	ADefaultPlayerController* PC = Cast<ADefaultPlayerController>(Controller);
+/*
 	if (PC)
 	{
 		PC->ClientRequestRegistration();
 	}
+	*/
 }
 
 ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer)

@@ -72,8 +72,15 @@ protected:
 protected:
 	virtual bool LoadServerData();
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings);
+	virtual FPlayerSettings FetchSettingsFromLobbyData(APlayerController* NewPlayer);
 	virtual bool CheckPlayerRegistry();
 	virtual FServerSettings GetDefaultSettings() const;
+
+#if WITH_EDITOR
+protected:
+	FPlayerSettings EditorFetchPlayerSettings(APlayerController* Controller);
+	int EditorPlayerCount = 0;
+#endif
 
 protected:
 /************************************/
@@ -83,7 +90,7 @@ protected:
 	TArray<FPlayerSettings> LobbyPlayers;
 /************************************/
 	
-	TMap<int, bool> PlayerRegistry;
+	TMap<TSharedPtr<const FUniqueNetId>, bool> PlayerRegistry;
 	TArray<TeamSpawnSelector> TeamStartingPoints;
 
 

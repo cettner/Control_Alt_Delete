@@ -47,7 +47,7 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 
 
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].isSlotActive = true;
-	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = NewPlayer->PlayerState->GetPlayerId();
+	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = ULobbyGameInstance::GetUniquePlayerNetId(NewPlayer);
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].PlayerName = NewPlayer->PlayerState->GetPlayerName();
 
 	NewPlayer->PlayerSlotInfo = LobbyData[smallestteamindex].TeamData[emptyslotindex];
@@ -77,7 +77,7 @@ bool ALobbyGameState::RemovePlayerFromLobby(ALobbyPlayerController* LeavingPlaye
 		/*Team and SlotID Remain the Same For Future PLayers*/
 		LobbyData[settings.TeamId].TeamData[settings.SlotId].PlayerName = "";
 		LobbyData[settings.TeamId].TeamData[settings.SlotId].isSlotActive = false;
-		LobbyData[settings.TeamId].TeamData[settings.SlotId].OwningPlayerID = -1;
+		LobbyData[settings.TeamId].TeamData[settings.SlotId].OwningPlayerID = FUniqueNetIdRepl();
 		retval = true;
 
 
@@ -183,7 +183,7 @@ bool ALobbyGameState::StorePlayerData(ULobbyGameInstance * GI)
 	if (FindPlayerinLobby(Player, playerslot) == false) return(false);
 	
 	FPlayerSettings settings;
-	settings.PlayerId = playerslot.OwningPlayerID;
+	settings.PlayerId = playerslot.OwningPlayerID.GetUniqueNetId();
 	settings.TeamId = playerslot.TeamId;
 	settings.bIsValid = true;
 
@@ -204,7 +204,7 @@ bool ALobbyGameState::StoreServerData(ULobbyGameInstance * GI)
 			if (slotdata.isSlotActive)
 			{
 				FPlayerSettings activeplayer;
-				activeplayer.PlayerId = slotdata.OwningPlayerID;
+				activeplayer.PlayerId = slotdata.OwningPlayerID.GetUniqueNetId();
 				activeplayer.TeamId = slotdata.TeamId;
 				activeplayer.bIsValid = true;
 				ServerSettings.settings.Emplace(activeplayer);
@@ -244,7 +244,7 @@ void ALobbyGameState::OnRep_LobbyInfo()
 bool ALobbyGameState::FindPlayerinLobby(ALobbyPlayerController * player, FSlotPlayerData& OutSlot)
 { 
 	if (player == nullptr || player->PlayerState == nullptr) return false;
-	int idtosearch = player->PlayerState->GetPlayerId();
+	FUniqueNetIdRepl idtosearch = ULobbyGameInstance::GetUniquePlayerNetId(player);
 
 	for (int i = 0; i < LobbyData.Num(); i++)
 	{
@@ -293,12 +293,12 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	/*Deativate the owned slot*/
 	LobbyData[currentteam].TeamData[currentslot].isSlotActive = false;
 	LobbyData[currentteam].TeamData[currentslot].PlayerName = "";
-	LobbyData[currentteam].TeamData[currentslot].OwningPlayerID = 0xFFFFU;
+	LobbyData[currentteam].TeamData[currentslot].OwningPlayerID = FUniqueNetIdRepl();
 
-	/*Put the player in its new spot*/
+	/*Put the player in its new slot*/
 	LobbyData[requestedteamid].TeamData[requestedslotid].isSlotActive = true;
 	LobbyData[requestedteamid].TeamData[requestedslotid].PlayerName = RequestingPlayer->PlayerState->GetPlayerName();
-	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = RequestingPlayer->PlayerState->GetPlayerId();
+	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = ULobbyGameInstance::GetUniquePlayerNetId(RequestingPlayer);
 	
 	/*Store its new location*/
 	RequestingPlayer->PlayerSlotInfo = LobbyData[requestedteamid].TeamData[requestedslotid];

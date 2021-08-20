@@ -77,7 +77,8 @@ bool ARTFPSMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringP
 		
 		if (settings.CustomSettings.Contains(RTS_Project::IsRTSPlayerkey))
 		{
-			PS->SetIsRTSPlayer((bool)(*settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey)));
+			const bool rtssetting = (bool)(*settings.CustomSettings.Find(RTS_Project::IsRTSPlayerkey));
+			PS->SetIsRTSPlayer(rtssetting);
 		}
 		else
 		{

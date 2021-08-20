@@ -27,7 +27,7 @@ struct FSlotPlayerData
 	bool isSlotActive = false;
 
 	UPROPERTY()
-	uint32 OwningPlayerID = 0xFFFFU;
+	FUniqueNetIdRepl OwningPlayerID = FUniqueNetIdRepl();
 };
 
 USTRUCT()

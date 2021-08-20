@@ -122,7 +122,7 @@ bool ULobbyGameInstance::SetServerSettings(FServerSettings settings)
 	return true;
 }
 
-FServerSettings ULobbyGameInstance::GetServerSettings()
+FServerSettings ULobbyGameInstance::GetServerSettings() const
 {
 	return(ServerSettings);
 }
@@ -130,6 +130,34 @@ FServerSettings ULobbyGameInstance::GetServerSettings()
 TArray<FName> ULobbyGameInstance::GetAvailableSubsystems() const
 {
 	return IntegratedSubSystems;
+}
+
+FUniqueNetIdRepl ULobbyGameInstance::GetUniquePlayerNetId(APlayerController* PlayerController)
+{
+	FUniqueNetIdRepl UniqueNetIdRepl;
+
+	if (PlayerController->IsLocalPlayerController())
+	{
+		ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+		if (IsValid(LocalPlayer))
+		{
+			UniqueNetIdRepl = LocalPlayer->GetPreferredUniqueNetId();
+		}
+		else
+		{
+			UNetConnection* RemoteNetConnection = Cast<UNetConnection>(PlayerController->Player);
+			check(IsValid(RemoteNetConnection));
+			UniqueNetIdRepl = RemoteNetConnection->PlayerId;
+		}
+	}
+	else
+	{
+		UNetConnection* RemoteNetConnection = Cast<UNetConnection>(PlayerController->Player);
+		check(IsValid(RemoteNetConnection));
+		UniqueNetIdRepl = RemoteNetConnection->PlayerId;
+	}
+
+	return UniqueNetIdRepl;
 }
 
 void ULobbyGameInstance::StartOfflineGame()

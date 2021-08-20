@@ -12,7 +12,7 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	PlayerStateClass = ADefaultPlayerState::StaticClass();
 	
 	TeamStartingPoints = TArray<TeamSpawnSelector>();
-	PlayerRegistry = TMap<int, bool>();
+	PlayerRegistry = TMap<TSharedPtr<const FUniqueNetId>, bool>();
 	LobbyPlayers = TArray<FPlayerSettings>();
 	NumTeams = -1;
 	TeamSize = -1;
@@ -89,27 +89,33 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
 
-	ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+	ADefaultPlayerController* firstcontroller = World->GetFirstPlayerController<ADefaultPlayerController>();
+	ADefaultPlayerController* newcontroller = Cast<ADefaultPlayerController>(NewPlayer);
 
-	/*IF we're on a listen server, register the servers playercontroller and */
-	if (GetNetMode() == NM_ListenServer && NewPlayer == World->GetFirstPlayerController())
+	const ENetMode netmode = GetNetMode();
+	const bool bnetmodevalid = (netmode == NM_ListenServer || netmode == NM_Standalone);
+	
+	const EWorldType::Type worldtype = World->WorldType;
+	FPlayerSettings settings = FetchSettingsFromLobbyData(NewPlayer);
+
+	if (!settings.bIsValid)
 	{
-		FPlayerSettings settings;
-		if (PC && PC->GetPlayerInfo(settings))
+		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Failed to Find Player Data"));
+		return;
+	}
+	else
+	{
+		FinishPlayerRegistration(newcontroller, settings);
+		if (!RegisterPlayerData(newcontroller, settings))
 		{
-			if (RegisterPlayerData(PC, settings))
-			{
-				PC->ClientNotifyTeamChange(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Failed to Register Player Data"));
-			}
+			UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Failed to Register Player Data"));
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Invalid Player Data"));
-		}
+	}
+
+	/*If we're on a listen server, register the servers playercontroller and play local effects*/
+	if ((bnetmodevalid == true) && (NewPlayer == World->GetFirstPlayerController()))
+	{
+		firstcontroller->ClientNotifyTeamChange(firstcontroller->GetPlayerState<ADefaultPlayerState>()->TeamID);
 	}
 }
 
@@ -153,19 +159,31 @@ bool ADefaultMode::LoadServerData()
 
 bool ADefaultMode::RegisterPlayerData(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings)
 {
+	bool retval = false;
+
+	#if WITH_EDITOR
+	/*In Editor*/
+	for (TPair<TSharedPtr<const FUniqueNetId>, bool>& Elem : PlayerRegistry)
+	{
+		if (Elem.Value == false)
+		{
+			PlayerRegistry[Elem.Key] = true;
+			retval = true;
+			break;
+		}
+	}
+
+	return retval;
+	#else
 	if (settings.bIsValid == false || RegisteringPlayer == nullptr) return false;
 
 	if (PlayerRegistry.Contains(settings.PlayerId))
 	{
-		PlayerRegistry[settings.PlayerId] = FinishPlayerRegistration(RegisteringPlayer, settings);
+		PlayerRegistry[settings.PlayerId] = true;
 		return(PlayerRegistry[settings.PlayerId]);
 	}
-	else
-	{
-		/*TODO:: Implement adding of player midgame*/
-	}
-
 	return false;
+	#endif
 }
 
 bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings)
@@ -185,16 +203,37 @@ bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* Registerin
 	if (playerindex <= INDEX_NONE || PS == nullptr) return(false);
 
 	PS->TeamID = LobbyPlayers[playerindex].TeamId;
-	PS->SetPlayerId(LobbyPlayers[playerindex].PlayerId);
 
 	return true;
+}
+
+FPlayerSettings ADefaultMode::FetchSettingsFromLobbyData(APlayerController* NewPlayer)
+{
+#if WITH_EDITOR
+	return(EditorFetchPlayerSettings(NewPlayer));
+#else
+
+	const ULobbyGameInstance * gi = GetGameInstance<ULobbyGameInstance>();
+	FPlayerSettings retval = FPlayerSettings();
+	const FUniqueNetIdRepl registeringid = ULobbyGameInstance::GetUniquePlayerNetId(NewPlayer);
+	
+	for (int i = 0; i < LobbyPlayers.Num(); i++)
+	{
+		if (LobbyPlayers[i].PlayerId == registeringid)
+		{
+			retval = LobbyPlayers[i];
+		}
+	}
+
+	return(retval);
+#endif
 }
 
 bool ADefaultMode::CheckPlayerRegistry()
 {
 	bool ballplayersregistered = (PlayerRegistry.Num() > 0);
 
-	for (TPair<int,bool>& Elem : PlayerRegistry)
+	for (TPair<TSharedPtr<const FUniqueNetId>,bool>& Elem : PlayerRegistry)
 	{
 		ballplayersregistered &= Elem.Value;
 	}
@@ -207,4 +246,17 @@ FServerSettings ADefaultMode::GetDefaultSettings() const
 	return DefaultSettings;
 }
 
+#if WITH_EDITOR
+FPlayerSettings ADefaultMode::EditorFetchPlayerSettings(APlayerController* Controller)
+{
+	FPlayerSettings retval = FPlayerSettings();
+	if (EditorPlayerCount < LobbyPlayers.Num() && Controller != nullptr)
+	{
+		LobbyPlayers[EditorPlayerCount].PlayerId = ULobbyGameInstance::GetUniquePlayerNetId(Controller).GetUniqueNetId();
+		retval = LobbyPlayers[EditorPlayerCount];
+		EditorPlayerCount++;
+	}
+	return(retval);
+}
+#endif
 

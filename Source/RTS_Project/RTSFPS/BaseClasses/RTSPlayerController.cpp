@@ -67,36 +67,74 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 	for (TActorIterator<ARTSMinion> It(World); It; ++It)
 	{
 		ARTSMinion* Minion = *It;
-		if (Minion && !Minion->IsPendingKill())
+		if (IsValid(Minion) && !Minion->IsPendingKill())
 		{
 			Minion->SetDeselected();
-			if (Minion->GetTeam() != newteam)
-			{
-				Minion->SetTeamColors(FLinearColor::Red);
-				Minion->SetSelected();
-			}
 		}
 	}
+
 }
 
 void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 {
 	if (PS == nullptr) return;
-	/*
-	TArray<AActor *> Units;
-	if (PS->IsRTSPlayer() && FOWManager)
+
+#if !WITH_EDITOR
+	UWorld* world = GetWorld();
+	if (IsValid(world))
 	{
-		for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+		for (TActorIterator<ARTSMinion> It(world); It; ++It)
 		{
-			ARTSMinion * freeminion = *Itr;
-			if (freeminion->GetTeam() == PS->TeamID && freeminion->GetLocalRole() != ROLE_Authority)
+			ARTSMinion* Minion = *It;
+			if (IsValid(Minion) && !Minion->IsPendingKill())
 			{
-				Units.AddUnique(freeminion);
+				Minion->SetDeselected();
+				if (Minion->GetTeam() != GetTeamID())
+				{
+					Minion->SetTeamColors(FLinearColor::Red);
+					Minion->SetSelected();
+				}
 			}
 		}
-		FOWManager->EnableFOW(Units);
 	}
-	*/
+
+#else
+
+	UWorld* world = GetWorld();
+	if (world && world->WorldType != EWorldType::Game)
+	{
+		for (int i = 0; i < GEngine->GetWorldContexts().Num(); i++)
+		{
+			world = GEngine->GetWorldContexts()[i].World();
+			if (world != nullptr && world->WorldType == EWorldType::PIE)
+			{
+				break;
+			}
+			else
+			{
+				world = nullptr;
+			}
+
+		}
+	}
+
+	if (IsValid(world))
+	{
+		for (TActorIterator<ARTSMinion> It(world); It; ++It)
+		{
+			ARTSMinion* Minion = *It;
+			if (IsValid(Minion) && !Minion->IsPendingKill())
+			{
+				Minion->SetDeselected();
+				if (Minion->GetTeam() != GetTeamID())
+				{
+					Minion->SetTeamColors(FLinearColor::Red);
+					Minion->SetSelected();
+				}
+			}
+		}
+	}
+#endif
 
 
 	InitHUD();
