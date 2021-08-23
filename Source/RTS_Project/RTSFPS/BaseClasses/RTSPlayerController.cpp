@@ -99,6 +99,14 @@ void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
 	}
 
 #else
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RTSPlayerController::FinishLocalPlayerSetup Server Initialized"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RTSPlayerController::FinishLocalPlayerSetup Client Initialized"));
+	}
 
 	UWorld* world = GetWorld();
 	if (world && world->WorldType != EWorldType::Game)

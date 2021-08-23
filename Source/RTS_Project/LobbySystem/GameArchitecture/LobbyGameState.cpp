@@ -185,7 +185,7 @@ bool ALobbyGameState::StorePlayerData(ULobbyGameInstance * GI)
 	FPlayerSettings settings;
 	settings.PlayerId = playerslot.OwningPlayerID.GetUniqueNetId();
 	settings.TeamId = playerslot.TeamId;
-	settings.bIsValid = true;
+	settings.bIsValid = settings.PlayerId.IsValid();
 
 	SetCustomPlayerSettings(settings, playerslot);
 	return(GI->SetPlayerSettings(settings));
@@ -206,7 +206,9 @@ bool ALobbyGameState::StoreServerData(ULobbyGameInstance * GI)
 				FPlayerSettings activeplayer;
 				activeplayer.PlayerId = slotdata.OwningPlayerID.GetUniqueNetId();
 				activeplayer.TeamId = slotdata.TeamId;
-				activeplayer.bIsValid = true;
+				activeplayer.bIsValid = activeplayer.PlayerId.IsValid();
+				SetCustomPlayerSettings(activeplayer, slotdata);
+
 				ServerSettings.settings.Emplace(activeplayer);
 				ServerSettings.bIsValid = true;
 			}

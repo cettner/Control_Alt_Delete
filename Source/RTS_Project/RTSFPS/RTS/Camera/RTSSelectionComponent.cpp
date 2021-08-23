@@ -20,11 +20,9 @@ URTSSelectionComponent::URTSSelectionComponent()
 	if (PrimaryDecalMaterialAsset.Succeeded())
 	{
 		PrimarySelectionRing->SetDecalMaterial(PrimaryDecalMaterialAsset.Object);
-		UMaterialInterface * selectionmat = PrimarySelectionRing->GetDecalMaterial();
-		DynamicColor = UMaterialInstanceDynamic::Create(selectionmat, PrimarySelectionRing);
+
 
 	}
-
 
 	PrimarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
 	PrimarySelectionRing->SetRelativeScale3D(FVector(1.0f, .25f, .25f));
@@ -55,6 +53,8 @@ void URTSSelectionComponent::SetDetection(UPrimitiveComponent * Collision)
 
 void URTSSelectionComponent::SetSelectionColor(FLinearColor Color)
 {
+	UMaterialInterface* selectionmat = PrimarySelectionRing->GetDecalMaterial();
+	DynamicColor = UMaterialInstanceDynamic::Create(selectionmat, PrimarySelectionRing);
 	if (DynamicColor && PrimarySelectionRing)
 	{
 		DynamicColor->SetVectorParameterValue(ColorParamName, Color);
