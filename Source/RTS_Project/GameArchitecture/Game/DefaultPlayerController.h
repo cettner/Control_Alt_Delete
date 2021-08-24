@@ -35,6 +35,9 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void SetIsRegistered(bool bregistered);
 
+		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
+		virtual void FinishLocalPlayerSetup();
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);
@@ -49,9 +52,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		UFUNCTION()
 		virtual void OnRep_bisregistered();
-
-		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
-		virtual void FinishLocalPlayerSetup();
 
 	protected:
 		/*Replicated After Player data is registered by the server during post login or on request*/

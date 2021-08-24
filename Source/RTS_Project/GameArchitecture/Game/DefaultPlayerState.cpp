@@ -9,10 +9,17 @@
 void ADefaultPlayerState::ClientInitialize(AController* Controller)
 {
 	Super::ClientInitialize(Controller);
+	ADefaultPlayerController * pc = Cast<ADefaultPlayerController>(Controller);
+	check(pc);
+
+	if (pc->IsRegistered())
+	{
+		pc->FinishLocalPlayerSetup();
+	}
+
 }
 
-ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	TeamID = -1;
 }
