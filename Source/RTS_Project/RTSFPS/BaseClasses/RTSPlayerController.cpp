@@ -25,12 +25,6 @@ void ARTSPlayerController::BeginPlay()
 	FInputModeGameOnly InputMode;
 	InputMode.SetConsumeCaptureMouseDown(false);
 	SetInputMode(InputMode);
-
-
-	if (bdelaytillbeginplay == true)
-	{
-		FinishLocalPlayerSetup(GetPlayerState<ARTFPSPlayerState>());
-	}
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -74,22 +68,8 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 
 }
 
-void ARTSPlayerController::PostRegisterInit()
+void ARTSPlayerController::FinishLocalPlayerSetup()
 {
-	if(HasActorBegunPlay())
-	{
-		FinishLocalPlayerSetup(GetPlayerState<ARTFPSPlayerState>());
-	}
-	else
-	{
-		bdelaytillbeginplay = true;
-	}
-
-}
-
-void ARTSPlayerController::FinishLocalPlayerSetup(ARTFPSPlayerState * PS)
-{
-	if (PS == nullptr) return;
 
 #if !WITH_EDITOR
 	UWorld* world = GetWorld();

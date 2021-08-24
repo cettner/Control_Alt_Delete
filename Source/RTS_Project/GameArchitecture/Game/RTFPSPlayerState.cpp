@@ -26,13 +26,6 @@ void ARTFPSPlayerState::SetIsRTSPlayer(bool isrts)
 void ARTFPSPlayerState::ClientInitialize(AController * C)
 {
 	Super::ClientInitialize(C);
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-	
-	ARTSPlayerController* PC = Cast<ARTSPlayerController>(C);
-	if (PC == nullptr) return;
-
-	PC->FinishLocalPlayerSetup(this);
 }
 
 void ARTFPSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

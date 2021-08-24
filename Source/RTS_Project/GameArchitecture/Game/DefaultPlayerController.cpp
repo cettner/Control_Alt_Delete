@@ -101,6 +101,11 @@ void ADefaultPlayerController::OnRep_bisregistered()
 	}
 }
 
+void ADefaultPlayerController::FinishLocalPlayerSetup()
+{
+	/*Pure Virtual Local PLayer Setup Code Goes Here*/
+}
+
 void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -109,7 +114,25 @@ void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 void ADefaultPlayerController::PostRegisterInit()
 {
-	int debug = 9;
+	if (HasActorBegunPlay())
+	{
+		FinishLocalPlayerSetup();
+	}
+	else
+	{
+		bdelaytillbeginplay = true;
+	}
+}
+
+void ADefaultPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (bdelaytillbeginplay == true)
+	{
+		FinishLocalPlayerSetup();
+	}
+	
 }
 
 bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)

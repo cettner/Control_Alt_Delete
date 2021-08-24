@@ -117,12 +117,6 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 		}
 
 	}
-
-	/*If we're on a listen server, register the servers playercontroller and play local effects*/
-	if ((bnetmodevalid == true) && (NewPlayer == World->GetFirstPlayerController()))
-	{
-		firstcontroller->ClientNotifyTeamChange(firstcontroller->GetPlayerState<ADefaultPlayerState>()->TeamID);
-	}
 }
 
 void ADefaultMode::StartMatch()
