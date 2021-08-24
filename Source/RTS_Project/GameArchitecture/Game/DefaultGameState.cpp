@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DefaultGameState.h"
 #include "Engine/World.h"
@@ -57,6 +57,15 @@ bool ADefaultGameState::IsTeamFull(int Team_Index) const
 	}
 
 	return (retval);
+}
+
+void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
+{
+	Super::OnRep_ReplicatedHasBegunPlay();
+	
+	UWorld * world = GetWorld();
+	ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
+	firstcontroller->OnMatchStart();
 }
 
 bool ADefaultGameState::IsTeamValid(int Team_Index) const

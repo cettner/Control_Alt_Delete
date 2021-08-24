@@ -27,11 +27,10 @@ void ARTSPlayerController::BeginPlay()
 	SetInputMode(InputMode);
 
 
-	if (GetLocalRole() == ROLE_Authority && GetPlayerState<ARTFPSPlayerState>())
+	if (bdelaytillbeginplay == true)
 	{
 		FinishLocalPlayerSetup(GetPlayerState<ARTFPSPlayerState>());
 	}
-
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -71,6 +70,19 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 		{
 			Minion->SetDeselected();
 		}
+	}
+
+}
+
+void ARTSPlayerController::PostRegisterInit()
+{
+	if(HasActorBegunPlay())
+	{
+		FinishLocalPlayerSetup(GetPlayerState<ARTFPSPlayerState>());
+	}
+	else
+	{
+		bdelaytillbeginplay = true;
 	}
 
 }

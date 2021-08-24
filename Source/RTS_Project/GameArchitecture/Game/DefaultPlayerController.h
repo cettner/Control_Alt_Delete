@@ -30,6 +30,10 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual int GetTeamID() const;
 
+		virtual void OnMatchStart();
+
+		virtual void SetIsRegistered(bool bregistered);
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);
@@ -38,6 +42,19 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void RequestRegistration();
 
+		virtual void PostRegisterInit();
+
+		UFUNCTION()
+		virtual void OnRep_bisregistered();
+
+	protected:
+
+		UPROPERTY(ReplicatedUsing = OnRep_bisregistered)
 		bool bisregistered = false;
+
+		bool bdelaytillbeginplay = false;
+
+	protected:
+		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 };

@@ -5,6 +5,8 @@
 #include "DefaultMode.h"
 #include "DefaultPlayerState.h"
 
+#include "Net/UnrealNetwork.h"
+
 void ADefaultPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -39,6 +41,20 @@ int ADefaultPlayerController::GetTeamID() const
 	return -1;
 }
 
+void ADefaultPlayerController::OnMatchStart()
+{
+}
+
+void ADefaultPlayerController::SetIsRegistered(bool bregistered)
+{
+	bisregistered = bregistered;
+
+	if ((GetWorld()->GetFirstPlayerController() == this) && HasAuthority())
+	{
+		OnRep_bisregistered();
+	}
+}
+
 void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
 {
 	if (HasAuthority() && (bisregistered == false))
@@ -50,6 +66,12 @@ void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
 		if (GM == nullptr) return;
 
 		bisregistered = GM->RegisterPlayerData(this,settings);
+
+		/*Inititalize the local server*/
+		if (bisregistered && (World->GetFirstPlayerController() == this) && (World->GetNetMode() == NM_ListenServer))
+		{
+			PostRegisterInit();
+		}
 	}
 	else
 	{
@@ -69,6 +91,25 @@ void ADefaultPlayerController::RequestRegistration()
 
 		ServerRegisterPlayerInfo(mysettings);
 	}
+}
+
+void ADefaultPlayerController::OnRep_bisregistered()
+{
+	if (bisregistered == true)
+	{
+		PostRegisterInit();
+	}
+}
+
+void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ADefaultPlayerController, bisregistered);
+}
+
+void ADefaultPlayerController::PostRegisterInit()
+{
+	int debug = 9;
 }
 
 bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)

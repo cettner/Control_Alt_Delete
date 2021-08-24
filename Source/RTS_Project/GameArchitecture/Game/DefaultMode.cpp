@@ -82,7 +82,8 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 
 bool ADefaultMode::ReadyToStartMatch_Implementation()
 {
-	return CheckPlayerRegistry();
+	const bool allplayersregistered = CheckPlayerRegistry();
+	return (allplayersregistered);
 }
 
 void ADefaultMode::PostLogin(APlayerController* NewPlayer)
@@ -108,11 +109,13 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 	}
 	else
 	{
-		FinishPlayerRegistration(newcontroller, settings);
-		if (!RegisterPlayerData(newcontroller, settings))
+		const bool bhasplayerregistered = RegisterPlayerData(newcontroller, settings);
+		newcontroller->SetIsRegistered(bhasplayerregistered);
+		if (!bhasplayerregistered)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostLogin] Listen Server Failed to Register Player Data"));
 		}
+
 	}
 
 	/*If we're on a listen server, register the servers playercontroller and play local effects*/
@@ -120,6 +123,21 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 	{
 		firstcontroller->ClientNotifyTeamChange(firstcontroller->GetPlayerState<ADefaultPlayerState>()->TeamID);
 	}
+}
+
+void ADefaultMode::StartMatch()
+{
+	Super::StartMatch();
+
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+
+	ADefaultPlayerController* firstcontroller = World->GetFirstPlayerController<ADefaultPlayerController>();
+	if (World->GetNetMode() == NM_ListenServer)
+	{
+		firstcontroller->OnMatchStart();
+	}
+
 }
 
 bool ADefaultMode::LoadServerData()
@@ -176,17 +194,18 @@ bool ADefaultMode::RegisterPlayerData(ADefaultPlayerController* RegisteringPlaye
 		}
 	}
 
-	return retval;
 	#else
 	if (settings.bIsValid == false || RegisteringPlayer == nullptr) return false;
 
 	if (PlayerRegistry.Contains(settings.PlayerId))
 	{
 		PlayerRegistry[settings.PlayerId] = true;
-		return(PlayerRegistry[settings.PlayerId]);
+		retval = PlayerRegistry[settings.PlayerId];
 	}
-	return false;
 	#endif
+
+	retval &= FinishPlayerRegistration(RegisteringPlayer, settings);
+	return(retval);
 }
 
 bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings)

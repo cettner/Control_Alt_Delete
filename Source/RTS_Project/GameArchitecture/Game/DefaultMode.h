@@ -68,6 +68,7 @@ protected:
 	virtual AActor * FindPlayerStart_Implementation(AController* Player, const FString& IncomingName) override;
 	virtual bool ReadyToStartMatch_Implementation() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void StartMatch() override;
 
 protected:
 	virtual bool LoadServerData();

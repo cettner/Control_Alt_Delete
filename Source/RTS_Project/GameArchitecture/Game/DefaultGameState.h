@@ -31,5 +31,8 @@ public:
 	bool IsTeamValid(int team_id) const;
 	bool IsTeamFull(int Team_Index) const;
 	bool LeaveTeam(APlayerState * Player);
+
+protected:
+	virtual void OnRep_ReplicatedHasBegunPlay() override;
 	
 };

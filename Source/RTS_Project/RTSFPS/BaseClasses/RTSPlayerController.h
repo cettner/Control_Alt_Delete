@@ -55,6 +55,8 @@ public:
 
 	virtual void ClientNotifyTeamChange(int newteam) override;
 
+	virtual void PostRegisterInit() override;
+
 	void FinishLocalPlayerSetup(ARTFPSPlayerState * PS);
 	
 	virtual AFogOfWarManager * InitFOW();
