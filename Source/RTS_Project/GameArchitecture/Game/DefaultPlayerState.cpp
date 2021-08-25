@@ -14,7 +14,7 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 
 	if (pc->IsRegistered())
 	{
-		pc->FinishLocalPlayerSetup();
+		pc->PostRegisterInit();
 	}
 
 }

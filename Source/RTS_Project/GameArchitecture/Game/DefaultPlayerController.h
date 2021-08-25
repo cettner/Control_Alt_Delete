@@ -35,8 +35,8 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void SetIsRegistered(bool bregistered);
 
-		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
-		virtual void FinishLocalPlayerSetup();
+		/*Attempts to call FinishLocalPlayersetup after registration is complete, if called before beginplay is kicked off deferes playerstartup to beginplay for the controller*/
+		void PostRegisterInit();
 
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
@@ -47,8 +47,8 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void RequestRegistration();
 
-		/*Attempts to call FinishLocalPlayersetup after registration is complete, if called before beginplay is kicked off deferes playerstartup to beginplay for the controller*/
-		void PostRegisterInit();
+		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
+		virtual void FinishLocalPlayerSetup();
 
 		UFUNCTION()
 		virtual void OnRep_bisregistered();
