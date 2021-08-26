@@ -16,29 +16,27 @@ URTSSelectionComponent::URTSSelectionComponent()
 
 	ColorParamName = "Color";
 	PrimarySelectionRing = CreateDefaultSubobject<UDecalComponent>("PrimarySelectionRing");
-	static ConstructorHelpers::FObjectFinder<UMaterial> PrimaryDecalMaterialAsset(TEXT(SELECTION_DECAL_PATH));
-	if (PrimaryDecalMaterialAsset.Succeeded())
+
+	if (IsValid(DecalMaterial))
 	{
-		PrimarySelectionRing->SetDecalMaterial(PrimaryDecalMaterialAsset.Object);
-
-
+		PrimarySelectionRing->SetDecalMaterial(DecalMaterial);
 	}
 
 	PrimarySelectionRing->DecalSize = FVector(300.0f, 300.0f, 300.0f);
 	PrimarySelectionRing->SetRelativeScale3D(FVector(1.0f, .25f, .25f));
 	PrimarySelectionRing->SetRelativeLocation(FVector(0, 0, -100.0f));
 	PrimarySelectionRing->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
-	PrimarySelectionRing->SetVisibility(false);
+	PrimarySelectionRing->SetHiddenInGame(true);
 }
 
 void URTSSelectionComponent::SetSelected()
 {
-	PrimarySelectionRing->SetVisibility(true);
+	PrimarySelectionRing->SetHiddenInGame(false);
 }
 
 void URTSSelectionComponent::SetDeselected()
 {
-	PrimarySelectionRing->SetVisibility(false);
+	PrimarySelectionRing->SetHiddenInGame(true);
 }
 
 void URTSSelectionComponent::SetRoot(USceneComponent * RootComponent)
@@ -53,11 +51,18 @@ void URTSSelectionComponent::SetDetection(UPrimitiveComponent * Collision)
 
 void URTSSelectionComponent::SetSelectionColor(FLinearColor Color)
 {
-	UMaterialInterface* selectionmat = PrimarySelectionRing->GetDecalMaterial();
-	DynamicColor = UMaterialInstanceDynamic::Create(selectionmat, PrimarySelectionRing);
-	if (DynamicColor && PrimarySelectionRing)
+	if (PrimarySelectionRing->GetDecalMaterial()->IsA(UMaterialInstanceDynamic::StaticClass()))
 	{
+		UMaterialInstanceDynamic * DynamicColor = 	Cast<UMaterialInstanceDynamic>(PrimarySelectionRing->GetDecalMaterial());
 		DynamicColor->SetVectorParameterValue(ColorParamName, Color);
-		PrimarySelectionRing->SetDecalMaterial(DynamicColor);
+	}
+	else
+	{
+		UMaterialInstanceDynamic * DynamicColor = UMaterialInstanceDynamic::Create(PrimarySelectionRing->GetDecalMaterial(), PrimarySelectionRing);
+		if (DynamicColor && PrimarySelectionRing)
+		{
+			DynamicColor->SetVectorParameterValue(ColorParamName, Color);
+			PrimarySelectionRing->SetDecalMaterial(DynamicColor);
+		}
 	}
 }

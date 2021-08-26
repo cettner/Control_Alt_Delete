@@ -38,6 +38,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Selection)
 	FName ColorParamName;
 
-	/*Dynamic Instance that allows us to change Color of Selection Ring at Runtime*/
-	UMaterialInstanceDynamic* DynamicColor;
+	/**/
+	UPROPERTY(EditDefaultsOnly)
+	UMaterial * DecalMaterial;
 };

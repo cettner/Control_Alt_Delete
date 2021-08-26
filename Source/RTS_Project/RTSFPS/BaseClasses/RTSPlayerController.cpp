@@ -71,7 +71,6 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 void ARTSPlayerController::FinishLocalPlayerSetup()
 {
 
-#if !WITH_EDITOR
 	UWorld* world = GetWorld();
 	if (IsValid(world))
 	{
@@ -85,57 +84,11 @@ void ARTSPlayerController::FinishLocalPlayerSetup()
 				{
 					Minion->SetTeamColors(FLinearColor::Red);
 					Minion->SetSelected();
+
 				}
 			}
 		}
 	}
-
-#else
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("RTSPlayerController::FinishLocalPlayerSetup Server Initialized"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("RTSPlayerController::FinishLocalPlayerSetup Client Initialized"));
-	}
-
-	UWorld* world = GetWorld();
-	if (world && world->WorldType != EWorldType::Game)
-	{
-		for (int i = 0; i < GEngine->GetWorldContexts().Num(); i++)
-		{
-			world = GEngine->GetWorldContexts()[i].World();
-			if (world != nullptr && world->WorldType == EWorldType::PIE)
-			{
-				break;
-			}
-			else
-			{
-				world = nullptr;
-			}
-
-		}
-	}
-
-	if (IsValid(world))
-	{
-		for (TActorIterator<ARTSMinion> It(world); It; ++It)
-		{
-			ARTSMinion* Minion = *It;
-			if (IsValid(Minion) && !Minion->IsPendingKill())
-			{
-				Minion->SetDeselected();
-				if (Minion->GetTeam() != GetTeamID())
-				{
-					Minion->SetTeamColors(FLinearColor::Red);
-					Minion->SetSelected();
-				}
-			}
-		}
-	}
-#endif
-
 
 	InitHUD();
 }
