@@ -17,6 +17,10 @@ class RTS_PROJECT_API ADefaultPlayerState : public APlayerState
 public:
 	ADefaultPlayerState(const FObjectInitializer& ObjectInitializer);
 
+public:
+	/*Returns wether the first set of data has been replicated from the server after game login, this always returns true on the server.*/
+	bool IsClientInitialized();
+
 protected:
 	/*Virtual Function For Override*/
 	UFUNCTION()
@@ -28,8 +32,13 @@ protected:
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
-public:
 
+public:
+	/*True if the initial data has been replicated from the server*/
+	bool bisClientInitialized = false;
+
+
+public:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
 	int TeamID;
 	

@@ -7,10 +7,6 @@
 
 #include "Net/UnrealNetwork.h"
 
-void ADefaultPlayerController::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
 
 bool ADefaultPlayerController::ServerRegisterPlayerInfo_Validate(FPlayerSettings settings)
 {
@@ -29,6 +25,7 @@ void ADefaultPlayerController::ClientRequestRegistration_Implementation()
 
 void ADefaultPlayerController::ClientNotifyTeamChange(int newteamid)
 {
+	/*Pure Virtual Function*/
 }
 
 int ADefaultPlayerController::GetTeamID() const
@@ -95,7 +92,11 @@ void ADefaultPlayerController::RequestRegistration()
 
 void ADefaultPlayerController::OnRep_bisregistered()
 {
-	if (bisregistered == true)
+	/*If Registration happens after Client Initialization or we're the server, finish the local player setup otherwise wait for playerstate to initialize*/
+	/*Warning: On Client Player State may not even be created yet.*/
+
+	ADefaultPlayerState * ps = GetPlayerState<ADefaultPlayerState>();
+	if (IsValid(ps) && ps->IsClientInitialized() && bisregistered == true)
 	{
 		PostRegisterInit();
 	}
@@ -114,25 +115,7 @@ void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 void ADefaultPlayerController::PostRegisterInit()
 {
-	if (HasActorBegunPlay())
-	{
-		FinishLocalPlayerSetup();
-	}
-	else
-	{
-		bdelaytillbeginplay = true;
-	}
-}
-
-void ADefaultPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (bdelaytillbeginplay == true)
-	{
-		FinishLocalPlayerSetup();
-	}
-	
+	FinishLocalPlayerSetup();
 }
 
 bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)

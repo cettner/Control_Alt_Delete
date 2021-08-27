@@ -15,9 +15,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-	protected:
-		virtual void PostInitializeComponents() override;
-		virtual void BeginPlay() override;
 
 	public:
 		bool GetPlayerInfo(FPlayerSettings& outsettings);
@@ -33,7 +30,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void OnMatchStart();
 
-		virtual void SetIsRegistered(bool bregistered);
+		void SetIsRegistered(bool bregistered);
 
 		/*Attempts to call FinishLocalPlayersetup after registration is complete, if called before beginplay is kicked off deferes playerstartup to beginplay for the controller*/
 		void PostRegisterInit();
@@ -51,7 +48,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		virtual void FinishLocalPlayerSetup();
 
 		UFUNCTION()
-		virtual void OnRep_bisregistered();
+		void OnRep_bisregistered();
 
 	protected:
 		/*Replicated After Player data is registered by the server during post login or on request*/
@@ -59,12 +56,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		bool bisregistered = false;
 
 
-
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
-	private:
-		/*If Registration happens before begin play, we have to wait to finish local playersetup*/
-		bool bdelaytillbeginplay = false;
 
 };

@@ -59,11 +59,6 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 	/*Iterate through all minions in the map, set team color on all minons that don't match our team ID*/
 	for (TActorIterator<ARTSMinion> It(World); It; ++It)
 	{
-		ARTSMinion* Minion = *It;
-		if (IsValid(Minion) && !Minion->IsPendingKill())
-		{
-			Minion->SetDeselected();
-		}
 	}
 
 }
@@ -80,11 +75,13 @@ void ARTSPlayerController::FinishLocalPlayerSetup()
 			if (IsValid(Minion) && !Minion->IsPendingKill())
 			{
 				Minion->SetDeselected();
-				if (Minion->GetTeam() != GetTeamID())
+				const int tid = GetTeamID();
+				const int mid = Minion->GetTeam();
+
+				if (mid != tid)
 				{
 					Minion->SetTeamColors(FLinearColor::Red);
 					Minion->SetSelected();
-
 				}
 			}
 		}

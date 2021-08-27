@@ -17,6 +17,7 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 		pc->PostRegisterInit();
 	}
 
+	bisClientInitialized = true;
 }
 
 ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -24,15 +25,32 @@ ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitial
 	TeamID = -1;
 }
 
+bool ADefaultPlayerState::IsClientInitialized()
+{
+	if (!HasAuthority())
+	{
+		/*check if initial Client Data has been sent*/
+		return bisClientInitialized;
+	}
+	else
+	{
+		/*If we're the server, all data is already present...*/
+		return true;
+	}
+}
+
 void ADefaultPlayerState::OnRep_TeamID()
 {
+	/*Skip Replication actions if we havnt set up locally yet.*/
+	if (!IsClientInitialized()) return;
+
 	UWorld* World =  GetWorld();
-	if (World == nullptr) return;
+	check(World);
 
-	ADefaultPlayerController * PC = World->GetFirstPlayerController<ADefaultPlayerController>();
-	if (PC == nullptr) return;
+	ADefaultPlayerController * pc = World->GetFirstPlayerController<ADefaultPlayerController>();
+	check(pc)
 
-	PC->ClientNotifyTeamChange(TeamID);
+	pc->ClientNotifyTeamChange(TeamID);
 }
 
 void ADefaultPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
