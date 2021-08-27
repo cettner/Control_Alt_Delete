@@ -5,6 +5,7 @@
 #include "Interfaces/AbilityUserInterface.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 #define DEBUG_WEAPON
 
@@ -47,6 +48,7 @@ void UAbilityComponent::SetCurrentAbility(UAbility * InAbility)
 {
 	CurrentAbility = InAbility;
 }
+
 
 void UAbilityComponent::StartAbility()
 {
@@ -279,4 +281,19 @@ FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 	FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
 
 	return retval;
+}
+
+void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UAbilityComponent, bIsCasting);
+
+}
+
+void UAbilityComponent::OnRep_bIsCasting()
+{
+	if (bIsCasting == true)
+	{
+		CurrentAbility->OnAbilityStart();
+	}
 }

@@ -9,6 +9,7 @@ AAbilityWeapon::AAbilityWeapon() : Super()
 {
 	AbilityComp = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComp"));
 	check(AbilityComp);
+	AbilityComp->SetIsReplicated(true);
 }
 
 void AAbilityWeapon::StartFire()

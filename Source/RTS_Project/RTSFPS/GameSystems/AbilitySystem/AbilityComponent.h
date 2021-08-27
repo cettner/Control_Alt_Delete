@@ -68,6 +68,13 @@ public:
 	AActor * FinishSpawningActor(AActor * InitializedActor, const FTransform& SpawnTransform);
 
 
+
+
+public:
+	virtual FTransform GetSurfaceTransform();
+	virtual FTransform GetCrosshairTransform(FName Socketname);
+
+
 protected:
 	virtual FVector GetControlRotation();
 	virtual bool CanUseAbility() const;
@@ -75,9 +82,13 @@ protected:
 	void SetWantsToCast(bool InState);
 	void SetCurrentAbility(UAbility * InAbility);
 
-public:
-	virtual FTransform GetSurfaceTransform();
-	virtual FTransform GetCrosshairTransform(FName Socketname);
+
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+	
+	UFUNCTION()
+	void OnRep_bIsCasting();
+
 
 protected:
 	UPROPERTY()
@@ -89,5 +100,7 @@ protected:
 	FAbilityAnim CurrentMontage;
 
 	bool bWantstoCast = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
 	bool bIsCasting = false;
 };
