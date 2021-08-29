@@ -33,10 +33,12 @@ void UAbility::OnAbilityReleased()
 
 	if (ReleaseAbilityMontages.Num() && bcanplaymontage)
 	{
+		AbilityComp->SetIsCastSuccessful(true);
 		float playtime = AbilityComp->PlayAbilityMontage(ReleaseAbilityMontages[0]);
 	}
 	else
 	{
+		AbilityComp->SetIsCastSuccessful(false);
 		AbilityComp->StopCurrentAnimation();
 		AbilityComp->OnCastEnd();
 	}

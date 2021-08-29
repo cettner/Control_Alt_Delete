@@ -9,6 +9,32 @@
 
 constexpr int INVALID_ABILITY_COST = -1;
 
+
+USTRUCT()
+struct FReplicationBool
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	void Set(bool instate)
+	{
+		Value = instate;
+		ReplicationCounter++;
+	}
+
+	bool Get()
+	{
+		return(Value);
+	}
+
+private:
+	UPROPERTY()
+	bool Value = false;
+
+	UPROPERTY()
+	uint8 ReplicationCounter = 0x00U;
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTS_PROJECT_API UAbilityComponent : public UActorComponent
 {
@@ -28,6 +54,12 @@ public:
 	virtual void OnCastStart();
 	/*Called by the ability to notify the component that casting has ended*/
 	virtual void OnCastEnd();
+	
+	/****************Server Trigger***********/
+	/*Called by Ability to notify that the ability was successfully started*/
+	void SetIsCastSuccessful(bool ReleaseState);
+	/*****************************************/
+
 	/*Start the Abilities Effect*/
 	virtual void AbilityEffect();
 	/*Notify the ability that it has ended*/
@@ -83,7 +115,6 @@ protected:
 	
 	/*ServerReplication Triggers*/
 	void SetIsCasting(bool CastingState);
-	void SetIsCastReleased(bool ReleaseState);
 	void SetIsCastReady(bool ReadyState);
 	/*****************************/
 
@@ -119,6 +150,6 @@ private:
 	bool bIsCasting = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
-	bool bIsCastReleased = false;
+	FReplicationBool bReleaseSuccess = FReplicationBool();
 
 };

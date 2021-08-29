@@ -39,9 +39,12 @@ void UAbilityComponent::SetIsCasting(bool CastingState)
 	bIsCasting = CastingState;
 }
 
-void UAbilityComponent::SetIsCastReleased(bool ReleaseState)
+void UAbilityComponent::SetIsCastSuccessful(bool ReleaseState)
 {
-	bIsCastReleased = ReleaseState;
+	if (GetOwner()->HasAuthority())
+	{
+		bReleaseSuccess.Set(ReleaseState);
+	}
 }
 
 void UAbilityComponent::SetIsCastReady(bool ReadyState)
@@ -79,7 +82,6 @@ void UAbilityComponent::ReleaseAbility()
 	SetWantsToCast(false);
 	if (IsAbilityValid())
 	{
-		SetIsCastReleased(true);
 		CurrentAbility->OnAbilityReleased();
 		SetIsCastReady(false);
 	}
@@ -88,11 +90,13 @@ void UAbilityComponent::ReleaseAbility()
 
 void UAbilityComponent::OnCastEnd()
 {
-	SetIsCasting(false);
-	SetIsCastReleased(false);
-	if (WantstoCast())
+	if (GetOwner()->HasAuthority())
 	{
-		StartAbility();
+		SetIsCasting(false);
+		if (WantstoCast())
+		{
+			StartAbility();
+		}
 	}
 }
 
@@ -307,7 +311,7 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UAbilityComponent, bIsCasting);
 	DOREPLIFETIME(UAbilityComponent, bIsCastReady);
-	DOREPLIFETIME(UAbilityComponent, bIsCastReleased);
+	DOREPLIFETIME(UAbilityComponent, bReleaseSuccess);
 }
 
 void UAbilityComponent::OnRep_bIsCasting()
@@ -320,5 +324,14 @@ void UAbilityComponent::OnRep_bIsCasting()
 
 void UAbilityComponent::OnRep_bIsCastReleased()
 {
-	CurrentAbility->OnAbilityReleased();
+	if (bReleaseSuccess.Get() == true)
+	{
+		bIsCastReady = true;
+		CurrentAbility->OnAbilityReleased();
+	}
+	else
+	{
+		bIsCastReady = false;
+		CurrentAbility->OnAbilityReleased();
+	}
 }
