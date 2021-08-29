@@ -15,4 +15,9 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 {
 	GENERATED_BODY()
 	
+	virtual void OnReadyNotify() override;
+	virtual void OnLoopNotify() override;
+	virtual void OnEffectNotify() override;
+	virtual void OnEndNotify() override;
+
 };

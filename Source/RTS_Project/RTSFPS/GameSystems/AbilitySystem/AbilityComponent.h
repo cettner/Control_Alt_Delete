@@ -28,7 +28,6 @@ public:
 	virtual void OnCastStart();
 	/*Called by the ability to notify the component that casting has ended*/
 	virtual void OnCastEnd();
-
 	/*Start the Abilities Effect*/
 	virtual void AbilityEffect();
 	/*Notify the ability that it has ended*/
@@ -57,6 +56,9 @@ public:
 	/*True if the user is attempting to use the current ability regardless of mana or other considerations such as timing*/
 	bool WantstoCast() const;
 
+	/*True if the cast is complete and is awaiting release / execution*/
+	bool IsCastReady() const;
+
 	virtual bool IsAbilityValid() const;
 	int GetAbilityCost() const;
 	bool ConsumeMana(int amount);
@@ -78,7 +80,13 @@ public:
 protected:
 	virtual FVector GetControlRotation();
 	virtual bool CanUseAbility() const;
+	
+	/*ServerReplication Triggers*/
 	void SetIsCasting(bool CastingState);
+	void SetIsCastReleased(bool ReleaseState);
+	void SetIsCastReady(bool ReadyState);
+	/*****************************/
+
 	void SetWantsToCast(bool InState);
 	void SetCurrentAbility(UAbility * InAbility);
 
@@ -89,6 +97,8 @@ protected:
 	UFUNCTION()
 	void OnRep_bIsCasting();
 
+	UFUNCTION()
+	void OnRep_bIsCastReleased();
 
 protected:
 	UPROPERTY()
@@ -101,6 +111,14 @@ protected:
 
 	bool bWantstoCast = false;
 
+private:
+	UPROPERTY(Replicated)
+	bool bIsCastReady = false;
+
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
 	bool bIsCasting = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
+	bool bIsCastReleased = false;
+
 };

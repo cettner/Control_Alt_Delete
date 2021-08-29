@@ -39,6 +39,16 @@ void UAbilityComponent::SetIsCasting(bool CastingState)
 	bIsCasting = CastingState;
 }
 
+void UAbilityComponent::SetIsCastReleased(bool ReleaseState)
+{
+	bIsCastReleased = ReleaseState;
+}
+
+void UAbilityComponent::SetIsCastReady(bool ReadyState)
+{
+	bIsCastReady = ReadyState;
+}
+
 void UAbilityComponent::SetWantsToCast(bool InState)
 {
 	bWantstoCast = InState;
@@ -69,7 +79,9 @@ void UAbilityComponent::ReleaseAbility()
 	SetWantsToCast(false);
 	if (IsAbilityValid())
 	{
+		SetIsCastReleased(true);
 		CurrentAbility->OnAbilityReleased();
+		SetIsCastReady(false);
 	}
 
 }
@@ -77,6 +89,7 @@ void UAbilityComponent::ReleaseAbility()
 void UAbilityComponent::OnCastEnd()
 {
 	SetIsCasting(false);
+	SetIsCastReleased(false);
 	if (WantstoCast())
 	{
 		StartAbility();
@@ -100,6 +113,7 @@ void UAbilityComponent::OnReadyNotify()
 {
 	if (IsAbilityValid())
 	{
+		SetIsCastReady(true);
 		CurrentAbility->NotifyOnReady();
 	}
 }
@@ -173,7 +187,12 @@ bool UAbilityComponent::WantstoCast() const
 	return bWantstoCast;
 }
 
-bool UAbilityComponent::IsAbilityValid() const 
+bool UAbilityComponent::IsCastReady() const
+{
+	return bIsCastReady;
+}
+
+bool UAbilityComponent::IsAbilityValid() const
 {
 	bool retval = IsValid(CurrentAbility);
 	return retval;
@@ -287,7 +306,8 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UAbilityComponent, bIsCasting);
-
+	DOREPLIFETIME(UAbilityComponent, bIsCastReady);
+	DOREPLIFETIME(UAbilityComponent, bIsCastReleased);
 }
 
 void UAbilityComponent::OnRep_bIsCasting()
@@ -296,4 +316,9 @@ void UAbilityComponent::OnRep_bIsCasting()
 	{
 		CurrentAbility->OnAbilityStart();
 	}
+}
+
+void UAbilityComponent::OnRep_bIsCastReleased()
+{
+	CurrentAbility->OnAbilityReleased();
 }

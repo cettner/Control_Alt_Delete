@@ -2,36 +2,34 @@
 
 
 #include "AbilityAnimNotify.h"
-
-
-
-void UAbilityAnimNotify::InitializeAbilities(UAbilityComponent * InAbilComp)
-{
-	AbilityComp = InAbilComp;
-}
+#include "../AbilityComponent.h"
+#include "../Interfaces/AbilityUserInterface.h"
 
 
 void UAbilityAnimNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation)
 {
 	Super::Notify(MeshComp, Animation);
+
+
+	IAbilityUserInterface * AbilityUser = Cast<IAbilityUserInterface>(MeshComp->GetOwner());
 	
-	if (IsValid(AbilityComp))
+	if (AbilityUser != nullptr)
 	{
 		if(bReadyNotify == true)
 		{
-			AbilityComp->OnReadyNotify();
+			AbilityUser->OnReadyNotify();
 		}
 		if (bLoopNotify == true)
 		{
-			AbilityComp->OnLoopNotify();
+			AbilityUser->OnLoopNotify();
 		}
 		if (bEffectNotify == true)
 		{
-			AbilityComp->OnEffectNotify();
+			AbilityUser->OnEffectNotify();
 		}
 		if(bEndNotify == true)
 		{
-			AbilityComp->OnEndNotify();
+			AbilityUser->OnEndNotify();
 		}
 	}
 

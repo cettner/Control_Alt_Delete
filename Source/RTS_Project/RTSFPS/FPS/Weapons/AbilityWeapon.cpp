@@ -7,9 +7,12 @@
 
 AAbilityWeapon::AAbilityWeapon() : Super()
 {
-	AbilityComp = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComp"));
-	check(AbilityComp);
-	AbilityComp->SetIsReplicated(true);
+	if (HasAuthority())
+	{
+		AbilityComp = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComp"));
+		check(AbilityComp);
+		AbilityComp->SetIsReplicated(true);
+	}
 }
 
 void AAbilityWeapon::StartFire()
@@ -79,6 +82,26 @@ TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> T
 	return outvec;
 }
 
+void AAbilityWeapon::OnReadyNotify()
+{
+	AbilityComp->OnReadyNotify();
+}
+
+void AAbilityWeapon::OnLoopNotify()
+{
+	AbilityComp->OnLoopNotify();
+}
+
+void AAbilityWeapon::OnEffectNotify()
+{
+	AbilityComp->OnEffectNotify();
+}
+
+void AAbilityWeapon::OnEndNotify()
+{
+	AbilityComp->OnEndNotify();
+}
+
 int AAbilityWeapon::GetCurrentMana() const
 {
 	return Mana;
@@ -95,6 +118,7 @@ void AAbilityWeapon::InitAbilities()
 void AAbilityWeapon::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	AbilityComp->RegisterComponent();
 	InitAbilities();
 }
 

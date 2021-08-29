@@ -29,4 +29,9 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual FVector GetAbilitySocketLocation(FName SocketName);
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
+
+		virtual void OnReadyNotify();
+		virtual void OnLoopNotify();
+		virtual void OnEffectNotify();
+		virtual void OnEndNotify();
 };

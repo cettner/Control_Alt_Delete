@@ -48,8 +48,6 @@ class RTS_PROJECT_API UAbility : public UObject
 		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel();
 		virtual bool ConsumeMana(int amount);
 
-	protected:
-		virtual void InitializeAnimNotify(UAnimNotify * InNotify);
 
 	protected:
 		UPROPERTY(EditDefaultsOnly)
@@ -57,7 +55,7 @@ class RTS_PROJECT_API UAbility : public UObject
 		int ManaCost = 0;
 
 		UPROPERTY(EditDefaultsOnly)
-		/*If true, Release Events or Effects will not fire unless bIsCastReady is set to true, otherwise they will always fire*/
+		/*If true, Release Events or Effects will not fire unless bIsCastReady from interface is set to true, otherwise they will always fire*/
 		bool bRequiresReadyCast = true;
 
 		UPROPERTY(EditDefaultsOnly)
@@ -79,7 +77,6 @@ class RTS_PROJECT_API UAbility : public UObject
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
 
-		bool bIsCastReady = false;
 
 	protected:
 		FTransform Transform = FTransform();
