@@ -79,7 +79,61 @@ protected:
 
 #if WITH_EDITOR
 protected:
+	/*Editor Only Class used to spoof the registration system into beleiveing editor players are real*/
+	class FEditorUniqueNetID : public FUniqueNetId
+	{
+
+/*************************************************************************/
+		public:
+		FEditorUniqueNetID(){ /*Have to Define from parent*/ }
+		
+		int32 GetSize() const override
+		{
+			return ((int32)sizeof(seed));
+		}
+
+		const uint8* GetBytes() const override
+		{
+			return(&seed);
+		}
+
+		bool IsValid() const override
+		{
+			return(bHasBeenSet);
+		}
+
+		FString ToString() const override
+		{
+			FString retval = FString::FromInt(seed);
+			return(retval);
+		}
+
+		FString ToDebugString() const override
+		{
+			return(ToString());
+		}
+/*************************************************************************/		
+		void SetSeed(uint8 InSeed)
+		{
+			seed = InSeed;
+			bHasBeenSet = true;
+		}
+
+		void InValidate()
+		{
+			bHasBeenSet = false;
+		}
+
+
+	private:
+		uint8 seed = 0U;
+		bool bHasBeenSet = false;
+	};
+
+
+
 	FPlayerSettings EditorFetchPlayerSettings(APlayerController* Controller);
+	TSharedPtr<const FUniqueNetId> EditorCreatePlayerID();
 	int EditorPlayerCount = 0;
 #endif
 

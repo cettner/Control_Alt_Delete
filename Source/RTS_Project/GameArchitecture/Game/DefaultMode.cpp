@@ -156,18 +156,29 @@ bool ADefaultMode::LoadServerData()
 	/*Empty the Registry*/
 	PlayerRegistry.Empty();
 
-	for (int i = 0; i < LobbyPlayers.Num(); i++)
-	{
-		if (LobbyPlayers[i].bIsValid  && !PlayerRegistry.Contains(LobbyPlayers[i].PlayerId))
+	#if !WITH_EDITOR
+		for (int i = 0; i < LobbyPlayers.Num(); i++)
 		{
+			if (LobbyPlayers[i].bIsValid  && !PlayerRegistry.Contains(LobbyPlayers[i].PlayerId))
+			{
+				PlayerRegistry.Emplace(LobbyPlayers[i].PlayerId, false);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::LoadServerData] Server Player Settings are Invalid"));
+				retval = false;
+			}
+		}
+	#else
+		/*In the editor, Create a fake ID based off the default settings*/
+		for (int i = 0; i < LobbyPlayers.Num(); i++)
+		{
+			LobbyPlayers[i].PlayerId = EditorCreatePlayerID();
 			PlayerRegistry.Emplace(LobbyPlayers[i].PlayerId, false);
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::LoadServerData] Server Player Settings are Invalid"));
-			retval = false;
-		}
-	}
+
+
+	#endif
 
 	return retval;
 }
@@ -268,11 +279,22 @@ FPlayerSettings ADefaultMode::EditorFetchPlayerSettings(APlayerController* Contr
 	FPlayerSettings retval = FPlayerSettings();
 	if (EditorPlayerCount < LobbyPlayers.Num() && Controller != nullptr)
 	{
-		LobbyPlayers[EditorPlayerCount].PlayerId = ULobbyGameInstance::GetUniquePlayerNetId(Controller).GetUniqueNetId();
 		retval = LobbyPlayers[EditorPlayerCount];
 		EditorPlayerCount++;
 	}
 	return(retval);
+}
+TSharedPtr<const FUniqueNetId> ADefaultMode::EditorCreatePlayerID()
+{
+	static uint8 currentseed = 0U;
+	FEditorUniqueNetID * fakeid = new FEditorUniqueNetID();
+	fakeid->SetSeed(currentseed);
+	/*increment so next id will be "unique"*/
+	currentseed++;
+
+	TSharedPtr<FEditorUniqueNetID> retval = TSharedPtr<FEditorUniqueNetID>(fakeid);
+
+	return retval;
 }
 #endif
 
