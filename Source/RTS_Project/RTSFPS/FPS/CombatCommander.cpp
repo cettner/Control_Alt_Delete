@@ -51,7 +51,7 @@ void ACombatCommander::SetWeaponStance()
 	}
 }
 
-TEnumAsByte<Combat_Stance> ACombatCommander::GetWeaponStance()
+TEnumAsByte<Combat_Stance> ACombatCommander::GetWeaponStance() const
 {
 	if (CurrentWeapon)
 	{

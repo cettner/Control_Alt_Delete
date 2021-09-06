@@ -14,13 +14,15 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (Pawn)
 	{
-		FVector velocity = Pawn->GetVelocity();
+		const FVector velocity = Pawn->GetVelocity();
 		
 		Speed = velocity.Size();
 		Direction = CalculateDirection(velocity, Pawn->GetActorRotation());
 		bIsMoving = Speed > 0.0F;
 
-		UPawnMovementComponent * MoveComp = Pawn->GetMovementComponent();
+		UpdateAimOffset(Pawn);
+
+		const UPawnMovementComponent * MoveComp = Pawn->GetMovementComponent();
 
 		if (MoveComp)
 		{
@@ -28,10 +30,16 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 	}
 
-	ACombatCommander * WeaponHolder = Cast<ACombatCommander>(Pawn);
+	const ACombatCommander * WeaponHolder = Cast<ACombatCommander>(Pawn);
 
 	if (WeaponHolder)
 	{
 		WeaponStance = WeaponHolder->GetWeaponStance();
 	}
+}
+
+void UFPSAnimInstance::UpdateAimOffset(APawn * AnimPawn)
+{
+	const FRotator controllerrotation = AnimPawn->GetControlRotation();
+	Pitch = FMath::ClampAngle(controllerrotation.Pitch, -90.0f, 90.0f);
 }

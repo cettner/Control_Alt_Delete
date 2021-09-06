@@ -48,14 +48,6 @@ Weapon_Grip_Type AWeapon::GetType()
 
 void AWeapon::OnEquip()
 {
-	if (!HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Equipping %s..."), *this->GetName()));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Equipping %s..."), *this->GetName()));
-	}
 	
 	AttachMeshToPawn();
 	bPendingEquip = true;
@@ -79,16 +71,7 @@ void AWeapon::OnEquip()
 }
 
 void AWeapon::OnEquipFinished()
-{
-	if (!HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Finished Equipping %s!"), *this->GetName()));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Finished Equipping %s!"), *this->GetName()));
-	}
-	
+{	
 	AttachMeshToPawn();
 
 	bIsEquipped = true;
@@ -100,15 +83,6 @@ void AWeapon::OnEquipFinished()
 
 void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 {
-	if (!HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Unequipping %s..."), *this->GetName()));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Unequipping %s..."), *this->GetName()));
-	}
-
 	if (bPendingEquip)
 	{
 		StopWeaponAnimation(EquipAnim);
@@ -133,15 +107,6 @@ void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
 
 void AWeapon::OnUnEquipFinished()
 {
-	if (!HasAuthority())
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Client Unequip %s Finished"), *this->GetName()));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Server Unequip %s Finished"), *this->GetName()));
-	}
-
 	DetachMeshFromPawn();
 	bIsEquipped = false;
 	bPendingUnEquip = false;
@@ -201,23 +166,35 @@ void AWeapon::AttachMeshToPawn()
 			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,true);
 			USkeletalMeshComponent* PawnMesh1p = MyPawn->GetSpecifcPawnMesh(true);
 			USkeletalMeshComponent* PawnMesh3p = MyPawn->GetSpecifcPawnMesh(false);
+			check(PawnMesh1p);
+			check(PawnMesh3p);
 			
-			FirstPersonMesh->SetHiddenInGame(false,true);
-			ThirdPersonMesh->SetHiddenInGame(true,true);
-			
-			FirstPersonMesh->CastShadow = false;
-			ThirdPersonMesh->CastShadow = false;
+			if (PawnMesh1p != FirstPersonMesh)
+			{
+				FirstPersonMesh->AttachToComponent(PawnMesh1p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
+				FirstPersonMesh->SetHiddenInGame(false, true);
+				FirstPersonMesh->CastShadow = false;
+			}
 
-			FirstPersonMesh->AttachToComponent(PawnMesh1p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
-			ThirdPersonMesh->AttachToComponent(PawnMesh3p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
+			if (PawnMesh3p != ThirdPersonMesh)
+			{
+				ThirdPersonMesh->AttachToComponent(PawnMesh3p, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
+				ThirdPersonMesh->SetHiddenInGame(true, true);
+				ThirdPersonMesh->CastShadow = false;
+			}
+
 		}
 		else
 		{
 			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,false);
 			USkeletalMeshComponent* UseWeaponMesh = GetWeaponMesh();
 			USkeletalMeshComponent* UsePawnMesh = MyPawn->GetPawnMesh();
-			UseWeaponMesh->AttachToComponent(UsePawnMesh, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
-			UseWeaponMesh->SetHiddenInGame(false,true);
+
+			if (UseWeaponMesh != UsePawnMesh)
+			{
+				UseWeaponMesh->AttachToComponent(UsePawnMesh, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
+				UseWeaponMesh->SetHiddenInGame(false, true);
+			}
 		}
 	}
 }

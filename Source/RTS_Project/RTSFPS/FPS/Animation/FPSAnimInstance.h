@@ -22,6 +22,8 @@ protected:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 
+protected:
+	virtual void UpdateAimOffset(APawn * AnimPawn);
 
 /**************************First Person Mesh***************************/
 protected:
@@ -37,6 +39,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	float Direction = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Pitch = 0.0f;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Yaw = 0.0f;
 /***********************************************************************/
 
 

@@ -75,7 +75,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	TEnumAsByte<Combat_Stance> GetWeaponStance();
+	TEnumAsByte<Combat_Stance> GetWeaponStance() const;
 
 	/*Read by Animation Blueprint to determine which state machine to use*/
 	UPROPERTY(BlueprintReadOnly)
