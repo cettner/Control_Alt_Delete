@@ -4,7 +4,7 @@
 #include "DefaultGameState.h"
 #include "Engine.h"
 #include "DefaultPlayerState.h"
-
+#include "DefaultHUD.h"
 
 
 
@@ -13,6 +13,7 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 {
 	GameStateClass = ADefaultGameState::StaticClass();
 	PlayerStateClass = ADefaultPlayerState::StaticClass();
+	HUDClass = ADefaultHUD::StaticClass();
 	
 	TeamStartingPoints = TArray<TeamSpawnSelector>();
 	PlayerRegistry = TMap<TSharedPtr<const FUniqueNetId>, bool>();

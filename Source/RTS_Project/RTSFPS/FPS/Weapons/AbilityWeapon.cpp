@@ -118,7 +118,6 @@ void AAbilityWeapon::InitAbilities()
 void AAbilityWeapon::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	AbilityComp->RegisterComponent();
 	InitAbilities();
 }
 

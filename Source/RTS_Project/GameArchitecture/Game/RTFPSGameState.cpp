@@ -408,6 +408,7 @@ void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ARTFPSGameState, TeamResources);
+	DOREPLIFETIME_CONDITION(ARTFPSGameState, MapResourceInfo, COND_InitialOnly);
 }
 
 

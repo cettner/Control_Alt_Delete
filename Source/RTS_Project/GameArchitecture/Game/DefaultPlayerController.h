@@ -35,6 +35,9 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		/*Attempts to call FinishLocalPlayersetup after registration is complete, if called before beginplay is kicked off deferes playerstartup to beginplay for the controller*/
 		void PostRegisterInit();
 
+		/*Called By DefaultGameState After Initial Data Has Been Replicated Down*/
+		virtual void ClientInitUI();
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);
@@ -55,7 +58,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		UPROPERTY(ReplicatedUsing = OnRep_bisregistered)
 		bool bisregistered = false;
 
-
+		bool isHUDInitialized = false;
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 

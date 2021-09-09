@@ -57,6 +57,8 @@ FVector2D ARTSFPSHUD::GetMouseLocation()
 
 bool ARTSFPSHUD::InitializeUI()
 {
+	Super::InitializeUI();
+
 	if (MainUIClass == nullptr || MainUI != nullptr) return(false);
 	MainUI = CreateWidget<URTSFPSWidget>(GetOwningPlayerController(), MainUIClass,"MainUI");
 

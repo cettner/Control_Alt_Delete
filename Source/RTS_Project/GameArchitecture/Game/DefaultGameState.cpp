@@ -1,23 +1,26 @@
  // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DefaultGameState.h"
+
 #include "Engine/World.h"
+#include "Net/UnrealNetwork.h"
 
 bool ADefaultGameState::TeamInitialize(ADefaultMode * GameMode)
 {
 	if (HasAuthority())
 	{
-		GM = GameMode;
-		if (GM)
+		check(GameMode);
+		SetMaxTeamSize(GameMode->GetTeamSize());
+		SetNumTeams(GameMode->GetNumTeams());
+
+		for (int i = 0; i < GameMode->GetNumTeams(); i++)
 		{
-			for (int i = 0; i < GM->GetNumTeams(); i++)
-			{
-				TArray<APlayerState *> newteam;
-				Teams.Emplace(newteam);
-			}
-			initialized = GM->GetNumTeams() == Teams.Num();
-		}	
+			TArray<APlayerState *> newteam;
+			Teams.Emplace(newteam);
+		}
+		initialized = GameMode->GetNumTeams() == Teams.Num();
 	}
+
 	return(initialized);
 }
 
@@ -28,7 +31,7 @@ int ADefaultGameState::HasTeam(APlayerState * Player) const
 
 	if (initialized)
 	{
-		for (int i = 0; i < GM->GetNumTeams(); i++)
+		for (int i = 0; i < Teams.Num(); i++)
 		{
 			found = Teams[i].Find(Player, retval);
 
@@ -53,10 +56,20 @@ bool ADefaultGameState::IsTeamFull(int Team_Index) const
 
 	if (IsTeamValid(Team_Index) && initialized)
 	{
-		retval = Teams[Team_Index].Num() >= GM->GetTeamSize();
+		retval = Teams[Team_Index].Num() >= MaxTeamSize;
 	}
 
 	return (retval);
+}
+
+void ADefaultGameState::SetMaxTeamSize(int8 InTeamSize)
+{
+	MaxTeamSize = InTeamSize;
+}
+
+void ADefaultGameState::SetNumTeams(int8 InNumTeams)
+{
+	NumTeams = InNumTeams;
 }
 
 void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
@@ -68,9 +81,23 @@ void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
 	firstcontroller->OnMatchStart();
 }
 
+void ADefaultGameState::ReceivedGameModeClass()
+{
+	Super::ReceivedGameModeClass();
+
+	if (!HasAuthority())
+	{
+		UWorld * world = GetWorld();
+		ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
+		firstcontroller->ClientInitUI();
+	}
+}
+
+
+
 bool ADefaultGameState::IsTeamValid(int Team_Index) const
 {
-	return(initialized &&(-1 < Team_Index) && (Team_Index < GM->GetNumTeams()));
+	return((Team_Index > -1) && (Team_Index < MaxTeamSize));
 }
 
 int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
@@ -83,9 +110,9 @@ int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
 	}
 	else
 	{
-		for (int i = 0; i < GM->GetNumTeams(); i++)
+		for (int i = 0; i < NumTeams; i++)
 		{
-			if (Teams[i].Num() < GM->GetTeamSize())
+			if (Teams[i].Num() < MaxTeamSize)
 			{
 				Teams[i].AddUnique(New_Player);
 				retval = i;
@@ -108,9 +135,9 @@ int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
 	else
 	{
 		int smallest_team_index = -1;
-		int smallest_team_size = GM->GetTeamSize();
+		int smallest_team_size = MaxTeamSize;
 
-		for (int i = 0; i < GM->GetNumTeams(); i++)
+		for (int i = 0; i < NumTeams; i++)
 		{
 			if (Teams[i].Num() < smallest_team_size)
 			{
@@ -119,7 +146,7 @@ int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
 			}
 		}
 
-		if (smallest_team_size < GM->GetTeamSize())
+		if (smallest_team_size < MaxTeamSize)
 		{
 			Teams[smallest_team_index].AddUnique(New_Player);
 			retval = smallest_team_index;
@@ -130,3 +157,11 @@ int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
 }
 
 
+void ADefaultGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION(ADefaultGameState, MaxTeamSize, COND_InitialOnly);
+	DOREPLIFETIME_CONDITION(ADefaultGameState, NumTeams, COND_InitialOnly);
+
+
+}

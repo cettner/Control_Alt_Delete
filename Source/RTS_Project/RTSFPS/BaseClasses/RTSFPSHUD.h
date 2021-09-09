@@ -2,6 +2,9 @@
 
 #pragma once
 
+
+#include "RTS_Project/GameArchitecture/Game/DefaultHUD.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "RTSFPSWidget.h"
@@ -24,7 +27,7 @@ enum HUDSTATE
 
 
 UCLASS()
-class RTS_PROJECT_API ARTSFPSHUD : public AHUD
+class RTS_PROJECT_API ARTSFPSHUD : public ADefaultHUD
 {
 	GENERATED_BODY()
 
@@ -33,7 +36,7 @@ public:
 	virtual HUDSTATE GetHUDState();
 	virtual void ChangeHUDState(HUDSTATE statetype);
 	virtual FVector2D GetMouseLocation();
-	virtual bool InitializeUI();
+	virtual bool InitializeUI() override;
 
 protected:
 	virtual void RTSSelectAndMoveHandler();

@@ -4,6 +4,7 @@
 #include "DefaultPlayerController.h"
 #include "DefaultMode.h"
 #include "DefaultPlayerState.h"
+#include "DefaultHUD.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -104,7 +105,7 @@ void ADefaultPlayerController::OnRep_bisregistered()
 
 void ADefaultPlayerController::FinishLocalPlayerSetup()
 {
-	/*Pure Virtual Local PLayer Setup Code Goes Here*/
+	/*Virtual Function Child Implementation Goes Here*/
 }
 
 void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -115,7 +116,22 @@ void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 void ADefaultPlayerController::PostRegisterInit()
 {
+	/*Client Will inititialize its UI After Gamestate's initial Replication, Server can Start Here*/
+	if ((GetWorld()->GetNetMode() == NM_ListenServer) && (GetWorld()->GetFirstPlayerController() == this) && HasAuthority())
+	{
+		ClientInitUI();
+	}
+
 	FinishLocalPlayerSetup();
+}
+
+void ADefaultPlayerController::ClientInitUI()
+{
+	if (IsRegistered() && IsLocalController())
+	{
+		ADefaultHUD * hud = GetHUD<ADefaultHUD>();
+		hud->InitializeUI();
+	}
 }
 
 bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)

@@ -77,16 +77,35 @@ protected:
 	virtual bool CheckPlayerRegistry();
 	virtual FServerSettings GetDefaultSettings() const;
 
+
+protected:
+/************************************/
+	/*Loaded from Game Instance*/
+	int NumTeams;
+	int TeamSize;
+	TArray<FPlayerSettings> LobbyPlayers;
+/************************************/
+	
+	TMap<TSharedPtr<const FUniqueNetId>, bool> PlayerRegistry;
+	TArray<TeamSpawnSelector> TeamStartingPoints;
+
+
+	/*Used By Editor Because Game Instance Cannot be Set Properly*/
+	UPROPERTY(EditDefaultsOnly, Category = Debug)
+	FServerSettings DefaultSettings;
+
+
+
 #if WITH_EDITOR
 protected:
 	/*Editor Only Class used to spoof the registration system into beleiveing editor players are real*/
 	class FEditorUniqueNetID : public FUniqueNetId
 	{
 
-/*************************************************************************/
-		public:
-		FEditorUniqueNetID(){ /*Have to Define from parent*/ }
-		
+		/*************************************************************************/
+	public:
+		FEditorUniqueNetID() { /*Have to Define from parent*/ }
+
 		int32 GetSize() const override
 		{
 			return ((int32)sizeof(seed));
@@ -112,7 +131,7 @@ protected:
 		{
 			return(ToString());
 		}
-/*************************************************************************/		
+		/*************************************************************************/
 		void SetSeed(uint8 InSeed)
 		{
 			seed = InSeed;
@@ -136,20 +155,4 @@ protected:
 	TSharedPtr<const FUniqueNetId> EditorCreatePlayerID();
 	int EditorPlayerCount = 0;
 #endif
-
-protected:
-/************************************/
-	/*Loaded from Game Instance*/
-	int NumTeams;
-	int TeamSize;
-	TArray<FPlayerSettings> LobbyPlayers;
-/************************************/
-	
-	TMap<TSharedPtr<const FUniqueNetId>, bool> PlayerRegistry;
-	TArray<TeamSpawnSelector> TeamStartingPoints;
-
-
-	/*Used By Editor Because Game Instance Cannot be Set Properly*/
-	UPROPERTY(EditDefaultsOnly, Category = Debug)
-	FServerSettings DefaultSettings;
 };

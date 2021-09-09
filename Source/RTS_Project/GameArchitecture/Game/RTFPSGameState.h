@@ -86,6 +86,6 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 
 		TMap<TSubclassOf<AActor>, FReplicationResourceMap> UnitCosts;
 
-		UPROPERTY(EditAnywhere)
+		UPROPERTY(Replicated)
 		TArray<FResourceUIData> MapResourceInfo;
 };

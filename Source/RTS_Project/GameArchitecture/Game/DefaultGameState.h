@@ -16,11 +16,7 @@ class RTS_PROJECT_API ADefaultGameState : public AGameState
 {
 	GENERATED_BODY()
 	
-protected:
-	bool initialized = false;
-	ADefaultMode * GM = nullptr;
-	TArray<TArray<APlayerState *>> Teams;
-	
+
 
 public:
 	virtual bool TeamInitialize(ADefaultMode * GameMode);
@@ -32,7 +28,25 @@ public:
 	bool IsTeamFull(int Team_Index) const;
 	bool LeaveTeam(APlayerState * Player);
 
+
+protected:
+	void SetMaxTeamSize(int8 InTeamSize);
+	void SetNumTeams(int8 InNumTeams);
+
 protected:
 	virtual void OnRep_ReplicatedHasBegunPlay() override;
-	
+	virtual void ReceivedGameModeClass() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
+protected:
+	bool initialized = false;
+	TArray<TArray<APlayerState *>> Teams;
+
+	UPROPERTY(Replicated)
+	int8 MaxTeamSize = -1;
+
+	UPROPERTY(Replicated)
+	int8 NumTeams = -1;
+
 };

@@ -125,8 +125,6 @@ void ARTSPlayerController::InitHUD()
 		{
 			HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
 		}
-
-		HudPtr->InitializeUI();
 	}
 }
 
