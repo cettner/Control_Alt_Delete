@@ -6,7 +6,6 @@
 #include "RTSCamera.h"
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
-#include "RTSSelectable.h"
 #include "RTSSelectionCamera.generated.h"
 
 /**
@@ -33,42 +32,6 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 	void SelectPressed();
 	void SelectReleased();
 	void MoveSelected();
-
-	ARTSSelectable * TempClick = nullptr;
-
-	class ViewActor
-	{
-	public:
-		ViewActor()
-		{
-			Selectable = nullptr;
-			Minion = nullptr;
-		}
-		void empty() { Selectable = nullptr; Minion = nullptr; }
-		void set(ARTSSelectable * inselect) 
-		{
-			Selectable = inselect;
-			Minion = nullptr;
-		};
-		void set(ARTSMinion * inMinion)
-		{
-			Minion = inMinion;
-			Selectable = nullptr;
-		}
-		ARTSSelectable * GetSelectable()
-		{
-			return (Selectable);
-		}
-		ARTSMinion * GetMinion()
-		{
-			return(Minion);
-		}
-	private:
-		ARTSSelectable * Selectable;
-		ARTSMinion * Minion;
-
-	};
-	ViewActor CurrentView = ViewActor();
 	
 	
 };

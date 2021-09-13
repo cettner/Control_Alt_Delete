@@ -227,8 +227,7 @@ void ARTFPSGameState::InitializeResources(ARTFPSMode * GameMode)
 		TeamResources.Emplace(Resources);
 	}
 
-	UnitCosts = GameMode->GetDefaultUnitCosts();
-
+	UnpackUnitPriceMap(GameMode->GetDefaultUnitCosts());
 }
 
 bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount)
@@ -317,6 +316,15 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>
 	return ResourcesRemoved;
 }
 
+void ARTFPSGameState::UnpackUnitPriceMap(TMap<TSubclassOf<AActor>, FReplicationResourceMap> GameModePrices)
+{
+	for (const TPair<TSubclassOf<AActor>, FReplicationResourceMap>& pair : GameModePrices)
+	{
+		PurchasableUnits.Emplace(pair.Key);
+		UnitCosts.Emplace(pair.Value);
+	}
+}
+
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const
 {
 	int retval = -1;
@@ -348,14 +356,24 @@ FReplicationResourceMap ARTFPSGameState::RefundUnit(TSubclassOf<AActor> RefundCl
 
 bool ARTFPSGameState::IsUnitPurchaseable(TSubclassOf<AActor> PurchaseClass, AController* Purchaser) const
 {
-	const FReplicationResourceMap* findme = UnitCosts.Find(PurchaseClass);
-	bool retval = findme != nullptr;
-	return (retval);
+	bool ispurchasable = PurchasableUnits.IndexOfByKey(PurchaseClass) != INDEX_NONE;
+	ispurchasable &= (PurchasableUnits.Num() == UnitCosts.Num());
+
+	return (ispurchasable);
 }
 
 FReplicationResourceMap ARTFPSGameState::GetUnitPrice(TSubclassOf<AActor> PurchaseClass) const
 {
-	return *UnitCosts.Find(PurchaseClass);
+	int purchaseindex = PurchasableUnits.IndexOfByKey(PurchaseClass);
+	FReplicationResourceMap retval = FReplicationResourceMap();
+	bool replicationvalid = (PurchasableUnits.Num() == UnitCosts.Num());
+
+	if ((purchaseindex != INDEX_NONE) && replicationvalid)
+	{
+		retval = UnitCosts[purchaseindex];
+	}
+
+	return retval;
 }
 
 bool ARTFPSGameState::ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, IRTSObjectInterface* Donar)
@@ -409,6 +427,8 @@ void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ARTFPSGameState, TeamResources);
 	DOREPLIFETIME_CONDITION(ARTFPSGameState, MapResourceInfo, COND_InitialOnly);
+	DOREPLIFETIME_CONDITION(ARTFPSGameState, UnitCosts, COND_InitialOnly);
+	DOREPLIFETIME_CONDITION(ARTFPSGameState, PurchasableUnits, COND_InitialOnly);
 }
 
 

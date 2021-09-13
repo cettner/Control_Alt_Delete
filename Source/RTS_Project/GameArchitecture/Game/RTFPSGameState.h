@@ -63,6 +63,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
+		virtual void UnpackUnitPriceMap(TMap<TSubclassOf<AActor>, FReplicationResourceMap> GameModePrices);
 
 
 
@@ -84,7 +85,11 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		UPROPERTY(Replicated)
 		TArray<FReplicationResourceMap> TeamResources;
 
-		TMap<TSubclassOf<AActor>, FReplicationResourceMap> UnitCosts;
+		UPROPERTY(Replicated)
+		TArray<TSubclassOf<AActor>> PurchasableUnits;
+
+		UPROPERTY(Replicated)
+		TArray<FReplicationResourceMap> UnitCosts;
 
 		UPROPERTY(Replicated)
 		TArray<FResourceUIData> MapResourceInfo;

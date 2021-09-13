@@ -8,7 +8,7 @@
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
-#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
@@ -166,7 +166,7 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Selection)
-	URTSSelectionComponent* Selection;
+	UDecalSelectionComponent* Selection;
 
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* MeshComp;

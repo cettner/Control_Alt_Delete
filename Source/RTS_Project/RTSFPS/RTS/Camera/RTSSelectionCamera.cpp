@@ -24,16 +24,6 @@ void  ARTSSelectionCamera::SelectPressed()
 		
 		FHitResult Hit;
 		PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-		AActor * target = Hit.GetActor();
-
-		//save the result to check on release
-		TempClick = Cast<ARTSSelectable>(target);
-
-		if (CurrentView.GetSelectable() && CurrentView.GetSelectable() != TempClick)
-		{
-			CurrentView.GetSelectable()->SetDeselected();
-			CurrentView.empty();
-		}
 
 		HudPtr->Initial_select = HudPtr->GetMouseLocation();
 		HudPtr->SelctionInProcess = true;
@@ -42,10 +32,6 @@ void  ARTSSelectionCamera::SelectPressed()
 void ARTSSelectionCamera::SelectReleased()
 {
 		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
-		FHitResult Hit;
-		PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-		AActor * target = Hit.GetActor();
-		ARTSSelectable * ReleaseClick = Cast<ARTSSelectable>(target);
 
 		ARTSHUD * HudPtr = Cast<ARTSHUD>(PC->GetHUD());
 		HudPtr->SelctionInProcess = false;
@@ -53,33 +39,6 @@ void ARTSSelectionCamera::SelectReleased()
 
 		SelectedStructures.Empty();
 		SelectedUnits = HudPtr->Selected_Units;
-
-		if (ReleaseClick && TempClick == ReleaseClick && TempClick != CurrentView.GetSelectable())
-		{
-			CurrentView.set(TempClick);
-			CurrentView.GetSelectable()->SetSelected();
-		}
-		else if (SelectedUnits.Num())
-		{
-			if(CurrentView.GetSelectable())
-			{
-				CurrentView.GetSelectable()->SetDeselected();
-			}
-			CurrentView.set(SelectedUnits[0]);
-		}
-		else if(CurrentView.GetSelectable() == ReleaseClick && ReleaseClick == TempClick)
-		{
-			// clicked on already selected object do nothing
-		}
-		else
-		{
-			if(CurrentView.GetSelectable())
-			{
-				CurrentView.GetSelectable()->SetDeselected();
-			}
-			CurrentView.empty();
-		}
-		TempClick = nullptr;
 }
 	
 void ARTSSelectionCamera::MoveSelected()

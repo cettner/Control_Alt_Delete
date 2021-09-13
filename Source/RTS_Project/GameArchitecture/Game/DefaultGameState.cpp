@@ -93,8 +93,6 @@ void ADefaultGameState::ReceivedGameModeClass()
 	}
 }
 
-
-
 bool ADefaultGameState::IsTeamValid(int Team_Index) const
 {
 	return((Team_Index > -1) && (Team_Index < MaxTeamSize));
@@ -155,7 +153,6 @@ int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
 	
 	return retval;
 }
-
 
 void ADefaultGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

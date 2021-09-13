@@ -15,7 +15,7 @@ AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(Object
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	bReplicates = true;
 
-	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("SelectionComp"));
+
 	
 	UStaticMeshComponent* Mesh = GetStaticMeshComponent();
 	
@@ -24,9 +24,13 @@ AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(Object
 		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		Mesh->SetCanEverAffectNavigation(true);
 		Mesh->bFillCollisionUnderneathForNavmesh = true;
-		Selection->SetDetection(Mesh);
-		Selection->SetRoot(Mesh);
+		Mesh->bReceivesDecals = false;
 	}
+
+	SelectionComp = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
+	SelectionComp->SetDetection(Mesh);
+	SelectionComp->SetupAttachment(Mesh);
+	SetDeselected();
 
 	UIData.ResourceName = "Default Resource";
 	UIData.Key = GetClass();
@@ -60,12 +64,12 @@ FResourceUIData AResource::GetUIData() const
 
 void AResource::SetSelected()
 {
-	Selection->SetSelected();
+	SelectionComp->SetHiddenInGame(false);
 }
 
 void AResource::SetDeselected()
 {
-	Selection->SetDeselected();
+	SelectionComp->SetHiddenInGame(true);
 }
 
 

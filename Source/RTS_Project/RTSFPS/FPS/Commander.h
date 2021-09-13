@@ -5,10 +5,7 @@
 #include "CoreMinimal.h"
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 #include "Camera/CameraComponent.h"
-#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectable.h"
 #include "Commander.generated.h"
-
-#define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
 
 UCLASS()

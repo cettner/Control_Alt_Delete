@@ -9,7 +9,7 @@
 
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
-#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
+#include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "RTSMinion.generated.h"
 
@@ -99,11 +99,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * RTSBehavior;
 
-	UPROPERTY(EditDefaultsOnly, Category = Perception)
+	UPROPERTY(EditDefaultsOnly, Category = Behavior)
 	FRTSAIPerceptionConfig AIConfig;
-	
-	UPROPERTY(Editdefaultsonly, Category = Selection)
-	URTSSelectionComponent * Selection;
+
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	UDecalSelectionComponent * Selection = nullptr;
 
 	UPROPERTY(Replicated)
 	ACommander * Cmdr;

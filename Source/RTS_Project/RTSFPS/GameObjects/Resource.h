@@ -3,9 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTS_Project/RTSFPS//RTS/Camera/RTSSelectable.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
-
+#include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Resource.generated.h"
 
@@ -41,7 +40,8 @@ public:
 	virtual void SetDeselected() override;
 
 protected:
-	URTSSelectionComponent* Selection;
+	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	UDecalSelectionComponent* SelectionComp;
 
 protected:
 

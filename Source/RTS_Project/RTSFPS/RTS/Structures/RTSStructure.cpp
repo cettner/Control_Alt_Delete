@@ -13,7 +13,7 @@ ARTSStructure::ARTSStructure() : Super()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("SelectionComp"));
+	Selection = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
 	bReplicates = true;
 
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
@@ -23,9 +23,9 @@ ARTSStructure::ARTSStructure() : Super()
 		MeshComp->SetCanEverAffectNavigation(true);
 		MeshComp->bFillCollisionUnderneathForNavmesh = true;
 		MeshComp->bReceivesDecals = false;
-
 		Selection->SetDetection(MeshComp);
-		Selection->SetRoot(MeshComp);
+		Selection->SetupAttachment(RootComponent);
+		SetDeselected();
 	}
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
@@ -136,13 +136,16 @@ void ARTSStructure::OnConstructionComplete()
 
 void ARTSStructure::OnDeath()
 {
-	/*Unregister Minion to be percieved from AI perception*/
-	UWorld* World = GetWorld();
-	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
-	PerceptionSystem->UnregisterSource(*this);
+	if (HasAuthority())
+	{
+		/*Unregister Minion to be percieved from AI perception*/
+		UWorld* World = GetWorld();
+		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+		PerceptionSystem->UnregisterSource(*this);
 
-	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
-	GS->OnUnitDeath(this);
+		ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
+		GS->OnUnitDeath(this);
+	}
 
 	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (pgrid != nullptr)
@@ -165,12 +168,12 @@ float ARTSStructure::TakeDamage(float Damage, FDamageEvent const& DamageEvent, A
 
 void ARTSStructure::SetSelected()
 {
-	Selection->SetSelected();
+	Selection->SetHiddenInGame(false);
 }
 
 void ARTSStructure::SetDeselected()
 {
-	Selection->SetDeselected();
+	Selection->SetHiddenInGame(true);
 }
 
 int ARTSStructure::GetTeam() const

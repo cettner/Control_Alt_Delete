@@ -5,7 +5,6 @@
 #include "RTS_Project/AssetHelpers/GameAssets.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/GameArchitecture/Game/DefaultPlayerState.h"
-#include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionComponent.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 
 #include "UObject/ConstructorHelpers.h"
@@ -37,9 +36,10 @@ ARTSMinion::ARTSMinion()
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
-	Selection = CreateDefaultSubobject<URTSSelectionComponent>(TEXT("Selection"));
-	Selection->SetRoot(RootComponent);
+	Selection = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("Selection"));
 	Selection->SetDetection(GetCapsuleComponent());
+	Selection->SetupAttachment(RootComponent);
+	SetDeselected();
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 	Health->OnDeathStart.BindUFunction(this,"OnDeath");
@@ -168,7 +168,7 @@ void ARTSMinion::SetSelected()
 {
 	if (Selection)
 	{
-		Selection->SetSelected();
+		Selection->SetHiddenInGame(false);
 	}
 }
 
@@ -176,7 +176,7 @@ void ARTSMinion::SetDeselected()
 {
 	if (Selection)
 	{
-		Selection->SetDeselected();
+		Selection->SetHiddenInGame(true);
 	}
 }
 
