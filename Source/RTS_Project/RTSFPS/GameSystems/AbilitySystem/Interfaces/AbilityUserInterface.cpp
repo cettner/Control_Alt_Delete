@@ -35,18 +35,18 @@ TArray<AActor*> IAbilityUserInterface::GetIgnoredTraceActors(TWeakObjectPtr<UAbi
 	return TArray<AActor*>();
 }
 
-void IAbilityUserInterface::OnReadyNotify()
+void IAbilityUserInterface::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 }
 
-void IAbilityUserInterface::OnLoopNotify()
+void IAbilityUserInterface::OnLoopNotify(UAbilityAnimNotify * CallingContext)
 {
 }
 
-void IAbilityUserInterface::OnEffectNotify()
+void IAbilityUserInterface::OnEffectNotify(UAbilityAnimNotify * CallingContext)
 {
 }
 
-void IAbilityUserInterface::OnEndNotify()
+void IAbilityUserInterface::OnEndNotify(UAbilityAnimNotify * CallingContext)
 {
 }

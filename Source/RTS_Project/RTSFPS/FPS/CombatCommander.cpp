@@ -265,10 +265,24 @@ void ACombatCommander::OnPrimaryFireEnd()
 
 void ACombatCommander::OnSecondaryFireStart()
 {
+	if (!bWantsSecondaryFire)
+	{
+		bWantsSecondaryFire = true;
+		if (CurrentWeapon != nullptr)
+		{
+			CurrentWeapon->StartSecondaryFire();
+		}
+	}
+
 }
 
 void ACombatCommander::OnSecondaryFireEnd()
 {
+	if (!bWantsSecondaryFire)
+	{
+		bWantsSecondaryFire = false;
+		CurrentWeapon->StopSecondaryFire();
+	}
 }
 
 void ACombatCommander::OnReload()

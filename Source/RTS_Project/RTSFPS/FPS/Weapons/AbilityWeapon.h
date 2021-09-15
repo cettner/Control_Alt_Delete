@@ -38,10 +38,10 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual FVector GetAbilityAimVector() const override;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr) override;
 
-		virtual void OnReadyNotify() override;
-		virtual void OnLoopNotify() override;
-		virtual void OnEffectNotify() override;
-		virtual void OnEndNotify() override;
+		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
+		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
+		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
+		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	/*****************************************************************/
 
 

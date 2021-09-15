@@ -15,8 +15,15 @@ class RTS_PROJECT_API UAbilityAnimNotify : public UAnimNotify
 {
 	GENERATED_BODY()
 
+
+public:
+	virtual FName GetAssetSlotName() const;
+
 protected:
+
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+
+	FName AnimTrackSlotName = "";
 
 	UPROPERTY(EditAnyWhere, Category = Ability)
 	bool bLoopNotify = false;

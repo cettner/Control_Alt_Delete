@@ -46,6 +46,16 @@ Weapon_Grip_Type AWeapon::GetType()
 	return(Grip_Type);
 }
 
+void AWeapon::StartSecondaryFire()
+{
+
+}
+
+void AWeapon::StopSecondaryFire()
+{
+
+}
+
 void AWeapon::OnEquip()
 {
 	

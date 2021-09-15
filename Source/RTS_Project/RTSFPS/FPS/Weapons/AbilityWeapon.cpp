@@ -82,22 +82,22 @@ TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> T
 	return outvec;
 }
 
-void AAbilityWeapon::OnReadyNotify()
+void AAbilityWeapon::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 	AbilityComp->OnReadyNotify();
 }
 
-void AAbilityWeapon::OnLoopNotify()
+void AAbilityWeapon::OnLoopNotify(UAbilityAnimNotify * CallingContext)
 {
 	AbilityComp->OnLoopNotify();
 }
 
-void AAbilityWeapon::OnEffectNotify()
+void AAbilityWeapon::OnEffectNotify(UAbilityAnimNotify * CallingContext)
 {
 	AbilityComp->OnEffectNotify();
 }
 
-void AAbilityWeapon::OnEndNotify()
+void AAbilityWeapon::OnEndNotify(UAbilityAnimNotify * CallingContext)
 {
 	AbilityComp->OnEndNotify();
 }

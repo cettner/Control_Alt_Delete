@@ -6,9 +6,21 @@
 #include "../Interfaces/AbilityUserInterface.h"
 
 
+FName UAbilityAnimNotify::GetAssetSlotName() const
+{
+	return(AnimTrackSlotName);
+}
+
 void UAbilityAnimNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation)
 {
 	Super::Notify(MeshComp, Animation);
+
+	if (AnimTrackSlotName == "")
+	{
+		UAnimMontage * Montage = Cast<UAnimMontage>(Animation);
+		FSlotAnimationTrack track = Montage->SlotAnimTracks[0];
+		AnimTrackSlotName = track.SlotName;
+	}
 
 
 	IAbilityUserInterface * AbilityUser = Cast<IAbilityUserInterface>(MeshComp->GetOwner());
@@ -17,21 +29,19 @@ void UAbilityAnimNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequence
 	{
 		if(bReadyNotify == true)
 		{
-			AbilityUser->OnReadyNotify();
+			AbilityUser->OnReadyNotify(this);
 		}
 		if (bLoopNotify == true)
 		{
-			AbilityUser->OnLoopNotify();
+			AbilityUser->OnLoopNotify(this);
 		}
 		if (bEffectNotify == true)
 		{
-			AbilityUser->OnEffectNotify();
+			AbilityUser->OnEffectNotify(this);
 		}
 		if(bEndNotify == true)
 		{
-			AbilityUser->OnEndNotify();
+			AbilityUser->OnEndNotify(this);
 		}
 	}
-
-
 }

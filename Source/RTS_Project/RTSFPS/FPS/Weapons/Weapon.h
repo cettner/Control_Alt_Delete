@@ -84,6 +84,12 @@ public:
 	virtual void StartReload(bool bFromReplication = false) PURE_VIRTUAL(AWeapon::StartReload,);
 
 	virtual void StopReload() PURE_VIRTUAL(AWeapon::StopFire,);
+/**********************************************************************************************/
+	virtual void StartSecondaryFire();
+
+	virtual void StopSecondaryFire();
+
+/*********************************************************************************************/
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
@@ -96,8 +102,13 @@ public:
 	UBoxComponent * CollisionComp;
 
 public:
+	/*If True Will bind secondary fire button on equipped*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Gameplay")
-	bool bhassecondary = false;  
+	bool bHasSecondary = false;  
+
+	/*If true, Secondary will be allowed to fire while primary fire is active*/
+	UPROPERTY(EditDefaultsOnly, Category = "Gameplay", meta = (EditCondition = "bHasSecondary"))
+	bool bAllowSimultaneousFire = false;
 
 	/*Animation State Machine to Use when holding this Weapon*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")

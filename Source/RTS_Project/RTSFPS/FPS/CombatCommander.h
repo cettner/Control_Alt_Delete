@@ -178,8 +178,11 @@ protected:
 	/*Is a weapon Currently Equipped*/
 	bool bIsWeaponEquipped = false;
 
-	/** current firing state */
+	/* Current Primary Firing State */
 	bool bWantsToFire = false;
+
+	/*Current Secondary Firing State*/
+	bool bWantsSecondaryFire = false;
 
 private:
 	void HandleSwitchWeapon(int direction);

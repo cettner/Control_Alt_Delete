@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "../AbilityComponent.h"
+#include "../Animation/AbilityAnimNotify.h"
 #include "AbilityUserInterface.generated.h"
 
 // This class does not need to be modified.
@@ -30,8 +31,8 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
 
-		virtual void OnReadyNotify();
-		virtual void OnLoopNotify();
-		virtual void OnEffectNotify();
-		virtual void OnEndNotify();
+		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr);
+		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr);
+		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr);
+		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr);
 };
