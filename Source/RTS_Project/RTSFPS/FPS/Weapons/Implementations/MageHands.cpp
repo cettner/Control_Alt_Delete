@@ -99,22 +99,22 @@ void AMageHands::StopSecondaryFire()
 	ServerStopUseSecondAbility();
 }
 
-bool AAbilityWeapon::ServerStartUseSecondAbility_Validate()
+bool AMageHands::ServerStartUseSecondAbility_Validate()
 {
 	return true;
 }
 
-void AAbilityWeapon::ServerStartUseSecondAbility_Implementation()
+void AMageHands::ServerStartUseSecondAbility_Implementation()
 {
 	RightHandAbilityComp->StartAbility();
 }
 
-bool AAbilityWeapon::ServerStopUseSecondAbility_Validate()
+bool AMageHands::ServerStopUseSecondAbility_Validate()
 {
 	return true;
 }
 
-void AAbilityWeapon::ServerStopUseSecondAbility_Implementation()
+void AMageHands::ServerStopUseSecondAbility_Implementation()
 {
 	RightHandAbilityComp->ReleaseAbility();
 }

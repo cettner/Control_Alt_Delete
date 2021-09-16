@@ -278,7 +278,7 @@ void ACombatCommander::OnSecondaryFireStart()
 
 void ACombatCommander::OnSecondaryFireEnd()
 {
-	if (!bWantsSecondaryFire)
+	if (bWantsSecondaryFire)
 	{
 		bWantsSecondaryFire = false;
 		CurrentWeapon->StopSecondaryFire();

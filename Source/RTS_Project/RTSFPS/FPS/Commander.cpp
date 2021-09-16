@@ -61,7 +61,7 @@ void ACommander::PossessedBy(AController* NewController)
 ACommander::ACommander() : Super()
 {
 	FPS_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	FPS_Camera->SetupAttachment(GetCapsuleComponent());
+	FPS_Camera->SetupAttachment(RootComponent);
 	FPS_Camera->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f));
 	FPS_Camera->bUsePawnControlRotation = true;
 
@@ -75,6 +75,7 @@ ACommander::ACommander() : Super()
 	FPS_Mesh->bReceivesDecals = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
 	trace = FCollisionQueryParams(FName(TEXT("FPSTrace")), true, this);
 	trace.bTraceComplex = true;
