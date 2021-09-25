@@ -34,7 +34,7 @@ bool UAbilityComponent::CanUseAbility() const
 
 void UAbilityComponent::SetIsCasting(bool CastingState)
 {
-	bIsCasting = CastingState;
+	bIsCasting.Set(CastingState);
 }
 
 void UAbilityComponent::SetIsCastSuccessful(bool ReleaseState)
@@ -181,7 +181,7 @@ TWeakObjectPtr<UAbility> UAbilityComponent::AddAbility(TSubclassOf<UAbility> Abi
 
 bool UAbilityComponent::IsCasting() const
 {
-	return bIsCasting;
+	return bIsCasting.Get();
 }
 
 bool UAbilityComponent::WantstoCast() const
@@ -302,7 +302,7 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void UAbilityComponent::OnRep_bIsCasting()
 {
-	if (bIsCasting == true)
+	if (bIsCasting.Get() == true)
 	{
 		CurrentAbility->OnAbilityStart();
 	}

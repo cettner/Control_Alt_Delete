@@ -23,7 +23,7 @@ public:
 		ReplicationCounter++;
 	}
 
-	bool Get()
+	bool Get() const
 	{
 		return(Value);
 	}
@@ -153,7 +153,7 @@ private:
 	bool bIsCastReady = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
-	bool bIsCasting = false;
+	FReplicationBool bIsCasting = FReplicationBool();
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
 	FReplicationBool bReleaseSuccess = FReplicationBool();
