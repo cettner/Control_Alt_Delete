@@ -59,8 +59,20 @@ void AMageHands::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 	/*Determine if we use the right or left arms component based off the animation*/
 	UAbilityComponent * utilizedcomp = GetHandAbilityComponent(CallingContext);
-	check(utilizedcomp);
-	utilizedcomp->OnReadyNotify();
+
+	#ifndef UE_BUILD_DEBUG
+		utilizedcomp->OnReadyNotify();
+	#else
+		if (utilizedcomp != nullptr)
+		{
+			utilizedcomp->OnReadyNotify();
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AMageHands::OnReadyNotify Failed to Select Arm!")));
+		}
+	#endif
+
 }
 
 
@@ -68,24 +80,63 @@ void AMageHands::OnLoopNotify(UAbilityAnimNotify * CallingContext)
 {
 	/*Determine if we use the right or left arms component based off the animation*/
 	UAbilityComponent * utilizedcomp = GetHandAbilityComponent(CallingContext);
-	check(utilizedcomp);
-	utilizedcomp->OnLoopNotify();
+	
+	#ifndef UE_BUILD_DEBUG
+		/*Release Build*/
+		utilizedcomp->OnLoopNotify();
+	#else
+		/*Debug Build*/
+		if (utilizedcomp != nullptr)
+		{
+			utilizedcomp->OnLoopNotify();
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AMageHands::OnLoopNotify Failed to Select Arm!")));
+		}
+	#endif
 }
 
 void AMageHands::OnEffectNotify(UAbilityAnimNotify * CallingContext)
 {
 	/*Determine if we use the right or left arms component based off the animation*/
 	UAbilityComponent * utilizedcomp = GetHandAbilityComponent(CallingContext);
-	check(utilizedcomp);
-	utilizedcomp->OnEffectNotify();
+	
+	#ifndef UE_BUILD_DEBUG
+		/*Release Build*/
+		utilizedcomp->OnEffectNotify();
+	#else
+	/*Debug Build*/
+	if (utilizedcomp != nullptr)
+	{
+		utilizedcomp->OnEffectNotify();
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AMageHands::OnEffectNotify Failed to Select Arm!")));
+	}
+	#endif
 }
 
 void AMageHands::OnEndNotify(UAbilityAnimNotify * CallingContext) 
 {
 	/*Determine if we use the right or left arms component based off the animation*/
 	UAbilityComponent * utilizedcomp = GetHandAbilityComponent(CallingContext);
-	check(utilizedcomp);
-	utilizedcomp->OnEndNotify();
+
+	#ifndef UE_BUILD_DEBUG
+		/*Release Build*/
+		utilizedcomp->OnEndNotify();
+	#else
+		/*Debug Build*/
+		if (utilizedcomp != nullptr)
+		{
+			utilizedcomp->OnEndNotify();
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("AMageHands::OnEndNotify Failed to Select Arm!")));
+		}
+	#endif
 }
 
 

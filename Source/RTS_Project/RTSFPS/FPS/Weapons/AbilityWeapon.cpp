@@ -56,7 +56,7 @@ void AAbilityWeapon::StopAbilityMontage(FAbilityAnim AnimToStop)
 	StopWeaponAnimation(converter);
 }
 
-FVector AAbilityWeapon::GetAbilitySocketLocation(FName SocketName)
+FVector AAbilityWeapon::GetAbilitySocketLocation(FName SocketName) const 
 {
 	FVector retval = GetActorLocation();
 	if (GetWeaponMesh() && GetWeaponMesh()->DoesSocketExist(SocketName))

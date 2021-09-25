@@ -20,7 +20,7 @@ void IAbilityUserInterface::StopAbilityMontage(FAbilityAnim AnimToStop)
 
 }
 
-FVector IAbilityUserInterface::GetAbilitySocketLocation(FName SocketName)
+FVector IAbilityUserInterface::GetAbilitySocketLocation(FName SocketName) const 
 {
 	return FVector();
 }

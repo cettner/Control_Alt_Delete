@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Ability.h"
+#include "Interfaces/AbilityUserInterface.h"
 #include "AbilityComponent.generated.h"
 
 constexpr int INVALID_ABILITY_COST = -1;
@@ -92,8 +93,14 @@ public:
 	bool IsCastReady() const;
 
 	virtual bool IsAbilityValid() const;
+
 	int GetAbilityCost() const;
+
 	bool ConsumeMana(int amount);
+
+	/*Returns the User Associated witht he Component*/
+	virtual IAbilityUserInterface * GetAbilityUser() const;
+
 
 public:
 	float PlayAbilityMontage(FAbilityAnim PlayAnim);
@@ -107,7 +114,6 @@ public:
 public:
 	virtual FTransform GetSurfaceTransform();
 	virtual FTransform GetCrosshairTransform(FName Socketname);
-
 
 protected:
 	virtual FVector GetControlRotation();
@@ -151,5 +157,4 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
 	FReplicationBool bReleaseSuccess = FReplicationBool();
-
 };

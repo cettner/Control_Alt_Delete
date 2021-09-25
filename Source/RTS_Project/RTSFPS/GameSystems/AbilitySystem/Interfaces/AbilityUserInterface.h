@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "../AbilityComponent.h"
 #include "../Animation/AbilityAnimNotify.h"
+#include"../Ability.h"
 #include "AbilityUserInterface.generated.h"
 
 // This class does not need to be modified.
@@ -27,7 +27,7 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual bool CanCastAbility();
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay);
 		virtual void StopAbilityMontage(FAbilityAnim AnimToStop);
-		virtual FVector GetAbilitySocketLocation(FName SocketName);
+		virtual FVector GetAbilitySocketLocation(FName SocketName) const;
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
 

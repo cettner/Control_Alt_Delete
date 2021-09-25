@@ -37,6 +37,7 @@ class RTS_PROJECT_API UAbility : public UObject
 		virtual void OnEffect();
 		virtual void OnAbilityReleased();
 		virtual void OnAbilityEnd();
+		virtual void OnTick(float DeltaSeconds);
 
 	public:
 		/*Called from AnimNotify to Set Ability is Ready for release*/
@@ -48,6 +49,8 @@ class RTS_PROJECT_API UAbility : public UObject
 		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel();
 		virtual bool ConsumeMana(int amount);
 
+	protected:
+		UWorld * GetWorld() const;
 
 	protected:
 		UPROPERTY(EditDefaultsOnly)
@@ -77,8 +80,14 @@ class RTS_PROJECT_API UAbility : public UObject
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
 
+/*
+	#ifdef UE_BUILD_DEBUG
+		class UAbilityAnimNotify;
 
-	protected:
-		FTransform Transform = FTransform();
-
+		protected:
+		virtual bool InitCheck();
+		bool AreAnimNotifiesSynced(FAbilityAnim AbilityAnim);
+		uint8 GetNotifyConfigID(UAbilityAnimNotify * InNotify);
+	#endif
+*/
 };

@@ -210,6 +210,11 @@ bool UAbilityComponent::ConsumeMana(int amount)
 	return false;
 }
 
+IAbilityUserInterface * UAbilityComponent::GetAbilityUser() const
+{
+	return GetOwner<IAbilityUserInterface>();
+}
+
 float UAbilityComponent::PlayAbilityMontage(FAbilityAnim PlayAnim)
 {
 	IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
@@ -242,9 +247,7 @@ bool UAbilityComponent::StopCurrentAnimation()
 AActor* UAbilityComponent::SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform)
 {
 	UWorld* world = GetWorld();
-	const FTransform reference = SpawnTransform;
-	AActor * spawnedactor = world->SpawnActorDeferred<AActor>(ActorClass, SpawnTransform, GetOwner(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	
+	AActor* spawnedactor = world->SpawnActorDeferred<AActor>(ActorClass, SpawnTransform, GetOwner(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	
 	return spawnedactor;
 }
@@ -269,7 +272,6 @@ FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 	IAbilityUserInterface* AbilityUser = GetOwner<IAbilityUserInterface>();
 	FVector spawnlocation = FVector();
 	FVector aimdirection = FVector();
-	const FCollisionShape traceshape = FCollisionShape::MakeCapsule(1.0, 1.0);
 	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
 
 	if (AbilityUser != nullptr)
@@ -284,20 +286,6 @@ FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 		aimdirection = GetOwner()->GetActorForwardVector();
 		queryparams.AddIgnoredActor(GetOwner());
 	}
-	
-	FVector starttrace = spawnlocation;
-	FVector endtrace = starttrace + (aimdirection * 1000.0f);
-
-
-	#ifdef DEBUG_WEAPON
-		UWorld * world = GetWorld();
-		FHitResult outhit;
-		const FName TraceTag("DebugShooterTag");
-		world->DebugDrawTraceTag = TraceTag;
-		queryparams.TraceTag = TraceTag;
-		world->SweepSingleByChannel(outhit, starttrace, endtrace, aimdirection.ToOrientationQuat(), CurrentAbility->GetAbilityCollisionChannel(), traceshape, queryparams);
-	#endif // Define to view weapon trace
-
 
 	FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
 
