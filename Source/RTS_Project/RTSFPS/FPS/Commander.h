@@ -48,7 +48,7 @@ public:
 
 	bool LeaveSquad(ARTSMinion * leaver);
 
-	bool IsFirstPerson();
+	bool IsFirstPerson() const;
 
 	virtual ACommander * GetCommander() override;
 
@@ -61,6 +61,10 @@ public:
 	virtual bool CanInteract(AActor * Interactable) override;
 
 	virtual int GetTeam() const override;
+
+	virtual bool IsServerPawn() const;
+
+	void SetIsServerPawn(bool IsServer);
 
 	virtual void OnDeath() override;
 
@@ -77,10 +81,14 @@ public:
 	UFUNCTION()
 	virtual void Interact();
 
+
+public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
 
 private:
+	bool bIsServerPawn = false;
+
 	float marchwidth = 150.0f;
 
 	FCollisionQueryParams trace;

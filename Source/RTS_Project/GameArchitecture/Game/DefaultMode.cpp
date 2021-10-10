@@ -274,6 +274,32 @@ FServerSettings ADefaultMode::GetDefaultSettings() const
 	return DefaultSettings;
 }
 
+
+void ADefaultMode::InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController)
+{
+	/*Virtual Function for Initializing Pawn Prior To Spawn*/
+}
+
+APawn * ADefaultMode::SpawnDefaultPawnAtTransform_Implementation(AController * NewPlayer, const FTransform & SpawnTransform)
+{
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Instigator = GetInstigator();
+	SpawnInfo.ObjectFlags |= RF_Transient;	// We never want to save default player pawns into a map
+	UClass* PawnClass = GetDefaultPawnClassForController(NewPlayer);
+
+	APawn* ResultPawn = GetWorld()->SpawnActorDeferred<APawn>(PawnClass, SpawnTransform, NewPlayer, GetInstigator());
+	InitializeDeferredDefaultPawn(ResultPawn, NewPlayer);
+	ResultPawn->FinishSpawning(SpawnTransform);
+
+
+	if (!ResultPawn)
+	{
+		UE_LOG(LogGameMode, Warning, TEXT("SpawnDefaultPawnAtTransform: Couldn't spawn Pawn of type %s at %s"), *GetNameSafe(PawnClass), *SpawnTransform.ToHumanReadableString());
+	}
+
+	return ResultPawn;
+}
+
 #if WITH_EDITOR
 FPlayerSettings ADefaultMode::EditorFetchPlayerSettings(APlayerController* Controller)
 {

@@ -7,7 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
-#define DEBUG_WEAPON
 
 // Sets default values for this component's properties
 UAbilityComponent::UAbilityComponent()
@@ -304,20 +303,33 @@ void UAbilityComponent::OnRep_bIsCasting()
 {
 	if (bIsCasting.Get() == true)
 	{
-		CurrentAbility->OnAbilityStart();
+		ENetRole netrole = GetOwnerRole();
+		bool authority = GetOwner()->HasAuthority();
+
+		if (!CurrentAbility && !authority)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed")));
+		}
+		else
+		{
+			CurrentAbility->OnAbilityStart();
+		}
 	}
 }
 
 void UAbilityComponent::OnRep_bIsCastReleased()
 {
-	if (bReleaseSuccess.Get() == true)
+	if (CurrentAbility)
 	{
-		bIsCastReady = true;
-		CurrentAbility->OnAbilityReleased();
-	}
-	else
-	{
-		bIsCastReady = false;
-		CurrentAbility->OnAbilityReleased();
+		if (bReleaseSuccess.Get() == true)
+		{
+			bIsCastReady = true;
+			CurrentAbility->OnAbilityReleased();
+		}
+		else
+		{
+			bIsCastReady = false;
+			CurrentAbility->OnAbilityReleased();
+		}
 	}
 }

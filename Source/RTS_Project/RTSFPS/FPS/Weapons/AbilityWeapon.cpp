@@ -33,6 +33,16 @@ void AAbilityWeapon::StopReload()
 {
 }
 
+void AAbilityWeapon::OnEnterInventory(ACombatCommander * NewOwner)
+{
+	Super::OnEnterInventory(NewOwner);
+	if (bAreAbilitiesInitialized == false)
+	{
+		bAreAbilitiesInitialized = InitAbilities();
+	}
+
+}
+
 bool AAbilityWeapon::CanCastAbility()
 {
 	return true;
@@ -102,25 +112,30 @@ void AAbilityWeapon::OnEndNotify(UAbilityAnimNotify * CallingContext)
 	AbilityComp->OnEndNotify();
 }
 
+USceneComponent * AAbilityWeapon::GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility)
+{
+	return GetWeaponMesh();
+}
+
 int AAbilityWeapon::GetCurrentMana() const
 {
 	return Mana;
 }
 
-void AAbilityWeapon::InitAbilities()
+bool AAbilityWeapon::InitAbilities()
 {
 	for (int i = 0; i < AbilityClasses.Num(); i++)
 	{
 		AbilityComp->AddAbility(AbilityClasses[i]);
 	}
+
+	return (true);
 }
 
 void AAbilityWeapon::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	InitAbilities();
 }
-
 
 bool AAbilityWeapon::ServerStartUseAbility_Validate()
 {

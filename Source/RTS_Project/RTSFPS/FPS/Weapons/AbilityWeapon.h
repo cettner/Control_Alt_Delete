@@ -28,6 +28,8 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual void StartReload(bool bFromReplication = false) override;
 
 		virtual void StopReload() override;
+
+		virtual void OnEnterInventory(ACombatCommander* NewOwner) override;
 	/*****************************************************************/
 
 	/***********************IAbilityUserInterface*********************/
@@ -42,6 +44,8 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
+
+		virtual USceneComponent * GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility = nullptr) override;
 	/*****************************************************************/
 
 
@@ -49,7 +53,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual int GetCurrentMana() const;
 
 	protected:
-		virtual void InitAbilities();
+		virtual bool InitAbilities();
 
 	protected:
 		virtual void PostInitializeComponents() override;
@@ -66,6 +70,8 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
+
+		bool bAreAbilitiesInitialized = false;
 
 		UPROPERTY(EditDefaultsOnly)
 		TArray<TSubclassOf<UAbility>> AbilityClasses;

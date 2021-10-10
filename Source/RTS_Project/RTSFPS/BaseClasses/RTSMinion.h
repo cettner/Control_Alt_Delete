@@ -35,7 +35,7 @@ public:
 
 	virtual void StartAttack(AActor * AttackMe);
 
-	virtual bool IsAlive();
+	virtual bool IsAlive() const;
 
 	UFUNCTION()
 	virtual void OnDeath();

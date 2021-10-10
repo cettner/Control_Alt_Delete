@@ -44,15 +44,16 @@ USkeletalMeshComponent * AMageHands::GetWeaponMesh() const
 	return(MyPawn->GetPawnMesh());
 }
 
-void AMageHands::InitAbilities()
+bool AMageHands::InitAbilities()
 {
-	Super::InitAbilities();
+	bool retval = Super::InitAbilities();
 
 	for (int i = 0; i < RightAbilityClasses.Num(); i++)
 	{
 		RightHandAbilityComp->AddAbility(RightAbilityClasses[i]);
 	}
 
+	return(retval);
 }
 
 void AMageHands::OnReadyNotify(UAbilityAnimNotify * CallingContext)

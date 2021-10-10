@@ -135,9 +135,21 @@ AActor * ACommander::GetSelectableActor()
 	}
 }
 
-bool ACommander::IsFirstPerson()
+bool ACommander::IsFirstPerson() const
 {
-	return IsAlive() && Controller && Controller->IsLocalPlayerController();
+	bool retval = false;
+	const bool balive = IsAlive();
+	if (!HasAuthority())
+	{
+		const bool blocalControl = ((Controller != nullptr) && Controller->IsLocalPlayerController());
+		retval = balive && blocalControl;
+	}
+	else
+	{
+		retval = balive && IsServerPawn();
+	}
+
+	return retval;
 }
 
 void ACommander::SetTarget(AActor * newtarget)
@@ -176,14 +188,19 @@ int ACommander::GetTeam() const
 	return(team_index);
 }
 
+bool ACommander::IsServerPawn() const
+{
+	return bIsServerPawn;
+}
+
+void ACommander::SetIsServerPawn(bool IsServer)
+{
+	bIsServerPawn = IsServer;
+}
+
 void ACommander::OnDeath()
 {
 	Super::OnDeath();
-	AFPSServerController * PC = GetController<AFPSServerController>();
-	if (PC && GetLocalRole() == ROLE_Authority)
-	{
-
-	}
 }
 
 bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)

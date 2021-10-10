@@ -135,7 +135,7 @@ public:
 	virtual void OnLeaveInventory();
 
 	/**Assign Net Owner*/
-	void SetOwningPawn(ACombatCommander* NewOwner);
+	virtual void SetOwningPawn(ACombatCommander* NewOwner);
 
 protected:
 	/** Attaches weapon mesh to pawn's mesh */
@@ -211,7 +211,7 @@ public:
 
 protected:
 	UFUNCTION()
-	void OnRep_MyPawn();
+	virtual void OnRep_MyPawn();
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 

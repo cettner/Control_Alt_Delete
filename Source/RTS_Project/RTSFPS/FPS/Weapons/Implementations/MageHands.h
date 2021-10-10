@@ -19,7 +19,7 @@ protected:
 
 protected:
 	virtual USkeletalMeshComponent* GetWeaponMesh() const override;
-	virtual void InitAbilities() override;
+	virtual bool InitAbilities() override;
 
 protected:
 	/**********************AWeapon Overrides***************************/

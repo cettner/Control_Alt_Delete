@@ -50,3 +50,8 @@ void IAbilityUserInterface::OnEffectNotify(UAbilityAnimNotify * CallingContext)
 void IAbilityUserInterface::OnEndNotify(UAbilityAnimNotify * CallingContext)
 {
 }
+
+USceneComponent * IAbilityUserInterface::GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility)
+{
+	return nullptr;
+}

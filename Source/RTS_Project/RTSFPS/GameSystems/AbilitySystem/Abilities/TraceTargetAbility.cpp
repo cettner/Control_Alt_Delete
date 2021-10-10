@@ -28,11 +28,18 @@ void UTraceTargetAbility::OnEffect()
 
 	world->SweepSingleByChannel(outhit, spawnlocation, endtrace, aimdirection.ToOrientationQuat(), GetAbilityCollisionChannel(), traceshape, queryparams);
 
+	if (bOnlyProcessTrueHits == true)
+	{
+		if (outhit.bBlockingHit == true)
+		{
+			ProcessTraceHit(outhit,spawnlocation,endtrace);
+		}
+	}
+	else 
+	{
+		ProcessTraceHit(outhit, spawnlocation, endtrace);
+	}
 	
-}
-
-void UTraceTargetAbility::OnTick(float DeltaSeconds)
-{
 }
 
 void UTraceTargetAbility::NotifyOnReady()
@@ -49,6 +56,10 @@ void UTraceTargetAbility::OnAbilityEnd()
 {
 	GetWorld()->GetTimerManager().ClearTimer(ChannelPulseHandler);
 	Super::OnAbilityEnd();
+}
+
+void UTraceTargetAbility::ProcessTraceHit(FHitResult HitResult, FVector StartTrace, FVector EndTrace)
+{
 }
 
 void UTraceTargetAbility::UpdateChannel()

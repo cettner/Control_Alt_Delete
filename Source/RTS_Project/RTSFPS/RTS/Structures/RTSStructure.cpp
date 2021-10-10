@@ -131,7 +131,6 @@ void ARTSStructure::IncrementConstruction(float DeltaConstruction, AActor * Cont
 void ARTSStructure::OnConstructionComplete()
 {
 	bISConstructed = true;
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Magenta, FString::Printf(TEXT("Structure Complete!!")));
 }
 
 void ARTSStructure::OnDeath()

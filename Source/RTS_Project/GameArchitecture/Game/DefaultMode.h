@@ -76,7 +76,8 @@ protected:
 	virtual FPlayerSettings FetchSettingsFromLobbyData(APlayerController* NewPlayer);
 	virtual bool CheckPlayerRegistry();
 	virtual FServerSettings GetDefaultSettings() const;
-
+	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController);
+	virtual APawn * SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 
 protected:
 /************************************/

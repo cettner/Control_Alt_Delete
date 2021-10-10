@@ -94,7 +94,12 @@ protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
 	virtual AActor * FindPlayerStart_Implementation(AController * Player, const FString & IncomingName) override;
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings) override;
+	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController) override;
 	virtual void StartMatch() override;
+
+
+protected:
+
 
 public:
 	virtual int GetStartingResources(TSubclassOf<AResource> ResourceClass);

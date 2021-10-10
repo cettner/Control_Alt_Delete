@@ -90,9 +90,10 @@ void ARTSMinion::StartAttack(AActor * AttackMe)
 {
 }
 
-bool ARTSMinion::IsAlive()
+bool ARTSMinion::IsAlive() const
 {
-	return (Health && Health->IsAlive());
+	const bool retval = Health && Health->IsAlive();
+	return (retval);
 }
 
 void ARTSMinion::OnDeath()

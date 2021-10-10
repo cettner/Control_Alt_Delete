@@ -35,4 +35,6 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr);
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr);
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr);
+
+		virtual USceneComponent * GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility = nullptr);
 };

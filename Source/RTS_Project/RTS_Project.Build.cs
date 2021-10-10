@@ -23,7 +23,8 @@ public class RTS_Project : ModuleRules
             "RenderCore",
             "OnlineSubsystem",
             "OnlineSubSystemSteam",
-            "ProceduralMeshComponent"
+            "ProceduralMeshComponent",
+            "Niagara"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

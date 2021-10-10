@@ -32,12 +32,12 @@ AWeapon::AWeapon() : Super()
 	ThirdPersonMesh->CastShadow = true;
 	ThirdPersonMesh->SetupAttachment(RootComponent);
 
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.TickGroup = TG_PrePhysics;
 
 	SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
 	bReplicates = true;
-	bNetUseOwnerRelevancy = true;
+	//bNetUseOwnerRelevancy = true;
 
 }
 

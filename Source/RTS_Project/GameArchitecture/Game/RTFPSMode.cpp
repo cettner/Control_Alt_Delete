@@ -89,6 +89,21 @@ bool ARTFPSMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringP
 	return RetParent;
 }
 
+void ARTFPSMode::InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController)
+{
+	if (GetNetMode() == NM_ListenServer)
+	{
+		ACommander * commandpawn = Cast<ACommander>(DefferedPawn);
+		APlayerController * controller = GetWorld()->GetFirstPlayerController();
+
+		if (commandpawn != nullptr && (InheritingController == controller))
+		{
+			commandpawn->SetIsServerPawn(true);
+		}
+	}
+
+}
+
 void ARTFPSMode::StartMatch()
 {
 	Super::StartMatch();
@@ -103,6 +118,7 @@ void ARTFPSMode::StartMatch()
 	}
 
 }
+
 
 int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass)
 {
