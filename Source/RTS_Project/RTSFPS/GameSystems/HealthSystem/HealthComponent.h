@@ -169,10 +169,10 @@ protected:
 	//Death
 
 	UPROPERTY(EditDefaultsOnly, Category = "Death")
-	bool ShouldRagdoll = true;
+	bool bShouldRagdoll = false;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Death")
-	bool DestroyAfterRagdoll = true;
+	UPROPERTY(EditDefaultsOnly, Category = "Death", meta = (EditCondition = "bShouldRagDoll"))
+	bool bDestroyAfterRagdoll = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Death")
 	float TimeRagdoll = 5.0F;

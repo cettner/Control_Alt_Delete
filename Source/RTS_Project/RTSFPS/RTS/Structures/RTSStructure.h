@@ -101,6 +101,7 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+
 protected:
 	UFUNCTION()
 	virtual void OnRep_TeamIndex();

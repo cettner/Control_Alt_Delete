@@ -160,10 +160,10 @@ void UHealthComponent::OnDeath(float KillingDamage, FDamageEvent const& DamageEv
 	{
 		DeathAnimDuration = SkeletalMeshComp->GetAnimInstance()->Montage_Play(DeathAnimMontage);
 		/*Delete Actor just before the animation ends*/
-		DeathAnimDuration -= .3f;
+		DeathAnimDuration -= .6f;
 	}
 
-	if (ShouldRagdoll && SkeletalMeshComp)
+	if (bShouldRagdoll && SkeletalMeshComp)
 	{
 		HandleRagDoll(SkeletalMeshComp, DeathAnimDuration);
 	}
@@ -210,7 +210,7 @@ void UHealthComponent::SetRagDollPhysics(USkeletalMeshComponent* Mesh, UMovement
 	}
 
 
-	if (DestroyAfterRagdoll)
+	if (bDestroyAfterRagdoll == true)
 	{
 		//Ragdoll Enabled, set time till Actor Destruction
 		DestroyOwner(TimeRagdoll);
