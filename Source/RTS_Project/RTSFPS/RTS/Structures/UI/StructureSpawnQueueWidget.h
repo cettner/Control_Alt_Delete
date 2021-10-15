@@ -2,11 +2,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 
-#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "StructureQueueSelectionWidget.h"
 #include "StructureSpawnQueueWidget.generated.h"
 

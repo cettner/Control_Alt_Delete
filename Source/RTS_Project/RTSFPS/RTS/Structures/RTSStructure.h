@@ -5,14 +5,12 @@
 #include "CoreMinimal.h"
 
 #include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
-#include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 #include "Interfaces/BuildableInterface.h"
 
 #include "Components/SkeletalMeshComponent.h"
@@ -200,4 +198,11 @@ protected:
 	TSubclassOf<UStructureSpawnQueueWidget> MenuClass;
 
 	UStructureSpawnQueueWidget* Menu;
+
+
+
+#if WITH_EDITOR
+	/*need this because for some reason editor world is obtained sometimes instead of PIE from GetWorld() call*/
+	UWorld * GetWorldPIE() const;
+#endif
 };

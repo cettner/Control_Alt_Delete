@@ -106,12 +106,7 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 	ADefaultPlayerState* PS = Controller->GetPlayerState<ADefaultPlayerState>();
 	TArray<ARTSStructure*> structures = GetAllStructuresOfTeam(PS->TeamID);
 
-
-	ARespawnSelectionPawn * Respawnactor =  World->SpawnActor<ARespawnSelectionPawn>(ARespawnSelectionPawn::StaticClass(),RespawnActorParams);
-	if (structures.Num() && Respawnactor)
-	{
-		Respawnactor->SetRevolveActor(structures[0]);
-	}
+	ARespawnSelectionPawn * Respawnactor =  World->SpawnActor<ARespawnSelectionPawn>(ARespawnSelectionPawn::StaticClass(), RespawnActorParams);
 	if (Respawnactor)
 	{
 		Controller->Possess(Respawnactor);

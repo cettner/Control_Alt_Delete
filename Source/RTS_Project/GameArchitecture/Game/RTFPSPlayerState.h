@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
 #include "DefaultPlayerState.h"
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTFPSPlayerState.generated.h"
 
 /**
@@ -17,15 +18,17 @@ class RTS_PROJECT_API ARTFPSPlayerState : public ADefaultPlayerState
 public:
 	bool IsRTSPlayer() const;
 	void SetIsRTSPlayer(bool isrts);
+	void SetTeamStructures(TArray<ARTSStructure *>& InStructures);
 
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void ClientInitialize(AController * C) override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 protected:
 	UPROPERTY(Replicated)
 	bool isRtsPlayer = false;
+
+	UPROPERTY(Replicated)
+	TArray<ARTSStructure *> TeamStructures;
 	
 };

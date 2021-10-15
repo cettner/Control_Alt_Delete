@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "DefaultGameState.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 #include "RTFPSMode.h"

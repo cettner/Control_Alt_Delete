@@ -3,12 +3,14 @@
 
 #include "RespawnSelectionPawn.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
-
+#include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 
 // Sets default values
 ARespawnSelectionPawn::ARespawnSelectionPawn()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bAlwaysRelevant = false;
+	bNetUseOwnerRelevancy = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Fulcrum"));
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -41,6 +43,19 @@ void ARespawnSelectionPawn::SetupPlayerInputComponent(UInputComponent* PlayerInp
 void ARespawnSelectionPawn::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	UWorld * world = GetWorld();
+	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+	if (GetOwner<ADefaultPlayerController>())
+	{
+		const int teamid = GetOwner<ADefaultPlayerController>()->GetTeamID();
+
+		TArray<ARTSStructure *> teamstructures = gs->GetAllStructuresOfTeam(teamid);
+		if (teamstructures.Num() > 0)
+		{
+			SetRevolveActor(teamstructures[0]);
+		}
+	}
 }
 
 void ARespawnSelectionPawn::Tick(float DeltaTime)
@@ -53,6 +68,21 @@ void ARespawnSelectionPawn::Tick(float DeltaTime)
 		SpringArmComp->AddLocalRotation(CameraRotation);
 	}
 
+}
+
+void ARespawnSelectionPawn::OnRep_Controller()
+{
+	UWorld * world = GetWorld();
+	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+	ADefaultPlayerController * pc = GetController<ADefaultPlayerController>();
+
+	const int teamid = pc->GetTeamID();
+	TArray<ARTSStructure *> teamstructures = gs->GetAllStructuresOfTeam(teamid);
+	
+	if (teamstructures.Num() > 0)
+	{
+		SetRevolveActor(teamstructures[0]);
+	}
 }
 
 void ARespawnSelectionPawn::SetRevolveActor(AActor* FollowMe)

@@ -27,6 +27,7 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void OnRep_Controller() override;
 
 protected:
 	virtual void CyclePrev();

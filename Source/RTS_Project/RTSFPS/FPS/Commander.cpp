@@ -146,7 +146,9 @@ bool ACommander::IsFirstPerson() const
 	}
 	else
 	{
-		retval = balive && IsServerPawn();
+		const bool blocalControl = ((Controller != nullptr) && Controller->IsLocalPlayerController());
+		const bool bIsServerInitPawn = IsServerPawn();
+		retval = balive && (bIsServerInitPawn || blocalControl);
 	}
 
 	return retval;

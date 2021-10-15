@@ -142,6 +142,11 @@ void ARTSStructure::OnDeath()
 		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
 		PerceptionSystem->UnregisterSource(*this);
 
+
+		/*Stop Ticking Events*/
+		GetWorldTimerManager().ClearTimer(BuildUpdateHandler);
+		GetWorldTimerManager().ClearTimer(QueueHandler);
+
 		ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
 		GS->OnUnitDeath(this);
 	}
@@ -151,7 +156,7 @@ void ARTSStructure::OnDeath()
 	{
 		for (int i = 0; i < Modifiers.Num(); i++)
 		{
-			pgrid->RemoveModifier(Modifiers[i],GridClaimSpace,this);
+			pgrid->RemoveModifier(Modifiers[i], GridClaimSpace, this);
 		}
 	}
 }
@@ -250,33 +255,24 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 
 	/*TODO: Context for this function seems to be incorrect in Editor so we have to iterate through all World contexts till its valid*/
 	/*it is valid in standalone though through normal GetWorld() call*/
-	UWorld* World = GetWorld();
-	ARTFPSGameState* GS = nullptr;
+	#if WITH_EDITOR
+	const UWorld * world = GetWorldPIE();
+	#else
+	const UWorld * world = GetWorld();
+	#endif // WITH_EDITOR
 
-	if (World && World->WorldType != EWorldType::Game)
-	{
-		for (int i = 0; i < GEngine->GetWorldContexts().Num(); i++)
-		{
-			World = GEngine->GetWorldContexts()[i].World();
-			if (World == nullptr) continue;
+	ARTFPSGameState* gs = nullptr;
+	gs = world->GetGameState<ARTFPSGameState>();
 
-			GS = World->GetGameState<ARTFPSGameState>();
-			if (GS != nullptr) break;
-		}
-	}
-	else if(World)
-	{
-		GS = World->GetGameState<ARTFPSGameState>();
-	}
+	check(gs);
 
-
-	if (GS == nullptr) return false;
-
-	return 	GS->ScoreResource(ResourceType, Amount,this);
+	return 	gs->ScoreResource(ResourceType, Amount,this);
 }
 
 bool ARTSStructure::QueueActor(TSubclassOf<AActor> minionclass, AController* InheritingController)
 {
+	if (!HasAuthority()) return false;
+
 	int index = GetIndexByClass(minionclass);
 	if (index < 0 || IsQueueFull()) return false;
 	
@@ -292,7 +288,15 @@ bool ARTSStructure::QueueActor(TSubclassOf<AActor> minionclass, AController* Inh
 		StructureQueue.Enqueue(Queuedata);
 		CurrentQueueSize++;
 		float spawntime = Queuedata.SpawnTime / 100.0f;
-		GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
+		#if WITH_EDITOR
+		const UWorld * world = GetWorldPIE();
+		#else
+		const UWorld * world = GetWorld();
+		#endif // WITH_EDITOR
+
+
+
+		world->GetTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 	}
 	else
 	{
@@ -320,14 +324,24 @@ void ARTSStructure::UpdateSpawnQueue()
 		
 		if (StructureQueue.Peek(queuedata))
 		{
+			#if WITH_EDITOR
+			const UWorld * world = GetWorldPIE();
+			#else
+			const UWorld * world = GetWorld();
+			#endif // WITH_EDITOR
 			float spawntime = queuedata.SpawnTime / 100.0f;
-			GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
+			world->GetTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 		}
 	}
 	else if(StructureQueue.Peek(queuedata))
 	{
+		#if WITH_EDITOR
+		const UWorld * world = GetWorldPIE();
+		#else
+		const UWorld * world = GetWorld();
+		#endif // WITH_EDITOR
 		float spawntime = queuedata.SpawnTime / 100.0f;
-		GetWorldTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
+		world->GetTimerManager().SetTimer(QueueHandler, this, &ARTSStructure::UpdateSpawnQueue, 1.0, false, spawntime);
 	}
 	else
 	{
@@ -339,13 +353,17 @@ void ARTSStructure::UpdateSpawnQueue()
 
 void ARTSStructure::SpawnUnit(FStructureQueueData QueueData)
 {
-	UWorld * World = GetWorld();
-	if (World == nullptr) return;
+	#if WITH_EDITOR
+	const UWorld * world = GetWorldPIE();
+	#else
+	const UWorld * world = GetWorld();
+	#endif // WITH_EDITOR
+	if (world == nullptr) return;
 
-	ARTFPSGameState* GS = World->GetGameState<ARTFPSGameState>();
-	if (GS == nullptr) return;
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	if (gs == nullptr) return;
 
-	GS->HandleStructureMinionSpawn(this, QueueData);
+	gs->HandleStructureMinionSpawn(this, QueueData);
 }
 
 void ARTSStructure::CancelSpawn()
@@ -381,3 +399,24 @@ void  ARTSStructure::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ARTSStructure, queuestatus);
 	DOREPLIFETIME(ARTSStructure, TeamIndex);
 }
+
+#if WITH_EDITOR
+UWorld * ARTSStructure::GetWorldPIE() const
+{
+
+	UWorld * world = GetWorld();
+	if ( world && world->WorldType == EWorldType::PIE) return world;
+
+	for (int i = 0; i < GEngine->GetWorldContexts().Num(); i++)
+	{
+		world = GEngine->GetWorldContexts()[i].World();
+		if (world == nullptr) continue;
+		else if (world->WorldType == EWorldType::PIE)
+		{
+			return world;
+		}
+
+	}
+	return world;
+}
+#endif

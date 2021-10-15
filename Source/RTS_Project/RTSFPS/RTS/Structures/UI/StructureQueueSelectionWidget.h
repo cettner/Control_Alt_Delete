@@ -2,16 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
+
 
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "StructureQueueSelectionWidget.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class RTS_PROJECT_API UStructureQueueSelectionWidget : public UUserWidget
 {
