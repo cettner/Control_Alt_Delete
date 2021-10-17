@@ -19,7 +19,7 @@ public:
 	bool IsRTSPlayer() const;
 	void SetIsRTSPlayer(bool isrts);
 	void SetTeamStructures(TArray<ARTSStructure *>& InStructures);
-
+	TArray<ARTSStructure *> GetTeamStructures() const;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;

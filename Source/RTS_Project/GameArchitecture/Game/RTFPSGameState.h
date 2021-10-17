@@ -56,19 +56,19 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual FReplicationResourceMap GetUnitPrice(TSubclassOf<AActor> PurchaseClass) const;
 		virtual bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, IRTSObjectInterface* Donar);
 
+    public:
+		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
+
 	protected:
-		
 		virtual void InitializeResources(ARTFPSMode * GM);
 		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
 		virtual void UnpackUnitPriceMap(TMap<TSubclassOf<AActor>, FReplicationResourceMap> GameModePrices);
-
-
-
-    public:
-		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
-
+	
+	protected:
+		virtual void AddRTSObjectToTeam(IRTSObjectInterface * InObject);
+		virtual bool RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject);
 
 
     protected:
@@ -78,9 +78,6 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:
-		TArray<RTSTeamUnits> AllUnits;
-		RTSTeamUnits InvalidUnits;
-
 		UPROPERTY(Replicated)
 		TArray<FReplicationResourceMap> TeamResources;
 
@@ -92,4 +89,9 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 
 		UPROPERTY(Replicated)
 		TArray<FResourceUIData> MapResourceInfo;
+
+		private:
+		TArray<RTSTeamUnits> AllUnits;
+
+		RTSTeamUnits InvalidUnits;
 };

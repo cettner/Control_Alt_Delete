@@ -320,6 +320,38 @@ void ARTFPSGameState::UnpackUnitPriceMap(TMap<TSubclassOf<AActor>, FReplicationR
 	}
 }
 
+void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
+{
+	const int teamid = InObject->GetTeam();
+	if(IsTeamValid(teamid))
+	{
+		const ARTSMinion * isminion = Cast<ARTSMinion>(InObject); 
+		const ARTSStructure * isstructure = Cast<ARTSStructure>(InObject);
+		/**/
+		if(isminion != nullptr)
+		{ 
+			AllUnits[teamid].Minions.AddUnique(isminion);
+			for(int i = 0; i < Teams[teamsid].Num(); i++)
+			{
+				
+			}
+		}
+		else if(isstructure != nullptr)
+		{
+			/*Add in the units on the server*/
+			AllUnits[teamid].Structures.AddUnique(isstructure);
+			for(int i = 0; i < Teams[teamsid].Num(); i++)
+			{
+				/*For each player, update the list of Structures unique to thier team*/
+				ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(Teams[teamsid][i]);
+				check(ps);
+				ps->SetTeamStructures(AllUnits[teamid].Structures);
+			}
+		}
+	}
+
+}
+
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const
 {
 	int retval = -1;
