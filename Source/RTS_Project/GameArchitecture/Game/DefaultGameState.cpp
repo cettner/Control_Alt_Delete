@@ -98,6 +98,11 @@ bool ADefaultGameState::IsTeamValid(int Team_Index) const
 	return((Team_Index > -1) && (Team_Index < MaxTeamSize));
 }
 
+void ADefaultGameState::PlayerGameDataInit(APlayerState * Player)
+{
+	/*Pure Virtual Function, Map related data to populate the playerstate on login goes here*/
+}
+
 int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
 {
 	int retval = HasTeam(New_Player);

@@ -58,6 +58,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 
     public:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
+		virtual void PlayerGameDataInit(APlayerState * Player) override;
 
 	protected:
 		virtual void InitializeResources(ARTFPSMode * GM);

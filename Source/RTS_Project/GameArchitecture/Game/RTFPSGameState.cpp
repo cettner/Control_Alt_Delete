@@ -33,30 +33,16 @@ int ARTFPSGameState::NumRTSPlayers(int Team_Index)
 
 void ARTFPSGameState::RefreshAllUnits()
 {
-	for (TObjectIterator<ARTSMinion> Itr; Itr; ++Itr)
+	UWorld * world = GetWorld();
+	for (TActorIterator<ARTSMinion> Itr(world); Itr; ++Itr)
 	{
-		ARTSMinion* minion = *Itr;
-		if (minion && IsTeamValid(minion->GetTeam()))
-		{
-			AllUnits[minion->GetTeam()].Minions.AddUnique(minion);
-		}
-		else
-		{
-			InvalidUnits.Minions.Add(minion);
-		}
+		IRTSObjectInterface * rtsobj = *Itr;
+		AddRTSObjectToTeam(rtsobj);
 	}
-
-	for (TObjectIterator<ARTSStructure> Itr; Itr; ++Itr)
+	for (TActorIterator<ARTSStructure> Itr(world); Itr; ++Itr)
 	{
-		ARTSStructure* structure = *Itr;
-		if (structure && IsTeamValid(structure->GetTeam()))
-		{
-			AllUnits[structure->GetTeam()].Structures.AddUnique(structure);
-		}
-		else
-		{
-			InvalidUnits.Structures.Add(structure);
-		}
+		IRTSObjectInterface * rtsobj = *Itr;
+		AddRTSObjectToTeam(rtsobj);
 	}
 }
 
@@ -138,7 +124,7 @@ void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructur
 	}
 
 	UGameplayStatics::FinishSpawningActor(Minion, FTransform());
-	AllUnits[Minion->GetTeam()].Minions.Emplace(Minion);
+	AddRTSObjectToTeam(Minion);
 }
 
 void ARTFPSGameState::HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController* InvokedController)
@@ -155,7 +141,7 @@ void ARTFPSGameState::HandleStructureSpawn(TSubclassOf<AActor> StructureClass, F
 
 	
 	UGameplayStatics::FinishSpawningActor(structure,SpawnTransform);
-	AllUnits[teamid].Structures.Emplace(structure);
+	AddRTSObjectToTeam(structure);
 }
 
 TArray<ARTSMinion*> ARTFPSGameState::GetAllMinionsOfTeam(int teamindex) const
@@ -325,13 +311,13 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
 	const int teamid = InObject->GetTeam();
 	if(IsTeamValid(teamid))
 	{
-		const ARTSMinion * isminion = Cast<ARTSMinion>(InObject); 
-		const ARTSStructure * isstructure = Cast<ARTSStructure>(InObject);
+		ARTSMinion * isminion = Cast<ARTSMinion>(InObject); 
+		ARTSStructure * isstructure = Cast<ARTSStructure>(InObject);
 		/**/
 		if(isminion != nullptr)
 		{ 
 			AllUnits[teamid].Minions.AddUnique(isminion);
-			for(int i = 0; i < Teams[teamsid].Num(); i++)
+			for(int i = 0; i < Teams[teamid].Num(); i++)
 			{
 				
 			}
@@ -340,16 +326,21 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
 		{
 			/*Add in the units on the server*/
 			AllUnits[teamid].Structures.AddUnique(isstructure);
-			for(int i = 0; i < Teams[teamsid].Num(); i++)
+			for(int i = 0; i < Teams[teamid].Num(); i++)
 			{
 				/*For each player, update the list of Structures unique to thier team*/
-				ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(Teams[teamsid][i]);
+				ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(Teams[teamid][i]);
 				check(ps);
 				ps->SetTeamStructures(AllUnits[teamid].Structures);
 			}
 		}
 	}
 
+}
+
+bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
+{
+	return false;
 }
 
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const
@@ -429,6 +420,16 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	RefreshAllUnits();
 
 	return result;
+}
+
+void ARTFPSGameState::PlayerGameDataInit(APlayerState * Player)
+{
+	ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(Player);
+	const int teamid = ps->TeamID;
+
+	TArray<ARTSStructure *> initstructures = GetAllStructuresOfTeam(teamid);
+	ps->SetTeamStructures(initstructures);
+	
 }
 
 bool ARTFPSGameState::InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> ResourceClasses)

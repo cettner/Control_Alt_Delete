@@ -20,6 +20,7 @@ class RTS_PROJECT_API ADefaultGameState : public AGameState
 
 public:
 	virtual bool TeamInitialize(ADefaultMode * GameMode);
+	virtual void PlayerGameDataInit(APlayerState * Player);
 	int AssignAvailableTeam(APlayerState * New_Player);
 	int AssignBalancedTeam(APlayerState * New_Player);
 	bool SwapTeam(APlayerState * Player, int New_Team);

@@ -2,8 +2,9 @@
 
 
 #include "RespawnSelectionPawn.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "../FPSServerController.h"
 
 // Sets default values
 ARespawnSelectionPawn::ARespawnSelectionPawn()
@@ -43,14 +44,14 @@ void ARespawnSelectionPawn::SetupPlayerInputComponent(UInputComponent* PlayerInp
 void ARespawnSelectionPawn::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	UWorld * world = GetWorld();
-	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-	if (GetOwner<ADefaultPlayerController>())
+	if (HasAuthority())
 	{
-		const int teamid = GetOwner<ADefaultPlayerController>()->GetTeamID();
+		UWorld * world = GetWorld();
 
-		TArray<ARTSStructure *> teamstructures = gs->GetAllStructuresOfTeam(teamid);
+		const APlayerController * pc = GetOwner<APlayerController>();
+		const ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(pc->PlayerState);
+		TArray<ARTSStructure *> teamstructures = ps->GetTeamStructures();
+
 		if (teamstructures.Num() > 0)
 		{
 			SetRevolveActor(teamstructures[0]);
@@ -73,11 +74,12 @@ void ARespawnSelectionPawn::Tick(float DeltaTime)
 void ARespawnSelectionPawn::OnRep_Controller()
 {
 	UWorld * world = GetWorld();
-	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-	ADefaultPlayerController * pc = GetController<ADefaultPlayerController>();
 
-	const int teamid = pc->GetTeamID();
-	TArray<ARTSStructure *> teamstructures = gs->GetAllStructuresOfTeam(teamid);
+	const APlayerController * pc = GetController<APlayerController>();
+
+	const ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(pc->PlayerState);
+
+	TArray<ARTSStructure *> teamstructures = ps->GetTeamStructures();
 	
 	if (teamstructures.Num() > 0)
 	{

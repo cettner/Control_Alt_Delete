@@ -94,13 +94,8 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
 
-	ADefaultPlayerController* firstcontroller = World->GetFirstPlayerController<ADefaultPlayerController>();
 	ADefaultPlayerController* newcontroller = Cast<ADefaultPlayerController>(NewPlayer);
-
-	const ENetMode netmode = GetNetMode();
-	const bool bnetmodevalid = (netmode == NM_ListenServer || netmode == NM_Standalone);
 	
-	const EWorldType::Type worldtype = World->WorldType;
 	FPlayerSettings settings = FetchSettingsFromLobbyData(NewPlayer);
 
 	if (!settings.bIsValid)
@@ -118,6 +113,9 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 		}
 
 	}
+
+	ADefaultGameState * gs = GetGameState<ADefaultGameState>();
+	gs->PlayerGameDataInit(NewPlayer->PlayerState);
 }
 
 void ADefaultMode::StartMatch()
