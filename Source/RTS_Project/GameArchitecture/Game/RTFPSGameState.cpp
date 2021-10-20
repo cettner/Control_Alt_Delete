@@ -219,7 +219,7 @@ bool ARTFPSGameState::AddTeamResource(int TeamID, TSubclassOf<AResource> Resourc
 		const int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr)
 		{
-			int newval = *currentval + amount;
+			const int newval = *currentval + amount;
 			TeamResources[TeamID].Emplace(ResourceClass, newval);
 
 			retval = true;
@@ -233,7 +233,7 @@ bool ARTFPSGameState::IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource>
 	bool retval = false;
 	if (IsTeamValid(TeamID))
 	{
-		auto currentval = TeamResources[TeamID].Find(ResourceClass);
+		const int* currentval = TeamResources[TeamID].Find(ResourceClass);
 		if (currentval != nullptr && *currentval >= requestedamount)
 		{
 			retval = true;
@@ -319,7 +319,7 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
 			AllUnits[teamid].Minions.AddUnique(isminion);
 			for(int i = 0; i < Teams[teamid].Num(); i++)
 			{
-				
+				/*Currently no reason to send clients Minions on thier team*/
 			}
 		}
 		else if(isstructure != nullptr)
@@ -340,6 +340,32 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
 
 bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 {
+	const int teamid = InObject->GetTeam();
+	if(IsTeamValid(teamid))
+	{
+		ARTSMinion * isminion = Cast<ARTSMinion>(InObject); 
+		ARTSStructure * isstructure = Cast<ARTSStructure>(InObject);
+
+		/*check type casting and attempt to remove data*/
+		if(isminion != nullptr && (AllUnits.Minions.Remove(isminion) >= (int32)1))
+		{
+			for(int i = 0; i < Teams[teamid].Num(); i++)
+			{
+				/*Currently no reason to send clients Minions on thier team*/
+			}
+		}
+		else if(isstructure != nullptr &&  && (AllUnits.Structures.Remove(isstructure) >= (int32)1))
+		{
+			for(int i = 0; i < Teams[teamid].Num(); i++)
+			{
+				/*For each player, update the list of Structures unique to thier team*/
+				ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(Teams[teamid][i]);
+				check(ps);
+				ps->SetTeamStructures(AllUnits[teamid].Structures);
+			}
+		}
+
+	}
 	return false;
 }
 
