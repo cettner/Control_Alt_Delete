@@ -67,7 +67,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
 		virtual void UnpackUnitPriceMap(TMap<TSubclassOf<AActor>, FReplicationResourceMap> GameModePrices);
 	
-	protected:
+	public:
 		virtual void AddRTSObjectToTeam(IRTSObjectInterface * InObject);
 		virtual bool RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject);
 

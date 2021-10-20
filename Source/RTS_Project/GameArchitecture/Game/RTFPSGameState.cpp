@@ -51,27 +51,20 @@ void ARTFPSGameState::OnUnitDeath(IRTSObjectInterface * Unit)
 	if (Unit && IsTeamValid(Unit->GetTeam()))
 	{
 		ARTSMinion * minion = Cast<ARTSMinion>(Unit);
-		ARTSStructure * structure = Cast<ARTSStructure>(Unit);
 
 		if (minion)
 		{
-			if (AllUnits[Unit->GetTeam()].Minions.Remove(minion) != (int32)1)
+			/*Remove the Object From All PLayers who share its Team*/
+			if (!RemoveRTSObjectFromTeam(Unit))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnUnitDeath] Minion Removal Unsuccessful!"));
 			}
 
+			/*If A Player Died, Assign a New Pawn to await and choose Respawn*/
 			AFPSServerController* PC = minion->GetController<AFPSServerController>();
 			if (PC)
 			{
 				HandlePlayerDeath(PC);
-			}
-		}
-
-		else if(structure)
-		{
-			if(AllUnits[Unit->GetTeam()].Structures.Remove(structure) != (int32)1)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("[ARTFPSGameState::OnUnitDeath] Structure Removal was Unsuccessful!"));
 			}
 		}
 	}
@@ -340,6 +333,7 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
 
 bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 {
+	bool retval = false;
 	const int teamid = InObject->GetTeam();
 	if(IsTeamValid(teamid))
 	{
@@ -347,15 +341,17 @@ bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 		ARTSStructure * isstructure = Cast<ARTSStructure>(InObject);
 
 		/*check type casting and attempt to remove data*/
-		if(isminion != nullptr && (AllUnits.Minions.Remove(isminion) >= (int32)1))
+		if(isminion != nullptr && (AllUnits[teamid].Minions.Remove(isminion) >= (int32)1))
 		{
+			retval = true;
 			for(int i = 0; i < Teams[teamid].Num(); i++)
 			{
 				/*Currently no reason to send clients Minions on thier team*/
 			}
 		}
-		else if(isstructure != nullptr &&  && (AllUnits.Structures.Remove(isstructure) >= (int32)1))
+		else if(isstructure != nullptr && (AllUnits[teamid].Structures.Remove(isstructure) >= (int32)1))
 		{
+			retval = true;
 			for(int i = 0; i < Teams[teamid].Num(); i++)
 			{
 				/*For each player, update the list of Structures unique to thier team*/
@@ -366,7 +362,7 @@ bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 		}
 
 	}
-	return false;
+	return retval;
 }
 
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const

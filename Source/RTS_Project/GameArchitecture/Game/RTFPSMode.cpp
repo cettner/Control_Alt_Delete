@@ -9,6 +9,7 @@
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionCamera.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/PreGame/RTSFPSLobbyGameState.h"
+#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
@@ -101,24 +102,22 @@ void ARTFPSMode::InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController
 			commandpawn->SetIsServerPawn(true);
 		}
 	}
+	/*Add the Pawns to the GameState*/
+	ARTFPSGameState * gs = GetGameState<ARTFPSGameState>();
+	IRTSObjectInterface * rtsobj = Cast<IRTSObjectInterface>(DefferedPawn);
+	ADefaultPlayerController * pc = Cast<ADefaultPlayerController>(InheritingController);
 
+	rtsobj->SetTeam(pc->GetTeamID());
+	gs->AddRTSObjectToTeam(rtsobj);
 }
 
 void ARTFPSMode::StartMatch()
 {
 	Super::StartMatch();
 	ARTFPSGameState * GS = GetGameState<ARTFPSGameState>();
-	if (GS)
-	{
-		GS->RefreshAllUnits();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[ARTSFPSMODE::StartMatch] Failed to initialize RTS Teams"));
-	}
 
+	GS->RefreshAllUnits();
 }
-
 
 int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass)
 {
