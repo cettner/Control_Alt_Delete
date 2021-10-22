@@ -2,6 +2,9 @@
 
 
 #include "AbilityProjectile.h"
+#include "Kismet/GameplayStatics.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 
 // Sets default values
 AAbilityProjectile::AAbilityProjectile()
@@ -13,10 +16,21 @@ AAbilityProjectile::AAbilityProjectile()
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMoveComp"));
 	MovementComp->ProjectileGravityScale = 0.0f;
 
-	FlightParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComp"));
-	CollisionComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CollisionComp"));
+	//Definition for the SphereComponent that will serve as the Root component for the projectile and its collision.
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
+	SphereComponent->InitSphereRadius(5.5f);
+	if (HasAuthority())
+	{
+		SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	}
+	else
+	{
+		SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	}
 
-	RootComponent = CollisionComp;
+	RootComponent = SphereComponent;
+
+	FlightParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComp"));
 	FlightParticles->SetupAttachment(RootComponent);
 
 }
@@ -24,11 +38,22 @@ AAbilityProjectile::AAbilityProjectile()
 void AAbilityProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	
+	if (HasAuthority())
+	{
+		SphereComponent->SetCollisionResponseToChannel(CollisionChannel, ECollisionResponse::ECR_Block);
+		SphereComponent->OnComponentHit.AddDynamic(this, &AAbilityProjectile::OnProjectileImpact);
+
+		SetLifeSpan(ProjectileLifeTime);
+	}
+	else
+	{
+
+	}
+
 	FVector fv = GetActorForwardVector();
 	check(MovementComp);
-
 	MovementComp->Velocity = InitialSpeed * fv;
-	SetLifeSpan(ProjectileLifeTime);
 }
 
 // Called every frame
@@ -36,6 +61,57 @@ void AAbilityProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AAbilityProjectile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (!HasAuthority() && OnHitParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticles, GetTransform());
+	}
+	Super::EndPlay(EndPlayReason);
+}
+
+void AAbilityProjectile::OnRep_Owner()
+{
+	IAbilityUserInterface * owner = GetOwner<IAbilityUserInterface>();
+	if (owner)
+	{
+		SetIgnoredActors(owner->GetIgnoredTraceActors());
+	}
+}
+
+void AAbilityProjectile::SetIgnoredActors(TArray<AActor*> IgnoreThese)
+{
+	for (int i = 0; i < IgnoreThese.Num(); i++)
+	{
+		SetIgnoredActor(IgnoreThese[i]);
+	}
+}
+
+void AAbilityProjectile::SetIgnoredActor(AActor * IgnoreThis)
+{
+	SphereComponent->IgnoreActorWhenMoving(IgnoreThis,true);
+	IgnoredActors.AddUnique(IgnoreThis);
+}
+
+void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	if (OtherActor && !IgnoredActors.Contains(OtherActor))
+	{
+		if (OnHitParticles)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticles, GetTransform());
+		}
+
+		if (OtherActor->CanBeDamaged())
+		{
+			FDamageEvent ondamageevent = FDamageEvent();
+			OtherActor->TakeDamage(DirectDamage, ondamageevent, nullptr, this);
+		}
+
+		Destroy();
+	}
 }
 
 

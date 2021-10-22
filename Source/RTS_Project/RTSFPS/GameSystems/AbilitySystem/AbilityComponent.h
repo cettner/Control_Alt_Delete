@@ -106,6 +106,14 @@ public:
 	float PlayAbilityMontage(FAbilityAnim PlayAnim);
 	virtual bool StopCurrentAnimation();
 	AActor * SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform = FTransform());
+
+	template < class T >
+	T * SpawnUninitializedActor(TSubclassOf<AActor> Class, const FTransform &SpawnTransform)
+	{
+		T* retval = Cast<T>(SpawnUninitializedActor(Class, SpawnTransform));
+		return(retval);
+	}
+
 	AActor * FinishSpawningActor(AActor * InitializedActor, const FTransform& SpawnTransform);
 
 

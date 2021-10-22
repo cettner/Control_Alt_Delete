@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/SphereComponent.h"
 
 #include "AbilityProjectile.generated.h"
 
@@ -25,24 +26,45 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-
+	virtual void EndPlay( const EEndPlayReason::Type EndPlayReason) override;
+	virtual void OnRep_Owner() override;
 
 public:
+	void SetIgnoredActors(TArray<AActor*> IgnoreThese);
+	void SetIgnoredActor(AActor * IgnoreThis);
+
+protected:
+	UFUNCTION()
+	virtual void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+	float DirectDamage = 40.0f;
+
 	UPROPERTY(EditDefaultsOnly)
 	float InitialSpeed = 1000.0f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ProjectileLifeTime = 10.0f;
 
+	UPROPERTY(EditDefaultsOnly)
+	TEnumAsByte<ECollisionChannel> CollisionChannel;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	UProjectileMovementComponent* MovementComp = nullptr;
 
-	UPROPERTY(EditDefaultsOnly)
-	UStaticMeshComponent* CollisionComp = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USphereComponent* SphereComponent = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystemComponent * FlightParticles = nullptr;
+
+	UPROPERTY(EditAnyWhere)
+	UParticleSystem * OnHitParticles = nullptr;
+
+
+protected:
+	TArray<AActor *> IgnoredActors = TArray<AActor *>();
 
 };
