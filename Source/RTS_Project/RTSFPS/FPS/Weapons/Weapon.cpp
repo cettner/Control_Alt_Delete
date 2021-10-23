@@ -25,12 +25,14 @@ AWeapon::AWeapon() : Super()
 	FirstPersonMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	FirstPersonMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 	FirstPersonMesh->SetupAttachment(RootComponent);
+	FirstPersonMesh->SetHiddenInGame(true, true);
 
 	
 	ThirdPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Third Person Weapon Mesh"));
 	ThirdPersonMesh->bReceivesDecals = false;
 	ThirdPersonMesh->CastShadow = true;
 	ThirdPersonMesh->SetupAttachment(RootComponent);
+	ThirdPersonMesh->SetHiddenInGame(true, true);
 
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.TickGroup = TG_PrePhysics;
