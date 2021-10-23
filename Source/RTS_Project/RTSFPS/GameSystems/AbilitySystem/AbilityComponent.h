@@ -98,7 +98,7 @@ public:
 
 	bool ConsumeMana(int amount);
 
-	/*Returns the User Associated witht he Component*/
+	/*Returns the User Associated witht the Component*/
 	virtual IAbilityUserInterface * GetAbilityUser() const;
 
 

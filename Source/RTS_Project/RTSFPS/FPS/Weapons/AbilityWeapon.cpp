@@ -94,6 +94,7 @@ TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> T
 
 void AAbilityWeapon::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
+	SetWeaponState(EWeaponState::Firing);
 	AbilityComp->OnReadyNotify();
 }
 
@@ -109,6 +110,7 @@ void AAbilityWeapon::OnEffectNotify(UAbilityAnimNotify * CallingContext)
 
 void AAbilityWeapon::OnEndNotify(UAbilityAnimNotify * CallingContext)
 {
+	SetWeaponState(EWeaponState::Idle);
 	AbilityComp->OnEndNotify();
 }
 
