@@ -64,7 +64,6 @@ void AMageHands::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 	utilizedcomp->OnReadyNotify();
 }
 
-
 void AMageHands::OnLoopNotify(UAbilityAnimNotify * CallingContext)
 {
 	/*Determine if we use the right or left arms component based off the animation*/
@@ -80,7 +79,6 @@ void AMageHands::OnEffectNotify(UAbilityAnimNotify * CallingContext)
 	utilizedcomp->OnEffectNotify();
 }
 
-
 void AMageHands::OnEndNotify(UAbilityAnimNotify * CallingContext) 
 {
 	/*Determine if we use the right or left arms component based off the animation*/
@@ -92,7 +90,6 @@ void AMageHands::OnEndNotify(UAbilityAnimNotify * CallingContext)
 	}
 
 }
-
 
 void AMageHands::StartSecondaryFire()
 {

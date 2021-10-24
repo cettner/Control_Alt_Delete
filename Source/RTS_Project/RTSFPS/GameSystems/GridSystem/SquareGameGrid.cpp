@@ -17,7 +17,12 @@ ASquareGameGrid::ASquareGameGrid()
 	SelectionProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("SelectionMesh"));
 
 	LinesProceduralMesh->SetupAttachment(RootComponent);
+	LinesProceduralMesh->SetVisibility(true, true);
+	LinesProceduralMesh->SetHiddenInGame(true, true);
+
 	SelectionProceduralMesh->SetupAttachment(RootComponent);
+	SelectionProceduralMesh->SetVisibility(true, true);
+	SelectionProceduralMesh->SetHiddenInGame(true, true);
 }
 
 void ASquareGameGrid::PostInitializeComponents()

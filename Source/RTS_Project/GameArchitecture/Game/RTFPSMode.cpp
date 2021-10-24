@@ -102,13 +102,17 @@ void ARTFPSMode::InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController
 			commandpawn->SetIsServerPawn(true);
 		}
 	}
-	/*Add the Pawns to the GameState*/
-	ARTFPSGameState * gs = GetGameState<ARTFPSGameState>();
-	IRTSObjectInterface * rtsobj = Cast<IRTSObjectInterface>(DefferedPawn);
-	ADefaultPlayerController * pc = Cast<ADefaultPlayerController>(InheritingController);
 
-	rtsobj->SetTeam(pc->GetTeamID());
-	gs->AddRTSObjectToTeam(rtsobj);
+	IRTSObjectInterface * rtsobj = Cast<IRTSObjectInterface>(DefferedPawn);
+	if (rtsobj != nullptr)
+	{
+		/*Add the Pawns to the GameState*/
+		ARTFPSGameState * gs = GetGameState<ARTFPSGameState>();
+		ADefaultPlayerController * pc = Cast<ADefaultPlayerController>(InheritingController);
+		rtsobj->SetTeam(pc->GetTeamID());
+		gs->AddRTSObjectToTeam(rtsobj);
+	}
+
 }
 
 void ARTFPSMode::StartMatch()
