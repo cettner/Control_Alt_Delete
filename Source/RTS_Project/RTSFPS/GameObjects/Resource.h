@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
-#include "Engine/StaticMeshActor.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
+
+
+#include "Components/StaticMeshComponent.h"
 #include "Resource.generated.h"
 
 USTRUCT(Blueprintable)
@@ -24,13 +27,13 @@ struct FResourceUIData
 };
 
 UCLASS(Blueprintable)
-class RTS_PROJECT_API AResource : public AStaticMeshActor, public IRTSObjectInterface
+class RTS_PROJECT_API AResource : public AGridClaimingActor, public IRTSObjectInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AResource(const FObjectInitializer& ObjectInitializer);
+	AResource();
 	int Mine(uint32 amount_to_mine);
 	FResourceUIData GetUIData() const;
 
@@ -40,8 +43,11 @@ public:
 	virtual void SetDeselected() override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = Selection)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	UDecalSelectionComponent* SelectionComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UStaticMeshComponent* MeshComp;
 
 protected:
 

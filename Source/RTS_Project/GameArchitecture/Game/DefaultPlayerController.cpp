@@ -121,6 +121,12 @@ void ADefaultPlayerController::PostRegisterInit()
 	{
 		ClientInitUI();
 	}
+	else if (battemptedHudinit == true)
+	{
+		/*If Player Registration was Behind Gamestate Replication*/
+		ADefaultHUD * hud = GetHUD<ADefaultHUD>();
+		isHUDInitialized = hud->InitializeUI();
+	}
 
 	FinishLocalPlayerSetup();
 }
@@ -130,7 +136,12 @@ void ADefaultPlayerController::ClientInitUI()
 	if (IsRegistered() && IsLocalController())
 	{
 		ADefaultHUD * hud = GetHUD<ADefaultHUD>();
-		hud->InitializeUI();
+		isHUDInitialized = hud->InitializeUI();
+	}
+	else if (!IsRegistered() && IsLocalController())
+	{
+		/*Gamestate replicated before registration occured*/
+		battemptedHudinit = true;
 	}
 }
 

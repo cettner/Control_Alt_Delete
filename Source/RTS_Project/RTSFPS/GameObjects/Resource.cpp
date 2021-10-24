@@ -2,34 +2,27 @@
 
 #include "Resource.h"
 
-#include "GameFramework/PlayerController.h"
-#include "Components/StaticMeshComponent.h"
 
 
 
 
 
-AResource::AResource(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) 
+
+AResource::AResource() : Super() 
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	bReplicates = true;
 
-
-	
-	UStaticMeshComponent* Mesh = GetStaticMeshComponent();
-	
-	if (Mesh)
-	{
-		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Mesh->SetCanEverAffectNavigation(true);
-		Mesh->bFillCollisionUnderneathForNavmesh = true;
-		Mesh->bReceivesDecals = false;
-	}
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	MeshComp->SetCanEverAffectNavigation(true);
+	MeshComp->bFillCollisionUnderneathForNavmesh = true;
+	MeshComp->bReceivesDecals = false;
 
 	SelectionComp = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
-	SelectionComp->SetDetection(Mesh);
-	SelectionComp->SetupAttachment(Mesh);
+	SelectionComp->SetDetection(MeshComp);
+	SelectionComp->SetupAttachment(MeshComp);
 	SetDeselected();
 
 	UIData.ResourceName = "Default Resource";

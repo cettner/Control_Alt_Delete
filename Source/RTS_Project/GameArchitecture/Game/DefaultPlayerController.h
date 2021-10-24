@@ -59,6 +59,9 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		bool bisregistered = false;
 
 		bool isHUDInitialized = false;
+
+		/*set to to true when the gamestate is initally replicated down if it beats player registration*/
+		bool battemptedHudinit = false;
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
