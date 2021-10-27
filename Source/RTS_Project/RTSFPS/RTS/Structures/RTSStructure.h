@@ -25,7 +25,7 @@ USTRUCT()
 struct FStructureQueueData
 {
 	GENERATED_USTRUCT_BODY()
-	TSubclassOf<ARTSMinion> SpawnClass = nullptr;
+	TSubclassOf<UObject> SpawnClass = nullptr;
 	AController* RecieveingController = nullptr;
 	float SpawnTime = 0.0f;
 };
@@ -36,7 +36,7 @@ struct FStructureSpawnData
 	GENERATED_USTRUCT_BODY()
 	
 	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
-	TSubclassOf<AActor> SpawnClass = nullptr;
+	TSubclassOf<UObject> SpawnClass = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	float SpawnTime = 0.0f;
@@ -108,15 +108,15 @@ protected:
 
 public:
 
-	bool QueueActor(TSubclassOf<AActor> minionclass, AController* InheritingController = nullptr);
+	bool QueueActor(TSubclassOf<UObject> ObjectClass, AController* InheritingController = nullptr);
 
 	virtual bool IsDropPointFor(TSubclassOf<AResource> ResourceType) const;
 
 	bool IsQueueFull() const;
 
-	bool CanSpawn(TSubclassOf<AActor> minionclass) const;
+	bool CanSpawn(TSubclassOf<UObject> Objectclass) const;
 
-	int GetIndexByClass(TSubclassOf<AActor> minionclass) const;
+	int GetIndexByClass(TSubclassOf<UObject> Objectclass) const;
 
 	TArray< FStructureSpawnData> GetSpawnData() const;
 
@@ -128,7 +128,6 @@ public:
 
 	bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar = nullptr);
 
-	//bool PurchaseQueueItem(TSubclassOf<AActor> minionclass);
 
 protected:
 

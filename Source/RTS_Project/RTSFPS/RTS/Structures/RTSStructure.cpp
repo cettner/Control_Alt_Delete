@@ -208,17 +208,17 @@ bool ARTSStructure::IsQueueFull() const
 	return (CurrentQueueSize >= MaxQueueSize);
 }
 
-bool ARTSStructure::CanSpawn(TSubclassOf<AActor> minionclass) const
+bool ARTSStructure::CanSpawn(TSubclassOf<UObject> minionclass) const
 {
 	return (GetIndexByClass(minionclass) > -1);
 }
 
-int ARTSStructure::GetIndexByClass(TSubclassOf<AActor> minionclass) const
+int ARTSStructure::GetIndexByClass(TSubclassOf<UObject> minionclass) const
 {
 	int index = -1;
 	for (int i = 0; i < SpawnableUnits.Num(); i++)
 	{
-		TSubclassOf<AActor> availableclasses = SpawnableUnits[i].SpawnClass;
+		TSubclassOf<UObject> availableclasses = SpawnableUnits[i].SpawnClass;
 
 		if (availableclasses.Get()->IsChildOf(minionclass.Get()))
 		{
@@ -269,11 +269,11 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 	return 	gs->ScoreResource(ResourceType, Amount,this);
 }
 
-bool ARTSStructure::QueueActor(TSubclassOf<AActor> minionclass, AController* InheritingController)
+bool ARTSStructure::QueueActor(TSubclassOf<UObject> ObjectClass, AController* InheritingController)
 {
 	if (!HasAuthority()) return false;
 
-	int index = GetIndexByClass(minionclass);
+	int index = GetIndexByClass(ObjectClass);
 	if (index < 0 || IsQueueFull()) return false;
 	
 	FStructureSpawnData Spawndata = SpawnableUnits[index];
@@ -363,7 +363,7 @@ void ARTSStructure::SpawnUnit(FStructureQueueData QueueData)
 	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
 	if (gs == nullptr) return;
 
-	gs->HandleStructureMinionSpawn(this, QueueData);
+	gs->SpawnObjectFromStructure(this, QueueData);
 }
 
 void ARTSStructure::CancelSpawn()

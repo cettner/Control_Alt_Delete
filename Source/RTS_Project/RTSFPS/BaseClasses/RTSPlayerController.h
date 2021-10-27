@@ -42,7 +42,7 @@ public:
 	void MoveMinions(ARTSPlayerController * PC, const TArray<ARTSMinion *>& Units, FHitResult Hit);
 
 	UFUNCTION(Server, reliable, WithValidation)
-	void ServerPurchaseMinion(ARTSStructure * SpawningStructure, TSubclassOf<AActor> RequestedClass);
+	void ServerPurchaseRTSObject(ARTSStructure * SpawningStructure, TSubclassOf<UObject> RequestedClass);
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void ServerPurchaseStructure(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation);

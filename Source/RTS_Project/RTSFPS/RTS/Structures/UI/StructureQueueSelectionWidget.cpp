@@ -25,7 +25,7 @@ void UStructureQueueSelectionWidget::OnSelectionClicked()
 	ARTSPlayerController * PC = World->GetFirstPlayerController<ARTSPlayerController>();
 	if (PC == nullptr) return;
 
-	PC->ServerPurchaseMinion(Structure, BoundQueueData.SpawnClass);
+	PC->ServerPurchaseRTSObject(Structure, BoundQueueData.SpawnClass);
 }
 
 bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()

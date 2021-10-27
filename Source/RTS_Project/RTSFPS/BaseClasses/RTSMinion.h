@@ -7,6 +7,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
@@ -18,7 +19,7 @@
 class ACommander;
 
 UCLASS(Blueprintable)
-class ARTSMinion : public ACharacter, public IRTSObjectInterface
+class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgradableInterface
 {
 	GENERATED_BODY()
 

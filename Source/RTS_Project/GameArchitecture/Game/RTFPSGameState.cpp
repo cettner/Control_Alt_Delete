@@ -93,31 +93,44 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 
 }
 
-void ARTFPSGameState::HandleStructureMinionSpawn(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData)
+void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData)
 {
 	UWorld* World = GetWorld();
-
-	ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass,FTransform(),nullptr,nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-
-	AController* PC = SpawnData.RecieveingController;
-
-	if (PC && Minion)
+	const bool isminion = SpawnData.SpawnClass.Get()->IsChildOf(ARTSMinion::StaticClass());
+	if (isminion == true)
 	{
-		Minion->SetTeam(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
-		APawn* respawnpawn = PC->GetPawn();
-		PC->UnPossess();
-		respawnpawn->Destroy();
-		PC->Possess(Minion);
+		ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, FTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+
+		AController* PC = SpawnData.RecieveingController;
+
+		if (PC != nullptr)
+		{
+			Minion->SetTeam(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
+			APawn* respawnpawn = PC->GetPawn();
+			PC->UnPossess();
+			respawnpawn->Destroy();
+			PC->Possess(Minion);
+		}
+		else
+		{
+			Minion->SetTeam(SpawningStructure->GetTeam());
+			/*Set Team Colors on listen Server*/
+			Minion->OnRep_TeamID();
+		}
+
+		UGameplayStatics::FinishSpawningActor(Minion, FTransform());
+		AddRTSObjectToTeam(Minion);
 	}
 	else
 	{
-		Minion->SetTeam(SpawningStructure->GetTeam());
-		/*Set Team Colors on listen Server*/
-		Minion->OnRep_TeamID();
+		const int teamid = SpawningStructure->GetTeam();
+		TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(SpawnData.SpawnClass.Get());
+		TArray<AActor*> minionactors = TArray<AActor*>(AllUnits[teamid].Minions);
+
+		UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
 	}
 
-	UGameplayStatics::FinishSpawningActor(Minion, FTransform());
-	AddRTSObjectToTeam(Minion);
+
 }
 
 void ARTFPSGameState::HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController* InvokedController)
@@ -290,7 +303,7 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>
 	return ResourcesRemoved;
 }
 
-void ARTFPSGameState::UnpackUnitPriceMap(TMap<TSubclassOf<AActor>, FReplicationResourceMap> GameModePrices)
+void ARTFPSGameState::UnpackUnitPriceMap(TMap<TSubclassOf<UObject>, FReplicationResourceMap> GameModePrices)
 {
 	for (const TPair<TSubclassOf<AActor>, FReplicationResourceMap>& pair : GameModePrices)
 	{
@@ -376,7 +389,7 @@ int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> Res
 	return(retval);
 }
 
-bool ARTFPSGameState::PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayerController * Purchaser)
+bool ARTFPSGameState::PurchaseUnit(TSubclassOf<UObject> PurchaseClass, ARTSPlayerController * Purchaser)
 {
 	bool retval = false;
 	if (IsUnitPurchaseable(PurchaseClass, Purchaser))
@@ -389,12 +402,12 @@ bool ARTFPSGameState::PurchaseUnit(TSubclassOf<AActor> PurchaseClass, ARTSPlayer
 
 }
 
-FReplicationResourceMap ARTFPSGameState::RefundUnit(TSubclassOf<AActor> RefundClass, ARTSPlayerController * Purchaser)
+FReplicationResourceMap ARTFPSGameState::RefundUnit(TSubclassOf<UObject> RefundClass, ARTSPlayerController * Purchaser)
 {
 	return FReplicationResourceMap();
 }
 
-bool ARTFPSGameState::IsUnitPurchaseable(TSubclassOf<AActor> PurchaseClass, AController* Purchaser) const
+bool ARTFPSGameState::IsUnitPurchaseable(TSubclassOf<UObject> PurchaseClass, AController* Purchaser) const
 {
 	bool ispurchasable = PurchasableUnits.IndexOfByKey(PurchaseClass) != INDEX_NONE;
 	ispurchasable &= (PurchasableUnits.Num() == UnitCosts.Num());
@@ -402,7 +415,7 @@ bool ARTFPSGameState::IsUnitPurchaseable(TSubclassOf<AActor> PurchaseClass, ACon
 	return (ispurchasable);
 }
 
-FReplicationResourceMap ARTFPSGameState::GetUnitPrice(TSubclassOf<AActor> PurchaseClass) const
+FReplicationResourceMap ARTFPSGameState::GetUnitPrice(TSubclassOf<UObject> PurchaseClass) const
 {
 	int purchaseindex = PurchasableUnits.IndexOfByKey(PurchaseClass);
 	FReplicationResourceMap retval = FReplicationResourceMap();
@@ -472,6 +485,16 @@ bool ARTFPSGameState::InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> R
 	return(retval);
 }
 
+void ARTFPSGameState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (HasAuthority())
+	{
+		UpgradeManager = SpawnUpgradeManager();
+	}
+
+}
+
 void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -479,6 +502,21 @@ void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME_CONDITION(ARTFPSGameState, MapResourceInfo, COND_InitialOnly);
 	DOREPLIFETIME_CONDITION(ARTFPSGameState, UnitCosts, COND_InitialOnly);
 	DOREPLIFETIME_CONDITION(ARTFPSGameState, PurchasableUnits, COND_InitialOnly);
+}
+
+AUpgradeManager * ARTFPSGameState::SpawnUpgradeManager()
+{
+	UWorld * world = GetWorld();
+	check(world);
+
+	AUpgradeManager * retval = world->SpawnActor<AUpgradeManager>(AUpgradeManager::StaticClass());
+
+	return retval;
+}
+
+AUpgradeManager * ARTFPSGameState::GetUpgradeManager() const
+{
+	return UpgradeManager;
 }
 
 

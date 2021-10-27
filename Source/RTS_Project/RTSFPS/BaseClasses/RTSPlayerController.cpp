@@ -4,7 +4,8 @@
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
-#include "RTS_Project/AssetHelpers/GameAssets.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+
 #include "EngineUtils.h"
  
 ARTSPlayerController::ARTSPlayerController()
@@ -188,12 +189,12 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 	}
 }
 
-bool ARTSPlayerController::ServerPurchaseMinion_Validate(ARTSStructure * SpawningStructure, TSubclassOf<AActor> RequestedClass)
+bool ARTSPlayerController::ServerPurchaseRTSObject_Validate(ARTSStructure * SpawningStructure, TSubclassOf<UObject> RequestedClass)
 {
 	return(true);
 }
 
-void ARTSPlayerController::ServerPurchaseMinion_Implementation(ARTSStructure * SpawningStructure, TSubclassOf<AActor> RequestedClass)
+void ARTSPlayerController::ServerPurchaseRTSObject_Implementation(ARTSStructure * SpawningStructure, TSubclassOf<UObject> RequestedClass)
 {
 	UWorld* world = GetWorld();
 	check(world);

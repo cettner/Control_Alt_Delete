@@ -104,7 +104,7 @@ protected:
 public:
 	virtual int GetStartingResources(TSubclassOf<AResource> ResourceClass);
 	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
-	TMap<TSubclassOf<AActor>, FReplicationResourceMap> GetDefaultUnitCosts() const;
+	TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetDefaultUnitCosts() const;
 
 
 protected:
@@ -118,6 +118,6 @@ protected:
 	TArray<TSubclassOf<AResource>> ResourceTypes;
 
 	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
-	TMap<TSubclassOf<AActor>, FReplicationResourceMap> DefaultUnitCosts;
+	TMap<TSubclassOf<UObject>, FReplicationResourceMap> DefaultUnitCosts;
 
 };

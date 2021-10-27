@@ -133,7 +133,7 @@ TArray<TSubclassOf<AResource>> ARTFPSMode::GetResourceTypes() const
 	return ResourceTypes;
 }
 
-TMap<TSubclassOf<AActor>, FReplicationResourceMap> ARTFPSMode::GetDefaultUnitCosts() const
+TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSMode::GetDefaultUnitCosts() const
 {
 	return DefaultUnitCosts;
 }
