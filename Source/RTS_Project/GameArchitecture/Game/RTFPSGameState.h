@@ -96,7 +96,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		TArray<FReplicationResourceMap> TeamResources;
 
 		UPROPERTY(Replicated)
-		TArray<TSubclassOf<AActor>> PurchasableUnits;
+		TArray<TSubclassOf<UObject>> PurchasableUnits;
 
 		UPROPERTY(Replicated)
 		TArray<FReplicationResourceMap> UnitCosts;

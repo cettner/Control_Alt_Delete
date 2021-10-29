@@ -28,6 +28,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay( const EEndPlayReason::Type EndPlayReason) override;
 	virtual void OnRep_Owner() override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 public:
 	void SetIgnoredActors(TArray<AActor*> IgnoreThese);
@@ -37,15 +38,19 @@ protected:
 	UFUNCTION()
 	virtual void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+protected:
+	UFUNCTION()
+	virtual void OnRep_InitialSpeed();
+
 public:
 	UPROPERTY(EditDefaultsOnly)
 	float DirectDamage = 40.0f;
 
-	UPROPERTY(EditDefaultsOnly)
-	float InitialSpeed = 1000.0f;
+	UPROPERTY(ReplicatedUsing = OnRep_InitialSpeed)
+	float InitialSpeed = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float ProjectileLifeTime = 10.0f;
+	float ProjectileLifeTime = 4.0f;
 
 	UPROPERTY(EditDefaultsOnly)
 	TEnumAsByte<ECollisionChannel> CollisionChannel;

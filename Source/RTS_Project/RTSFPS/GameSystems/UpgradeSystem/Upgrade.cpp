@@ -8,3 +8,8 @@ void UUpgrade::ApplyUpgrade(IUpgradableInterface * ToUpgrade) const
 {
 
 }
+
+bool UUpgrade::CanUpgrade(IUpgradableInterface * TestUpgrade) const
+{
+	return false;
+}

@@ -125,7 +125,16 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	{
 		const int teamid = SpawningStructure->GetTeam();
 		TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(SpawnData.SpawnClass.Get());
-		TArray<AActor*> minionactors = TArray<AActor*>(AllUnits[teamid].Minions);
+		const UUpgrade * defaultupgrade = upgradeclass.GetDefaultObject();
+
+		TArray<AActor*> minionactors = TArray<AActor*>();
+		for (int i = 0; i < AllUnits[teamid].Minions.Num(); i++)
+		{
+			if (defaultupgrade->CanUpgrade(AllUnits[teamid].Minions[i]))
+			{
+				minionactors.Emplace(AllUnits[teamid].Minions[i]);
+			}
+		}
 
 		UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
 	}
@@ -305,7 +314,7 @@ bool ARTFPSGameState::RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>
 
 void ARTFPSGameState::UnpackUnitPriceMap(TMap<TSubclassOf<UObject>, FReplicationResourceMap> GameModePrices)
 {
-	for (const TPair<TSubclassOf<AActor>, FReplicationResourceMap>& pair : GameModePrices)
+	for (const TPair<TSubclassOf<UObject>, FReplicationResourceMap>& pair : GameModePrices)
 	{
 		PurchasableUnits.Emplace(pair.Key);
 		UnitCosts.Emplace(pair.Value);

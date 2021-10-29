@@ -2,8 +2,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
+
 #include "RTSUpgrade.h"
+#include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Ability.h"
 #include "RTSAbilityUpgrade.generated.h"
 
 /**
@@ -13,5 +15,6 @@ UCLASS()
 class RTS_PROJECT_API URTSAbilityUpgrade : public URTSUpgrade
 {
 	GENERATED_BODY()
-	
+	TArray<TSubclassOf<UAbility>> TargetAbilities;
+
 };

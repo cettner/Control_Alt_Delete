@@ -2,9 +2,11 @@
 
 
 #include "AbilityProjectile.h"
-#include "Kismet/GameplayStatics.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AAbilityProjectile::AAbilityProjectile()
@@ -45,15 +47,8 @@ void AAbilityProjectile::PostInitializeComponents()
 		SphereComponent->OnComponentHit.AddDynamic(this, &AAbilityProjectile::OnProjectileImpact);
 
 		SetLifeSpan(ProjectileLifeTime);
+		OnRep_InitialSpeed();
 	}
-	else
-	{
-
-	}
-
-	FVector fv = GetActorForwardVector();
-	check(MovementComp);
-	MovementComp->Velocity = InitialSpeed * fv;
 }
 
 // Called every frame
@@ -65,7 +60,7 @@ void AAbilityProjectile::Tick(float DeltaTime)
 
 void AAbilityProjectile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (!HasAuthority() && OnHitParticles)
+	if (OnHitParticles)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticles, GetTransform());
 	}
@@ -99,11 +94,6 @@ void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, 
 {
 	if (OtherActor && !IgnoredActors.Contains(OtherActor))
 	{
-		if (OnHitParticles)
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticles, GetTransform());
-		}
-
 		if (OtherActor->CanBeDamaged())
 		{
 			FDamageEvent ondamageevent = FDamageEvent();
@@ -114,4 +104,16 @@ void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, 
 	}
 }
 
+void AAbilityProjectile::OnRep_InitialSpeed()
+{
+	FVector fv = GetActorForwardVector();
+	check(MovementComp);
+	MovementComp->Velocity = InitialSpeed * fv;
+}
 
+
+void AAbilityProjectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION(AAbilityProjectile, InitialSpeed, COND_InitialOnly);
+}

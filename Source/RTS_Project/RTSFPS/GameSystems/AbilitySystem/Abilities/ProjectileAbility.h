@@ -23,6 +23,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AAbilityProjectile> ProjectileClass;
 
-
-	
+	UPROPERTY(EditDefaultsOnly)
+	float ProjectileSpeed = 1500.0f;
 };

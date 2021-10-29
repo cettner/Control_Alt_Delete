@@ -2,4 +2,16 @@
 
 
 #include "RTSUpgrade.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 
+bool URTSUpgrade::CanUpgrade(IUpgradableInterface * TestUpgrade) const
+{
+	bool retval = false;
+	UObject * actorclass = Cast<UObject>(TestUpgrade);
+	for (int i = 0; i < TargetClasses.Num(); i++)
+	{
+		retval |= actorclass->GetClass()->IsChildOf(TargetClasses[i].Get());
+	}
+
+	return(retval);
+}

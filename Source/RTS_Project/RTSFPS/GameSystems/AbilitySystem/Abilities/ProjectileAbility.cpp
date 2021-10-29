@@ -8,8 +8,10 @@ void UProjectileAbility::OnEffect()
 {
 	FTransform spawntransform = AbilityComp->GetCrosshairTransform(EffectSocketName);
 	AAbilityProjectile * Projectile = AbilityComp->SpawnUninitializedActor<AAbilityProjectile>(ProjectileClass, spawntransform);
+	Projectile->SetOwner(AbilityComp->GetOwner());
+	Projectile->InitialSpeed = ProjectileSpeed;
 	Projectile->CollisionChannel = AbilityEffectChannel;
 	Projectile->SetIgnoredActors(AbilityComp->GetAbilityUser()->GetIgnoredTraceActors());
-	Projectile->SetOwner(AbilityComp->GetOwner());
+
 	AbilityComp->FinishSpawningActor(Projectile, spawntransform);
 }

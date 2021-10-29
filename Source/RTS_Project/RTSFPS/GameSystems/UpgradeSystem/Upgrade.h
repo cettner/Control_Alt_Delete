@@ -15,4 +15,9 @@ class RTS_PROJECT_API UUpgrade : public UObject
 	GENERATED_BODY()
 public:
 	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const;
+	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FString TooltipInfo = "N/A";
 };

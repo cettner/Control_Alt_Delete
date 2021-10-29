@@ -10,9 +10,22 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class RTS_PROJECT_API URTSUpgrade : public UUpgrade, public IRTSObjectInterface
 {
 	GENERATED_BODY()
-	
+
+public:
+	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
+	TArray<TSubclassOf<AActor>> TargetClasses;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsGlobalUpgrade = true;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bPersistsThroughRespawn = true;
+
 };
