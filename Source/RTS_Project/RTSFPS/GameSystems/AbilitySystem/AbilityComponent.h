@@ -101,6 +101,7 @@ public:
 	/*Returns the User Associated witht the Component*/
 	virtual IAbilityUserInterface * GetAbilityUser() const;
 
+	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const;
 
 public:
 	float PlayAbilityMontage(FAbilityAnim PlayAnim);

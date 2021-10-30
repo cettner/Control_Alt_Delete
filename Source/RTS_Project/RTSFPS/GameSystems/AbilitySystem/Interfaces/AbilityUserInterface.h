@@ -30,6 +30,7 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const;
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
+		virtual TWeakObjectPtr<UAbility> GetActiveAbilityByClass(TSubClassOf<UAbility> AbilityClass) const;
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr);
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr);

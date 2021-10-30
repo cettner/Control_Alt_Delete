@@ -150,6 +150,18 @@ TWeakObjectPtr<UAbility> UAbilityComponent::GetCurrentAbility() const
 	return CurrentAbility;
 }
 
+TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+{
+	TArray<TWeakObjectPtr<UAbility>> classabilities = TArray<TWeakObjectPtr<UAbility>>();
+	for(int i = 0; i < AllAbilites.Num(); i++)
+	{
+		if(AllAbilites[i]->IsChildOf(AbilityClass.Get()))
+		{
+			classabilities.Emplace(TWeakObjectPtr(AllAbilites[i]));
+		}
+	}
+}
+
 bool UAbilityComponent::IsAbilityUsingCrosshair() const
 {
 	return false;
