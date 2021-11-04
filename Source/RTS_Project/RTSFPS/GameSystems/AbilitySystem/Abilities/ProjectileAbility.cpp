@@ -15,3 +15,13 @@ void UProjectileAbility::OnEffect()
 
 	AbilityComp->FinishSpawningActor(Projectile, spawntransform);
 }
+
+void UProjectileAbility::SetProjectileSpeed(float NewSpeed)
+{
+	ProjectileSpeed = NewSpeed;
+}
+
+float UProjectileAbility::GetProjectileSpeed() const
+{
+	return ProjectileSpeed;
+}

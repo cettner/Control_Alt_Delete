@@ -31,7 +31,7 @@ protected:
 	virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
-
+	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
 
 protected:
 	UAbilityComponent * GetHandAbilityComponent(UAbilityAnimNotify * CallingContext) const;

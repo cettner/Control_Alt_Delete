@@ -35,9 +35,9 @@ TArray<AActor*> IAbilityUserInterface::GetIgnoredTraceActors(TWeakObjectPtr<UAbi
 	return TArray<AActor*>();
 }
 
-TWeakObjectPtr<UAbility> IAbilityUserInterface::GetActiveAbilityByClass(TSubClassOf<UAbility> AbilityClass)
+TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
 {
-	return nullptr;
+	return TArray<TWeakObjectPtr<UAbility>>();
 }
 
 void IAbilityUserInterface::OnReadyNotify(UAbilityAnimNotify * CallingContext)

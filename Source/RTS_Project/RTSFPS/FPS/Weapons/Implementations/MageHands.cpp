@@ -91,6 +91,13 @@ void AMageHands::OnEndNotify(UAbilityAnimNotify * CallingContext)
 
 }
 
+TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+{
+	TArray<TWeakObjectPtr<UAbility>> retval = Super::GetAbilitiesByClass(AbilityClass);
+	retval.Append(RightHandAbilityComp->GetAbilitiesByClass(AbilityClass));
+	return retval;
+}
+
 void AMageHands::StartSecondaryFire()
 {
 	ServerStartUseSecondAbility();

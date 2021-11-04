@@ -42,3 +42,14 @@ void AAbilityCombatCommander::OnEndNotify(UAbilityAnimNotify * CallingContext)
 		abilityweapon->OnEndNotify(CallingContext);
 	}
 }
+
+TArray<TWeakObjectPtr<UAbility>> AAbilityCombatCommander::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+{
+	IAbilityUserInterface * abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
+	TArray<TWeakObjectPtr<UAbility>> retval = TArray<TWeakObjectPtr<UAbility>>();
+	if (abilityweapon != nullptr)
+	{
+		retval = abilityweapon->GetAbilitiesByClass(AbilityClass);
+	}
+	return retval;
+}

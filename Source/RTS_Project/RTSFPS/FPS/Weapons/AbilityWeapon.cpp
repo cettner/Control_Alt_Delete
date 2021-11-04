@@ -92,6 +92,11 @@ TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> T
 	return outvec;
 }
 
+TArray<TWeakObjectPtr<UAbility>> AAbilityWeapon::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+{
+	return AbilityComp->GetAbilitiesByClass(AbilityClass);
+}
+
 void AAbilityWeapon::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 	SetWeaponState(EWeaponState::Firing);

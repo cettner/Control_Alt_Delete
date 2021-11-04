@@ -13,5 +13,14 @@ UCLASS()
 class RTS_PROJECT_API UProjectileAbilityUpgrade : public URTSAbilityUpgrade
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const override;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	float VelocityIncrement = 500.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float DamageIncrement = 10.0f;
 };

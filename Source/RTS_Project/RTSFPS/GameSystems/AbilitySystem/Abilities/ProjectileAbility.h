@@ -15,14 +15,17 @@ class RTS_PROJECT_API UProjectileAbility : public UAbility
 {
 	GENERATED_BODY()
 
-protected:
-	virtual void OnEffect() override;
 
+
+public:
+	virtual void OnEffect() override;
+	virtual void SetProjectileSpeed(float NewSpeed);
+	virtual float GetProjectileSpeed() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AAbilityProjectile> ProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	float ProjectileSpeed = 1500.0f;
+	float ProjectileSpeed = 1000.0f;
 };
