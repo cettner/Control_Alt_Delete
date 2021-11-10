@@ -3,6 +3,7 @@
 #include "FPSServerController.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "FPSPlayerState.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -38,9 +39,14 @@ void AFPSServerController::SelectRespawnStructure(ARTSStructure* RespawnStructur
 	}
 	else
 	{
-		if (RespawnStructure->CanSpawn(ACommander::StaticClass()) && !isSpawningMinion)
+		EPlayerReswpawnState currentstate = GetPlayerState<AFPSPlayerState>()->GetRespawnState();
+
+		if (RespawnStructure->CanSpawn(ACommander::StaticClass()) && (currentstate == EPlayerReswpawnState::SELECTINGRESPAWN))
 		{
-			isSpawningMinion = RespawnStructure->QueueActor(ACommander::StaticClass(), this);
+			 const bool queuecheck = RespawnStructure->QueueActor(ACommander::StaticClass(), this);
+			 check(queuecheck);
+			 GetPlayerState<AFPSPlayerState>()->SetRespawnState(EPlayerReswpawnState::AWAITINGRESPAWN);
+
 		}
 	}
 }
@@ -59,12 +65,19 @@ void AFPSServerController::ClientNotifyTeamChange(int newteamid)
 
 void AFPSServerController::OnPawnDeath()
 {
+	GetPlayerState<AFPSPlayerState>()->SetRespawnState(EPlayerReswpawnState::SELECTINGRESPAWN);
 }
 
 void AFPSServerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	isSpawningMinion = false;
+
+	if (Cast<ACommander>(InPawn))
+	{
+		GetPlayerState<AFPSPlayerState>()->SetRespawnState(EPlayerReswpawnState::ALIVE);
+	}
+
+
 }
 
 bool AFPSServerController::ServerSelectRespawnStructure_Validate(ARTSStructure* SelectedStructure)
@@ -77,14 +90,8 @@ void AFPSServerController::ServerSelectRespawnStructure_Implementation(ARTSStruc
 	SelectRespawnStructure(SelectedStructure);
 }
 
-void AFPSServerController::OnRep_isSpawningMinion()
-{
-
-}
-
 void AFPSServerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AFPSServerController, isSpawningMinion);
 }
 

@@ -6,6 +6,7 @@
 #include "RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/GameObjects/RTFPSPlayerStart.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
+#include "RTS_Project/RTSFPS/FPS/FPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSSelectionCamera.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/PreGame/RTSFPSLobbyGameState.h"
@@ -21,7 +22,7 @@ ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	GameStateClass = ARTFPSGameState::StaticClass();
 	PlayerControllerClass = AFPSServerController::StaticClass();
 	HUDClass = ARTSHUD::StaticClass();
-	PlayerStateClass = ARTFPSPlayerState::StaticClass();
+	PlayerStateClass = AFPSPlayerState::StaticClass();
 	DefaultPawnClass = nullptr;
 	ResourceTypes = TArray<TSubclassOf<AResource>>();
 

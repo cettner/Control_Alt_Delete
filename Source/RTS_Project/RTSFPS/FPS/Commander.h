@@ -28,12 +28,6 @@ public:
 public:
 	ACommander();
 
-	UPROPERTY(EditDefaultsOnly)
-	UCameraComponent* FPS_Camera;
-
-	UPROPERTY(EditDefaultsOnly)
-	USkeletalMeshComponent* FPS_Mesh;
-
 	//handles moving forward/backward
 	UFUNCTION()
 	void MoveForward(float Val);
@@ -50,6 +44,7 @@ public:
 
 	bool IsFirstPerson() const;
 
+	/**************RTSMinion Overrides************/
 	virtual ACommander * GetCommander() override;
 
 	virtual void ClearCommander() override;
@@ -62,11 +57,13 @@ public:
 
 	virtual int GetTeam() const override;
 
+	virtual void OnDeath() override;
+	/********************************************/
+
+
 	virtual bool IsServerPawn() const;
 
 	void SetIsServerPawn(bool IsServer);
-
-	virtual void OnDeath() override;
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void MinionInteractionHandler(ARTSMinion * Interacted);
@@ -81,10 +78,18 @@ public:
 	UFUNCTION()
 	virtual void Interact();
 
-
 public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	UCameraComponent* FPS_Camera;
+
+	UPROPERTY(EditDefaultsOnly)
+	USkeletalMeshComponent* FPS_Mesh;
+
 
 private:
 	bool bIsServerPawn = false;

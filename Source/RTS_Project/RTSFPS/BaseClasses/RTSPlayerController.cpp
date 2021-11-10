@@ -203,7 +203,7 @@ void ARTSPlayerController::ServerPurchaseRTSObject_Implementation(ARTSStructure 
 
 	if (gs && gs->PurchaseUnit(RequestedClass, this))
 	{
-		SpawningStructure->QueueActor(RequestedClass);
+		SpawningStructure->QueueActor(RequestedClass, this);
 	}
 }
 

@@ -23,9 +23,6 @@ protected:
 	TArray<TSubclassOf<AActor>> TargetClasses;
 
 	UPROPERTY(EditDefaultsOnly)
-	bool bIsGlobalUpgrade = true;
-
-	UPROPERTY(EditDefaultsOnly)
 	bool bPersistsThroughRespawn = true;
 
 };

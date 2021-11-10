@@ -9,6 +9,7 @@
 
 class ARTSStructure;
 
+
 UCLASS()
 class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 {
@@ -33,13 +34,7 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerSelectRespawnStructure(ARTSStructure* SelectedStructure);
 
-	    UFUNCTION()
-	    virtual void OnRep_isSpawningMinion();
-
     protected:
 	    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
-    protected:
-	    UPROPERTY(ReplicatedUsing = OnRep_isSpawningMinion)
-	    bool isSpawningMinion = false;
 };
