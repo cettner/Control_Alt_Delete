@@ -15,3 +15,13 @@ bool URTSUpgrade::CanUpgrade(IUpgradableInterface * TestUpgrade) const
 
 	return(retval);
 }
+
+bool URTSUpgrade::IsGlobal()
+{
+	return bIsGlobal;
+}
+
+bool URTSUpgrade::IsPersistent()
+{
+	return bPersistsThroughRespawn;
+}

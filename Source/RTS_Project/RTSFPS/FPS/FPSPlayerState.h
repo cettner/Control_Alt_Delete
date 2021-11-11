@@ -6,7 +6,6 @@
 #include "GameFramework/PlayerState.h"
 
 #include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
-#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 
 #include "FPSPlayerState.generated.h"
 

@@ -3,7 +3,9 @@
 #include "RTFPSGameState.h"
 #include "RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/FPS/Death/RespawnSelectionPawn.h"
+#include "RTS_Project/RTSFPS/FPS/FPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "RTS_Project/RTSFPS/Shared/Upgrades/RTSUpgrade.h"
 
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
@@ -96,16 +98,26 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData)
 {
 	UWorld* World = GetWorld();
+	/*Check if the Object is a Minion, or an Upgrade*/
 	const bool isminion = SpawnData.SpawnClass.Get()->IsChildOf(ARTSMinion::StaticClass());
 	if (isminion == true)
 	{
 		ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, FTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 
 		AController* PC = SpawnData.RecieveingController;
+		AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
 
-		if (PC != nullptr)
+		/*If its a minion, Check whether the purchasing controller will be assuming control of the Pawn*/
+		const bool isvalidforpossession = (Cast<ACommander>(Minion) != nullptr) && (ps != nullptr);
+		if ((isvalidforpossession == true) && (ps->GetRespawnState() == EPlayerReswpawnState::AWAITINGRESPAWN))
 		{
 			Minion->SetTeam(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
+			/*Apply Upgrades that are global to the team*/
+			ApplyGlobalUpgrades(Minion);
+			/*Apply Upgrades that are specific to the player*/
+			ApplyPlayerUpgrades(Minion, Cast<AFPSServerController>(PC));
+			
+			/*Get And Destroy the Pawn the player was Using and give him the new one*/
 			APawn* respawnpawn = PC->GetPawn();
 			PC->UnPossess();
 			respawnpawn->Destroy();
@@ -114,8 +126,13 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 		else
 		{
 			Minion->SetTeam(SpawningStructure->GetTeam());
+			/*Apply Upgrades that are global to the team*/
+			ApplyGlobalUpgrades(Minion);
 			/*Set Team Colors on listen Server*/
-			Minion->OnRep_TeamID();
+			if (GetNetMode() == NM_ListenServer)
+			{
+				Minion->OnRep_TeamID();
+			}
 		}
 
 		UGameplayStatics::FinishSpawningActor(Minion, FTransform());
@@ -123,9 +140,12 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	}
 	else
 	{
+		/*Handle A new Upgrade Purchase*/
+
 		const int teamid = SpawningStructure->GetTeam();
-		TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(SpawnData.SpawnClass.Get());
+		const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(SpawnData.SpawnClass.Get());
 		const UUpgrade * defaultupgrade = upgradeclass.GetDefaultObject();
+		
 
 		TArray<AActor*> minionactors = TArray<AActor*>();
 		for (int i = 0; i < AllUnits[teamid].Minions.Num(); i++)
@@ -157,6 +177,33 @@ void ARTFPSGameState::HandleStructureSpawn(TSubclassOf<AActor> StructureClass, F
 	
 	UGameplayStatics::FinishSpawningActor(structure,SpawnTransform);
 	AddRTSObjectToTeam(structure);
+}
+
+void ARTFPSGameState::ApplyGlobalUpgrades(ARTSMinion * Minion) const
+{
+	const int teamid = Minion->GetTeam();
+	for (int i = 0; i < AllUnits[teamid].Upgrades.Num(); i++)
+	{
+		const UUpgrade * upgrade = AllUnits[teamid].Upgrades[i].GetDefaultObject();
+		if (upgrade->CanUpgrade(Minion))
+		{
+			upgrade->ApplyUpgrade(Minion);
+		}
+	}
+}
+
+void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSServerController * InController) const
+{
+	if (InController != nullptr)
+	{
+		const TArray<TSubclassOf<UUpgrade>> upgrades = InController->GetAppliedUpgrades();
+
+		for (int i = 0; i < upgrades.Num(); i++)
+		{
+			const UUpgrade * upgrade = upgrades[i].GetDefaultObject();
+			upgrade->ApplyUpgrade(PlayerPawn);
+		}
+	}
 }
 
 TArray<ARTSMinion*> ARTFPSGameState::GetAllMinionsOfTeam(int teamindex) const

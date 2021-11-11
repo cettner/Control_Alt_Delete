@@ -3,7 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+
 #include "../BaseClasses/RTSPlayerController.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "Commander.h"
 #include "FPSServerController.generated.h"
 
@@ -11,7 +14,7 @@ class ARTSStructure;
 
 
 UCLASS()
-class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
+class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController, public IUpgradableInterface
 {
 	GENERATED_BODY()
 	

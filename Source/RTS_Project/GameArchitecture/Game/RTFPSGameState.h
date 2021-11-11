@@ -24,6 +24,7 @@ struct RTSTeamUnits
 {
 	TArray<ARTSMinion*> Minions = TArray<ARTSMinion*>();
 	TArray<ARTSStructure*> Structures = TArray<ARTSStructure*>();
+	TArray<TSubclassOf<UUpgrade>> Upgrades = TArray<TSubclassOf<UUpgrade>>();
 };
 
 
@@ -35,11 +36,15 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 	public:
 		ARTFPSGameState(const FObjectInitializer & FOI);
 		int NumRTSPlayers(int Team_Index);
+		/*******************Unit Event Handling*****************/
 		virtual void RefreshAllUnits();
 		virtual void OnUnitDeath(IRTSObjectInterface* Unit);
 		virtual void HandlePlayerDeath(AFPSServerController * Controller);
 		virtual void SpawnObjectFromStructure(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
 		virtual void HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController * InvokedController = nullptr);
+		virtual void ApplyGlobalUpgrades(ARTSMinion * Minion) const;
+		virtual void ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSServerController * InController) const;
+		/******************************************************/
 
 		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
 		virtual TArray<ARTSStructure *> GetAllStructuresOfTeam(int teamindex) const;

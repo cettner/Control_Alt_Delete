@@ -17,6 +17,8 @@ class RTS_PROJECT_API URTSUpgrade : public UUpgrade, public IRTSObjectInterface
 
 public:
 	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const override;
+	bool IsGlobal();
+	bool IsPersistent();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
@@ -24,5 +26,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bPersistsThroughRespawn = true;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bIsGlobal = true;
 
 };
