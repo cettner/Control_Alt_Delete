@@ -26,6 +26,13 @@ public:
 	virtual int GetCurrentUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass);
 	virtual int GetMaxUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass);
 	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades();
-	
+
+	/*If the Actor is spawned via spawn Actor Deffered, then certain components may not be ready to be upgraded, Allows the Use of Add Upgrade and PostInstallUpgrades*/
+	virtual bool IsPreInitialized() const;
+
 	virtual void OnApplyUpgrade(const UUpgrade * Upgrade);
+
+protected:
+	virtual void PostInstallUpgrades();
+	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd);
 };

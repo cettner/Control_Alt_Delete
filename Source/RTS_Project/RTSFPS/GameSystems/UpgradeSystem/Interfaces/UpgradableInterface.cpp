@@ -21,7 +21,21 @@ TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetAppliedUpgrades()
 	return TArray<TSubclassOf<UUpgrade>>();
 }
 
+bool IUpgradableInterface::IsPreInitialized() const
+{
+	return false;
+}
+
 void IUpgradableInterface::OnApplyUpgrade(const UUpgrade * Upgrade)
 {
 		Upgrade->ApplyUpgrade(this);
+}
+
+void IUpgradableInterface::PostInstallUpgrades()
+{
+}
+
+bool IUpgradableInterface::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
+{
+	return false;
 }

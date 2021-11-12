@@ -4,6 +4,7 @@
 
 #include "DefaultGameState.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
+#include "RTS_Project/RTSFPS/FPS/FPSPlayerState.h"
 #include "RTFPSMode.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeManager.h"
 #include "RTFPSGameState.generated.h"
@@ -24,7 +25,7 @@ struct RTSTeamUnits
 {
 	TArray<ARTSMinion*> Minions = TArray<ARTSMinion*>();
 	TArray<ARTSStructure*> Structures = TArray<ARTSStructure*>();
-	TArray<TSubclassOf<UUpgrade>> Upgrades = TArray<TSubclassOf<UUpgrade>>();
+	TArray<FUpgradeInfo> Upgrades = TArray<FUpgradeInfo>();
 };
 
 
@@ -43,7 +44,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void SpawnObjectFromStructure(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
 		virtual void HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController * InvokedController = nullptr);
 		virtual void ApplyGlobalUpgrades(ARTSMinion * Minion) const;
-		virtual void ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSServerController * InController) const;
+		virtual void ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerState * InController) const;
 		/******************************************************/
 
 		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
@@ -80,7 +81,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
 
 	public:
-		virtual void AddRTSObjectToTeam(IRTSObjectInterface * InObject);
+		virtual void AddRTSObjectToTeam(IRTSObjectInterface * const InObject);
 		virtual bool RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject);
 
 

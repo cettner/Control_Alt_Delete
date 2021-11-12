@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTFPSGameState.h"
-#include "RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/FPS/Death/RespawnSelectionPawn.h"
-#include "RTS_Project/RTSFPS/FPS/FPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/Shared/Upgrades/RTSUpgrade.h"
 
@@ -105,7 +103,7 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 		ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, FTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 
 		AController* PC = SpawnData.RecieveingController;
-		AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
+		const AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
 
 		/*If its a minion, Check whether the purchasing controller will be assuming control of the Pawn*/
 		const bool isvalidforpossession = (Cast<ACommander>(Minion) != nullptr) && (ps != nullptr);
@@ -115,7 +113,7 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 			/*Apply Upgrades that are global to the team*/
 			ApplyGlobalUpgrades(Minion);
 			/*Apply Upgrades that are specific to the player*/
-			ApplyPlayerUpgrades(Minion, Cast<AFPSServerController>(PC));
+			ApplyPlayerUpgrades(Minion, PC->GetPlayerState<AFPSPlayerState>());
 			
 			/*Get And Destroy the Pawn the player was Using and give him the new one*/
 			APawn* respawnpawn = PC->GetPawn();
@@ -142,10 +140,11 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	{
 		/*Handle A new Upgrade Purchase*/
 		const int teamid = SpawningStructure->GetTeam();
-		const URTSUpgrade * defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
+		URTSUpgrade * defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
 		
-		if(defaultupgrade.IsGlobal() && defaultupgrade.IsPersistent())
+		if(defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
 		{
+			/*Upgrade All Existing Minions On the Map*/
 			TArray<AActor*> minionactors = TArray<AActor*>();
 			for (int i = 0; i < AllUnits[teamid].Minions.Num(); i++)
 			{
@@ -155,7 +154,9 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 				}
 			}
 
+			const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(defaultupgrade->GetClass());
 			UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
+			AddRTSObjectToTeam(defaultupgrade);
 		}
 		else if(!defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
 		{
@@ -188,7 +189,7 @@ void ARTFPSGameState::ApplyGlobalUpgrades(ARTSMinion * Minion) const
 	const int teamid = Minion->GetTeam();
 	for (int i = 0; i < AllUnits[teamid].Upgrades.Num(); i++)
 	{
-		const UUpgrade * upgrade = AllUnits[teamid].Upgrades[i].GetDefaultObject();
+		const UUpgrade * upgrade = AllUnits[teamid].Upgrades[i].UpgradeClass.GetDefaultObject();
 		if (upgrade->CanUpgrade(Minion))
 		{
 			upgrade->ApplyUpgrade(Minion);
@@ -196,7 +197,7 @@ void ARTFPSGameState::ApplyGlobalUpgrades(ARTSMinion * Minion) const
 	}
 }
 
-void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSServerController * InController) const
+void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerState * InController) const
 {
 	if (InController != nullptr)
 	{
@@ -372,13 +373,14 @@ void ARTFPSGameState::UnpackUnitPriceMap(TMap<TSubclassOf<UObject>, FReplication
 	}
 }
 
-void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
+void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
 {
 	const int teamid = InObject->GetTeam();
 	if(IsTeamValid(teamid))
 	{
 		ARTSMinion * isminion = Cast<ARTSMinion>(InObject); 
 		ARTSStructure * isstructure = Cast<ARTSStructure>(InObject);
+		URTSUpgrade * isupgrade = Cast<URTSUpgrade>(InObject);
 		/**/
 		if(isminion != nullptr)
 		{ 
@@ -399,6 +401,10 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * InObject)
 				check(ps);
 				ps->SetTeamStructures(AllUnits[teamid].Structures);
 			}
+		}
+		else if (isupgrade != nullptr)
+		{
+
 		}
 	}
 

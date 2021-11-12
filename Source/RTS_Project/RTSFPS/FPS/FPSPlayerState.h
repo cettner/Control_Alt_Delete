@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerState.h"
 
 #include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
-
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "FPSPlayerState.generated.h"
 
 
@@ -14,9 +14,11 @@ USTRUCT()
 struct FUpgradeInfo
 {
 	GENERATED_USTRUCT_BODY()
-
+public:
+	/*Class Of The Upgrade*/
 	TSubclassOf<UUpgrade> UpgradeClass = nullptr;
-	
+
+	/*Number of Times the Upgrade Has Been Applied*/
 	int Rank = 0;
 };
 
@@ -31,7 +33,7 @@ enum EPlayerReswpawnState
 
 
 UCLASS()
-class RTS_PROJECT_API AFPSPlayerState : public ARTFPSPlayerState
+class RTS_PROJECT_API AFPSPlayerState : public ARTFPSPlayerState, public IUpgradableInterface
 {
 	GENERATED_BODY()
 
