@@ -141,22 +141,26 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	else
 	{
 		/*Handle A new Upgrade Purchase*/
-
 		const int teamid = SpawningStructure->GetTeam();
-		const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(SpawnData.SpawnClass.Get());
-		const UUpgrade * defaultupgrade = upgradeclass.GetDefaultObject();
+		const URTSUpgrade * defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
 		
-
-		TArray<AActor*> minionactors = TArray<AActor*>();
-		for (int i = 0; i < AllUnits[teamid].Minions.Num(); i++)
+		if(defaultupgrade.IsGlobal() && defaultupgrade.IsPersistent())
 		{
-			if (defaultupgrade->CanUpgrade(AllUnits[teamid].Minions[i]))
+			TArray<AActor*> minionactors = TArray<AActor*>();
+			for (int i = 0; i < AllUnits[teamid].Minions.Num(); i++)
 			{
-				minionactors.Emplace(AllUnits[teamid].Minions[i]);
+				if (defaultupgrade->CanUpgrade(AllUnits[teamid].Minions[i]))
+				{
+					minionactors.Emplace(AllUnits[teamid].Minions[i]);
+				}
 			}
-		}
 
-		UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
+			UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
+		}
+		else if(!defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
+		{
+
+		}
 	}
 
 
