@@ -166,6 +166,8 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 				minionactors.Emplace(playerpawn);
 				UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
 			}
+			const AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
+			ps->AddUpgrade(upgradeclass);
 		}
 	}
 
