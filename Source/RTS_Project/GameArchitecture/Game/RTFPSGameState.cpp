@@ -140,12 +140,13 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	{
 		/*Handle A new Upgrade Purchase*/
 		const int teamid = SpawningStructure->GetTeam();
+		const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(defaultupgrade->GetClass());
 		URTSUpgrade * defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
-		
+		TArray<AActor*> minionactors = TArray<AActor*>();
+
 		if(defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
 		{
 			/*Upgrade All Existing Minions On the Map*/
-			TArray<AActor*> minionactors = TArray<AActor*>();
 			for (int i = 0; i < AllUnits[teamid].Minions.Num(); i++)
 			{
 				if (defaultupgrade->CanUpgrade(AllUnits[teamid].Minions[i]))
@@ -154,13 +155,17 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 				}
 			}
 
-			const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(defaultupgrade->GetClass());
 			UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
 			AddRTSObjectToTeam(defaultupgrade);
 		}
 		else if(!defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
 		{
-
+			ARTSMinion * playerpawn = PC->GetPawn<ARTSMinion>();
+			if(IsValid(playerpawn) && CanUpgrade(playerpawn))
+			{
+				minionactors.Emplace(playerpawn);
+				UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
+			}
 		}
 	}
 
@@ -402,13 +407,31 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
 				ps->SetTeamStructures(AllUnits[teamid].Structures);
 			}
 		}
-		else if (isupgrade != nullptr)
+		else if (isupgrade != nullptr  && isupgrade->IsGlobal())
 		{
+			const TSubclassOf<UUpgrade> upgradeclass = isupgrade->GetClass();
+			
+			FUpgradeInfo infocheck = FUpgradeInfo();
+			infocheck.UpgradeClass = upgradeclass;
+			infocheck.Rank = 1; 
+
+			SizeType upgradeindex = AllUnits[teamid].Upgrades.Find(infocheck);
+			if(upgradeindex != INDEX_NONE)
+			{
+				/*If We've implemented this upgrade before, increase its rank*/
+				AllUnits[teamid].Upgrades[upgradeindex].Rank++;
+			}
+			else
+			{
+				/*New Upgrade, Add it to the list*/
+				AllUnits[teamid].Upgrades.Emplace(infocheck);
+			}
 
 		}
-	}
 
+	}
 }
+
 
 bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 {

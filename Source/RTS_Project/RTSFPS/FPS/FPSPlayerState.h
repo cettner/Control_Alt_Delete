@@ -20,6 +20,20 @@ public:
 
 	/*Number of Times the Upgrade Has Been Applied*/
 	int Rank = 0;
+
+	/*For Comparision, We only care that the class is the same,  That way, if we want to "Find" it in an array
+	we can simulate a "MultiMap" Style Behavior Between the upgrade and its Rank*/
+	friend bool operator == (const FUpgradeInfo& Myself, const FUpgradeInfo& Other)
+	{
+		bool isSame = Myself.UpgradeClass == Other.UpgradeClass;
+		return(isSame);
+	}
+
+	friend bool operator == (const FUpgradeInfo& Myself, const TSubclassOf<UUpgrade>& Other)
+	{
+		bool isSame = Myself.UpgradeClass == Other;
+		return(isSame);
+	}
 };
 
 
