@@ -115,7 +115,7 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 			/*Apply Upgrades that are specific to the player*/
 			ApplyPlayerUpgrades(Minion, PC->GetPlayerState<AFPSPlayerState>());
 			
-			/*Get And Destroy the Pawn the player was Using and give him the new one*/
+			/*Get And Destroy the Pawn the player was Using and give them the new one*/
 			APawn* respawnpawn = PC->GetPawn();
 			PC->UnPossess();
 			respawnpawn->Destroy();
@@ -140,8 +140,9 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	{
 		/*Handle A new Upgrade Purchase*/
 		const int teamid = SpawningStructure->GetTeam();
+		URTSUpgrade * const defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
 		const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(defaultupgrade->GetClass());
-		URTSUpgrade * defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
+		const AController* PC = SpawnData.RecieveingController;
 		TArray<AActor*> minionactors = TArray<AActor*>();
 
 		if(defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
@@ -161,12 +162,12 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 		else if(!defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
 		{
 			ARTSMinion * playerpawn = PC->GetPawn<ARTSMinion>();
-			if(IsValid(playerpawn) && CanUpgrade(playerpawn))
+			if(IsValid(playerpawn) && defaultupgrade->CanUpgrade(playerpawn))
 			{
 				minionactors.Emplace(playerpawn);
-				UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
 			}
-			const AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
+			UpgradeManager->CheckAndDispatchUpgrade(upgradeclass, minionactors);
+			AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
 			ps->AddUpgrade(upgradeclass);
 		}
 	}
@@ -199,7 +200,7 @@ void ARTFPSGameState::ApplyGlobalUpgrades(ARTSMinion * Minion) const
 		const UUpgrade * upgrade = AllUnits[teamid].Upgrades[i].UpgradeClass.GetDefaultObject();
 		if (upgrade->CanUpgrade(Minion))
 		{
-			upgrade->ApplyUpgrade(Minion);
+			Minion->OnApplyUpgrade(upgrade);
 		}
 	}
 }
@@ -213,7 +214,7 @@ void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerSta
 		for (int i = 0; i < upgrades.Num(); i++)
 		{
 			const UUpgrade * upgrade = upgrades[i].GetDefaultObject();
-			upgrade->ApplyUpgrade(PlayerPawn);
+			PlayerPawn->OnApplyUpgrade(upgrade);
 		}
 	}
 }
@@ -417,7 +418,7 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
 			infocheck.UpgradeClass = upgradeclass;
 			infocheck.Rank = 1; 
 
-			SizeType upgradeindex = AllUnits[teamid].Upgrades.Find(infocheck);
+			int upgradeindex = AllUnits[teamid].Upgrades.Find(infocheck);
 			if(upgradeindex != INDEX_NONE)
 			{
 				/*If We've implemented this upgrade before, increase its rank*/

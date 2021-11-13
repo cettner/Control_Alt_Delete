@@ -70,6 +70,13 @@ void ARTSMinion::PostInitializeComponents()
 
 }
 
+void ARTSMinion::BeginPlay()
+{
+	Super::BeginPlay();
+	bAreComponentsReadyforUpgrades = true;
+	PostInstallUpgrades();
+}
+
 bool ARTSMinion::CanInteract(AActor * Interactable)
 {
 	bool retval = Cast<IRTSObjectInterface>(Interactable) != nullptr;
@@ -300,6 +307,26 @@ void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
 	{
 		AIC->MoveToActor(move_to_me, 5.0f, true, true, false, 0, false);
 	}
+}
+
+void ARTSMinion::PostInstallUpgrades()
+{
+	for (int i = 0; i < AppliedUpgrades.Num(); i++)
+	{
+		const UUpgrade * upgrade = AppliedUpgrades[i].GetDefaultObject();
+		OnApplyUpgrade(upgrade);
+	}
+}
+
+bool ARTSMinion::CanReceiveUpgrades() const
+{
+	return bAreComponentsReadyforUpgrades;
+}
+
+bool ARTSMinion::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
+{
+	AppliedUpgrades.Emplace(UpgradeToAdd);
+	return true;
 }
 
 float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

@@ -19,8 +19,6 @@ class RTS_PROJECT_API ACombatCommander : public ACommander
 public:
 	ACombatCommander();
 
-	virtual void BeginPlay() override;
-
 public:
 	/*Add Weapon to Inventory*/
 	void AddWeapon(AWeapon * Added_Weapon);

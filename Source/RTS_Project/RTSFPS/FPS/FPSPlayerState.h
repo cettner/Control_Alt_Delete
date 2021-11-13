@@ -51,16 +51,18 @@ class RTS_PROJECT_API AFPSPlayerState : public ARTFPSPlayerState, public IUpgrad
 {
 	GENERATED_BODY()
 
-
-	public:
-		void StoreAppliedUpgrade(TSubclassOf<UUpgrade> AppliedUpgrade);
+public:
 		
-		EPlayerReswpawnState GetRespawnState() const;
-		void SetRespawnState(EPlayerReswpawnState NewState);
+	EPlayerReswpawnState GetRespawnState() const;
+	void SetRespawnState(EPlayerReswpawnState NewState);
 
-	protected:
-		TArray<FUpgradeInfo> AppliedUpgrades;
+public:
+	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
+	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades() const override;
 
-		EPlayerReswpawnState RespawnState = EPlayerReswpawnState::PREGAME;
+protected:
+	TArray<FUpgradeInfo> AppliedUpgrades;
+
+	EPlayerReswpawnState RespawnState = EPlayerReswpawnState::PREGAME;
 
 };

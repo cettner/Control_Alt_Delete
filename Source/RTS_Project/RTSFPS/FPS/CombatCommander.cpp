@@ -11,11 +11,6 @@ ACombatCommander::ACombatCommander() : Super()
 	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Block);
 }
 
-void ACombatCommander::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon, bool bWantsFirstPerson)
 {
 	if (bWantsFirstPerson)

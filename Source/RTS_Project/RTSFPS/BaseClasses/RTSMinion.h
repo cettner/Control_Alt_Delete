@@ -25,8 +25,6 @@ class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgrad
 
 public:
 	ARTSMinion();
-	
-	virtual float TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 
 	virtual bool CanInteract(AActor * Interactable);
 
@@ -50,25 +48,12 @@ public:
 
 	virtual void ClearTarget();
 
-/**************IRTSObjectInterface****************/
-	virtual void SetSelected()  override;
-
-	virtual void SetDeselected() override;
-
-	//TODO: Make this a Server Call
-	virtual void SetTeam(int team_id) override;
-
-	virtual int GetTeam() const override;
-
-	virtual void SetTeamColors(FLinearColor TeamColor) override; 
-/*************************************************/
-
 	virtual void ReleaseAssets();
 
 	virtual bool HasAssets();
 
 	virtual void RtsMove(FVector Local);
-	
+
 	virtual void RtsMoveToActor(AActor * move_to_me);
 
 	virtual ACommander * GetCommander();
@@ -84,11 +69,34 @@ public:
 
 	virtual FRTSAIPerceptionConfig GetAIConfig() const;
 
+/**************IRTSObjectInterface****************/
+	virtual void SetSelected()  override;
+
+	virtual void SetDeselected() override;
+
+	virtual void SetTeam(int team_id) override;
+
+	virtual int GetTeam() const override;
+
+	virtual void SetTeamColors(FLinearColor TeamColor) override; 
+/*************************************************/
+
+/**************IUpgradableInterface****************/
 protected:
-	virtual void PostInitializeComponents() override;
+	virtual void PostInstallUpgrades() override;
+	virtual bool CanReceiveUpgrades() const override;
+	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
+/**************************************************/
+
+/*********************AActor***********************/
+public:
+	virtual float TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser) override;
 
 protected:
+	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+/**************************************************/
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
@@ -108,5 +116,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	ACommander * Cmdr;
+
+protected:
+	bool bAreComponentsReadyforUpgrades = false;
+	TArray<TSubclassOf<UUpgrade>> AppliedUpgrades;
 };
 
