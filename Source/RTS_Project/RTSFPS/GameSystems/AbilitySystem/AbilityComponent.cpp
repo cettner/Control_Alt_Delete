@@ -308,7 +308,7 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UAbilityComponent, bIsCasting);
-	DOREPLIFETIME(UAbilityComponent, bIsCastReady);
+	DOREPLIFETIME(UAbilityComponent, AbilityTarget);
 	DOREPLIFETIME(UAbilityComponent, bReleaseSuccess);
 }
 
@@ -344,5 +344,13 @@ void UAbilityComponent::OnRep_bIsCastReleased()
 			bIsCastReady = false;
 			CurrentAbility->OnAbilityReleased();
 		}
+	}
+}
+
+void UAbilityComponent::OnRep_AbilityTarget()
+{
+	if (CurrentAbility)
+	{
+		CurrentAbility->ProcessTarget(AbilityTarget);
 	}
 }

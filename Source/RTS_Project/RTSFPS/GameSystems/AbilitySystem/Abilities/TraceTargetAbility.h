@@ -23,7 +23,7 @@ public:
 protected:
 	UFUNCTION()
 	virtual void UpdateChannel();
-
+	virtual bool CanHit(AActor * HitActor);
 
 protected:
 	FTimerHandle ChannelPulseHandler = FTimerHandle();

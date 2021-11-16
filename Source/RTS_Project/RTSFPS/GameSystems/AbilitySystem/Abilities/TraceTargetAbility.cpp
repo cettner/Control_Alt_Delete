@@ -60,6 +60,15 @@ void UTraceTargetAbility::OnAbilityEnd()
 
 void UTraceTargetAbility::ProcessTraceHit(FHitResult HitResult, FVector StartTrace, FVector EndTrace)
 {
+	if(CanHit(HitResult))
+	{
+		AbilityComp->SetAbilityTarget(HitResult.GetActor());
+	}
+}
+
+bool UTraceTargetAbility::CanHit(AActor * HitActor)
+{
+	return true;
 }
 
 void UTraceTargetAbility::UpdateChannel()

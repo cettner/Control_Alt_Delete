@@ -54,6 +54,11 @@ void UAbility::OnTick(float DeltaSeconds)
 
 }
 
+void UAbility::ProcessTarget(AActor * Target)
+{
+	
+}
+
 void UAbility::NotifyOnReady()
 {
 	AbilityComp->PlayAbilityMontage(LoopMontage);

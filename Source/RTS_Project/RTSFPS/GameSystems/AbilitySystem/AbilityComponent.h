@@ -131,6 +131,7 @@ protected:
 	/*ServerReplication Triggers*/
 	void SetIsCasting(bool CastingState);
 	void SetIsCastReady(bool ReadyState);
+	void SetAbilityTarget(AActor * NewTarget);
 	/*****************************/
 
 	void SetWantsToCast(bool InState);
@@ -146,6 +147,9 @@ protected:
 	UFUNCTION()
 	void OnRep_bIsCastReleased();
 
+	UFUNCTION()
+	void OnRep_AbilityTarget();
+
 protected:
 	UPROPERTY()
 	UAbility * CurrentAbility = nullptr;
@@ -158,7 +162,6 @@ protected:
 	bool bWantstoCast = false;
 
 private:
-	UPROPERTY(Replicated)
 	bool bIsCastReady = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
@@ -166,4 +169,7 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
 	FReplicationBool bReleaseSuccess = FReplicationBool();
+
+	UPROPERTY(ReplicatedUsing = OnRep_AbilityTarget)
+	AActor * AbilityTarget = nullptr;
 };

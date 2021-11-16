@@ -38,6 +38,7 @@ class RTS_PROJECT_API UAbility : public UObject
 		virtual void OnAbilityReleased();
 		virtual void OnAbilityEnd();
 		virtual void OnTick(float DeltaSeconds);
+		virtual void ProcessTarget(AActor * Target);
 
 	public:
 		/*Called from AnimNotify to Set Ability is Ready for release*/
