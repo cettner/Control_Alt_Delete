@@ -59,6 +59,8 @@ public:
 	/****************Server Trigger***********/
 	/*Called by Ability to notify that the ability was successfully started*/
 	void SetIsCastSuccessful(bool ReleaseState);
+	/*Called By the Ability to notify that a target has been identified*/
+	void SetAbilityTarget(AActor * NewTarget);
 	/*****************************************/
 
 	/*Start the Abilities Effect*/
@@ -79,6 +81,7 @@ public:
 	virtual TWeakObjectPtr<UAbility> GetCurrentAbility() const;
 	virtual bool IsAbilityUsingCrosshair() const;
 	virtual bool IsUsingAbility() const;
+	AActor * GetAbilityTarget() const;
 
 	/*Creates The Abilty and adds it to the list of available ones this component recieves*/
 	virtual TWeakObjectPtr<UAbility> AddAbility(TSubclassOf<UAbility> AbilityClass);
@@ -131,7 +134,6 @@ protected:
 	/*ServerReplication Triggers*/
 	void SetIsCasting(bool CastingState);
 	void SetIsCastReady(bool ReadyState);
-	void SetAbilityTarget(AActor * NewTarget);
 	/*****************************/
 
 	void SetWantsToCast(bool InState);

@@ -44,6 +44,14 @@ void UAbilityComponent::SetIsCastSuccessful(bool ReleaseState)
 	}
 }
 
+void UAbilityComponent::SetAbilityTarget(AActor * NewTarget)
+{
+	if (GetOwner()->HasAuthority())
+	{
+		AbilityTarget = NewTarget;
+	}
+}
+
 void UAbilityComponent::SetIsCastReady(bool ReadyState)
 {
 	bIsCastReady = ReadyState;
@@ -173,6 +181,11 @@ bool UAbilityComponent::IsUsingAbility() const
 	return false;
 }
 
+AActor * UAbilityComponent::GetAbilityTarget() const
+{
+	return AbilityTarget;
+}
+
 TWeakObjectPtr<UAbility> UAbilityComponent::AddAbility(TSubclassOf<UAbility> AbilityClass)
 {
 	UAbility * newability = nullptr;
@@ -284,19 +297,16 @@ FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 	IAbilityUserInterface* AbilityUser = GetOwner<IAbilityUserInterface>();
 	FVector spawnlocation = FVector();
 	FVector aimdirection = FVector();
-	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
 
 	if (AbilityUser != nullptr)
 	{
 		spawnlocation = AbilityUser->GetAbilitySocketLocation(Socketname);
 		aimdirection = AbilityUser->GetAbilityAimVector();
-		queryparams.AddIgnoredActors(AbilityUser->GetIgnoredTraceActors());
 	}
 	else
 	{
 		spawnlocation = GetOwner()->GetActorLocation();
 		aimdirection = GetOwner()->GetActorForwardVector();
-		queryparams.AddIgnoredActor(GetOwner());
 	}
 
 	FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
@@ -316,7 +326,6 @@ void UAbilityComponent::OnRep_bIsCasting()
 {
 	if (bIsCasting.Get() == true)
 	{
-		ENetRole netrole = GetOwnerRole();
 		bool authority = GetOwner()->HasAuthority();
 
 		if (!CurrentAbility && !authority)

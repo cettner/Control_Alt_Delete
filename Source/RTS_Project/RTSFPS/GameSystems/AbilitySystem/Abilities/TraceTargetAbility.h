@@ -37,7 +37,7 @@ protected:
 	bool bOnlyProcessTrueHits = true;
 
 	UPROPERTY(EditDefaultsOnly)
-	float PulseRate = .5f;
+	float PulseRate = .25f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float Range = 150.0f;

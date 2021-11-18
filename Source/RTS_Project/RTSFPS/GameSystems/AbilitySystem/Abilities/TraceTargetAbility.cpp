@@ -55,15 +55,19 @@ void UTraceTargetAbility::NotifyOnReady()
 void UTraceTargetAbility::OnAbilityEnd()
 {
 	GetWorld()->GetTimerManager().ClearTimer(ChannelPulseHandler);
+	AbilityComp->SetAbilityTarget(nullptr);
+
 	Super::OnAbilityEnd();
 }
 
 void UTraceTargetAbility::ProcessTraceHit(FHitResult HitResult, FVector StartTrace, FVector EndTrace)
 {
-	if(CanHit(HitResult))
+	if(CanHit(HitResult.GetActor()))
 	{
 		AbilityComp->SetAbilityTarget(HitResult.GetActor());
+		ProcessTarget(HitResult.GetActor());
 	}
+
 }
 
 bool UTraceTargetAbility::CanHit(AActor * HitActor)
