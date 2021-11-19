@@ -78,9 +78,9 @@ bool ARTSBUILDER::CanCarryMore()
 
 void ARTSBUILDER::StartMining(AResource * Node)
 {
-	/*Start the cooldown based off of current cooldown rate*/	
+	/*Start the cooldown based off of current cooldown rate*/
 	target_node = Node;
-	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::Mine_Resource, 1.0, false, MineInterval);
+	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, false, MineInterval);
 	bIsMining = true;
 }
 
@@ -110,7 +110,7 @@ bool ARTSBUILDER::IsMining()
 	return(bIsMining && IsAlive());
 }
 
-void ARTSBUILDER::Mine_Resource()
+void ARTSBUILDER::MineResource()
 {
 	AResource * Node = Cast<AResource>(GetTarget());
 	if(IsValid(Node) && Node == target_node) //verify that the current target and the target specified at start of mine operation are the same

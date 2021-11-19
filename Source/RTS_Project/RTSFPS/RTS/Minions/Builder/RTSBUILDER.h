@@ -62,7 +62,7 @@ private:
 	UPROPERTY(Replicated)
 	bool bIsMining = false;
 
-	void Mine_Resource();
+	void MineResource();
 	void AddResource(TSubclassOf<AResource> type, int amount);
 	void CalculateCurrentWeight();
 	int CalculateGatherAmount(TSubclassOf<AResource> type) const;
