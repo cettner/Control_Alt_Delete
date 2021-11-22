@@ -52,6 +52,7 @@ class RTS_PROJECT_API UAbility : public UObject
 
 	protected:
 		UWorld * GetWorld() const;
+		bool HasAuthority() const;
 
 	protected:
 		UPROPERTY(EditDefaultsOnly)

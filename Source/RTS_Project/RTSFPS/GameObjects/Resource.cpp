@@ -29,9 +29,9 @@ AResource::AResource() : Super()
 	UIData.Key = GetClass();
 }
 
-int AResource::Mine(uint32 AmountToMine)
+uint32 AResource::Mine(uint32 AmountToMine)
 {
-	if ((ResourceVal > (int)AmountToMine) || bisinfinite)
+	if ((ResourceVal > AmountToMine) || bisinfinite)
 	{
 		if (!bisinfinite)
 		{
@@ -42,7 +42,7 @@ int AResource::Mine(uint32 AmountToMine)
 	}
 	else // theres not enough to give so give what's left.
 	{
-		int retval = ResourceVal;
+		uint32 retval = ResourceVal;
 		ResourceVal = 0;
 		Destroy();
 
@@ -53,6 +53,11 @@ int AResource::Mine(uint32 AmountToMine)
 FResourceUIData AResource::GetUIData() const
 {
 	return UIData;
+}
+
+uint32 AResource::GetResourceWeight() const
+{
+	return ResourceWeight;
 }
 
 void AResource::SetSelected()

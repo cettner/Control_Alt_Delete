@@ -46,6 +46,10 @@ public:
 	UAbilityComponent();
 
 public:
+	/*Pass through function for Abilities to dermine if they should Execute Authoritative Commands based on the comps owner*/
+	bool HasAuthority();
+
+public:
 	/*Called by Comp Owner on inital attempt to use ability*/
 	virtual void StartAbility();
 	/*Called by Comp Owner on end of attempt to use ability*/

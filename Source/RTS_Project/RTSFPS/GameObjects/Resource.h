@@ -26,6 +26,69 @@ struct FResourceUIData
 	TSubclassOf<AResource> Key = nullptr;
 };
 
+USTRUCT()
+struct FReplicationResourceMap
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	void Emplace(TSubclassOf<AResource> Key, int Value)
+	{
+		int index = Keys.IndexOfByKey(Key);
+
+		if (index == INDEX_NONE)
+		{
+			Keys.Emplace(Key);
+			Values.Emplace(Value);
+		}
+		else
+		{
+			Values[index] = Value;
+		}
+	}
+	const int* Find(TSubclassOf<AResource> Key) const
+	{
+		int index = Keys.IndexOfByKey(Key);
+
+		if (index != INDEX_NONE)
+		{
+			const int * retval = &Values[index];
+			return(retval);
+		}
+
+		return(nullptr);
+	}
+	int Num() const
+	{
+		return(Keys.Num());
+	}
+	TMap<TSubclassOf<AResource>, int> GetMap() const
+	{
+		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
+		if (IsValid())
+		{
+			for (int i = 0; i < Keys.Num(); i++)
+			{
+				Map.Emplace(Keys[i], Values[i]);
+			}
+		}
+
+
+		return(Map);
+	}
+	bool IsValid() const
+	{
+		return(Keys.Num() == Values.Num());
+	}
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+		TArray<int> Values;
+
+	UPROPERTY(EditDefaultsOnly)
+		TArray<TSubclassOf<AResource>> Keys;
+};
+
+
 UCLASS(Blueprintable)
 class RTS_PROJECT_API AResource : public AGridClaimingActor, public IRTSObjectInterface
 {
@@ -34,8 +97,9 @@ class RTS_PROJECT_API AResource : public AGridClaimingActor, public IRTSObjectIn
 public:	
 	// Sets default values for this actor's properties
 	AResource();
-	int Mine(uint32 amount_to_mine);
+	uint32 Mine(uint32 amount_to_mine);
 	FResourceUIData GetUIData() const;
+	uint32 GetResourceWeight() const;
 
 public:
 	/*RTSObject Interface Overrides*/
@@ -51,12 +115,15 @@ protected:
 
 protected:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditAnywhere, Category = Gameplay)
 	bool bisinfinite = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	int ResourceVal = 90;
+	UPROPERTY(EditAnywhere, Category = Gameplay)
+	uint32 ResourceVal = 90;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	uint32 ResourceWeight = 1U;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 	FResourceUIData UIData;
 };

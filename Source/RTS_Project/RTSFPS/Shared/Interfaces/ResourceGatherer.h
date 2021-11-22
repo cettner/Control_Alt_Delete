@@ -24,6 +24,13 @@ class RTS_PROJECT_API IResourceGatherer
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	void AddResource(TSubclassOf<AResource> ResourceClass, int amount);
-	bool CanCarryMore(TSubclassOf<AResource> ResourceClass);
+	virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount);
+	virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount);
+
+	virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
+	virtual bool DropsResourceOnDeath() const;
+	virtual FReplicationResourceMap GetAllHeldResources() const;
+	virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const;
+	virtual uint32 GetCurrentWeight() const;
+	virtual uint32 GetMaxWeight() const;
 };

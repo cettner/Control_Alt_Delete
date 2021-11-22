@@ -253,8 +253,6 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 {
 	if (!IsDropPointFor(ResourceType)) return(false);
 
-	/*TODO: Context for this function seems to be incorrect in Editor so we have to iterate through all World contexts till its valid*/
-	/*it is valid in standalone though through normal GetWorld() call*/
 	#if WITH_EDITOR
 	const UWorld * world = GetWorldPIE();
 	#else

@@ -68,6 +68,11 @@ void UAbilityComponent::SetCurrentAbility(UAbility * InAbility)
 }
 
 
+bool UAbilityComponent::HasAuthority()
+{
+	return GetOwner()->HasAuthority();
+}
+
 void UAbilityComponent::StartAbility()
 {
 	SetWantsToCast(true);

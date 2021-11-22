@@ -4,74 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "DefaultMode.h"
-#include "../../RTSFPS/FPS/Commander.h"
-#include "../../RTSFPS/RTS/Camera/RTSCamera.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
+#include "RTS_Project/RTSFPS/RTS/Camera/RTSCamera.h"
 #include "RTS_Project/RTSFPS/GameObjects/Resource.h"
 #include "RTFPSMode.generated.h"
 
 
 
-USTRUCT()
-struct FReplicationResourceMap
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	void Emplace(TSubclassOf<AResource> Key, int Value)
-	{
-		int index = Keys.IndexOfByKey(Key);
-
-		if (index == INDEX_NONE)
-		{
-			Keys.Emplace(Key);
-			Values.Emplace(Value);
-		}
-		else
-		{
-			Values[index] = Value;
-		}
-	}
-	const int* Find(TSubclassOf<AResource> Key) const
-	{
-		int index = Keys.IndexOfByKey(Key);
-
-		if (index != INDEX_NONE)
-		{
-			const int * retval = &Values[index];
-			return(retval);
-		}
-
-		return(nullptr);
-	}
-	int Num() const
-	{
-		return(Keys.Num());
-	}
-	TMap<TSubclassOf<AResource>, int> GetMap() const
-	{
-		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
-		if (IsValid())
-		{
-			for (int i = 0; i < Keys.Num(); i++)
-			{
-				Map.Emplace(Keys[i], Values[i]);
-			}
-		}
-
-
-		return(Map);
-	}
-	bool IsValid() const
-	{
-		return(Keys.Num() == Values.Num());
-	}
-
-protected:
-	UPROPERTY(EditDefaultsOnly)
-		TArray<int> Values;
-
-	UPROPERTY(EditDefaultsOnly)
-		TArray<TSubclassOf<AResource>> Keys;
-};
 
 
 UCLASS()
@@ -96,9 +35,6 @@ protected:
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings) override;
 	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController) override;
 	virtual void StartMatch() override;
-
-
-protected:
 
 
 public:

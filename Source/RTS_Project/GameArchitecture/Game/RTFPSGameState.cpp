@@ -435,7 +435,6 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
 	}
 }
 
-
 bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 {
 	bool retval = false;
