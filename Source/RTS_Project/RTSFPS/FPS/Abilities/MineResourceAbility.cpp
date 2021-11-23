@@ -3,3 +3,14 @@
 
 #include "MineResourceAbility.h"
 
+void UMineResourceAbility::ProcessTarget(AActor * Target)
+{
+    Super::ProcessTarget(Target);
+
+}
+
+bool UMineResourceAbility::CanHit(AActor * HitActor)
+{
+    const bool retval = Cast<AResource>(HitActor) != nullptr;
+    return(retval);
+}

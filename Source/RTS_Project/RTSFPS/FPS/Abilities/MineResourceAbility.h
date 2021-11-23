@@ -15,6 +15,7 @@ class RTS_PROJECT_API UMineResourceAbility : public UBeamParticleAbility
 	GENERATED_BODY()
 	
 	protected:
-
+		virtual void ProcessTarget(AActor * Target) override;
+		virtual void CanHit(AActor * HitActor) override;
 
 };

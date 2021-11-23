@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "../AbilityWeapon.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
 #include "MageHands.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API AMageHands : public AAbilityWeapon
+class RTS_PROJECT_API AMageHands : public AAbilityWeapon, public IResourceGatherer
 {
 	GENERATED_BODY()
 	
