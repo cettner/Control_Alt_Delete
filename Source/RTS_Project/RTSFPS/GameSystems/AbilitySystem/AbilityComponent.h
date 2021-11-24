@@ -86,6 +86,11 @@ public:
 	virtual bool IsAbilityUsingCrosshair() const;
 	virtual bool IsUsingAbility() const;
 	AActor * GetAbilityTarget() const;
+	template < class T >
+	T* GetAbilityTarget() const
+	{
+		return Cast<T>(GetAbilityTarget());
+	}
 
 	/*Creates The Abilty and adds it to the list of available ones this component recieves*/
 	virtual TWeakObjectPtr<UAbility> AddAbility(TSubclassOf<UAbility> AbilityClass);

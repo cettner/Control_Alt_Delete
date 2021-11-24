@@ -16,13 +16,15 @@ class RTS_PROJECT_API UBeamParticleAbility : public UTraceTargetAbility
 {
 	GENERATED_BODY()
 	
-public:
-	virtual bool ShouldSeverBeam();
+protected:
+	virtual void StartBeam();
+	virtual void UpdateBeamParameters();
+	virtual bool ShouldSeverBeam() const;
 	virtual void SeverBeam();
 
 protected:
-	virtual bool IsTargetInRange();
-	virtual bool IsTargetInLineOfSight();
+	virtual bool IsTargetInRange() const;
+	virtual bool IsTargetInLineOfSight() const;
 
 protected:
 	UBeamParticleAbility();
@@ -53,12 +55,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, meta = (EditCondition = "bLinkBeamToTarget == true"))
 	/*The Angle in degrees that the beam will be disconnected from the target if the User's View*/
-	float BeamSeveranceAngle = 45.0f;
+	float BeamSeveranceAngle = 60.0f;
 
 protected:
 	UNiagaraComponent * BeamComp = nullptr;
-
-	/*Current Location of the Beam Effects End, Only Used if the beam is Linked to a Target / Target Location*/
-	FVector BeamEnd = FVector();
 };
 

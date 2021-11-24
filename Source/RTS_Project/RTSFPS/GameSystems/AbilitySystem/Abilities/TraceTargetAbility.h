@@ -15,7 +15,6 @@ class RTS_PROJECT_API UTraceTargetAbility : public UAbility
 	GENERATED_BODY()
 
 public:
-	virtual void OnEffect() override;
 	virtual void NotifyOnReady() override;
 	virtual void OnAbilityEnd() override;
 	virtual void ProcessTraceHit(FHitResult HitResult, FVector StartTrace, FVector EndTrace);
@@ -23,7 +22,7 @@ public:
 protected:
 	UFUNCTION()
 	virtual void UpdateChannel();
-	virtual bool CanHit(AActor * HitActor);
+	virtual bool CanHit(AActor * HitActor) const;
 
 protected:
 	FTimerHandle ChannelPulseHandler = FTimerHandle();

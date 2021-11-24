@@ -8,6 +8,12 @@
 #include "NiagaraFunctionLibrary.h"
 
 
+void UBeamParticleAbility::StartBeam()
+{
+	UpdateBeamParameters();
+	BeamComp->Activate();
+}
+
 void UBeamParticleAbility::SeverBeam()
 {
 	if (BeamComp != nullptr)
@@ -15,10 +21,9 @@ void UBeamParticleAbility::SeverBeam()
 		BeamComp->Deactivate();
 	}
 	AbilityComp->SetAbilityTarget(nullptr);
-	BeamEnd = FVector();
 }
 
-bool UBeamParticleAbility::IsTargetInRange()
+bool UBeamParticleAbility::IsTargetInRange() const
 {
 	bool retval = true;
 
@@ -38,7 +43,7 @@ bool UBeamParticleAbility::IsTargetInRange()
 	return retval;
 }
 
-bool UBeamParticleAbility::IsTargetInLineOfSight()
+bool UBeamParticleAbility::IsTargetInLineOfSight() const
 {
 	bool retval = false;
 	if (AbilityComp->GetAbilityTarget())
@@ -67,7 +72,20 @@ UBeamParticleAbility::UBeamParticleAbility()
 	BeamEmitter = CreateDefaultSubobject<UNiagaraSystem>(TEXT("BeamSystem"));
 }
 
-bool UBeamParticleAbility::ShouldSeverBeam()
+void UBeamParticleAbility::UpdateBeamParameters()
+{
+	if (BeamComp == nullptr) return;
+
+	if (bLinkBeamToTarget && AbilityComp->GetAbilityTarget())
+	{
+		const AActor * Target = AbilityComp->GetAbilityTarget();
+		const FVector endbeam = Target->GetActorLocation();
+		const FName beamparametername = BeamEndParameterName;
+		BeamComp->SetVectorParameter(beamparametername, endbeam);
+	}
+}
+
+bool UBeamParticleAbility::ShouldSeverBeam() const
 {
 	bool retval = false;
 	if (AbilityComp->GetAbilityTarget() != nullptr && (bLinkBeamToTarget == true))
@@ -119,7 +137,7 @@ void UBeamParticleAbility::NotifyOnReady()
 	/*If the beam is intended to hit a specific target then wait till the target is aquired*/
 	if (BeamComp != nullptr && !bLinkBeamToTarget)
 	{
-		BeamComp->Activate();
+		StartBeam();
 	}
 	Super::NotifyOnReady();
 }
@@ -135,10 +153,7 @@ void UBeamParticleAbility::ProcessTarget(AActor * Target)
 {
 	if (bLinkBeamToTarget == true && Target != nullptr)
 	{
-		FVector endbeam = Target->GetActorLocation();
-		FName beamparametername = FName(BeamEndParameterName);
-		BeamComp->SetVectorParameter(beamparametername, endbeam);
-		BeamComp->Activate();
+		StartBeam();
 	}
 
 }
@@ -150,12 +165,8 @@ void UBeamParticleAbility::UpdateChannel()
 	{
 		SeverBeam();
 	}
-	else if(bLinkBeamToTarget && AbilityComp->GetAbilityTarget())
+	else 
 	{
-		const AActor * Target = AbilityComp->GetAbilityTarget();
-		const FVector endbeam = Target->GetActorLocation();
-		const FName beamparametername = BeamEndParameterName;
-		BeamComp->SetVectorParameter(beamparametername, endbeam);
-		BeamEnd = endbeam;
+		UpdateBeamParameters();
 	}
 }
