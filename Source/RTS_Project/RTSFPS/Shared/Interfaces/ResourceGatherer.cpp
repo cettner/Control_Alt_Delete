@@ -16,9 +16,9 @@ bool IResourceGatherer::RemoveResource(TSubclassOf<AResource> ResourceClass, int
 }
 
 
-bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
+uint32 IResourceGatherer::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
 {
-	return true;
+	return 0U;
 }
 
 uint32 IResourceGatherer::GetHeldResource(TSubclassOf<AResource> ResourceClass) const

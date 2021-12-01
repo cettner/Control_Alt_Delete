@@ -28,12 +28,6 @@ public:
 		bool isSame = Myself.UpgradeClass == Other.UpgradeClass;
 		return(isSame);
 	}
-
-	friend bool operator == (const FUpgradeInfo& Myself, const TSubclassOf<UUpgrade>& Other)
-	{
-		bool isSame = Myself.UpgradeClass == Other;
-		return(isSame);
-	}
 };
 
 

@@ -98,6 +98,26 @@ TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(TSubclassOf<UAb
 	return retval;
 }
 
+void AMageHands::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
+{
+	Cast<IResourceGatherer>(GetPawnOwner())->AddResource(ResourceClass, amount);
+}
+
+uint32 AMageHands::GetCurrentWeight() const
+{
+	return Cast<IResourceGatherer>(GetPawnOwner())->GetCurrentWeight();
+}
+
+uint32 AMageHands::GetMaxWeight() const
+{
+	return Cast<IResourceGatherer>(GetPawnOwner())->GetMaxWeight();
+}
+
+uint32 AMageHands::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
+{
+	return Cast<IResourceGatherer>(GetPawnOwner())->CanCarryMore(ResourceClass);
+}
+
 void AMageHands::StartSecondaryFire()
 {
 	ServerStartUseSecondAbility();

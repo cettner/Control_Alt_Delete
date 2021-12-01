@@ -21,6 +21,8 @@ class RTS_PROJECT_API UMineResourceAbility : public UBeamParticleAbility
 	public:
 		float GetMiningRate() const;
 		void SetMiningRate(float InRate);
+		uint32 GetMineAmount() const;
+		void SetMineAmount(uint32 InAmount);
 
 	protected:
 		UFUNCTION()
@@ -33,6 +35,7 @@ class RTS_PROJECT_API UMineResourceAbility : public UBeamParticleAbility
 	protected:
 		virtual void StartBeam() override;
 		virtual void SeverBeam() override;
+		virtual bool ShouldSeverBeam() const override;
 
 	protected:
 		virtual bool CanHit(AActor * HitActor) const override;
@@ -42,4 +45,7 @@ class RTS_PROJECT_API UMineResourceAbility : public UBeamParticleAbility
 
 		UPROPERTY(EditDefaultsOnly)
 		float MiningRate = 1.0f;
+
+		UPROPERTY(EditDefaultsOnly)
+		uint32 MineAmount = 20U;
 };

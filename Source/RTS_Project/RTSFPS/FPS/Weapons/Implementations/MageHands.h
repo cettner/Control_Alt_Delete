@@ -35,6 +35,12 @@ protected:
 	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
 
 protected:
+	virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
+	virtual uint32 GetCurrentWeight() const override;
+	virtual uint32 GetMaxWeight() const override;
+	virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const override;
+
+protected:
 	UAbilityComponent * GetHandAbilityComponent(UAbilityAnimNotify * CallingContext) const;
 	
 	UFUNCTION(reliable, server, WithValidation)

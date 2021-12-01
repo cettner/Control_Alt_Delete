@@ -135,7 +135,7 @@ void UBeamParticleAbility::Init(UAbilityComponent * InAbilityComp)
 void UBeamParticleAbility::NotifyOnReady()
 {
 	/*If the beam is intended to hit a specific target then wait till the target is aquired*/
-	if (BeamComp != nullptr && !bLinkBeamToTarget)
+	if (BeamComp != nullptr && !bLinkBeamToTarget && !BeamComp->IsActive())
 	{
 		StartBeam();
 	}
@@ -151,7 +151,7 @@ void UBeamParticleAbility::OnAbilityEnd()
 
 void UBeamParticleAbility::ProcessTarget(AActor * Target)
 {
-	if (bLinkBeamToTarget == true && Target != nullptr)
+	if (bLinkBeamToTarget == true && Target != nullptr && !BeamComp->IsActive())
 	{
 		StartBeam();
 	}

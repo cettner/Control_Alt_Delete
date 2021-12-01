@@ -80,6 +80,11 @@ public:
 		return(Keys.Num() == Values.Num());
 	}
 
+	/*Allows Pair Iteration*/
+	TPair<TSubclassOf<AResource>, int > operator[](int Index)
+	{
+		return TPair<TSubclassOf<AResource>, int >(Keys[Index], Values[Index]);
+	}
 protected:
 	UPROPERTY(EditDefaultsOnly)
 		TArray<int> Values;

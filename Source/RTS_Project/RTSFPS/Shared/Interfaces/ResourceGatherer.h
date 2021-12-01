@@ -27,7 +27,8 @@ public:
 	virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount);
 	virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount);
 
-	virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
+	/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
+	virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
 	virtual bool DropsResourceOnDeath() const;
 	virtual FReplicationResourceMap GetAllHeldResources() const;
 	virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const;
