@@ -44,8 +44,8 @@ class RTS_PROJECT_API UMineResourceAbility : public UBeamParticleAbility
 		FTimerHandle MineTickHandler = FTimerHandle();
 
 		UPROPERTY(EditDefaultsOnly)
-		float MiningRate = 1.0f;
+		float MiningRate = .5f;
 
 		UPROPERTY(EditDefaultsOnly)
-		uint32 MineAmount = 20U;
+		uint32 MineAmount = 4U;
 };

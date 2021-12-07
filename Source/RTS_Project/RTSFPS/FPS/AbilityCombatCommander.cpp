@@ -73,8 +73,20 @@ void AAbilityCombatCommander::CalculateCurrentWeight()
 
 void AAbilityCombatCommander::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
 {
-	HeldResources.Emplace(ResourceClass, amount);
+	HeldResources.Increment(ResourceClass, amount);
 	CalculateCurrentWeight();
+}
+
+bool AAbilityCombatCommander::RemoveResource(TSubclassOf<AResource> ResourceClass, int amount)
+{
+	const bool retval = HeldResources.Decrement(ResourceClass, amount);
+	CalculateCurrentWeight();
+	return retval;
+}
+
+FReplicationResourceMap AAbilityCombatCommander::GetAllHeldResources() const
+{
+	return HeldResources;
 }
 
 uint32 AAbilityCombatCommander::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
@@ -115,5 +127,5 @@ void AAbilityCombatCommander::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AAbilityCombatCommander, MaxWeight);
-	DOREPLIFETIME(AAbilityCombatCommander, HeldResources);
+	DOREPLIFETIME(AAbilityCombatCommander, CurrentWeight);
 }

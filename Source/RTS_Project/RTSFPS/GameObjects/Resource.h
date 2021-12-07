@@ -45,6 +45,42 @@ public:
 			Values[index] = Value;
 		}
 	}
+
+	void Increment(TSubclassOf<AResource> Key, int Value)
+	{
+		const int * curval = Find(Key);
+		if (curval != nullptr)
+		{
+			const int newval = *curval + Value;
+			Emplace(Key, newval);
+		}
+		else
+		{
+			Emplace(Key, Value);
+		}
+	}
+
+	bool Decrement(TSubclassOf<AResource> Key, int Value)
+	{
+		const int * curval = Find(Key);
+		if (curval != nullptr)
+		{
+			int newval = *curval - Value;
+			if (newval < 0)
+			{
+				newval = 0;
+			}
+			Emplace(Key, newval);
+			
+			return(true);
+		}
+		else
+		{
+			Emplace(Key, 0);
+			return(false);
+		}
+	}
+
 	const int* Find(TSubclassOf<AResource> Key) const
 	{
 		int index = Keys.IndexOfByKey(Key);
@@ -57,10 +93,12 @@ public:
 
 		return(nullptr);
 	}
+
 	int Num() const
 	{
 		return(Keys.Num());
 	}
+
 	TMap<TSubclassOf<AResource>, int> GetMap() const
 	{
 		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
@@ -75,6 +113,7 @@ public:
 
 		return(Map);
 	}
+
 	bool IsValid() const
 	{
 		return(Keys.Num() == Values.Num());

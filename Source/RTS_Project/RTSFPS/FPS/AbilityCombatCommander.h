@@ -30,12 +30,12 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		void CalculateCurrentWeight();
 	/*********************************Resource Gatherer***********************************/
 		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount);
-		//virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount);
+		virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount);
 
 	/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
 		virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
 		//virtual bool DropsResourceOnDeath() const;
-		//virtual FReplicationResourceMap GetAllHeldResources() const;
+		virtual FReplicationResourceMap GetAllHeldResources() const;
 		//virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const;
 		virtual uint32 GetCurrentWeight() const;
 		virtual uint32 GetMaxWeight() const;
@@ -45,12 +45,12 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:
-		UPROPERTY(Replicated)
 		FReplicationResourceMap HeldResources = FReplicationResourceMap();
 		
 		UPROPERTY(EditDefaultsOnly, Replicated)
-		uint32 MaxWeight = 100U;
+		uint32 MaxWeight = 30U;
 
+		UPROPERTY(Replicated)
 		uint32 CurrentWeight = 0U;
 
 };
