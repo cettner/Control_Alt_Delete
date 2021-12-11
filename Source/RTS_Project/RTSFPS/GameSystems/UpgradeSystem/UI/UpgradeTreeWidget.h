@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanel.h"
 #include "UpgradeTreeWidget.generated.h"
 
 /**
@@ -13,5 +14,10 @@ UCLASS()
 class RTS_PROJECT_API UUpgradeTreeWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
+
+
+	protected:
+		UPROPERTY(meta = (BindWidget))
+		UCanvasPanel * NodePanel;
 };

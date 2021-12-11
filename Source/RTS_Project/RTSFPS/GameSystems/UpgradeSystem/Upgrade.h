@@ -9,6 +9,8 @@
 
 class IUpgradableInterface;
 
+typedef  TPair<TSubclassOf<UUpgrade>, int > UpgradeTier_t;
+
 UCLASS()
 class RTS_PROJECT_API UUpgrade : public UObject
 {

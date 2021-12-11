@@ -3,9 +3,12 @@
 #pragma once
 
 #include "UObject/Interface.h"
+#include "Containers/Map.h"
 
 #include "..\Upgrade.h"
 #include "UpgradableInterface.generated.h"
+
+
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
