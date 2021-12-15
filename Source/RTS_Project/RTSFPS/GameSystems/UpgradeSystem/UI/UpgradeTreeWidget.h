@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CanvasPanel.h"
+
+#include "..\Interfaces\UpgradableInterface.h"
+#include "UpgradeNodeWidget.h"
 #include "UpgradeTreeWidget.generated.h"
 
 /**
@@ -15,9 +18,18 @@ class RTS_PROJECT_API UUpgradeTreeWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	protected:
+		virtual bool Initialize() override;
 
+	protected:
+		virtual void RefreshNodes();
+		virtual IUpgradableInterface* GetUpgradeUser() const;
 
 	protected:
 		UPROPERTY(meta = (BindWidget))
 		UCanvasPanel * NodePanel;
+
+	protected:
+		TArray< UUpgradeNodeWidget*> Nodes;
+
 };

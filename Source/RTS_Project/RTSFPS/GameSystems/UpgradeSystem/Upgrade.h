@@ -15,11 +15,20 @@ UCLASS()
 class RTS_PROJECT_API UUpgrade : public UObject
 {
 	GENERATED_BODY()
+
 public:
 	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const;
 	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const;
+	uint32 GetMaxRank() const;
+	FText GetToolTipInfo(uint32 CurrentRank = 0U);
 
+
+
+	/*Configuration Data*/
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	FString TooltipInfo = "N/A";
+	FText TooltipInfo = FText::FromString("N/A");
+
+	UPROPERTY(EditDefaultsOnly)
+	uint32 MaxRank = 1U;
 };
