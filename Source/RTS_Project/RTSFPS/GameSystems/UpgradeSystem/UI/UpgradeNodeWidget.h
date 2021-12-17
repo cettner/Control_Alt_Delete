@@ -15,12 +15,11 @@
  */
 
 
+
 UCLASS()
 class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
-
 
 
 	public:
@@ -28,11 +27,17 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 
 	protected:
 		virtual bool IsNodeEnabled() const;
-		virtual bool ShouldShowProgress() const;
+		virtual bool ShouldShouldEnableAbility() const;
 		virtual void SetProgressText(uint32 current, uint32 max);
+		virtual void SetNodeEnabled(bool isenabled);
+
+		uint32 GetUpgradeMaxRank() const;
+		TArray<FUpgradeUnlockCondition> GetUnlockConditions() const;
+		TArray<TSubclassOf<UUpgrade>> GetExclusiveConditions() const;
+
 
 	protected:
-		virtual bool Initialize() override;
+		virtual bool Setup(IUpgradableInterface * UpgradeUser);
 
 
 		/*Configuration Data*/
@@ -40,20 +45,15 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<UUpgrade> UpgradeToApply = nullptr;
 
-		//UPROPERTY(EditDefaultsOnly)
-		//TArray<TPair<int,int>> ParentUpgradeConditions;
-
 		/*Widget Design Data*/
 	protected:
 		UPROPERTY(meta = (BindWidget))
-		UButton* SelectButton;
+		UButton* UpgradeButton;
 
 		UPROPERTY(meta = (BindWidget))
 		UTextBlock* ProgressText;
 
-		/*Runtime Data*/
+
 	protected:
 		uint32 CurrentRank = 0;
-
-		uint32 MaxRank = 0;
 };

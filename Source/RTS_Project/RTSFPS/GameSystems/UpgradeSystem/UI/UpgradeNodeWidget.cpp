@@ -2,13 +2,14 @@
 
 
 #include "UpgradeNodeWidget.h"
+#include "../Interfaces/UpgradableInterface.h"
 
 bool UUpgradeNodeWidget::IsNodeEnabled() const
 {
 	return false;
 }
 
-bool UUpgradeNodeWidget::ShouldShowProgress() const
+bool UUpgradeNodeWidget::ShouldShouldEnableAbility() const
 {
 	return true;
 }
@@ -24,15 +25,68 @@ void UUpgradeNodeWidget::SetProgressText(uint32 current, uint32 max)
 	ProgressText->SetText(ptext);
 }
 
-bool UUpgradeNodeWidget::Initialize()
+void UUpgradeNodeWidget::SetNodeEnabled(bool isenabled)
 {
-	bool retval = Super::Initialize();
-	if (UpgradeToApply != nullptr)
+	
+}
+
+uint32 UUpgradeNodeWidget::GetUpgradeMaxRank() const
+{
+	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
+	return defaultupgrade->GetMaxRank();
+
+}
+
+TArray<FUpgradeUnlockCondition> UUpgradeNodeWidget::GetUnlockConditions() const
+{
+	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
+	return defaultupgrade->GetUnlockConditions();
+}
+
+TArray<TSubclassOf<UUpgrade>> UUpgradeNodeWidget::GetExclusiveConditions() const
+{
+	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
+	return defaultupgrade->GetExclusiveConditions();
+}
+
+bool UUpgradeNodeWidget::Setup(IUpgradableInterface* UpgradeUser)
+{
+
+	uint32 currentdisplayrank = 0U;
+	currentdisplayrank = UpgradeUser->GetCurrentUpgradeTierFor(UpgradeToApply);
+		
+	const uint32 maxrank = GetUpgradeMaxRank();
+	const TArray<TSubclassOf<UUpgrade>> exclusions = GetExclusiveConditions();
+	const TArray<FUpgradeUnlockCondition> unlockconditions = GetUnlockConditions();
+		
+	bool isnodeenabled = true;
+
+	for (int i = 0; i < unlockconditions.Num(); i++)
 	{
-		const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
-		MaxRank = defaultupgrade->GetMaxRank();
-		SetProgressText(CurrentRank, MaxRank);
+		const TSubclassOf<UUpgrade> unlockparent = unlockconditions[i].GetParent();
+		const uint32 unlockrank = unlockconditions[i].GetRank();
+
+		const uint32 currentrank =  UpgradeUser->GetCurrentUpgradeTierFor(unlockparent);
+
+		if (currentrank < unlockrank)
+		{
+			isnodeenabled = false;
+		}
+
 	}
+
+	for (int i = 0; i < exclusions.Num(); i++)
+	{
+		const uint32 currentrank = UpgradeUser->GetCurrentUpgradeTierFor(exclusions[i]);
+		if (currentrank > UPGRADE_UNLEARNED)
+		{
+			isnodeenabled = false;
+		}
+	}
+
+
+	SetProgressText(currentdisplayrank, maxrank);
+
 
 	return true;
 }

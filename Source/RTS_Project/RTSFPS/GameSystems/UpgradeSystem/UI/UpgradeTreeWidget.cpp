@@ -6,20 +6,30 @@
 
 
 
+
+
 bool UUpgradeTreeWidget::Initialize()
 {
-	Super::Initialize();
+	bool retval = Super::Initialize();
 
-	const TArray<UWidget* > childwidgets = NodePanel->GetAllChildren();
-	for (int i = 0; i < childwidgets.Num(); i++)
+	if(NodePanel != nullptr)
 	{
-		UUpgradeNodeWidget * node = Cast<UUpgradeNodeWidget>(childwidgets[i]);
-		if (IsValid(node))
+		const TArray<UWidget* > childwidgets = NodePanel->GetAllChildren();
+		for (int i = 0; i < childwidgets.Num(); i++)
 		{
-			Nodes.Emplace(node);
+			UUpgradeNodeWidget* node = Cast<UUpgradeNodeWidget>(childwidgets[i]);
+			if (IsValid(node))
+			{
+				Nodes.Emplace(node);
+			}
 		}
 	}
-	return true;
+	else
+	{
+		retval = false;
+	}
+
+	return retval;
 }
 
 void UUpgradeTreeWidget::RefreshNodes()
@@ -35,6 +45,11 @@ void UUpgradeTreeWidget::RefreshNodes()
 
 IUpgradableInterface* UUpgradeTreeWidget::GetUpgradeUser() const
 {
-	IUpgradableInterface * retval =  GetOwningPlayer()->GetPlayerState<IUpgradableInterface>();
+	IUpgradableInterface* retval = nullptr;
+	if (GetOwningPlayer())
+	{
+		retval = GetOwningPlayer()->GetPlayerState<IUpgradableInterface>();
+	}
+
 	return retval;
 }

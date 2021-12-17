@@ -19,7 +19,17 @@ uint32 UUpgrade::GetMaxRank() const
 	return MaxRank;
 }
 
-FText UUpgrade::GetToolTipInfo(uint32 CurrentRank)
+FText UUpgrade::GetToolTipInfo(uint32 CurrentRank) const
 {
 	return TooltipInfo;
+}
+
+TArray<TSubclassOf<UUpgrade>> UUpgrade::GetExclusiveConditions() const
+{
+	return ExclusiveConditions;
+}
+
+TArray<FUpgradeUnlockCondition> UUpgrade::GetUnlockConditions() const
+{
+	return UnlockConditions;
 }

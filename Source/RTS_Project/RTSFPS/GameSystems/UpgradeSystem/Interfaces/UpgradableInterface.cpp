@@ -5,16 +5,11 @@
 
 // Add default functionality here for any IUpg
 
-int IUpgradableInterface::GetCurrentUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass) const
+uint32 IUpgradableInterface::GetCurrentUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass) const
 {
-	return -1;
+	return UPGRADE_UNLEARNED;
 }
 
-
-int IUpgradableInterface::GetMaxUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass) const
-{
-	return 0;
-}
 
 TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetAppliedUpgrades() const
 {

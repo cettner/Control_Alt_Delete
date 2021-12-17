@@ -9,7 +9,24 @@
 
 class IUpgradableInterface;
 
-typedef  TPair<TSubclassOf<UUpgrade>, int > UpgradeTier_t;
+
+USTRUCT()
+struct FUpgradeUnlockCondition
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	TSubclassOf<UUpgrade> GetParent() const { return Parent; }
+
+	uint32 GetRank() const { return Rank; }
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<UUpgrade> Parent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+		uint32 Rank = 1U;
+};
+
 
 UCLASS()
 class RTS_PROJECT_API UUpgrade : public UObject
@@ -19,16 +36,26 @@ class RTS_PROJECT_API UUpgrade : public UObject
 public:
 	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const;
 	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const;
+	
 	uint32 GetMaxRank() const;
-	FText GetToolTipInfo(uint32 CurrentRank = 0U);
-
-
+	FText GetToolTipInfo(uint32 CurrentRank = 0U)  const;
+	TArray<TSubclassOf<UUpgrade>> GetExclusiveConditions() const;
+	TArray<FUpgradeUnlockCondition> GetUnlockConditions() const;
 
 	/*Configuration Data*/
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	FText TooltipInfo = FText::FromString("N/A");
+	FText UpgradeName = FText::FromString("DefaultUpgrade Name");
+
+	UPROPERTY(EditDefaultsOnly)
+	FText TooltipInfo = FText::FromString("Long Long Long Long Text");
 
 	UPROPERTY(EditDefaultsOnly)
 	uint32 MaxRank = 1U;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FUpgradeUnlockCondition> UnlockConditions = TArray<FUpgradeUnlockCondition>();
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<UUpgrade>> ExclusiveConditions = TArray<TSubclassOf<UUpgrade>>();
 };
