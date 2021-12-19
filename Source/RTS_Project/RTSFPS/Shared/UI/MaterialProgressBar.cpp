@@ -38,7 +38,7 @@ void UMaterialProgressBar::NativeTick(const FGeometry& MyGeometry, float InDelta
 		if (Percent != LastStablePercent)
 		{
 			LastStablePercent = Percent;
-			elapsedtime = 0.0f;
+			elapsedtime = 0.00f;
 		}
 
 		/*If the lerp hasnt caught up with the true value*/
