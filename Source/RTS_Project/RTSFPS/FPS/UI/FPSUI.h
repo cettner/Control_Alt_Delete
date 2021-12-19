@@ -24,38 +24,11 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 	protected:
 		virtual bool Initialize() override;
 
-	protected:
-		UHealthComponent* GetOwnerHealthComp() const;
-
-	protected:
-		UFUNCTION()
-		virtual float UpdateHealthPercent() const;
-
-		UFUNCTION()
-		virtual FText UpdateCurrentHealthText() const;
-
-		UFUNCTION()
-		virtual FText UpdateMaxHealthText() const;
-
-
-    protected:
-		/*Floating Point to Text Formatting Options*/
-		FNumberFormattingOptions FloatingPointOptions;
-
     protected:
 		UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<UTeamResourceWidget> ResourceWidgetClass;
 
     protected:
-	   UPROPERTY(meta = (BindWidget))
-	   UProgressBar* HealthBar;
-
-	   UPROPERTY(meta = (BindWidgetOptional))
-	   UTextBlock* MaxHealthText;
-
-	   UPROPERTY(meta = (BindWidgetOptional))
-	   UTextBlock* CurrentHealthText;
-
 	   UPROPERTY(meta = (BindWidgetOptional))
 	   UPanelWidget* TeamResourceList;
 };

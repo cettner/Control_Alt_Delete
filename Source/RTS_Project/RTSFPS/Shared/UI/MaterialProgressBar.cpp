@@ -53,12 +53,16 @@ void UMaterialProgressBar::NativeTick(const FGeometry& MyGeometry, float InDelta
 					LerpPercent = FMath::Lerp(LerpPercent, Percent, elapsedtime / LerpDuration);
 					elapsedtime += InDeltaTime;
 				}
-				else if (Percent < LerpPercent)
+				else if (Percent == 0.0f && Percent < LerpPercent)
 				{
 					/*Maximum Value Cannot be 0, So increment everything by one*/
-					const float decrement =  FMath::Lerp(Percent + 1.0f, LerpPercent + 1.0f, elapsedtime / LerpDuration);
-					LerpPercent -= (decrement -1.0f);
-					
+					const float decrement = FMath::Lerp(Percent + 1.0f, LerpPercent + 1.0f, elapsedtime / LerpDuration);
+					LerpPercent -= (decrement - 1.0f);
+					elapsedtime += InDeltaTime;
+				}
+				else if (Percent < LerpPercent)
+				{
+					LerpPercent =  FMath::Lerp(Percent, LerpPercent, elapsedtime / LerpDuration);		
 					elapsedtime += InDeltaTime;
 				}
 			}
