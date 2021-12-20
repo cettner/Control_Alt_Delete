@@ -19,9 +19,10 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 	GENERATED_BODY()
 
     public:
-		UFPSUI(const FObjectInitializer& ObjectInitializer);
+		virtual void ShouldShowUpgradeTree(bool bShowTree);
 
 	protected:
+		UFPSUI(const FObjectInitializer& ObjectInitializer);
 		virtual bool Initialize() override;
 
     protected:
@@ -31,4 +32,14 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
     protected:
 	   UPROPERTY(meta = (BindWidgetOptional))
 	   UPanelWidget* TeamResourceList;
+
+	   UPROPERTY(meta = (BindWidgetOptional))
+	   UWidgetSwitcher* FPSTabSwitcher;
+
+	   UPROPERTY(meta = (BindWidgetOptional))
+	   UUserWidget* MainFPSUI;
+
+	   UPROPERTY(meta = (BindWidgetOptional))
+	   UUserWidget* UpgradeTreeWidget;
+
 };

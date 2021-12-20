@@ -3,6 +3,9 @@
 #include "FPSServerController.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSFPSHUD.h"
+#include "RTS_Project/RTSFPS/BaseClasses/RTSFPSWidget.h"
+#include "RTS_Project/RTSFPS/FPS/UI/FPSUI.h"
 #include "FPSPlayerState.h"
 
 #include "Net/UnrealNetwork.h"
@@ -68,6 +71,15 @@ void AFPSServerController::OnPawnDeath()
 	GetPlayerState<AFPSPlayerState>()->SetRespawnState(EPlayerReswpawnState::SELECTINGRESPAWN);
 }
 
+void AFPSServerController::OpenUpgradeMenu()
+{
+	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
+	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
+	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
+	fpsui->ShouldShowUpgradeTree(true);
+
+}
+
 void AFPSServerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -88,6 +100,12 @@ bool AFPSServerController::ServerSelectRespawnStructure_Validate(ARTSStructure* 
 void AFPSServerController::ServerSelectRespawnStructure_Implementation(ARTSStructure* SelectedStructure)
 {
 	SelectRespawnStructure(SelectedStructure);
+}
+
+void AFPSServerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+	InputComponent->BindAction("NKey", IE_Pressed, this, &AFPSServerController::OpenUpgradeMenu);
 }
 
 void AFPSServerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

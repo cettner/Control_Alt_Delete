@@ -15,9 +15,6 @@ UCLASS()
 class RTS_PROJECT_API AFPSHUD : public ARTSHUD
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UFPSUI> FPSUIClass;
 	
 };
 

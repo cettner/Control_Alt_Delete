@@ -42,7 +42,7 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 
 		/*Configuration Data*/
 	protected:
-		UPROPERTY(EditDefaultsOnly)
+		UPROPERTY(EditAnywhere)
 		TSubclassOf<UUpgrade> UpgradeToApply = nullptr;
 
 		/*Widget Design Data*/

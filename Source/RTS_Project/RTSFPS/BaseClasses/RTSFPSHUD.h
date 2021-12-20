@@ -33,9 +33,9 @@ class RTS_PROJECT_API ARTSFPSHUD : public ADefaultHUD
 
 public:
 	ARTSFPSHUD();
-	virtual HUDSTATE GetHUDState();
+	virtual HUDSTATE GetHUDState() const;
 	virtual void ChangeHUDState(HUDSTATE statetype);
-	virtual FVector2D GetMouseLocation();
+	virtual FVector2D GetMouseLocation() const;
 	virtual bool InitializeUI() override;
 
 protected:

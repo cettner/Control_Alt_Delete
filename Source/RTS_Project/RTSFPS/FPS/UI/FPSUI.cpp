@@ -44,3 +44,7 @@ bool UFPSUI::Initialize()
 	return success;
 }
 
+void  UFPSUI::ShouldShowUpgradeTree(bool bShowTree)
+{
+
+}

@@ -27,6 +27,8 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 
 		virtual void OnPawnDeath();
 
+		UFUNCTION()
+		virtual void OpenUpgradeMenu();
 
     protected:
 		virtual void OnPossess(APawn* InPawn) override;
@@ -37,6 +39,8 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		void ServerSelectRespawnStructure(ARTSStructure* SelectedStructure);
 
     protected:
+		virtual void SetupInputComponent() override;
+
 	    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 };

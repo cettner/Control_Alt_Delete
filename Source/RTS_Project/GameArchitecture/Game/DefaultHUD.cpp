@@ -8,3 +8,13 @@ bool  ADefaultHUD::InitializeUI()
 {
 	return true;
 }
+
+UUserWidget* ADefaultHUD::GetPrimaryUI() const
+{
+	return MainUI;
+}
+
+void ADefaultHUD::SetPrimaryUI(UUserWidget* InUI)
+{
+	MainUI = InUI;
+}

@@ -39,3 +39,19 @@ void URTSFPSWidget::OnHUDStateChange()
 		RTSFPSUISwitcher->SetActiveWidget(FPSUI);
 	}
 }
+
+UFPSUI* URTSFPSWidget::GetFPSUI() const
+{
+	return FPSUI;
+}
+
+URTSUI* URTSFPSWidget::GetRTSUI() const
+{
+	return RTSUI;
+}
+
+UWidget* URTSFPSWidget::GetCurrentUI() const
+{
+	UWidget * retval = RTSFPSUISwitcher->GetActiveWidget();
+	return retval;
+}

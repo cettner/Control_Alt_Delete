@@ -24,7 +24,17 @@ class RTS_PROJECT_API URTSFPSWidget : public UUserWidget
 
 		virtual void Setup();
 		virtual void OnHUDStateChange();
+		
+		UFPSUI* GetFPSUI() const;
+		URTSUI* GetRTSUI() const;
 
+		virtual UWidget * GetCurrentUI() const;
+		template<class T>
+		T* GetCurrentUI() const
+		{
+			T* retval = Cast<T>(GetCurrentUI());
+			return retval;
+		}
 
 	protected:
 		UPROPERTY(meta = (BindWidget))

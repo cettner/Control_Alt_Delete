@@ -42,12 +42,12 @@ void ARTSFPSHUD::ChangeHUDState(HUDSTATE statetype)
 	}
 }
 
-HUDSTATE ARTSFPSHUD::GetHUDState()
+HUDSTATE ARTSFPSHUD::GetHUDState() const
 {
 	return (state);
 }
 
-FVector2D ARTSFPSHUD::GetMouseLocation()
+FVector2D ARTSFPSHUD::GetMouseLocation() const
 {
 	float PosX;
 	float PosY;
@@ -65,6 +65,7 @@ bool ARTSFPSHUD::InitializeUI()
 	if (MainUI == nullptr) return(false);
 	MainUI->Setup();
 	MainUI->AddToViewport();
+	SetPrimaryUI(MainUI);
 
 	return (true);
 }

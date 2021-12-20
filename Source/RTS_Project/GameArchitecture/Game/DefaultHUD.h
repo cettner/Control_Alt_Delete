@@ -17,4 +17,17 @@ class RTS_PROJECT_API ADefaultHUD : public AHUD
 
 	public:
 		virtual bool InitializeUI();
+		UUserWidget* GetPrimaryUI() const;
+		
+		template <class T>
+		T* GetPrimaryUI() const
+		{
+			T* retval = Cast<T>(GetPrimaryUI());
+			return(retval);
+		}
+
+		virtual void SetPrimaryUI(UUserWidget * InUI);
+
+	protected:
+		UUserWidget * MainUI = nullptr;
 };
