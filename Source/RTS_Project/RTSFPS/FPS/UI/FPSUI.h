@@ -2,12 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/ProgressBar.h"
+#include "Components/WidgetSwitcher.h"
+
 #include "Components/TextBlock.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/Shared/UI/TeamResourceWidget.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UI/UpgradeTreeWidget.h"
 #include "FPSUI.generated.h"
 
 /**
@@ -31,15 +32,15 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 
     protected:
 	   UPROPERTY(meta = (BindWidgetOptional))
-	   UPanelWidget* TeamResourceList;
+	   UPanelWidget * TeamResourceList;
 
 	   UPROPERTY(meta = (BindWidgetOptional))
-	   UWidgetSwitcher* FPSTabSwitcher;
+	   UWidgetSwitcher * FPSTabSwitcher;
 
 	   UPROPERTY(meta = (BindWidgetOptional))
-	   UUserWidget* MainFPSUI;
-
+	   UWidget * MainFPSUI;
+	   
 	   UPROPERTY(meta = (BindWidgetOptional))
-	   UUserWidget* UpgradeTreeWidget;
-
+	   UUpgradeTreeWidget * UpgradeTreeWidget;
+	   
 };

@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "Containers/Map.h"
 
 #include "..\Upgrade.h"
@@ -22,6 +23,9 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 	GENERATED_BODY()
 
 
+	protected:
+		virtual void NativeConstruct() override;
+
 	public:
 		virtual void RefreshNode(const IUpgradableInterface * UpgradeUser);
 
@@ -30,6 +34,8 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		virtual bool ShouldShouldEnableAbility() const;
 		virtual void SetProgressText(uint32 current, uint32 max);
 		virtual void SetNodeEnabled(bool isenabled);
+		UFUNCTION()
+		virtual void OnUpgradeButtonClicked();
 
 		uint32 GetUpgradeMaxRank() const;
 		TArray<FUpgradeUnlockCondition> GetUnlockConditions() const;
@@ -53,7 +59,6 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		UPROPERTY(meta = (BindWidget))
 		UTextBlock* ProgressText;
 
-
-	protected:
-		uint32 CurrentRank = 0;
+		UPROPERTY(meta = (BindWidgetOptional))
+		UImage * ButtonImage;
 };

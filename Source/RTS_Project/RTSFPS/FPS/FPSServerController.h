@@ -28,7 +28,7 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		virtual void OnPawnDeath();
 
 		UFUNCTION()
-		virtual void OpenUpgradeMenu();
+		virtual void ToggleUpgradeMenu();
 
     protected:
 		virtual void OnPossess(APawn* InPawn) override;
@@ -43,4 +43,8 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 
 	    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
+
+
+	protected:
+		bool bisUpgradeMenuOpen = false;
 };

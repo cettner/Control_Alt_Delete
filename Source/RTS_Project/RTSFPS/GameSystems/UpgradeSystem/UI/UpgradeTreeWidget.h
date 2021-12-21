@@ -18,11 +18,14 @@ class RTS_PROJECT_API UUpgradeTreeWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+	public:
+		virtual void RefreshNodes();
+
 	protected:
 		virtual bool Initialize() override;
 
 	protected:
-		virtual void RefreshNodes();
+
 		virtual IUpgradableInterface* GetUpgradeUser() const;
 
 	protected:

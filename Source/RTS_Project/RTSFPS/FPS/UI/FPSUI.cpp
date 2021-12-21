@@ -3,7 +3,7 @@
 
 #include "FPSUI.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h" 
-#include "Components/WidgetSwitcher.h"
+
 
 
 UFPSUI::UFPSUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -42,6 +42,11 @@ bool UFPSUI::Initialize()
 		success = false;
 	}
 
+	if (UpgradeTreeWidget != nullptr)
+	{
+		UpgradeTreeWidget->RefreshNodes();
+	}
+
 	return success;
 }
 
@@ -50,6 +55,7 @@ void  UFPSUI::ShouldShowUpgradeTree(bool bShowTree)
 	checkf(UpgradeTreeWidget, TEXT("UFPSUI::ShouldShowUpgradeTree Does not have valid Tree Widget"));
 	if (bShowTree == true)
 	{
+		UpgradeTreeWidget->RefreshNodes();
 		FPSTabSwitcher->SetActiveWidget(UpgradeTreeWidget);
 	}
 	else

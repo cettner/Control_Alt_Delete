@@ -4,6 +4,13 @@
 #include "UpgradeNodeWidget.h"
 #include "../Interfaces/UpgradableInterface.h"
 
+
+void UUpgradeNodeWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	UpgradeButton->OnClicked.AddDynamic(this, &UUpgradeNodeWidget::OnUpgradeButtonClicked);
+}
+
 bool UUpgradeNodeWidget::IsNodeEnabled() const
 {
 	return false;
@@ -27,7 +34,20 @@ void UUpgradeNodeWidget::SetProgressText(uint32 current, uint32 max)
 
 void UUpgradeNodeWidget::SetNodeEnabled(bool isenabled)
 {
-	
+
+	UpgradeButton->SetIsEnabled(isenabled);
+	ProgressText->SetIsEnabled(isenabled);
+
+	if (ButtonImage != nullptr)
+	{
+		ButtonImage->SetIsEnabled(isenabled);
+	}
+
+}
+
+void UUpgradeNodeWidget::OnUpgradeButtonClicked()
+{
+	int debug = 9;
 }
 
 uint32 UUpgradeNodeWidget::GetUpgradeMaxRank() const
@@ -93,5 +113,39 @@ bool UUpgradeNodeWidget::Setup(IUpgradableInterface* UpgradeUser)
 
 void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 {
+	uint32 currentdisplayrank = 0U;
+	currentdisplayrank = UpgradeUser->GetCurrentUpgradeTierFor(UpgradeToApply);
 
+	const uint32 maxrank = GetUpgradeMaxRank();
+	const TArray<TSubclassOf<UUpgrade>> exclusions = GetExclusiveConditions();
+	const TArray<FUpgradeUnlockCondition> unlockconditions = GetUnlockConditions();
+
+	bool isnodeenabled = true;
+
+	for (int i = 0; i < unlockconditions.Num(); i++)
+	{
+		const TSubclassOf<UUpgrade> unlockparent = unlockconditions[i].GetParent();
+		const uint32 unlockrank = unlockconditions[i].GetRank();
+
+		const uint32 currentrank = UpgradeUser->GetCurrentUpgradeTierFor(unlockparent);
+
+		if (currentrank < unlockrank)
+		{
+			isnodeenabled = false;
+		}
+
+	}
+
+	for (int i = 0; i < exclusions.Num(); i++)
+	{
+		const uint32 currentrank = UpgradeUser->GetCurrentUpgradeTierFor(exclusions[i]);
+		if (currentrank > UPGRADE_UNLEARNED)
+		{
+			isnodeenabled = false;
+		}
+	}
+
+
+	SetProgressText(currentdisplayrank, maxrank);
+	SetNodeEnabled(isnodeenabled);
 }

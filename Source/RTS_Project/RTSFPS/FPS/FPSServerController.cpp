@@ -71,16 +71,31 @@ void AFPSServerController::OnPawnDeath()
 	GetPlayerState<AFPSPlayerState>()->SetRespawnState(EPlayerReswpawnState::SELECTINGRESPAWN);
 }
 
-void AFPSServerController::OpenUpgradeMenu()
+void AFPSServerController::ToggleUpgradeMenu()
 {
 	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
 	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
 	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
 	
 	/*If we're in FPS mode, this wont return null*/
-	if (fpsui != nullptr)
+	if (fpsui != nullptr && !bisUpgradeMenuOpen)
 	{
 		fpsui->ShouldShowUpgradeTree(true);
+		FInputModeGameAndUI inputmode;
+		SetInputMode(inputmode);
+		bShowMouseCursor = true;
+
+		bisUpgradeMenuOpen = true;
+	}
+	else if (fpsui != nullptr && bisUpgradeMenuOpen)
+	{
+		fpsui->ShouldShowUpgradeTree(false);
+		FInputModeGameOnly inputMode;
+		inputMode.SetConsumeCaptureMouseDown(false);
+		SetInputMode(inputMode);
+		bShowMouseCursor = false;
+
+		bisUpgradeMenuOpen = false;
 	}
 }
 
@@ -109,7 +124,7 @@ void AFPSServerController::ServerSelectRespawnStructure_Implementation(ARTSStruc
 void AFPSServerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	InputComponent->BindAction("NKey", IE_Pressed, this, &AFPSServerController::OpenUpgradeMenu);
+	InputComponent->BindAction("NKey", IE_Pressed, this, &AFPSServerController::ToggleUpgradeMenu);
 }
 
 void AFPSServerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
