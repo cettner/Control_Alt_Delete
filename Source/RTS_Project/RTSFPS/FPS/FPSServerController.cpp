@@ -76,8 +76,12 @@ void AFPSServerController::OpenUpgradeMenu()
 	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
 	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
 	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
-	fpsui->ShouldShowUpgradeTree(true);
-
+	
+	/*If we're in FPS mode, this wont return null*/
+	if (fpsui != nullptr)
+	{
+		fpsui->ShouldShowUpgradeTree(true);
+	}
 }
 
 void AFPSServerController::OnPossess(APawn* InPawn)
