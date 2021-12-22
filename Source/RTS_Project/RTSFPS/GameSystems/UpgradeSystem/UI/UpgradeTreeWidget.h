@@ -24,8 +24,7 @@ class RTS_PROJECT_API UUpgradeTreeWidget : public UUserWidget
 	protected:
 		virtual bool Initialize() override;
 
-	protected:
-
+	public:
 		virtual IUpgradableInterface* GetUpgradeUser() const;
 
 	protected:

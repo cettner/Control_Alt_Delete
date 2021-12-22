@@ -27,8 +27,8 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 		virtual bool Initialize() override;
 
     protected:
-		UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<UTeamResourceWidget> ResourceWidgetClass;
+	   UPROPERTY(EditDefaultsOnly)
+	   TSubclassOf<UTeamResourceWidget> ResourceWidgetClass;
 
     protected:
 	   UPROPERTY(meta = (BindWidgetOptional))

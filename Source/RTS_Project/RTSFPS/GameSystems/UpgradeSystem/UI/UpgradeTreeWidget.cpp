@@ -21,6 +21,7 @@ bool UUpgradeTreeWidget::Initialize()
 			if (IsValid(node))
 			{
 				Nodes.Emplace(node);
+				node->Setup(this);
 			}
 		}
 	}

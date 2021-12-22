@@ -3,22 +3,13 @@
 
 #include "UpgradeNodeWidget.h"
 #include "../Interfaces/UpgradableInterface.h"
+#include "UpgradeTreeWidget.h"
 
 
 void UUpgradeNodeWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	UpgradeButton->OnClicked.AddDynamic(this, &UUpgradeNodeWidget::OnUpgradeButtonClicked);
-}
-
-bool UUpgradeNodeWidget::IsNodeEnabled() const
-{
-	return false;
-}
-
-bool UUpgradeNodeWidget::ShouldShouldEnableAbility() const
-{
-	return true;
 }
 
 void UUpgradeNodeWidget::SetProgressText(uint32 current, uint32 max)
@@ -34,21 +25,31 @@ void UUpgradeNodeWidget::SetProgressText(uint32 current, uint32 max)
 
 void UUpgradeNodeWidget::SetNodeEnabled(bool isenabled)
 {
+	SetIsEnabled(isenabled);
+}
 
-	UpgradeButton->SetIsEnabled(isenabled);
-	ProgressText->SetIsEnabled(isenabled);
+bool UUpgradeNodeWidget::CanPurchaseUpgrade() const
+{
+	const uint32 maxrank = GetUpgradeMaxRank();
+	return bIsEnabled && (CurrentRank < maxrank);
+}
 
-	if (ButtonImage != nullptr)
-	{
-		ButtonImage->SetIsEnabled(isenabled);
-	}
+void UUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const
+{
 
 }
 
 void UUpgradeNodeWidget::OnUpgradeButtonClicked()
 {
-	int debug = 9;
+	const UUpgradeTreeWidget * parenttree = GetParentTree();
+	IUpgradableInterface* upgradeuser = parenttree->GetUpgradeUser();
+	if (CanPurchaseUpgrade()  && (upgradeuser != nullptr))
+	{
+		ApplyUpgrade(upgradeuser);
+	}
 }
+
+
 
 uint32 UUpgradeNodeWidget::GetUpgradeMaxRank() const
 {
@@ -69,52 +70,16 @@ TArray<TSubclassOf<UUpgrade>> UUpgradeNodeWidget::GetExclusiveConditions() const
 	return defaultupgrade->GetExclusiveConditions();
 }
 
-bool UUpgradeNodeWidget::Setup(IUpgradableInterface* UpgradeUser)
+bool UUpgradeNodeWidget::Setup(UUpgradeTreeWidget * InParentTree)
 {
-
-	uint32 currentdisplayrank = 0U;
-	currentdisplayrank = UpgradeUser->GetCurrentUpgradeTierFor(UpgradeToApply);
-		
-	const uint32 maxrank = GetUpgradeMaxRank();
-	const TArray<TSubclassOf<UUpgrade>> exclusions = GetExclusiveConditions();
-	const TArray<FUpgradeUnlockCondition> unlockconditions = GetUnlockConditions();
-		
-	bool isnodeenabled = true;
-
-	for (int i = 0; i < unlockconditions.Num(); i++)
-	{
-		const TSubclassOf<UUpgrade> unlockparent = unlockconditions[i].GetParent();
-		const uint32 unlockrank = unlockconditions[i].GetRank();
-
-		const uint32 currentrank =  UpgradeUser->GetCurrentUpgradeTierFor(unlockparent);
-
-		if (currentrank < unlockrank)
-		{
-			isnodeenabled = false;
-		}
-
-	}
-
-	for (int i = 0; i < exclusions.Num(); i++)
-	{
-		const uint32 currentrank = UpgradeUser->GetCurrentUpgradeTierFor(exclusions[i]);
-		if (currentrank > UPGRADE_UNLEARNED)
-		{
-			isnodeenabled = false;
-		}
-	}
-
-
-	SetProgressText(currentdisplayrank, maxrank);
-
-
+	checkf(InParentTree, TEXT("UUpgradeNodeWidget::Setup InvalidParent Tree"))
+	ParentTree = InParentTree;
 	return true;
 }
 
 void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 {
-	uint32 currentdisplayrank = 0U;
-	currentdisplayrank = UpgradeUser->GetCurrentUpgradeTierFor(UpgradeToApply);
+	CurrentRank = UpgradeUser->GetCurrentUpgradeTierFor(UpgradeToApply);
 
 	const uint32 maxrank = GetUpgradeMaxRank();
 	const TArray<TSubclassOf<UUpgrade>> exclusions = GetExclusiveConditions();
@@ -146,6 +111,11 @@ void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 	}
 
 
-	SetProgressText(currentdisplayrank, maxrank);
+	SetProgressText(CurrentRank, maxrank);
 	SetNodeEnabled(isnodeenabled);
+}
+
+UUpgradeTreeWidget * UUpgradeNodeWidget::GetParentTree() const
+{
+	return ParentTree;
 }
