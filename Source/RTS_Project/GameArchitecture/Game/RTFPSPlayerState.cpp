@@ -30,6 +30,6 @@ TArray<ARTSStructure *> ARTFPSPlayerState::GetTeamStructures() const
 void ARTFPSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME_CONDITION(ARTFPSPlayerState,isRtsPlayer, COND_InitialOrOwner)
+	DOREPLIFETIME_CONDITION(ARTFPSPlayerState, isRtsPlayer, COND_InitialOrOwner);
 	DOREPLIFETIME(ARTFPSPlayerState,TeamStructures)
 }

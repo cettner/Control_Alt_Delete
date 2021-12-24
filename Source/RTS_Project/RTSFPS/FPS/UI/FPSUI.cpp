@@ -42,11 +42,6 @@ bool UFPSUI::Initialize()
 		success = false;
 	}
 
-	if (UpgradeTreeWidget != nullptr)
-	{
-		UpgradeTreeWidget->RefreshNodes();
-	}
-
 	return success;
 }
 

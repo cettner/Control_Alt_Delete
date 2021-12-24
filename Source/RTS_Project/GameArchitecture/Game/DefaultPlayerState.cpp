@@ -39,6 +39,17 @@ bool ADefaultPlayerState::IsClientInitialized()
 	}
 }
 
+bool ADefaultPlayerState::HasDefaultGameModeLoaded()
+{
+	return bHasDefaultGameModeDataLoaded;
+}
+
+void ADefaultPlayerState::LoadGameModeDefaults(const AGameModeBase * GameModeCDO)
+{
+	/*WARNING: GAMEMODE CDO CANNOT BE MODIFIED*/
+	bHasDefaultGameModeDataLoaded = true;
+}
+
 void ADefaultPlayerState::OnRep_TeamID()
 {
 	/*Skip Replication actions if we havnt set up locally yet.*/

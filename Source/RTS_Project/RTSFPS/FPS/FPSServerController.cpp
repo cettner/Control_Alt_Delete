@@ -74,7 +74,11 @@ void AFPSServerController::OnPawnDeath()
 void AFPSServerController::ToggleUpgradeMenu()
 {
 	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
+	if (hud == nullptr) return;
+
 	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
+	if (mainui == nullptr) return;
+
 	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
 	
 	/*If we're in FPS mode, this wont return null*/

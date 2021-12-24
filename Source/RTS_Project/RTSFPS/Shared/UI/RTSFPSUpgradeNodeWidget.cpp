@@ -6,17 +6,21 @@
 
 void URTSFPSUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const
 {
-	//GetOwningPlayer<AFPS
+	int debug = 9;
 }
 
 bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
 {
 	bool retval = Super::CanPurchaseUpgrade();
-	
-	if(retval == true)
+	const IResourceGatherer * purchaser = GetResourceSource();
+
+	if(retval == true && (purchaser != nullptr))
 	{
+		const FReplicationResourceMap prices = GetUpgradeCost();
+		const FReplicationResourceMap carriedresource = purchaser->GetAllHeldResources();
+
+		retval &= AResource::CanAfford(carriedresource, prices);
 	}
-	//GetOwningPlayerPawn<IReso>();
 
 
 	return retval;
@@ -34,5 +38,5 @@ FReplicationResourceMap URTSFPSUpgradeNodeWidget::GetUpgradeCost() const
 
 IResourceGatherer * URTSFPSUpgradeNodeWidget::GetResourceSource() const
 {
-	return nullptr;
+	return GetOwningPlayerPawn<IResourceGatherer>();
 }

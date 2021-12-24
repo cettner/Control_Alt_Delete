@@ -20,6 +20,12 @@ public:
 public:
 	/*Returns wether the first set of data has been replicated from the server after game login, this always returns true on the server.*/
 	bool IsClientInitialized();
+	
+	/*Whether Gameode Data has been loaded through the gamestate to the local player*/
+	bool HasDefaultGameModeLoaded();
+
+	/*Allow the Local Player to Initialize Data from the Default GameMode, after its class has been recieved by the GameState*/
+	virtual void LoadGameModeDefaults(const AGameModeBase * GameModeCDO);
 
 protected:
 	/*Virtual Function For Override*/
@@ -36,7 +42,7 @@ protected:
 public:
 	/*True if the initial data has been replicated from the server*/
 	bool bisClientInitialized = false;
-
+	bool bHasDefaultGameModeDataLoaded = false;
 
 public:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID)

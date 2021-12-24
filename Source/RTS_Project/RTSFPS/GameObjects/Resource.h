@@ -145,6 +145,9 @@ public:
 	FResourceUIData GetUIData() const;
 	uint32 GetResourceWeight() const;
 
+	/*Helper Static Function for purchasing Things With Resources*/
+	static bool CanAfford(FReplicationResourceMap BuyerResources, FReplicationResourceMap SellerCost);
+
 public:
 	/*RTSObject Interface Overrides*/
 	virtual void SetSelected() override;

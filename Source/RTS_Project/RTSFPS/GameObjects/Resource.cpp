@@ -60,6 +60,30 @@ uint32 AResource::GetResourceWeight() const
 	return ResourceWeight;
 }
 
+bool AResource::CanAfford(FReplicationResourceMap BuyerResources, FReplicationResourceMap SellerCost)
+{
+	bool retval = true;
+	const TMap<TSubclassOf<AResource>, int> buyermap = BuyerResources.GetMap();
+
+	for (TPair<TSubclassOf<AResource>, int> Elem : SellerCost.GetMap())
+	{
+		const int32 * outval = buyermap.Find(Elem.Key);
+		if (outval != nullptr && (retval == true))
+		{
+			/*Buyer has the resource, now check they have enough*/
+			retval &= (*outval >= Elem.Value);
+		}
+		else
+		{
+			/*Buyer did not have the needed Resource or did not have enough*/
+			retval = false;
+			break;
+		}
+	}
+
+	return retval;
+}
+
 void AResource::SetSelected()
 {
 	SelectionComp->SetHiddenInGame(false);
