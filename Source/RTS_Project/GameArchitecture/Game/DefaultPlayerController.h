@@ -64,5 +64,5 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		bool battemptedHudinit = false;
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
+		virtual void InitPlayerState() override;
 };

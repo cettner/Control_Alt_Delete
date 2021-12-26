@@ -27,22 +27,25 @@ public:
 	/*Allow the Local Player to Initialize Data from the Default GameMode, after its class has been recieved by the GameState*/
 	virtual void LoadGameModeDefaults(const AGameModeBase * GameModeCDO);
 
+	bool IsLocalPlayerState() const;
+
+	void SetLocalPlayerState(bool inLocalState);
+
 protected:
 	/*Virtual Function For Override*/
 	UFUNCTION()
 	virtual void OnRep_TeamID();
 
 protected:
-	void ClientInitialize(AController* Controller) override;
-
-protected:
+	virtual void ClientInitialize(AController* Controller) override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 
-public:
+protected:
 	/*True if the initial data has been replicated from the server*/
 	bool bisClientInitialized = false;
 	bool bHasDefaultGameModeDataLoaded = false;
+	bool bisLocalPlayerState = false;
 
 public:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID)

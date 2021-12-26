@@ -39,7 +39,6 @@ protected:
 	virtual void ReceivedGameModeClass() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-
 protected:
 	bool initialized = false;
 	TArray<TArray<APlayerState *>> Teams;

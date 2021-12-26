@@ -76,7 +76,7 @@ void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
 {
 	Super::OnRep_ReplicatedHasBegunPlay();
 	
-	UWorld * world = GetWorld();
+	const UWorld * world = GetWorld();
 	ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
 	firstcontroller->OnMatchStart();
 }
@@ -87,12 +87,13 @@ void ADefaultGameState::ReceivedGameModeClass()
 
 	if (!HasAuthority())
 	{
-		const UWorld * world = GetWorld();
+		const UWorld* world = GetWorld();
 		ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
+
 		firstcontroller->ClientInitUI();
 
 		ADefaultPlayerState * ps = firstcontroller->GetPlayerState<ADefaultPlayerState>();
-		if (ps != nullptr)
+		if (ps != nullptr && !ps->HasDefaultGameModeLoaded())
 		{
 			ps->LoadGameModeDefaults(GetDefaultGameMode());
 		}

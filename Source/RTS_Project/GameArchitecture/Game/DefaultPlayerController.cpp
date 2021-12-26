@@ -114,6 +114,15 @@ void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ADefaultPlayerController, bisregistered);
 }
 
+void ADefaultPlayerController::InitPlayerState()
+{
+	Super::InitPlayerState();
+	if (IsLocalPlayerController() && (GetNetMode() != NM_DedicatedServer))
+	{
+		GetPlayerState<ADefaultPlayerState>()->SetLocalPlayerState(true);
+	}
+}
+
 void ADefaultPlayerController::PostRegisterInit()
 {
 	/*Client Will inititialize its UI After Gamestate's initial Replication, Server can Start Here*/
@@ -147,7 +156,7 @@ void ADefaultPlayerController::ClientInitUI()
 
 bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)
 {
-	ULobbyGameInstance * GI= GetGameInstance<ULobbyGameInstance>();
+	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
 	if (GI == nullptr) return false;
 
 	outsettings = GI->GetPlayerSettings();
