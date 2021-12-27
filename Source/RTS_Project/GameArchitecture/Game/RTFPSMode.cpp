@@ -124,7 +124,7 @@ void ARTFPSMode::StartMatch()
 	GS->RefreshAllUnits();
 }
 
-int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass)
+int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass) const
 {
 	return StartingResource;
 }
@@ -137,4 +137,14 @@ TArray<TSubclassOf<AResource>> ARTFPSMode::GetResourceTypes() const
 TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSMode::GetDefaultUnitCosts() const
 {
 	return DefaultUnitCosts;
+}
+
+UCurveFloat* ARTFPSMode::GetExpCurve() const
+{
+	return ExpCurve;
+}
+
+uint32 ARTFPSMode::GetMaxLevel() const
+{
+	return MaxLevel;
 }

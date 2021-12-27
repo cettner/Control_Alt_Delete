@@ -36,24 +36,38 @@ protected:
 	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController) override;
 	virtual void StartMatch() override;
 
-
+	/********************RTS Initialization*********************/
 public:
-	virtual int GetStartingResources(TSubclassOf<AResource> ResourceClass);
+	int GetStartingResources(TSubclassOf<AResource> ResourceClass) const;
 	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetDefaultUnitCosts() const;
+	/***********************************************************/
 
+public:
+	/********************FPS Initialization*********************/
+	UCurveFloat* GetExpCurve() const;
 
+	uint32 GetMaxLevel() const;
+	/**********************************************************/
 protected:
-	int MaxRTSPlayersPerTeam = 1;
-	int MinRTSPlatersPerTeam = 1;
 	
-	UPROPERTY(EditDefaultsOnly)
+	/********************RTS Initialization*********************/
+	UPROPERTY(EditDefaultsOnly, Category = "RTS Initialization")
 	int StartingResource = 100;
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "RTS Initialization")
 	TArray<TSubclassOf<AResource>> ResourceTypes;
 
-	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
+	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"), Category = "RTS Initialization")
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> DefaultUnitCosts;
+	/***********************************************************/
 
+	/********************FPS Initialization*********************/
+	UPROPERTY(EditDefaultsOnly, Category = "FPS Initialization")
+	UCurveFloat * ExpCurve = nullptr;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "FPS Initialization")
+	uint32 MaxLevel = 10U;
+	/**********************************************************/
 };

@@ -23,7 +23,7 @@ class RTS_PROJECT_API IExpAccumulatorInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual uint32 GetCurrentExp() const;
-	virtual uint32 GetMaxExpForLevel() const;
+	virtual uint32 GetMaxExpForCurrentLevel() const;
 	virtual bool CanRecieveExp() const;
 	virtual uint32 GetCurrentLevel() const;
 	virtual uint32 GetMaxLevel() const;

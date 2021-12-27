@@ -50,22 +50,24 @@ TArray<TSubclassOf<UUpgrade>> AFPSPlayerState::GetAppliedUpgrades() const
 
 uint32 AFPSPlayerState::GetCurrentExp() const
 {
-	return uint32();
+	return CurrentExperiance;
 }
 
-uint32 AFPSPlayerState::GetMaxExpForLevel() const
+uint32 AFPSPlayerState::GetMaxExpForCurrentLevel() const
 {
-	return uint32();
+	const uint32 retval = GetExpforLevel(GetCurrentLevel());
+	return retval;
 }
 
 bool AFPSPlayerState::CanRecieveExp() const
 {
-	return false;
+	const bool retval = GetCurrentLevel() < GetMaxLevel();
+	return retval;
 }
 
 uint32 AFPSPlayerState::GetCurrentLevel() const
 {
-	return uint32();
+	return TotalUpgradePoints;
 }
 
 uint32 AFPSPlayerState::GetMaxLevel() const
@@ -78,17 +80,46 @@ uint32 AFPSPlayerState::GetExptoNextLevel() const
 	return uint32();
 }
 
+uint32 AFPSPlayerState::GetExpforLevel(uint32 inLevel) const
+{
+	checkf(ExpCurve, TEXT("AFPSPlayerState::GetExpforLevel ExpCurve was Null"))
+
+	const uint32 outval = (uint32)ExpCurve->GetFloatValue(inLevel);
+	
+	return outval;
+}
+
 void AFPSPlayerState::GrantExp(uint32 inexp)
 {
+
+	CurrentExperiance += inexp;
+
 }
 
 void AFPSPlayerState::OnLevelUp()
 {
+	TotalUpgradePoints += 1U;
+
+	
+}
+
+void AFPSPlayerState::LoadGameModeDefaults(const AGameModeBase* GameModeCDO)
+{
+	Super::LoadGameModeDefaults(GameModeCDO);
 }
 
 void AFPSPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	if (HasAuthority())
+	{
+		const UWorld * world = GetWorld();
+		const ARTFPSMode * gm = world->GetAuthGameMode<ARTFPSMode>();
+		checkf(gm, TEXT("AFPSPlayerState::PostInitializeComponents Server Failed to Obtain GameMode"))
+
+		MaxLevel= gm->GetMaxLevel();
+		ExpCurve = gm->GetExpCurve();
+	}
 }
 
 void AFPSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

@@ -61,11 +61,12 @@ public:
 	/************UpgradabaleInterface**********/
 public:
 	virtual uint32 GetCurrentExp() const override;
-	virtual uint32 GetMaxExpForLevel() const override;
+	virtual uint32 GetMaxExpForCurrentLevel() const override;
 	virtual bool CanRecieveExp() const override;
 	virtual uint32 GetCurrentLevel() const override;
 	virtual uint32 GetMaxLevel() const override;
 	virtual uint32 GetExptoNextLevel() const override;
+	virtual uint32 GetExpforLevel(uint32 inLevel) const;
 
 public:
 	/*Primary External Entry Point*/
@@ -75,6 +76,10 @@ protected:
 	virtual void OnLevelUp() override;
 	/******************************************/
 
+	/****************DefaultPlayerState********/
+protected:
+	virtual void LoadGameModeDefaults(const AGameModeBase* GameModeCDO) override;
+	/******************************************/
 	/******************Actor*******************/
 protected:
 	virtual void PostInitializeComponents() override;
@@ -96,6 +101,8 @@ protected:
 	UPROPERTY(Replicated)
 	uint32 CurrentExperiance = 0U;
 
-	UCurveFloat * ExpCurve;
+	uint32 MaxLevel = 0U;
+
+	UCurveFloat* ExpCurve = nullptr;
 	/*************************************/
 };

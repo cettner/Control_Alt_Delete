@@ -12,7 +12,7 @@ uint32 IExpAccumulatorInterface::GetCurrentExp() const
 	return 0U;
 }
 
-uint32 IExpAccumulatorInterface::GetMaxExpForLevel() const
+uint32 IExpAccumulatorInterface::GetMaxExpForCurrentLevel() const
 {
 	return 0U;
 }
