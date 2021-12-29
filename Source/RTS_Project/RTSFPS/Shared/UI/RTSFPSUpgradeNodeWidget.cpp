@@ -12,21 +12,18 @@ void URTSFPSUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) c
 bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
 {
 	bool retval = Super::CanPurchaseUpgrade();
-	const IResourceGatherer * purchaser = GetResourceSource();
+	const IExpAccumulatorInterface * purchaser = GetExpSource();
 
 	if(retval == true && (purchaser != nullptr))
 	{
-		const FReplicationResourceMap prices = GetUpgradeCost();
-		const FReplicationResourceMap carriedresource = purchaser->GetAllHeldResources();
-
-		retval &= AResource::CanAfford(carriedresource, prices);
+		retval &= (purchaser->GetAvailableUpgradePoints() > 1U);
 	}
 
 
 	return retval;
 }
 
-FReplicationResourceMap URTSFPSUpgradeNodeWidget::GetUpgradeCost() const
+FReplicationResourceMap URTSFPSUpgradeNodeWidget::GetUpgradeResourceCost() const
 {
 	FReplicationResourceMap retval = FReplicationResourceMap();
 	const UWorld * world = GetWorld();
@@ -39,4 +36,11 @@ FReplicationResourceMap URTSFPSUpgradeNodeWidget::GetUpgradeCost() const
 IResourceGatherer * URTSFPSUpgradeNodeWidget::GetResourceSource() const
 {
 	return GetOwningPlayerPawn<IResourceGatherer>();
+}
+
+IExpAccumulatorInterface * URTSFPSUpgradeNodeWidget::GetExpSource() const
+{
+	const APlayerController * pc = GetOwningPlayer();
+
+	return(pc->GetPlayerState<IExpAccumulatorInterface>());
 }

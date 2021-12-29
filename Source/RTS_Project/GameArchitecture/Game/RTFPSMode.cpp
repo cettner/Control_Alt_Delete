@@ -124,6 +124,11 @@ void ARTFPSMode::StartMatch()
 	GS->RefreshAllUnits();
 }
 
+TSubclassOf<ARTSCamera> ARTFPSMode::GetDefaultRTSClass() const
+{
+	return DefaultRTSClass;
+}
+
 int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass) const
 {
 	return StartingResource;
@@ -137,6 +142,11 @@ TArray<TSubclassOf<AResource>> ARTFPSMode::GetResourceTypes() const
 TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSMode::GetDefaultUnitCosts() const
 {
 	return DefaultUnitCosts;
+}
+
+TSubclassOf<ACommander> ARTFPSMode::GetDefaultFPSClass() const
+{
+	return DefaultFPSClass;
 }
 
 UCurveFloat* ARTFPSMode::GetExpCurve() const

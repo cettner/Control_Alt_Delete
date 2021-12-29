@@ -27,13 +27,19 @@ class RTS_PROJECT_API IUpgradableInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	/*Get CurrentTier for the specified class */
-	virtual uint32 GetCurrentUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass) const;
+	virtual uint32 GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const;
 	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades() const;
 
 	/*If the Actor is spawned via spawn Actor Deffered, then certain components may not be ready to be upgraded, Allows the Use of Add Upgrade and PostInstallUpgrades*/
 	virtual bool CanReceiveUpgrades() const;
 
 	virtual void OnApplyUpgrade(const UUpgrade * Upgrade);
+
+	/*Returns the Actual Interface object to be modifed, in case it's nested in a wrapper class like a playerstate or higher level pawn. Returns the interface object by default*/
+	virtual const UObject * GetUpgradeApplicationObject() const;
+
+	virtual UClass * GetUpgradeApplicationClass() const;
+
 	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd);
 
 protected:

@@ -79,36 +79,11 @@ bool UUpgradeNodeWidget::Setup(UUpgradeTreeWidget * InParentTree)
 
 void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 {
-	CurrentRank = UpgradeUser->GetCurrentUpgradeTierFor(UpgradeToApply);
-
+	CurrentRank = UpgradeUser->GetCurrentUpgradeRankFor(UpgradeToApply);
 	const uint32 maxrank = GetUpgradeMaxRank();
-	const TArray<TSubclassOf<UUpgrade>> exclusions = GetExclusiveConditions();
-	const TArray<FUpgradeUnlockCondition> unlockconditions = GetUnlockConditions();
 
-	bool isnodeenabled = true;
-
-	for (int i = 0; i < unlockconditions.Num(); i++)
-	{
-		const TSubclassOf<UUpgrade> unlockparent = unlockconditions[i].GetParent();
-		const uint32 unlockrank = unlockconditions[i].GetRank();
-
-		const uint32 currentrank = UpgradeUser->GetCurrentUpgradeTierFor(unlockparent);
-
-		if (currentrank < unlockrank)
-		{
-			isnodeenabled = false;
-		}
-
-	}
-
-	for (int i = 0; i < exclusions.Num(); i++)
-	{
-		const uint32 currentrank = UpgradeUser->GetCurrentUpgradeTierFor(exclusions[i]);
-		if (currentrank > UPGRADE_UNLEARNED)
-		{
-			isnodeenabled = false;
-		}
-	}
+	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
+	const bool isnodeenabled = defaultupgrade->CanUpgrade(UpgradeUser);
 
 
 	SetProgressText(CurrentRank, maxrank);

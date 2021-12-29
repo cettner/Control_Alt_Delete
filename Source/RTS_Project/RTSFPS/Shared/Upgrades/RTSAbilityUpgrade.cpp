@@ -9,28 +9,15 @@
 
 
 
-bool URTSAbilityUpgrade::CanUpgrade(IUpgradableInterface * TestUpgrade) const
+bool URTSAbilityUpgrade::CanUpgrade(const IUpgradableInterface * TestUpgrade) const
 {
-	
 	bool retval = Super::CanUpgrade(TestUpgrade);
-	bool hasability = false;
+
 	if (retval == true)
 	{
-		IAbilityUserInterface * abilityuser  = Cast<IAbilityUserInterface>(TestUpgrade);
-		if (abilityuser == nullptr)
-		{
-			retval = false;
-		}
-		else
-		{
-			for (int i = 0; i < TargetAbilities.Num(); i++)
-			{
-				const bool abilitycheck = (abilityuser->GetAbilitiesByClass(TargetAbilities[i]).Num() > 0);
-				hasability |= abilitycheck;
-			}
-		}
+		retval &= TestUpgrade->GetUpgradeApplicationClass()->ImplementsInterface(UAbilityUserInterface::StaticClass());
 	}
-	retval &= hasability;
+
 	return retval;
 }
 

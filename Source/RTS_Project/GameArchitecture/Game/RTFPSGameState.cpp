@@ -205,11 +205,11 @@ void ARTFPSGameState::ApplyGlobalUpgrades(ARTSMinion * Minion) const
 	}
 }
 
-void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerState * InController) const
+void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerState * InState) const
 {
-	if (InController != nullptr)
+	if (InState != nullptr)
 	{
-		const TArray<TSubclassOf<UUpgrade>> upgrades = InController->GetAppliedUpgrades();
+		const TArray<TSubclassOf<UUpgrade>> upgrades = InState->GetAppliedUpgrades();
 
 		for (int i = 0; i < upgrades.Num(); i++)
 		{
@@ -485,7 +485,7 @@ bool ARTFPSGameState::PurchaseUnit(TSubclassOf<UObject> PurchaseClass, ARTSPlaye
 	bool retval = false;
 	if (IsUnitPurchaseable(PurchaseClass, Purchaser))
 	{
-		FReplicationResourceMap costs = GetUnitPrice(PurchaseClass);
+		const FReplicationResourceMap costs = GetUnitPrice(PurchaseClass);
 		retval = RemoveTeamResource(Purchaser->GetTeamID(), costs.GetMap());
 	}
 
@@ -516,6 +516,31 @@ FReplicationResourceMap ARTFPSGameState::GetUnitPrice(TSubclassOf<UObject> Purch
 	{
 		retval = UnitCosts[purchaseindex];
 	}
+
+	return retval;
+}
+
+bool ARTFPSGameState::PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface * Purchaser, IUpgradableInterface * ToApply) const
+{
+	bool retval = true;
+	const UUpgrade* defaultupgrade = PurchaseClass.GetDefaultObject();
+	IUpgradableInterface * toupgrade = ToApply;
+	checkf(defaultupgrade,TEXT("ARTFPSGameState::PurchaseExpUpgrade : Failed to Obtain Upgrade CDO"))
+	
+	const bool hasupgradepoints = Purchaser->GetAvailableUpgradePoints() > 0U;
+	const bool canupgrade = defaultupgrade->CanUpgrade(ToApply);
+
+	if (canupgrade && hasupgradepoints)
+	{
+		Purchaser->SpendUpgradePoints(1U);
+		ToApply->OnApplyUpgrade(defaultupgrade);
+	}
+	else
+	{
+		retval = false;
+		return retval;
+	}
+
 
 	return retval;
 }

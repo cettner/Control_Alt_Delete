@@ -56,6 +56,7 @@ public:
 public:
 	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
 	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades() const override;
+	virtual UClass * GetUpgradeApplicationClass() const override;
 /******************************************/
 
 	/************UpgradabaleInterface**********/
@@ -65,8 +66,14 @@ public:
 	virtual bool CanRecieveExp() const override;
 	virtual uint32 GetCurrentLevel() const override;
 	virtual uint32 GetMaxLevel() const override;
-	virtual uint32 GetExptoNextLevel() const override;
-	virtual uint32 GetExpforLevel(uint32 inLevel) const;
+	virtual int32 GetExptoNextLevel() const override;
+	virtual uint32 GetExpforLevel(uint32 inLevel) const override;
+	
+	virtual uint32 GetAvailableUpgradePoints() const override;
+	virtual uint32 GetSpentUpgradePoints() const override;
+	virtual uint32 GetTotalUpgradePoints() const override;
+
+	virtual bool SpendUpgradePoints(uint32 PointsToSpend = 1U) override;
 
 public:
 	/*Primary External Entry Point*/

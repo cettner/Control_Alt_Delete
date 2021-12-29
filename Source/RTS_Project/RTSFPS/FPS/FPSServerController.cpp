@@ -6,6 +6,7 @@
 #include "RTS_Project/RTSFPS/BaseClasses/RTSFPSHUD.h"
 #include "RTS_Project/RTSFPS/BaseClasses/RTSFPSWidget.h"
 #include "RTS_Project/RTSFPS/FPS/UI/FPSUI.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 #include "FPSPlayerState.h"
 
 #include "Net/UnrealNetwork.h"
@@ -52,6 +53,22 @@ void AFPSServerController::SelectRespawnStructure(ARTSStructure* RespawnStructur
 
 		}
 	}
+}
+
+void AFPSServerController::PurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass)
+{
+	if (!HasAuthority())
+	{
+		ServerPurchaseExpUpgrade(UpgradeClass);
+	}
+	else
+	{
+		const UWorld * world = GetWorld();
+		const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+		AFPSPlayerState * ps = GetPlayerState<AFPSPlayerState>();
+		gs->PurchaseExpUpgrade(UpgradeClass, ps, ps);
+	}
+
 }
 
 void AFPSServerController::ClientNotifyTeamChange(int newteamid)
@@ -125,14 +142,45 @@ void AFPSServerController::ServerSelectRespawnStructure_Implementation(ARTSStruc
 	SelectRespawnStructure(SelectedStructure);
 }
 
+bool AFPSServerController::ServerPurchaseExpUpgrade_Validate(TSubclassOf<UUpgrade> UpgradeClass)
+{
+	return true;
+}
+
+void AFPSServerController::ServerPurchaseExpUpgrade_Implementation(TSubclassOf<UUpgrade> UpgradeClass)
+{
+	PurchaseExpUpgrade(UpgradeClass);
+}
+
 void AFPSServerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("NKey", IE_Pressed, this, &AFPSServerController::ToggleUpgradeMenu);
+	InputComponent->BindAction("BKey", IE_Pressed, this, &AFPSServerController::GrantPlayerExp);
 }
 
-void AFPSServerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+
+
+/**************************************Debug / Testing*******************************************/
+bool AFPSServerController::ServerGrantPlayerExp_Validate()
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	return true;
 }
 
+void AFPSServerController::ServerGrantPlayerExp_Implementation()
+{
+	GrantPlayerExp();
+}
+
+void AFPSServerController::GrantPlayerExp()
+{
+	if (!HasAuthority())
+	{
+		ServerGrantPlayerExp();
+	}
+	else
+	{
+		AFPSPlayerState * ps = GetPlayerState<AFPSPlayerState>();
+		ps->GrantExp(ExptoGrant);
+	}
+}

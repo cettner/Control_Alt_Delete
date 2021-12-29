@@ -18,7 +18,7 @@ class RTS_PROJECT_API URTSAbilityUpgrade : public URTSUpgrade
 	GENERATED_BODY()
 
 public:
-	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const override;
+	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const override;
 	TArray<TWeakObjectPtr<UAbility>> GetTargetAbilitesFromUser(IAbilityUserInterface * AbilityUser) const;
 
 protected:

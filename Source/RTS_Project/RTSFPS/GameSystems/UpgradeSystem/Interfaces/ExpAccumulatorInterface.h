@@ -27,13 +27,18 @@ public:
 	virtual bool CanRecieveExp() const;
 	virtual uint32 GetCurrentLevel() const;
 	virtual uint32 GetMaxLevel() const;
-
-	virtual uint32 GetExptoNextLevel() const;
+	virtual uint32 GetExpforLevel(uint32 inLevel) const;
+	virtual int32 GetExptoNextLevel() const;
 
 	virtual void GrantExp(uint32 inexp);
 
+public:
+	virtual uint32 GetAvailableUpgradePoints() const;
+	virtual uint32 GetSpentUpgradePoints() const;
+	virtual uint32 GetTotalUpgradePoints() const;
+
+	virtual bool SpendUpgradePoints(uint32 PointsToSpend = 1U);
+
 protected:
 	virtual void OnLevelUp();
-
-
 };

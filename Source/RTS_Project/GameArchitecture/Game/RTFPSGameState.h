@@ -7,6 +7,7 @@
 #include "RTS_Project/RTSFPS/FPS/FPSPlayerState.h"
 #include "RTFPSMode.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeManager.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTFPSGameState.generated.h"
 
 
@@ -63,6 +64,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual FReplicationResourceMap RefundUnit(TSubclassOf<UObject> RefundClass, ARTSPlayerController* Purchaser = nullptr);
 		virtual bool IsUnitPurchaseable(TSubclassOf<UObject> PurchaseClass, AController * Purchaser = nullptr) const;
 		virtual FReplicationResourceMap GetUnitPrice(TSubclassOf<UObject> PurchaseClass) const;
+		virtual bool PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface * Purchaser, IUpgradableInterface * ToApply) const;
 
 	protected:
 		virtual void UnpackUnitPriceMap(TMap<TSubclassOf<UObject>, FReplicationResourceMap> GameModePrices);

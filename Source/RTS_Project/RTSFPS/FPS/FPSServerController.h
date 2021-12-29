@@ -23,6 +23,8 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 
 		void SelectRespawnStructure(ARTSStructure* SelectedStructure);
 		
+		void PurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass);
+
 		virtual void ClientNotifyTeamChange(int newteamid) override;
 
 		virtual void OnPawnDeath();
@@ -38,13 +40,25 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerSelectRespawnStructure(ARTSStructure* SelectedStructure);
 
+		UFUNCTION(Server, reliable, WithValidation)
+		void ServerPurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass);
+
     protected:
 		virtual void SetupInputComponent() override;
 
-	    virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-
-
-
 	protected:
 		bool bisUpgradeMenuOpen = false;
+		
+
+	protected:
+	/**********************Debug / Testing Only****************/
+		UFUNCTION()
+		virtual void GrantPlayerExp();
+		
+		UFUNCTION(Server, reliable, WithValidation)
+		void ServerGrantPlayerExp();
+
+		UPROPERTY(EditDefaultsOnly, Category = Debug)
+		uint32 ExptoGrant = 3U;
+	/**********************************************************/
 };

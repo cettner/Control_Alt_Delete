@@ -16,7 +16,7 @@ class RTS_PROJECT_API URTSUpgrade : public UUpgrade, public IRTSObjectInterface
 	GENERATED_BODY()
 
 public:
-	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const override;
+	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const override;
 	bool IsGlobal() const;
 	bool IsPersistent() const;
 

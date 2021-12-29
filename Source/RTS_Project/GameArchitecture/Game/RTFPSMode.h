@@ -22,12 +22,8 @@ public:
 	ARTFPSMode(const FObjectInitializer& ObjectInitializer);
 
 public:
-	/** The default pawn class used by RTS players. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-	TSubclassOf<ACommander> DefaultFPSClass = nullptr;
+
 
 protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
@@ -36,8 +32,17 @@ protected:
 	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController) override;
 	virtual void StartMatch() override;
 
+protected:
+	/** The default pawn class used by RTS players. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	TSubclassOf<ACommander> DefaultFPSClass = nullptr;
+
 	/********************RTS Initialization*********************/
 public:
+	TSubclassOf<ARTSCamera> GetDefaultRTSClass() const;
 	int GetStartingResources(TSubclassOf<AResource> ResourceClass) const;
 	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetDefaultUnitCosts() const;
@@ -45,8 +50,8 @@ public:
 
 public:
 	/********************FPS Initialization*********************/
+	TSubclassOf<ACommander> GetDefaultFPSClass() const;
 	UCurveFloat* GetExpCurve() const;
-
 	uint32 GetMaxLevel() const;
 	/**********************************************************/
 protected:

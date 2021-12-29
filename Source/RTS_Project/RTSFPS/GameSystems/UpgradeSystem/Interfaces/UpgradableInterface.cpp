@@ -5,7 +5,7 @@
 
 // Add default functionality here for any IUpg
 
-uint32 IUpgradableInterface::GetCurrentUpgradeTierFor(TSubclassOf<UUpgrade> UpgradeClass) const
+uint32 IUpgradableInterface::GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const
 {
 	return UPGRADE_UNLEARNED;
 }
@@ -26,6 +26,7 @@ void IUpgradableInterface::OnApplyUpgrade(const UUpgrade * Upgrade)
 	if (CanReceiveUpgrades() == true)
 	{
 		Upgrade->ApplyUpgrade(this);
+		AddUpgrade(Upgrade->GetClass());
 	}
 	else
 	{
@@ -36,6 +37,26 @@ void IUpgradableInterface::OnApplyUpgrade(const UUpgrade * Upgrade)
 void IUpgradableInterface::PostInstallUpgrades()
 {
 }
+
+const UObject * IUpgradableInterface::GetUpgradeApplicationObject() const
+{
+	const UObject * retval = Cast<UObject>(this);
+	return retval;
+}
+
+UClass * IUpgradableInterface::GetUpgradeApplicationClass() const
+{
+	UClass * retval = nullptr;
+	const UObject * subobject = GetUpgradeApplicationObject();
+	if (subobject != nullptr)
+	{
+		retval = subobject->GetClass();
+	}
+	
+	return retval;
+}
+
+
 
 bool IUpgradableInterface::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
 {

@@ -34,8 +34,9 @@ class RTS_PROJECT_API UUpgrade : public UObject
 	GENERATED_BODY()
 
 public:
+	/*Refrain From using this directly, use IUpgradableInterface::OnApplyUpgrade*/
 	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const;
-	virtual bool CanUpgrade(IUpgradableInterface * TestUpgrade) const;
+	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const;
 	
 	uint32 GetMaxRank() const;
 	FText GetToolTipInfo(uint32 CurrentRank = 0U)  const;

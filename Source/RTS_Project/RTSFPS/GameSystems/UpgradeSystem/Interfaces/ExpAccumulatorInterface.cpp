@@ -33,9 +33,34 @@ uint32 IExpAccumulatorInterface::GetMaxLevel() const
 	return 0U;
 }
 
-uint32 IExpAccumulatorInterface::GetExptoNextLevel() const
+uint32 IExpAccumulatorInterface::GetExpforLevel(uint32 inLevel) const
 {
 	return 0U;
+}
+
+int32 IExpAccumulatorInterface::GetExptoNextLevel() const
+{
+	return 0;
+}
+
+uint32 IExpAccumulatorInterface::GetAvailableUpgradePoints() const
+{
+	return uint32();
+}
+
+uint32 IExpAccumulatorInterface::GetSpentUpgradePoints() const
+{
+	return uint32();
+}
+
+uint32 IExpAccumulatorInterface::GetTotalUpgradePoints() const
+{
+	return uint32();
+}
+
+bool IExpAccumulatorInterface::SpendUpgradePoints(uint32 PointsToSpend)
+{
+	return false;
 }
 
 void IExpAccumulatorInterface::GrantExp(uint32 inexp)
