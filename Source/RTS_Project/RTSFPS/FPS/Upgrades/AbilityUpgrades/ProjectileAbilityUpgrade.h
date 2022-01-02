@@ -14,7 +14,7 @@ class RTS_PROJECT_API UProjectileAbilityUpgrade : public URTSAbilityUpgrade
 {
 	GENERATED_BODY()
 public:
-	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const override;
+	virtual void ApplyUpgrade(UObject * ToUpgrade) const override;
 
 
 protected:

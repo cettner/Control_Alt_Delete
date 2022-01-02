@@ -3,6 +3,7 @@
 
 #include "UpgradeTreeWidget.h"
 
+#include "GameFramework/PlayerState.h"
 
 
 
@@ -35,12 +36,22 @@ bool UUpgradeTreeWidget::Initialize()
 
 void UUpgradeTreeWidget::RefreshNodes()
 {
-	IUpgradableInterface * upgradeuser = GetUpgradeUser();
+	const IUpgradableInterface * upgradeuser = GetUpgradeUser();
 	checkf(upgradeuser,TEXT("UUpgradeTreeWidget::RefreshNodes failed to obtain UpgradeUser"))
 
 	for (int i = 0; i < Nodes.Num(); i++)
 	{
 		Nodes[i]->RefreshNode(upgradeuser);
+	}
+
+	const IExpAccumulatorInterface * expuser = GetExpUser();
+	if (UpgradePointTextBlock != nullptr)
+	{
+		const FString preamble =  "Points Available: ";
+		const FString numpointsavailable = FString::FromInt(expuser->GetAvailableUpgradePoints());
+
+		FText endtext = FText::FromString(preamble + numpointsavailable);
+		UpgradePointTextBlock->SetText(endtext);
 	}
 }
 
@@ -50,6 +61,17 @@ IUpgradableInterface* UUpgradeTreeWidget::GetUpgradeUser() const
 	if (GetOwningPlayer())
 	{
 		retval = GetOwningPlayer()->GetPlayerState<IUpgradableInterface>();
+	}
+
+	return retval;
+}
+
+IExpAccumulatorInterface * UUpgradeTreeWidget::GetExpUser() const
+{
+	IExpAccumulatorInterface * retval = nullptr;
+	if (GetOwningPlayer())
+	{
+		retval = GetOwningPlayer()->GetPlayerState<IExpAccumulatorInterface>();
 	}
 
 	return retval;

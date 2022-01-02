@@ -6,6 +6,7 @@
 
 
 
+
 UFPSUI::UFPSUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	TeamResourceList = CreateDefaultSubobject<UPanelWidget>(TEXT("Team Resource List"));
@@ -57,4 +58,10 @@ void  UFPSUI::ShouldShowUpgradeTree(bool bShowTree)
 	{
 		FPSTabSwitcher->SetActiveWidget(MainFPSUI);
 	}
+}
+
+void UFPSUI::RefreshUpgradeTree()
+{
+	checkf(UpgradeTreeWidget, TEXT("UFPSUI::ShouldShowUpgradeTree Does not have valid Tree Widget"));
+	UpgradeTreeWidget->RefreshNodes();
 }

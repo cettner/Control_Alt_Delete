@@ -35,7 +35,7 @@ class RTS_PROJECT_API UUpgrade : public UObject
 
 public:
 	/*Refrain From using this directly, use IUpgradableInterface::OnApplyUpgrade*/
-	virtual void ApplyUpgrade(IUpgradableInterface * ToUpgrade) const;
+	virtual void ApplyUpgrade(UObject * ToUpgrade) const;
 	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const;
 	
 	uint32 GetMaxRank() const;

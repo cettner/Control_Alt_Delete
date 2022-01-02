@@ -4,7 +4,7 @@
 #include "Upgrade.h"
 #include "Interfaces/UpgradableInterface.h"
 
-void UUpgrade::ApplyUpgrade(IUpgradableInterface * ToUpgrade) const
+void UUpgrade::ApplyUpgrade(UObject * ToUpgrade) const
 {
 
 }

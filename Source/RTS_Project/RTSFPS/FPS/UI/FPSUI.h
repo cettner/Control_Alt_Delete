@@ -21,6 +21,7 @@ class RTS_PROJECT_API UFPSUI : public UUserWidget
 
     public:
 		virtual void ShouldShowUpgradeTree(bool bShowTree);
+		virtual void RefreshUpgradeTree();
 
 	protected:
 		UFPSUI(const FObjectInitializer& ObjectInitializer);

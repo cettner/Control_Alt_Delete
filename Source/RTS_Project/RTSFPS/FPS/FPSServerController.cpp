@@ -120,6 +120,23 @@ void AFPSServerController::ToggleUpgradeMenu()
 	}
 }
 
+void AFPSServerController::RefreshUpgradeMenu()
+{
+	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
+	if (hud == nullptr) return;
+
+	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
+	if (mainui == nullptr) return;
+
+	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
+
+	if (fpsui != nullptr)
+	{
+		fpsui->RefreshUpgradeTree();
+	}
+
+}
+
 void AFPSServerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

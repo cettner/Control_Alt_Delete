@@ -3,10 +3,12 @@
 
 #include "RTSFPSUpgradeNodeWidget.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 
 void URTSFPSUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const
 {
-	int debug = 9;
+	AFPSServerController * pc = GetOwningPlayer<AFPSServerController>();
+	pc->PurchaseExpUpgrade(UpgradeToApply);
 }
 
 bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
@@ -16,7 +18,7 @@ bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
 
 	if(retval == true && (purchaser != nullptr))
 	{
-		retval &= (purchaser->GetAvailableUpgradePoints() > 1U);
+		retval &= (purchaser->GetAvailableUpgradePoints() > 0U);
 	}
 
 

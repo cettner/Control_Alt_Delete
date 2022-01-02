@@ -200,7 +200,16 @@ void ARTFPSGameState::ApplyGlobalUpgrades(ARTSMinion * Minion) const
 		const UUpgrade * upgrade = AllUnits[teamid].Upgrades[i].UpgradeClass.GetDefaultObject();
 		if (upgrade->CanUpgrade(Minion))
 		{
-			Minion->OnApplyUpgrade(upgrade);
+			const uint32 upgraderank = AllUnits[teamid].Upgrades[i].Rank;
+			
+			const bool check = upgraderank > UPGRADE_UNLEARNED;
+			checkf(check, TEXT("ARTFPSGameState::ApplyGlobalUpgrades : Upgrade Applied of Rank 0"));
+			
+			for (uint32 k = 0U; k < upgraderank; k++)
+			{
+				Minion->OnApplyUpgrade(upgrade);
+			}
+
 		}
 	}
 }
@@ -213,8 +222,16 @@ void ARTFPSGameState::ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerSta
 
 		for (int i = 0; i < upgrades.Num(); i++)
 		{
+			const uint32 upgraderank = InState->GetCurrentUpgradeRankFor(upgrades[i]);
+			const bool check = upgraderank > UPGRADE_UNLEARNED;
+			checkf(check, TEXT(" ARTFPSGameState::ApplyPlayerUpgrades : Upgrade Applied of Rank 0"));
+
 			const UUpgrade * upgrade = upgrades[i].GetDefaultObject();
-			PlayerPawn->OnApplyUpgrade(upgrade);
+			
+			for (uint32 k = 0U; k < upgraderank; k++)
+			{
+				PlayerPawn->OnApplyUpgrade(upgrade);
+			}
 		}
 	}
 }

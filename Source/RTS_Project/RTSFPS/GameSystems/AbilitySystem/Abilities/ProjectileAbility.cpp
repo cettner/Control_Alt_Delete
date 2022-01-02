@@ -10,6 +10,7 @@ void UProjectileAbility::OnEffect()
 	AAbilityProjectile * Projectile = AbilityComp->SpawnUninitializedActor<AAbilityProjectile>(ProjectileClass, spawntransform);
 	Projectile->SetOwner(AbilityComp->GetOwner());
 	Projectile->InitialSpeed = ProjectileSpeed;
+	Projectile->DirectDamage = ProjectileDamage;
 	Projectile->CollisionChannel = AbilityEffectChannel;
 	Projectile->SetIgnoredActors(AbilityComp->GetAbilityUser()->GetIgnoredTraceActors());
 
@@ -24,4 +25,14 @@ void UProjectileAbility::SetProjectileSpeed(float NewSpeed)
 float UProjectileAbility::GetProjectileSpeed() const
 {
 	return ProjectileSpeed;
+}
+
+void UProjectileAbility::SetProjectileDamage(float NewDamage)
+{
+	ProjectileDamage = NewDamage;
+}
+
+float UProjectileAbility::GetProjectileDamage() const
+{
+	return ProjectileDamage;
 }

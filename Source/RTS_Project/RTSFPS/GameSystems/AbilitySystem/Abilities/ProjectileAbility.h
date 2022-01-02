@@ -22,10 +22,16 @@ public:
 	virtual void SetProjectileSpeed(float NewSpeed);
 	virtual float GetProjectileSpeed() const;
 
+	virtual void SetProjectileDamage(float NewDamage);
+	virtual float GetProjectileDamage() const;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AAbilityProjectile> ProjectileClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ProjectileSpeed = 1000.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ProjectileDamage = 40.0f;
 };

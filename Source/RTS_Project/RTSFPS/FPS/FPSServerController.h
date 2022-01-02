@@ -32,6 +32,8 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		UFUNCTION()
 		virtual void ToggleUpgradeMenu();
 
+		virtual void RefreshUpgradeMenu();
+
     protected:
 		virtual void OnPossess(APawn* InPawn) override;
 

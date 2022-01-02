@@ -3,10 +3,9 @@
 
 #include "ProjectileAbilityUpgrade.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
-#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Abilities/ProjectileAbility.h"
 
-void UProjectileAbilityUpgrade::ApplyUpgrade(IUpgradableInterface * ToUpgrade) const
+void UProjectileAbilityUpgrade::ApplyUpgrade(UObject * ToUpgrade) const
 {
 	IAbilityUserInterface * abilityuser = Cast<IAbilityUserInterface>(ToUpgrade);
 	TArray<TWeakObjectPtr<UAbility>> abilities = GetTargetAbilitesFromUser(abilityuser);
@@ -19,6 +18,10 @@ void UProjectileAbilityUpgrade::ApplyUpgrade(IUpgradableInterface * ToUpgrade) c
 			const float currentspeed = ability->GetProjectileSpeed();
 			const float newspeed = currentspeed + VelocityIncrement;
 			ability->SetProjectileSpeed(newspeed);
+
+			const float currentdamage = ability->GetProjectileDamage();
+			const float newdamage = currentdamage + DamageIncrement;
+			ability->SetProjectileDamage(newdamage);
 		}
 	}
 

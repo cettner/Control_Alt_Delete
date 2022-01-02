@@ -314,7 +314,7 @@ void ARTSMinion::PostInstallUpgrades()
 	for (int i = 0; i < AppliedUpgrades.Num(); i++)
 	{
 		const UUpgrade * upgrade = AppliedUpgrades[i].GetDefaultObject();
-		OnApplyUpgrade(upgrade);
+		upgrade->ApplyUpgrade(this);
 	}
 }
 

@@ -12,25 +12,7 @@
 #include "FPSPlayerState.generated.h"
 
 
-USTRUCT()
-struct FUpgradeInfo
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	/*Class Of The Upgrade*/
-	TSubclassOf<UUpgrade> UpgradeClass = nullptr;
 
-	/*Number of Times the Upgrade Has Been Applied*/
-	int Rank = 0;
-
-	/*For Comparision, We only care that the class is the same,  That way, if we want to "Find" it in an array
-	we can simulate a "MultiMap" Style Behavior Between the upgrade and its Rank*/
-	friend bool operator == (const FUpgradeInfo& Myself, const FUpgradeInfo& Other)
-	{
-		bool isSame = Myself.UpgradeClass == Other.UpgradeClass;
-		return(isSame);
-	}
-};
 
 
 enum EPlayerReswpawnState
@@ -48,18 +30,31 @@ class RTS_PROJECT_API AFPSPlayerState : public ARTFPSPlayerState, public IUpgrad
 	GENERATED_BODY()
 
 public:
-		
 	EPlayerReswpawnState GetRespawnState() const;
 	void SetRespawnState(EPlayerReswpawnState NewState);
+	void SetTotalUpgradePoints(uint32 InTotalUpgradePoints);
+	void SetSpentUpgradePoints(uint32 InSpentUpgradePoints);
 
+protected:
+	UFUNCTION()
+	virtual void OnRep_TotalUpgradePoints();
+
+	UFUNCTION()
+	virtual void OnRep_SpentUpgradePoints();
+
+	UFUNCTION()
+	virtual void OnRep_AppliedUpgrades();
 /************UpgradabaleInterface**********/
 public:
 	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
 	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades() const override;
 	virtual UClass * GetUpgradeApplicationClass() const override;
+	virtual UObject * GetUpgradeApplicationObject() override;
+	virtual const UObject * GetUpgradeApplicationObject() const override;
+	virtual uint32 GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const;
 /******************************************/
 
-	/************UpgradabaleInterface**********/
+	/************ExpAccumulatorInterface**********/
 public:
 	virtual uint32 GetCurrentExp() const override;
 	virtual uint32 GetMaxExpForCurrentLevel() const override;
@@ -73,11 +68,10 @@ public:
 	virtual uint32 GetSpentUpgradePoints() const override;
 	virtual uint32 GetTotalUpgradePoints() const override;
 
-	virtual bool SpendUpgradePoints(uint32 PointsToSpend = 1U) override;
-
 public:
-	/*Primary External Entry Point*/
+	/*External Functions*/
 	virtual void GrantExp(uint32 inexp) override;
+	virtual bool SpendUpgradePoints(uint32 PointsToSpend = 1U) override;
 
 protected:
 	virtual void OnLevelUp() override;
@@ -95,14 +89,16 @@ protected:
 
 	/************RunTime Data*************/
 protected:
-	TArray<FUpgradeInfo> AppliedUpgrades;
 
 	EPlayerReswpawnState RespawnState = EPlayerReswpawnState::PREGAME;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_AppliedUpgrades)
+	TArray<FUpgradeInfo> AppliedUpgrades;
+
+	UPROPERTY(ReplicatedUsing = OnRep_TotalUpgradePoints)
 	uint32 TotalUpgradePoints = 0U;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = OnRep_SpentUpgradePoints)
 	uint32 SpentUpgradePoints = 0U;
 
 	UPROPERTY(Replicated)
