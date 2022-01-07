@@ -69,35 +69,53 @@ protected:
 	virtual bool ReadyToStartMatch_Implementation() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void StartMatch() override;
+	virtual void EndMatch() override;
 
 protected:
 	virtual bool LoadServerData();
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings);
 	virtual FPlayerSettings FetchSettingsFromLobbyData(APlayerController* NewPlayer);
 	virtual bool CheckPlayerRegistry();
-	virtual FServerSettings GetDefaultSettings() const;
 	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController);
 	virtual APawn * SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 
+	UFUNCTION()
+	virtual void StartReturnPlayersToLobby();
+	virtual void ReturnPlayersToLobby();
+
+
+/*************Config Data*************/
 protected:
+	UPROPERTY(EditDefaultsOnly)
+	float TimeToReturnToLobby = 10.0f;
 /************************************/
-	/*Loaded from Game Instance*/
+
+/*****Loaded from Game Instance******/
+protected:
 	int NumTeams;
 	int TeamSize;
 	TArray<FPlayerSettings> LobbyPlayers;
 /************************************/
 	
+/**********************Runtime Data*********************/
+protected:
 	TMap<TSharedPtr<const FUniqueNetId>, bool> PlayerRegistry;
+
 	TArray<TeamSpawnSelector> TeamStartingPoints;
 
+	FTimerHandle ReturnToLobbyHandle = FTimerHandle();
+/*************************************************************************/
+	
 
+protected:
 	/*Used By Editor Because Game Instance Cannot be Set Properly*/
 	UPROPERTY(EditDefaultsOnly, Category = Debug)
 	FServerSettings DefaultSettings;
 
-
-
 #if WITH_EDITOR
+protected:
+	virtual FServerSettings GetDefaultSettings() const;
+
 protected:
 	/*Editor Only Class used to spoof the registration system into beleiveing editor players are real*/
 	class FEditorUniqueNetID : public FUniqueNetId
@@ -150,10 +168,10 @@ protected:
 		bool bHasBeenSet = false;
 	};
 
-
-
 	FPlayerSettings EditorFetchPlayerSettings(APlayerController* Controller);
 	TSharedPtr<const FUniqueNetId> EditorCreatePlayerID();
+
+private:
 	int EditorPlayerCount = 0;
 #endif
 };

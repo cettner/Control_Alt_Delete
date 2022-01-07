@@ -39,10 +39,6 @@ int ADefaultPlayerController::GetTeamID() const
 	return -1;
 }
 
-void ADefaultPlayerController::OnMatchStart()
-{
-}
-
 void ADefaultPlayerController::SetIsRegistered(bool bregistered)
 {
 	bisregistered = bregistered;

@@ -75,10 +75,6 @@ void ADefaultGameState::SetNumTeams(int8 InNumTeams)
 void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
 {
 	Super::OnRep_ReplicatedHasBegunPlay();
-	
-	const UWorld * world = GetWorld();
-	ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
-	firstcontroller->OnMatchStart();
 }
 
 void ADefaultGameState::ReceivedGameModeClass()

@@ -28,6 +28,8 @@ ARTSMinion::ARTSMinion()
 
 	/*SelectionRings Shouldnt appear on mesh*/
 	GetMesh()->bReceivesDecals = false;
+	/*Execute Montages even when not visible by the server, as socket locations are always relevant*/
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;

@@ -21,9 +21,11 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	NumTeams = -1;
 	TeamSize = -1;
 
-	DefaultSettings.bIsValid = true;
-	DefaultSettings.NumPlayersPerTeam = 2;
-	DefaultSettings.NumTeams = 2;
+	#if WITH_EDITOR
+		DefaultSettings.bIsValid = true;
+		DefaultSettings.NumPlayersPerTeam = 2;
+		DefaultSettings.NumTeams = 2;
+	#endif
 }
 
 void ADefaultMode::PostInitializeComponents()
@@ -121,32 +123,29 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 void ADefaultMode::StartMatch()
 {
 	Super::StartMatch();
+}
 
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-
-	ADefaultPlayerController* firstcontroller = World->GetFirstPlayerController<ADefaultPlayerController>();
-	if (World->GetNetMode() == NM_ListenServer)
-	{
-		firstcontroller->OnMatchStart();
-	}
-
+void ADefaultMode::EndMatch()
+{
+	Super::EndMatch();
+	StartReturnPlayersToLobby();
 }
 
 bool ADefaultMode::LoadServerData()
 {
 	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
 	if (GI == nullptr) return(false);
-
-	FServerSettings settings = GI->GetServerSettings();
-
-	if (settings.bIsValid == false)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::LoadServerData] Failed to get valid data from GameInstance Using Default."));
-		settings = GetDefaultSettings();
-	}
 	
 	bool retval = true;
+
+	#if !WITH_EDITOR
+		FServerSettings settings = GI->GetServerSettings();
+		checkf(settings.bIsValid, TEXT("ADefaultMode::LoadServerData Invalid Lobby Data Loaded from Game Instance"));
+	#else
+		FServerSettings settings = GetDefaultSettings();
+	#endif
+
+
 
 	NumTeams = settings.NumTeams;
 	TeamSize = settings.NumPlayersPerTeam;
@@ -267,10 +266,7 @@ bool ADefaultMode::CheckPlayerRegistry()
 	return(ballplayersregistered);
 }
 
-FServerSettings ADefaultMode::GetDefaultSettings() const
-{
-	return DefaultSettings;
-}
+
 
 
 void ADefaultMode::InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController)
@@ -298,7 +294,31 @@ APawn * ADefaultMode::SpawnDefaultPawnAtTransform_Implementation(AController * N
 	return ResultPawn;
 }
 
+void ADefaultMode::StartReturnPlayersToLobby()
+{
+	if (TimeToReturnToLobby <= 0.0f)
+	{
+		ReturnPlayersToLobby();
+	}
+	else
+	{
+		const UWorld * world = GetWorld();
+		world->GetTimerManager().SetTimer(ReturnToLobbyHandle, this, &ADefaultMode::StartReturnPlayersToLobby, 1.0f, false);
+		TimeToReturnToLobby -= 1.0f;
+	}
+}
+
+void ADefaultMode::ReturnPlayersToLobby()
+{
+}
+
 #if WITH_EDITOR
+
+FServerSettings ADefaultMode::GetDefaultSettings() const
+{
+	return DefaultSettings;
+}
+
 FPlayerSettings ADefaultMode::EditorFetchPlayerSettings(APlayerController* Controller)
 {
 	FPlayerSettings retval = FPlayerSettings();
@@ -309,6 +329,7 @@ FPlayerSettings ADefaultMode::EditorFetchPlayerSettings(APlayerController* Contr
 	}
 	return(retval);
 }
+
 TSharedPtr<const FUniqueNetId> ADefaultMode::EditorCreatePlayerID()
 {
 	static uint8 currentseed = 0U;

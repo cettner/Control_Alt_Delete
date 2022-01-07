@@ -28,8 +28,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual int GetTeamID() const;
 
-		virtual void OnMatchStart();
-
 		void SetIsRegistered(bool bregistered);
 
 		/*Attempts to call FinishLocalPlayersetup after registration is complete, if called before beginplay is kicked off deferes playerstartup to beginplay for the controller*/
