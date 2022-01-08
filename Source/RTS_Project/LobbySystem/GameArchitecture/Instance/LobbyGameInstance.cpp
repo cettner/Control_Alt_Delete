@@ -77,10 +77,9 @@ void ULobbyGameInstance::LoadLobbyMenu()
 	{
 		return;
 	}
-	else if (LobbyMenu == nullptr)
+	else
 	{
 		LobbyMenu = CreateWidget<ULobbyMenu>(this, LobbyClass);
-		if (LobbyMenu == nullptr) return;
 	}
 	
 	LobbyMenu->Setup();
@@ -94,10 +93,17 @@ ULobbyMenu * ULobbyGameInstance::GetLobbyMenu()
 void ULobbyGameInstance::StartGame()
 {
 	UWorld* World = GetWorld();
-	if (World == nullptr) return;
 
-	FString modifier = "?listen";
+	const FString modifier = "?listen";
 	World->ServerTravel(GameMapName + modifier);
+}
+
+void ULobbyGameInstance::TravelToLobby()
+{
+	UWorld* World = GetWorld();
+
+	const FString modifier = "?listen";
+	World->ServerTravel(LobbyMapName + modifier);
 }
 
 FLobbySettings ULobbyGameInstance::GetLobbySettings()
@@ -269,14 +275,7 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 
 	UE_LOG(LogTemp, Warning, TEXT("[OnCreateSessionComplete::OnCreateSessionComplete] HOST TRAVEL TO LOBBY"));
 
-	UWorld* World = GetWorld();
-
-	if (World == nullptr) return;
-
-	/*StartMap as Listen Server*/
-	FString modifier = "?listen";
-	bIsPlayingOffline = false;
-	World->ServerTravel(LobbyMapName + modifier);
+	TravelToLobby();
 }
 
 void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Success)

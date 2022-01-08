@@ -182,6 +182,8 @@ public:
 
 	void StartGame();
 
+	virtual void TravelToLobby();
+
 protected:
 	bool RestartSession;
 

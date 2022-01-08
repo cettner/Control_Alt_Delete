@@ -302,6 +302,9 @@ void ADefaultMode::StartReturnPlayersToLobby()
 	}
 	else
 	{
+		const int32 timeremaining = FMath::RoundToInt(TimeToReturnToLobby);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Returning to Lobby In : %d"), timeremaining));
+
 		const UWorld * world = GetWorld();
 		world->GetTimerManager().SetTimer(ReturnToLobbyHandle, this, &ADefaultMode::StartReturnPlayersToLobby, 1.0f, false);
 		TimeToReturnToLobby -= 1.0f;
@@ -310,6 +313,8 @@ void ADefaultMode::StartReturnPlayersToLobby()
 
 void ADefaultMode::ReturnPlayersToLobby()
 {
+	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
+	GI->TravelToLobby();
 }
 
 #if WITH_EDITOR

@@ -62,5 +62,14 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 
 		UPROPERTY(EditDefaultsOnly, Category = Debug)
 		uint32 ExptoGrant = 3U;
+
+
+		UFUNCTION()
+		virtual void DebugEndMatch();
+
+		UFUNCTION(Server, reliable, WithValidation)
+		void ServerDebugEndMatch();
+
+
 	/**********************************************************/
 };

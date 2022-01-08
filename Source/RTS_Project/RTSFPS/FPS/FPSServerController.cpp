@@ -173,7 +173,7 @@ void AFPSServerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("NKey", IE_Pressed, this, &AFPSServerController::ToggleUpgradeMenu);
-	InputComponent->BindAction("BKey", IE_Pressed, this, &AFPSServerController::GrantPlayerExp);
+	InputComponent->BindAction("BKey", IE_Pressed, this, &AFPSServerController::DebugEndMatch);
 }
 
 
@@ -200,4 +200,34 @@ void AFPSServerController::GrantPlayerExp()
 		AFPSPlayerState * ps = GetPlayerState<AFPSPlayerState>();
 		ps->GrantExp(ExptoGrant);
 	}
+}
+
+bool AFPSServerController::ServerDebugEndMatch_Validate()
+{
+	return true;
+}
+
+void AFPSServerController::ServerDebugEndMatch_Implementation()
+{
+	DebugEndMatch();
+}
+
+void AFPSServerController::DebugEndMatch()
+{
+	if (!HasAuthority())
+	{
+		ServerDebugEndMatch();
+	}
+	else
+	{
+		const UWorld * world = GetWorld();
+
+		ADefaultMode * gm = world->GetAuthGameMode<ADefaultMode>();
+		if (gm->IsMatchInProgress())
+		{
+			gm->EndMatch();
+		}
+	}
+
+
 }
