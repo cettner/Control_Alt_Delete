@@ -11,23 +11,30 @@ void UUpgradeToolTipWidget::FormatDependencies(TArray<FUpgradeDependencyInfo> In
 	{
 		const FString descriptionstring = InUpgradeDependencies[i].Description;
 		UTextBlock * dependencyblock = NewObject<UTextBlock>(this, UTextBlock::StaticClass());
-
-		FSlateColor color;
-
-		if (InUpgradeDependencies[i].IsSatisfied == true)
-		{
-			color = FSlateColor(FLinearColor::Green);
-		}
-		else
-		{
-			color = FSlateColor(FLinearColor::Red);
-		}
-
-		dependencyblock->ColorAndOpacity = color;
+		FormatDependencyText(InUpgradeDependencies[i], dependencyblock);
 		dependencyblock->SetText(FText::FromString(descriptionstring));
 
 		DependencyPanelWidget->AddChild(dependencyblock);
 	}
+}
+
+void UUpgradeToolTipWidget::FormatDependencyText(const FUpgradeDependencyInfo InInfo, UTextBlock * DependencyBlock)
+{
+	FSlateColor color;
+
+
+	if (InInfo.IsSatisfied == true)
+	{
+		color = FSlateColor(FLinearColor::Green);
+	}
+	else
+	{
+		color = FSlateColor(FLinearColor::Red);
+	}
+
+	DependencyBlock->ColorAndOpacity = color; 
+	DependencyBlock->Font = DependencyFont;
+	DependencyBlock->SetAutoWrapText(true);
 }
 
 void UUpgradeToolTipWidget::Setup(TSubclassOf<UUpgrade> InUpgradeClass)
@@ -36,6 +43,9 @@ void UUpgradeToolTipWidget::Setup(TSubclassOf<UUpgrade> InUpgradeClass)
 	const FName upgradename = owningupgrade->GetUpgradeName();
 	const FText nametext = FText::FromName(upgradename);
 
+	const FString upgradedescription = owningupgrade->GetUpgradeDescription();
+	const FText descriptiontext = FText::FromString(upgradedescription);
 
 	UpgradeNameTextBlock->SetText(nametext);
+	UpgradeDescriptionTextBlock->SetText(descriptiontext);
 }

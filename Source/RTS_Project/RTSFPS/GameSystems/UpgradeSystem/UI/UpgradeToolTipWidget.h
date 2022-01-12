@@ -25,12 +25,24 @@ public:
 	virtual void FormatDependencies(TArray<FUpgradeDependencyInfo> InUpgradeDependencies);
 
 protected:
-	/*****************Config Data**********************/
+	virtual void FormatDependencyText(const FUpgradeDependencyInfo InInfo, UTextBlock * DependencyBlock);
+
+protected:
+	/*****************Widget Design Data**********************/
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* UpgradeNameTextBlock;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* UpgradeDescriptionTextBlock;
 
 	UPROPERTY(meta = (BindWidgetOptional))
 	UPanelWidget* DependencyPanelWidget;
 	/**************************************************/
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	FSlateFontInfo DependencyFont;
+
 
 };
