@@ -52,14 +52,83 @@ bool UUpgrade::CanUpgrade(const IUpgradableInterface * TestUpgrade) const
 	return retval;
 }
 
+bool UUpgrade::CanUpgrade(const IUpgradableInterface* TestUpgrade, TArray<FUpgradeDependencyInfo>& OutDependencyInfo) const
+{
+	if (TestUpgrade == nullptr) return false;
+
+	bool retval = true;
+
+	const TArray<TSubclassOf<UUpgrade>> exclusions = GetExclusiveConditions();
+	const TArray<FUpgradeUnlockCondition> unlockconditions = GetUnlockConditions();
+	const uint32 maxrank = GetMaxRank();
+
+	if (TestUpgrade->GetCurrentUpgradeRankFor(GetClass()) >= maxrank)
+	{
+		retval &= false;
+	}
+
+	for (int i = 0; i < unlockconditions.Num(); i++)
+	{
+		const TSubclassOf<UUpgrade> unlockparent = unlockconditions[i].GetParent();
+		const uint32 unlockrank = unlockconditions[i].GetRank();
+		const uint32 currentrank = TestUpgrade->GetCurrentUpgradeRankFor(unlockparent);
+
+		FUpgradeDependencyInfo parentdependency;
+		parentdependency.Description = "Requires " + FString::FromInt(unlockrank) + " Points in " + unlockparent.GetDefaultObject()->GetUpgradeName().ToString();
+		parentdependency.Category = EUpgradeDependencyCategory::UNLOCK;
+
+		if (currentrank < unlockrank)
+		{
+			retval &= false;
+			parentdependency.IsSatisfied = false;
+		}
+		else
+		{
+			parentdependency.IsSatisfied = true;
+		}
+		OutDependencyInfo.Emplace(parentdependency);
+	}
+
+
+
+	for (int i = 0; i < exclusions.Num(); i++)
+	{
+		const UUpgrade* exclusionupgrade = exclusions[i].GetDefaultObject();
+
+		FUpgradeDependencyInfo parentdependency;
+		parentdependency.Description = "Exclusive With : " + exclusionupgrade->GetUpgradeName().ToString();
+		parentdependency.Category = EUpgradeDependencyCategory::EXCLUSION;
+
+		const uint32 currentrank = TestUpgrade->GetCurrentUpgradeRankFor(exclusions[i]);
+		if (currentrank > UPGRADE_UNLEARNED)
+		{
+			retval &= false;
+			parentdependency.IsSatisfied = false;
+		}
+		else
+		{
+			parentdependency.IsSatisfied = true;
+		}
+		OutDependencyInfo.Emplace(parentdependency);
+	}
+
+
+	return retval;
+}
+
 uint32 UUpgrade::GetMaxRank() const
 {
 	return MaxRank;
 }
 
-FText UUpgrade::GetToolTipInfo(uint32 CurrentRank) const
+FString UUpgrade::GetUpgradeDescription(uint32 CurrentRank) const
 {
 	return TooltipInfo;
+}
+
+FName UUpgrade::GetUpgradeName() const
+{
+	return UpgradeName;
 }
 
 TArray<TSubclassOf<UUpgrade>> UUpgrade::GetExclusiveConditions() const

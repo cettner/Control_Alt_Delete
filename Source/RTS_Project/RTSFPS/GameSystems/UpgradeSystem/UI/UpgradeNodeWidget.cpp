@@ -12,6 +12,10 @@ void UUpgradeNodeWidget::NativeConstruct()
 	UpgradeButton->OnClicked.AddDynamic(this, &UUpgradeNodeWidget::OnUpgradeButtonClicked);
 }
 
+void UUpgradeNodeWidget::AddExternalDependencies(TArray<FUpgradeDependencyInfo>& OutInfo) const
+{
+}
+
 void UUpgradeNodeWidget::SetProgressText(uint32 current, uint32 max)
 {
 	const FString currenttext = FString::FromInt(current);
@@ -74,6 +78,11 @@ bool UUpgradeNodeWidget::Setup(UUpgradeTreeWidget * InParentTree)
 {
 	checkf(InParentTree, TEXT("UUpgradeNodeWidget::Setup InvalidParent Tree"))
 	ParentTree = InParentTree;
+
+	UUpgradeToolTipWidget* tooltip = CreateWidget<UUpgradeToolTipWidget>(this, ToolTipClass);
+	tooltip->Setup(UpgradeToApply);
+	SetToolTip(tooltip);
+
 	return true;
 }
 
@@ -81,9 +90,14 @@ void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 {
 	CurrentRank = UpgradeUser->GetCurrentUpgradeRankFor(UpgradeToApply);
 	const uint32 maxrank = GetUpgradeMaxRank();
-
 	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
-	const bool isnodeenabled = defaultupgrade->CanUpgrade(UpgradeUser);
+
+
+	TArray<FUpgradeDependencyInfo> tooltipdependencies;
+	const bool isnodeenabled = defaultupgrade->CanUpgrade(UpgradeUser, tooltipdependencies);
+
+	UUpgradeToolTipWidget* tooltip = Cast<UUpgradeToolTipWidget>(ToolTipWidget);
+	tooltip->FormatDependencies(tooltipdependencies);
 
 
 	SetProgressText(CurrentRank, maxrank);

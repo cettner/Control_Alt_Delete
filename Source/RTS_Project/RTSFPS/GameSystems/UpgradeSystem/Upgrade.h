@@ -27,6 +27,24 @@ private:
 		uint32 Rank = 1U;
 };
 
+enum EUpgradeDependencyCategory
+{
+	UNDEFINED,
+	UNLOCK,
+	EXCLUSION,
+	PURCHASE_PRICE
+};
+
+struct FUpgradeDependencyInfo
+{
+public:
+	FString Description = "Requires X Points In Y";
+
+	bool IsSatisfied = false;
+
+	EUpgradeDependencyCategory Category = UNDEFINED;
+};
+
 
 UCLASS()
 class RTS_PROJECT_API UUpgrade : public UObject
@@ -37,19 +55,22 @@ public:
 	/*Refrain From using this directly, use IUpgradableInterface::OnApplyUpgrade*/
 	virtual void ApplyUpgrade(UObject * ToUpgrade) const;
 	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const;
-	
+	virtual bool CanUpgrade(const IUpgradableInterface* TestUpgrade, TArray<FUpgradeDependencyInfo>& OutDependencyInfo) const;
+
 	uint32 GetMaxRank() const;
-	FText GetToolTipInfo(uint32 CurrentRank = 0U)  const;
+	FString GetUpgradeDescription(uint32 CurrentRank = 0U)  const;
+	FName GetUpgradeName() const;
+
 	TArray<TSubclassOf<UUpgrade>> GetExclusiveConditions() const;
 	TArray<FUpgradeUnlockCondition> GetUnlockConditions() const;
 
 	/*Configuration Data*/
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	FText UpgradeName = FText::FromString("DefaultUpgrade Name");
+	FName UpgradeName = "DefaultUpgrade Name";
 
 	UPROPERTY(EditDefaultsOnly)
-	FText TooltipInfo = FText::FromString("Long Long Long Long Text");
+	FString TooltipInfo = "Long Long Long Long Text";
 
 	UPROPERTY(EditDefaultsOnly)
 	uint32 MaxRank = 1U;

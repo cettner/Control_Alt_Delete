@@ -9,6 +9,7 @@
 #include "Containers/Map.h"
 
 #include "..\Upgrade.h"
+#include "UpgradeToolTipWidget.h"
 #include "UpgradeNodeWidget.generated.h"
 
 /**
@@ -34,6 +35,8 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		UUpgradeTreeWidget* GetParentTree() const;
 
 	protected:
+		virtual void AddExternalDependencies(TArray<FUpgradeDependencyInfo> & OutInfo) const;
+
 		virtual void SetProgressText(uint32 current, uint32 max);
 		
 		virtual void SetNodeEnabled(bool isenabled);
@@ -56,6 +59,9 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		UPROPERTY(EditAnywhere)
 		TSubclassOf<UUpgrade> UpgradeToApply = nullptr;
 
+		UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<UUpgradeToolTipWidget> ToolTipClass = UUpgradeToolTipWidget::StaticClass();
+		 
 		/*Widget Design Data*/
 	protected:
 		UPROPERTY(meta = (BindWidget))
