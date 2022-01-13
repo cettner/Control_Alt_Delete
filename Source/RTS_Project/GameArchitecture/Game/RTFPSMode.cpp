@@ -11,6 +11,7 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/PreGame/RTSFPSLobbyGameState.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
 
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
@@ -122,6 +123,45 @@ void ARTFPSMode::StartMatch()
 	ARTFPSGameState * GS = GetGameState<ARTFPSGameState>();
 
 	GS->RefreshAllUnits();
+}
+
+bool ARTFPSMode::ReadyToEndMatch_Implementation()
+{
+
+	bool retval = true;
+
+	for (TActorIterator<AResource> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		const AResource * mapresource = *ActorItr;
+
+		if (IsValid(mapresource))
+		{
+			retval = false;
+			break;
+		}
+	}
+
+	if (retval == true)
+	{
+		for (TActorIterator<ARTSMinion> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			const ARTSMinion * mapminion = *ActorItr;
+			if (IsValid(mapminion))
+			{
+				const IResourceGatherer* gatherer = Cast<IResourceGatherer>(mapminion);
+
+				if (gatherer != nullptr  && gatherer->GetCurrentWeight() > 0U)
+				{
+					retval = false;
+					break;
+				}
+			}
+
+		}
+	}
+
+
+	return retval;
 }
 
 TSubclassOf<ARTSCamera> ARTFPSMode::GetDefaultRTSClass() const

@@ -123,6 +123,14 @@ uint32 AAbilityCombatCommander::GetMaxWeight() const
 	return MaxWeight;
 }
 
+void AAbilityCombatCommander::GrantExp(uint32 inexp)
+{
+	const APlayerController * pc =  GetController<APlayerController>();
+	IExpAccumulatorInterface* expstate = pc->GetPlayerState<IExpAccumulatorInterface>();
+	expstate->GrantExp(inexp);
+
+}
+
 void AAbilityCombatCommander::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

@@ -173,7 +173,7 @@ void AFPSServerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 	InputComponent->BindAction("NKey", IE_Pressed, this, &AFPSServerController::ToggleUpgradeMenu);
-	InputComponent->BindAction("BKey", IE_Pressed, this, &AFPSServerController::DebugEndMatch);
+	InputComponent->BindAction("BKey", IE_Pressed, this, &AFPSServerController::GrantPlayerExp);
 }
 
 

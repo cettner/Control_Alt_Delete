@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CombatCommander.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
 #include "AbilityCombatCommander.generated.h"
 
@@ -12,7 +13,7 @@
  * 
  */
 UCLASS()
-class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceGatherer
+class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceGatherer, public IExpAccumulatorInterface
 {
 	GENERATED_BODY()
 
@@ -41,6 +42,10 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual uint32 GetMaxWeight() const;
 	/*************************************************************************************/
 	
+
+	/*********************************Experiance Accumulator***********************************/
+		virtual void GrantExp(uint32 inexp) override;
+	/******************************************************************************************/
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 

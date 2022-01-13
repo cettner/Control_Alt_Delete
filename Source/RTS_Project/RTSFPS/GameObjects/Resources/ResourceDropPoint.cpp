@@ -8,6 +8,7 @@
 #include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
 #include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
 #include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 
 
 AResourceDropPoint::AResourceDropPoint() : Super()
@@ -30,6 +31,14 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 
 			for (int i = 0; i < resources.Num(); i++)
 			{
+				IExpAccumulatorInterface * expuser = Cast<IExpAccumulatorInterface>(gatherer);
+				
+				if (expuser != nullptr)
+				{
+					const uint32 resourcescored = resources[i].Value;
+					expuser->GrantExp(resourcescored);
+				}
+
 				ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
 				gs->ScoreResource(resources[i].Key,resources[i].Value, rtsobject);
 				gatherer->RemoveResource(resources[i].Key, resources[i].Value);

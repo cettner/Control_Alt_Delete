@@ -31,6 +31,7 @@ protected:
 	virtual bool FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings) override;
 	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController) override;
 	virtual void StartMatch() override;
+	virtual bool ReadyToEndMatch_Implementation() override;
 
 protected:
 	/** The default pawn class used by RTS players. */
