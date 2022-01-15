@@ -128,6 +128,7 @@ public:
 
 	bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar = nullptr);
 
+	FTransform FindActorSpawnLocation(FVector BoxExtent) const;
 
 protected:
 

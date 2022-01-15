@@ -17,19 +17,24 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 {
 	GENERATED_BODY()
 
-	public:
+	protected:
+		/*Used to Optimize Retrieval of Resources*/
+		void CalculateCurrentWeight();
+
+
 	/************************************IAbilityUserInterface****************************/
+	public:
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
+	/*************************************************************************************/
 
 
-	public:
-		/*Used to Optimize Retrieval of Resources*/
-		void CalculateCurrentWeight();
+
 	/*********************************Resource Gatherer***********************************/
+	public:
 		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount);
 		virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount);
 
@@ -46,15 +51,20 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 	/*********************************Experiance Accumulator***********************************/
 		virtual void GrantExp(uint32 inexp) override;
 	/******************************************************************************************/
+
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
+
+	/****************************************Config Data***************************************/
 	protected:
-		FReplicationResourceMap HeldResources = FReplicationResourceMap();
-		
 		UPROPERTY(EditDefaultsOnly, Replicated)
 		uint32 MaxWeight = 30U;
 
+	/************************************Runtime Data*****************************************/
+
+		FReplicationResourceMap HeldResources = FReplicationResourceMap();
+		
 		UPROPERTY(Replicated)
 		uint32 CurrentWeight = 0U;
 

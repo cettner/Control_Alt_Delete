@@ -100,7 +100,14 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 	const bool isminion = SpawnData.SpawnClass.Get()->IsChildOf(ARTSMinion::StaticClass());
 	if (isminion == true)
 	{
-		ARTSMinion* Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, FTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
+		const ARTSMinion * defaultminion = Cast<ARTSMinion>(SpawnData.SpawnClass.GetDefaultObject());
+		FVector minionextent;
+		FVector minionorigin;
+		defaultminion->GetActorBounds(true, minionorigin, minionextent);
+		FTransform spawntransform = SpawningStructure->FindActorSpawnLocation(minionextent);
+
+
+		ARTSMinion * Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, spawntransform, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 
 		AController* PC = SpawnData.RecieveingController;
 		const AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
@@ -133,7 +140,7 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 			}
 		}
 
-		UGameplayStatics::FinishSpawningActor(Minion, FTransform());
+		UGameplayStatics::FinishSpawningActor(Minion, spawntransform);
 		AddRTSObjectToTeam(Minion);
 	}
 	else

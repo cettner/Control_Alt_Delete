@@ -267,6 +267,23 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 	return 	gs->ScoreResource(ResourceType, Amount,this);
 }
 
+FTransform ARTSStructure::FindActorSpawnLocation(FVector InBoxExtent) const
+{
+	
+	const FCollisionShape traceshape = FCollisionShape::MakeBox(InBoxExtent);
+	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
+	FTransform retval = FTransform();
+
+	const FVector fv = GetActorForwardVector();
+	FVector actororigin;
+	FVector actorbounds;
+	GetActorBounds(true, actororigin, actorbounds, false);
+
+
+
+	return FTransform();
+}
+
 bool ARTSStructure::QueueActor(TSubclassOf<UObject> ObjectClass, AController* InheritingController)
 {
 	if (!HasAuthority()) return false;
