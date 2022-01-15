@@ -72,13 +72,13 @@ protected:
 	virtual bool BuildGridData();
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	int NumRows = 10;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	int NumColumns = 10;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	float TileSize = 200.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
