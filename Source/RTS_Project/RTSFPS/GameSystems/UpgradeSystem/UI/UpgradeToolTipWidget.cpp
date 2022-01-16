@@ -18,7 +18,7 @@ void UUpgradeToolTipWidget::FormatDependencies(TArray<FUpgradeDependencyInfo> In
 	}
 }
 
-void UUpgradeToolTipWidget::FormatDependencyText(const FUpgradeDependencyInfo InInfo, UTextBlock * DependencyBlock)
+void UUpgradeToolTipWidget::FormatDependencyText(const FUpgradeDependencyInfo InInfo, UTextBlock * DependencyBlock) const
 {
 	FSlateColor color;
 

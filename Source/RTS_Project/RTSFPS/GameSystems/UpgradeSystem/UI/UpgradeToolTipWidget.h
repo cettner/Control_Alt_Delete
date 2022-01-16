@@ -25,7 +25,7 @@ public:
 	virtual void FormatDependencies(TArray<FUpgradeDependencyInfo> InUpgradeDependencies);
 
 protected:
-	virtual void FormatDependencyText(const FUpgradeDependencyInfo InInfo, UTextBlock * DependencyBlock);
+	virtual void FormatDependencyText(const FUpgradeDependencyInfo InInfo, UTextBlock * DependencyBlock) const;
 
 protected:
 	/*****************Widget Design Data**********************/

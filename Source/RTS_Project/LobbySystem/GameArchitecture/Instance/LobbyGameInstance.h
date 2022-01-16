@@ -23,7 +23,7 @@ struct FLobbySettings
 	int NumTeams = 2;
 
 	UPROPERTY(EditDefaultsOnly)
-	int NumPlayersPerTeam = 2;
+	int NumPlayersPerTeam = 3;
 };
 
 USTRUCT()

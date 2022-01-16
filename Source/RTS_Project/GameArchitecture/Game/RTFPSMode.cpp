@@ -54,20 +54,35 @@ UClass * ARTFPSMode::GetDefaultPawnClassForController_Implementation(AController
 
 AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
 {
-	UWorld * World = GetWorld();
-	ARTFPSPlayerState * PS = Cast<ARTFPSPlayerState>(Player->PlayerState);
-	ADefaultGameState * GS = GetGameState<ADefaultGameState>();
+	UWorld * world = GetWorld();
+	const ARTFPSPlayerState * PS = Cast<ARTFPSPlayerState>(Player->PlayerState);
+	AActor * retval = nullptr;
 
-	for (TActorIterator<ARTFPSPlayerStart> It(World); It; ++It)
+	if (!HasMatchStarted())
 	{
-		ARTFPSPlayerStart * Start = *It;
-		if (GS->IsTeamValid(Start->teamid) && Start->isRTSStart == PS->IsRTSPlayer() && Start->teamid == PS->TeamID)
+		retval = ChoosePlayerStart(Player);
+	}
+	else
+	{
+		for (TActorIterator<ATeamPlayerStart> It(world); It; ++It)
 		{
-			return(Start);
+			ATeamPlayerStart * start = *It;
+			if (start->teamid == PS->TeamID)
+			{
+				retval = start;
+				ARTFPSPlayerStart * rtsfpsstart = Cast<ARTFPSPlayerStart>(start);
+
+				if (rtsfpsstart->isRTSStart == PS->IsRTSPlayer())
+				{
+					retval = rtsfpsstart;
+					break;
+				}
+			}
 		}
 	}
 
-	return (ChoosePlayerStart(Player));
+
+	return (retval);
 }
 
 bool ARTFPSMode::FinishPlayerRegistration(ADefaultPlayerController* RegisteringPlayer, FPlayerSettings settings)
