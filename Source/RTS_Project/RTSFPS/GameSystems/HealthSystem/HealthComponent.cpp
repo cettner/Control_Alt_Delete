@@ -18,13 +18,24 @@ UHealthComponent::UHealthComponent()
 	CurrentHealth = MaxHealth;
 }
 
-void UHealthComponent::SetMaxHealth(float healthval)
+void UHealthComponent::SetMaxHealth(float healthval, bool AdjustCurrentHealth)
 {
+	const float prevhealth = MaxHealth;
 	MaxHealth = healthval;
 
-	if (CurrentHealth > MaxHealth)
+	if (AdjustCurrentHealth == true)
 	{
-		SetCurrentHealth(MaxHealth);
+		if (CurrentHealth > MaxHealth)
+		{
+			SetCurrentHealth(MaxHealth);
+		}
+		else if (MaxHealth > prevhealth)
+		{
+			const float healthdiff = MaxHealth - prevhealth;
+			const float newcurrenthealth = CurrentHealth + healthdiff;
+
+			SetCurrentHealth(newcurrenthealth);
+		}
 	}
 }
 

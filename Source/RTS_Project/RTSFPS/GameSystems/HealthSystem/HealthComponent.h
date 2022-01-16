@@ -75,7 +75,7 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
-	virtual void SetMaxHealth(float healthval);
+	virtual void SetMaxHealth(float InHealthVal, bool AdjustCurrentHealth = true);
 
 	virtual void SetDeathanimMontage(UAnimMontage* InMontage);
 
