@@ -4,8 +4,6 @@
 #include "UI/StructureSpawnQueueWidget.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimableSquareGameGrid.h"
 
-#include "Components/DecalComponent.h"
-#include "Materials/Material.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -13,6 +11,7 @@ ARTSStructure::ARTSStructure() : Super()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 	Selection = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
 	bReplicates = true;
 
@@ -40,13 +39,30 @@ void ARTSStructure::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	/*Set Up perception so that it can be sensed by AI Pawnsensing Agents*/
-	UWorld* World = GetWorld();
-	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
-	if (PerceptionSystem)
+	if (HasAuthority())
 	{
-		PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+		/*Set Up perception so that it can be sensed by AI Pawnsensing Agents*/
+		UWorld* World = GetWorld();
+		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+		if (PerceptionSystem)
+		{
+			PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+		}
+
+
+		if (!bSkipsConstruction)
+		{
+			Health->SetCurrentHealth(UnConstructedHealth);
+			bISConstructed = false;
+			BeginConstruction();
+		}
+		else
+		{
+			OnConstructionComplete();
+		}
+
 	}
+
 
 	/*Pick a Random Destruction Animation to Play on Death*/
 	if (DestroyAnimations.Num())
@@ -55,17 +71,6 @@ void ARTSStructure::PostInitializeComponents()
 		uint8_t destroyindex = abs(rand() % DestroyAnimations.Num());
 		DestroyAnimation = DestroyAnimations[destroyindex];
 		Health->SetDeathanimMontage(DestroyAnimation);
-	}
-
-	if (!bSkipsConstruction)
-	{
-		Health->SetCurrentHealth(UnConstructedHealth);
-		bISConstructed = false;
-		BeginConstruction();
-	}
-	else
-	{
-		OnConstructionComplete();
 	}
 
 }
@@ -269,19 +274,123 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 
 FTransform ARTSStructure::FindActorSpawnLocation(FVector InBoxExtent) const
 {
-	
+	FTransform retval = GetTransform();
+	bool foundlocation = false;
+
+	/*Unimportant stuff*/
+	#if WITH_EDITOR
+		 UWorld* world = GetWorldPIE();
+	#else
+		 UWorld* world = GetWorld();
+	#endif // WITH_EDITOR
+
+	/*Create a Box with same extents as the incoming unit*/
 	const FCollisionShape traceshape = FCollisionShape::MakeBox(InBoxExtent);
+	
 	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
-	FTransform retval = FTransform();
+	FName TraceTag("DebugShooterTag");
+	world->DebugDrawTraceTag = TraceTag;
+	queryparams.TraceTag = TraceTag;
+	queryparams.bTraceComplex = false;
+	queryparams.bReturnFaceIndex = true;
+	queryparams.bReturnPhysicalMaterial = false;
+	queryparams.bFindInitialOverlaps = false;
 
-	const FVector fv = GetActorForwardVector();
-	FVector actororigin;
-	FVector actorbounds;
-	GetActorBounds(true, actororigin, actorbounds, false);
+	/*Distance the box is "moved" per check, will probably make this configurable, but for now make the quarter-width of the incoming volume*/
+	const float adjustmentdist = InBoxExtent.X;
+	/*Small collision buffer added to Trace check positions so we dont collide with it directly, Don't want to add to ignored actors*/
+	const float collisionbuffer = 10.0f;
+	
+	/*Ideally the center of the object, can also use AActor::GetComponentsBoundingBox.GetOrigin(), for true relative center*/
+	const FVector actororigin = GetActorLocation();
+	/*Half width for the structures Bounding Area in x,y,z*/
+	const FVector actorbounds = GetComponentsBoundingBox(false, false).GetExtent();
 
+	const float totalwidth = actorbounds.X * 2.0f;
+	const float totallength = actorbounds.Y * 2.0f;
+	/*Measure sides of bounding area, + 2 units on each end for corners then discern how many boxes can be drawn of that size along the side*/
+	const int32 numboxesperwidth = FMath::FloorToInt((totalwidth + (2 * InBoxExtent.X)) / adjustmentdist);
+	const int32 numboxesperheight = FMath::FloorToInt((totallength + (2 * InBoxExtent.Y)) / adjustmentdist);
 
+	/*Four starting corners of the bounding area such that the corner of the spawning structure touches the corner of the spawned units bouning area*/
+	const FVector topLeftcornerstart = FVector(actororigin.X + actorbounds.X + InBoxExtent.X + collisionbuffer, actororigin.Y + actorbounds.Y + InBoxExtent.Y, InBoxExtent.Z);
+	const FVector toprightcornerstart = FVector(actororigin.X + actorbounds.X + InBoxExtent.X, actororigin.Y - actorbounds.Y - InBoxExtent.Y - collisionbuffer, InBoxExtent.Z);
+	const FVector bottomrightcornerstart = FVector(actororigin.X - actorbounds.X - InBoxExtent.X - collisionbuffer, actororigin.Y - actorbounds.Y - InBoxExtent.Y, InBoxExtent.Z);
+	const FVector bottomleftcornerstart = FVector(actororigin.X - actorbounds.X - InBoxExtent.X, actororigin.Y + actorbounds.Y + InBoxExtent.Y + collisionbuffer, InBoxExtent.Z);
 
-	return FTransform();
+	const FQuat tracerotation = FRotator(0.0f, 0.0f, 0.0f).Quaternion();
+
+	FVector traceboxorigin;
+	FHitResult outhit;
+
+	for (int i = 0; i < numboxesperheight; i++)
+	{
+		traceboxorigin = topLeftcornerstart - FVector(0.0f, adjustmentdist * i, 0.0f);
+		
+		world->SweepSingleByChannel(outhit, traceboxorigin, traceboxorigin + FVector(0, 0, 1), tracerotation, SpawnTraceChannel, traceshape, queryparams);
+		if (outhit.bBlockingHit == false)
+		{
+			/*Nothing detected in bounding area so good to break from the loop*/
+			retval.SetLocation(traceboxorigin);
+			foundlocation = true;
+			break;
+		}
+	}
+
+	if (!foundlocation)
+	{
+		for (int i = 0; i < numboxesperwidth; i++)
+		{
+			traceboxorigin = toprightcornerstart - FVector(adjustmentdist * i, 0.0f, 0.0f);
+
+			world->SweepSingleByChannel(outhit, traceboxorigin, traceboxorigin + FVector(0, 0, 1), tracerotation, SpawnTraceChannel, traceshape, queryparams);
+
+			if (outhit.bBlockingHit == false)
+			{
+				/*Nothing detected in bounding area so good to break from the loop*/
+				retval.SetLocation(traceboxorigin);
+				foundlocation = true;
+				break;
+			}
+		}
+	}
+
+	if (!foundlocation)
+	{
+		for (int i = 0; i < numboxesperheight; i++)
+		{
+			traceboxorigin = bottomrightcornerstart + FVector(0.0f, adjustmentdist * i, 0.0f);
+
+			world->SweepSingleByChannel(outhit, traceboxorigin, traceboxorigin + FVector(0, 0, 1), tracerotation, SpawnTraceChannel, traceshape, queryparams);
+
+			if (outhit.bBlockingHit == false)
+			{
+				/*Nothing detected in bounding area so good to break from the loop*/
+				retval.SetLocation(traceboxorigin);
+				foundlocation = true;
+				break;
+			}
+		}
+	}
+
+	if (!foundlocation)
+	{
+		for (int i = 0; i < numboxesperwidth; i++)
+		{
+			traceboxorigin = bottomleftcornerstart + FVector(adjustmentdist * i, 0.0f, 0.0f);
+
+			world->SweepSingleByChannel(outhit, traceboxorigin, traceboxorigin + FVector(0, 0, 1), tracerotation, SpawnTraceChannel, traceshape, queryparams);
+			if (outhit.bBlockingHit == false)
+			{
+				/*Nothing detected in bounding area so good to break from the loop*/
+				retval.SetLocation(traceboxorigin);
+				foundlocation = true;
+				break;
+			}
+		}
+	}
+	
+	return retval;
 }
 
 bool ARTSStructure::QueueActor(TSubclassOf<UObject> ObjectClass, AController* InheritingController)

@@ -18,7 +18,11 @@
 #include "RTS_Project/AssetHelpers/GameAssets.h"
 #include "RTSStructure.generated.h"
 
-
+enum ERTSStructureSpawnSuccess
+{
+	SUCCESS,
+	COLLISION_FAIL,
+};
 
 
 USTRUCT()
@@ -189,6 +193,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Spawning)
 	TArray< FStructureSpawnData> SpawnableUnits;
+
+	UPROPERTY(EditDefaultsOnly, Category = Spawning)
+	TEnumAsByte<ECollisionChannel> SpawnTraceChannel;
 
 	TQueue<FStructureQueueData> StructureQueue;
 

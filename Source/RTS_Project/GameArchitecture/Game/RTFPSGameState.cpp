@@ -93,40 +93,50 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 
 }
 
-void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData)
+bool ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData)
 {
+	bool retval = false;
 	UWorld* World = GetWorld();
 	/*Check if the Object is a Minion, or an Upgrade*/
 	const bool isminion = SpawnData.SpawnClass.Get()->IsChildOf(ARTSMinion::StaticClass());
 	if (isminion == true)
 	{
-		const ARTSMinion * defaultminion = Cast<ARTSMinion>(SpawnData.SpawnClass.GetDefaultObject());
 		FVector minionextent;
 		FVector minionorigin;
-		defaultminion->GetActorBounds(true, minionorigin, minionextent);
-		FTransform spawntransform = SpawningStructure->FindActorSpawnLocation(minionextent);
+
+		ARTSMinion * Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, SpawningStructure->GetTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding);
+		Minion->GetActorBounds(true, minionorigin, minionextent);
+		const FTransform spawntransform = SpawningStructure->FindActorSpawnLocation(minionextent);
+
+		AController* pc = SpawnData.RecieveingController;
+		const AFPSPlayerState* ps;
+		
+		if (pc != nullptr)
+		{
+			ps = pc->GetPlayerState<AFPSPlayerState>();
+		}
+		else 
+		{
+			ps = nullptr;
+		}
 
 
-		ARTSMinion * Minion = World->SpawnActorDeferred<ARTSMinion>(SpawnData.SpawnClass, spawntransform, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
-
-		AController* PC = SpawnData.RecieveingController;
-		const AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
 
 		/*If its a minion, Check whether the purchasing controller will be assuming control of the Pawn*/
 		const bool isvalidforpossession = (Cast<ACommander>(Minion) != nullptr) && (ps != nullptr);
 		if ((isvalidforpossession == true) && (ps->GetRespawnState() == EPlayerReswpawnState::AWAITINGRESPAWN))
 		{
-			Minion->SetTeam(PC->GetPlayerState<ADefaultPlayerState>()->TeamID);
+			Minion->SetTeam(pc->GetPlayerState<ADefaultPlayerState>()->TeamID);
 			/*Apply Upgrades that are global to the team*/
 			ApplyGlobalUpgrades(Minion);
 			/*Apply Upgrades that are specific to the player*/
-			ApplyPlayerUpgrades(Minion, PC->GetPlayerState<AFPSPlayerState>());
+			ApplyPlayerUpgrades(Minion, pc->GetPlayerState<AFPSPlayerState>());
 			
 			/*Get And Destroy the Pawn the player was Using and give them the new one*/
-			APawn* respawnpawn = PC->GetPawn();
-			PC->UnPossess();
+			APawn* respawnpawn = pc->GetPawn();
+			pc->UnPossess();
 			respawnpawn->Destroy();
-			PC->Possess(Minion);
+			pc->Possess(Minion);
 		}
 		else
 		{
@@ -141,7 +151,18 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 		}
 
 		UGameplayStatics::FinishSpawningActor(Minion, spawntransform);
-		AddRTSObjectToTeam(Minion);
+		retval = IsValid(Minion);
+
+		if (IsValid(Minion))
+		{
+			AddRTSObjectToTeam(Minion);
+			retval = true;
+		}
+		else
+		{
+
+		}
+
 	}
 	else
 	{
@@ -177,9 +198,10 @@ void ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 			AFPSPlayerState * ps = PC->GetPlayerState<AFPSPlayerState>();
 			ps->AddUpgrade(upgradeclass);
 		}
+		retval = true;
 	}
 
-
+	return(retval);
 }
 
 void ARTFPSGameState::HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController* InvokedController)

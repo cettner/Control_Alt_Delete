@@ -42,7 +42,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void RefreshAllUnits();
 		virtual void OnUnitDeath(IRTSObjectInterface* Unit);
 		virtual void HandlePlayerDeath(AFPSServerController * Controller);
-		virtual void SpawnObjectFromStructure(ARTSStructure* SpawningStructure, FStructureQueueData SpawnData);
+		virtual bool SpawnObjectFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData);
 		virtual void HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController * InvokedController = nullptr);
 		virtual void ApplyGlobalUpgrades(ARTSMinion * Minion) const;
 		virtual void ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerState * InController) const;
