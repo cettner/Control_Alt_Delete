@@ -94,36 +94,34 @@ void ACombatCommander::WeaponSwitchComplete()
 
 void ACombatCommander::HandleSwitchWeapon(int direction)
 {
-	if (GetLocalRole() < ROLE_Authority)
+	const bool bhasmorethanoneweapon = Inventory.Num() > 1;
+	if ((GetLocalRole() < ROLE_Authority) && bhasmorethanoneweapon)
 	{
 		ServerSwitchWeapon(direction);
 	}
-	else
+	else if(bhasmorethanoneweapon)
 	{
-		if (Inventory.Num() >= 2)
+		/*If we're already Cycling Weapons */
+		if (NextWeapon && bIsSwitching_Weapon)
 		{
-			/*If we're already Cycling Weapons */
-			if (NextWeapon && bIsSwitching_Weapon)
-			{
-				const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
-				NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
-			}
-			else if (CurrentWeapon) // Get the nextweapon based on the current
-			{
-				const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
-				NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
-			}
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(NextWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
+		}
+		else if (CurrentWeapon) // Get the nextweapon based on the current
+		{
+			const int32 CurrentWeaponIdx = Inventory.IndexOfByKey(CurrentWeapon);
+			NextWeapon = Inventory[(CurrentWeaponIdx + direction + Inventory.Num()) % Inventory.Num()];
+		}
 			
-			if (bIsSwitching_Weapon)
-			{
-				SetWeaponEquippedTimer();
-			}
-			else if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
-			{
-				bIsSwitching_Weapon = true;
-				UnEquipWeapon();
-				SetWeaponEquippedTimer();
-			}
+		if (bIsSwitching_Weapon)
+		{
+			SetWeaponEquippedTimer();
+		}
+		else if (CurrentWeapon && CurrentWeapon->GetCurrentState() == EWeaponState::Idle)
+		{
+			bIsSwitching_Weapon = true;
+			UnEquipWeapon();
+			SetWeaponEquippedTimer();
 		}
 	}
 }
@@ -236,8 +234,6 @@ void ACombatCommander::ServerSwitchWeapon_Implementation(int direction)
 	HandleSwitchWeapon(direction);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//INPUT
 void ACombatCommander::SwitchWeaponUp()
 {
 	HandleSwitchWeapon(1);

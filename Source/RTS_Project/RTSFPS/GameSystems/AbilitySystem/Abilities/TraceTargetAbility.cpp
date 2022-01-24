@@ -52,10 +52,6 @@ void UTraceTargetAbility::UpdateChannel()
 	UWorld * world = GetWorld();
 	FHitResult outhit;
 
-	const FName TraceTag("DebugShooterTag");
-	world->DebugDrawTraceTag = TraceTag;
-	queryparams.TraceTag = TraceTag;
-
 
 	queryparams.AddIgnoredActors(abilityuser->GetIgnoredTraceActors(TWeakObjectPtr<UAbility>(this)));
 

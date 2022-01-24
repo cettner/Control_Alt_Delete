@@ -38,7 +38,6 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		virtual void OnPossess(APawn* InPawn) override;
 
     protected:
-
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerSelectRespawnStructure(ARTSStructure* SelectedStructure);
 
@@ -51,25 +50,4 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 	protected:
 		bool bisUpgradeMenuOpen = false;
 		
-
-	protected:
-	/**********************Debug / Testing Only****************/
-		UFUNCTION()
-		virtual void GrantPlayerExp();
-		
-		UFUNCTION(Server, reliable, WithValidation)
-		void ServerGrantPlayerExp();
-
-		UPROPERTY(EditDefaultsOnly, Category = Debug)
-		uint32 ExptoGrant = 3U;
-
-
-		UFUNCTION()
-		virtual void DebugEndMatch();
-
-		UFUNCTION(Server, reliable, WithValidation)
-		void ServerDebugEndMatch();
-
-
-	/**********************************************************/
 };

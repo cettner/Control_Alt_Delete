@@ -82,14 +82,5 @@ class RTS_PROJECT_API UAbility : public UObject
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
 
-/*
-	#ifdef UE_BUILD_DEBUG
-		class UAbilityAnimNotify;
 
-		protected:
-		virtual bool InitCheck();
-		bool AreAnimNotifiesSynced(FAbilityAnim AbilityAnim);
-		uint8 GetNotifyConfigID(UAbilityAnimNotify * InNotify);
-	#endif
-*/
 };

@@ -497,14 +497,12 @@ void ARTSStructure::CancelSpawn()
 
 void ARTSStructure::OnRep_TeamIndex()
 {
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
+	const UWorld* world = GetWorld();
 
-	ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
-	if (PC == nullptr) return;
+	const APlayerController* pc = world->GetFirstPlayerController<APlayerController>();
 
-	ADefaultPlayerState* PS = PC->GetPlayerState<ADefaultPlayerState>();
-	if (PS && PS->TeamID != TeamIndex)
+	ADefaultPlayerState* ps = pc->GetPlayerState<ADefaultPlayerState>();
+	if (ps && ps->TeamID != TeamIndex)
 	{
 		SetTeamColors(FLinearColor::Red);
 		SetSelected();
