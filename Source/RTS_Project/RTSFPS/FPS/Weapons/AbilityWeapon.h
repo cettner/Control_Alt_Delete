@@ -30,10 +30,12 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual void StopReload() override;
 
 		virtual void OnEnterInventory(ACombatCommander* NewOwner) override;
+
+		virtual void WeaponPrimarySetting(int ModeToggle) override;
 	/*****************************************************************/
 
 	/***********************IAbilityUserInterface*********************/
-		virtual bool CanCastAbility() override;
+		virtual bool CanCastAbility() const override;
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay) override;
 		virtual void StopAbilityMontage(FAbilityAnim AnimToStop) override;
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const override;
@@ -62,7 +64,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	protected:
 
 		UFUNCTION(reliable, server, WithValidation)
-		void ServerStartUseAbility();
+		void ServerStartUseAbility(int AbilityIndextoStart);
 
 		UFUNCTION(reliable, server, WithValidation)
 		void ServerStopUseAbility();
@@ -80,5 +82,6 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		UPROPERTY(replicated)
 		int Mana = 0;
 
-		float WeaponRange = 10000.0f;
+		/*Ability is indexed locally*/
+		int AbilityIndex = -1;
 };

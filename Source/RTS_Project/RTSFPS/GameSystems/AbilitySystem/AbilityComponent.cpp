@@ -14,10 +14,12 @@ UAbilityComponent::UAbilityComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-bool UAbilityComponent::CanUseAbility() const
+bool UAbilityComponent::CanUseAbility(int AbilityIndex) const
 {
-	IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
-	bool retval = IsAbilityValid() && !IsCasting();
+	const IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
+	const UAbility * ability = GetAbilityByIndex(AbilityIndex);
+	
+	bool retval = IsValid(ability) && !IsCasting();
 	if (user && retval)
 	{
 		retval = user->CanCastAbility();
@@ -33,14 +35,17 @@ bool UAbilityComponent::CanUseAbility() const
 
 void UAbilityComponent::SetIsCasting(bool CastingState)
 {
-	bIsCasting.Set(CastingState);
+	if (HasAuthority())
+	{
+		bIsCasting.Set(CastingState, CurrentAbilityIndex);
+	}
 }
 
 void UAbilityComponent::SetIsCastSuccessful(bool ReleaseState)
 {
-	if (GetOwner()->HasAuthority())
+	if (HasAuthority())
 	{
-		bReleaseSuccess.Set(ReleaseState);
+		bReleaseSuccess.Set(ReleaseState, CurrentAbilityIndex);
 	}
 }
 
@@ -62,23 +67,25 @@ void UAbilityComponent::SetWantsToCast(bool InState)
 	bWantstoCast = InState;
 }
 
-void UAbilityComponent::SetCurrentAbility(UAbility * InAbility)
+void UAbilityComponent::SetCurrentAbility(int InAbilityIndex)
 {
-	CurrentAbility = InAbility;
+	CurrentAbilityIndex = InAbilityIndex;
 }
-
 
 bool UAbilityComponent::HasAuthority()
 {
 	return GetOwner()->HasAuthority();
 }
 
-void UAbilityComponent::StartAbility()
+void UAbilityComponent::StartAbility(int InAbilityIndex)
 {
 	SetWantsToCast(true);
-	if (CanUseAbility())
+
+	if (CanUseAbility(InAbilityIndex))
 	{
-		CurrentAbility->OnAbilityStart();
+		SetCurrentAbility(InAbilityIndex);
+		UAbility* abilitytostart = GetCurrentAbility();
+		abilitytostart->OnAbilityStart();
 	}
 }
 
@@ -90,9 +97,11 @@ void UAbilityComponent::OnCastStart()
 void UAbilityComponent::ReleaseAbility()
 {
 	SetWantsToCast(false);
+
 	if (IsAbilityValid())
 	{
-		CurrentAbility->OnAbilityReleased();
+		UAbility* abilitytorelease = GetCurrentAbility();
+		abilitytorelease->OnAbilityReleased();
 		SetIsCastReady(false);
 	}
 
@@ -105,7 +114,7 @@ void UAbilityComponent::OnCastEnd()
 		SetIsCasting(false);
 		if (WantstoCast())
 		{
-			StartAbility();
+			StartAbility(CurrentAbilityIndex);
 		}
 	}
 }
@@ -114,13 +123,18 @@ void UAbilityComponent::AbilityEffect()
 {
 	if (IsAbilityValid() && GetOwner()->HasAuthority())
 	{
-		CurrentAbility->OnEffect();
+		GetCurrentAbility()->OnEffect();
 	}
 }
 
-void UAbilityComponent::ChangeAbility()
+int UAbilityComponent::GetNextAvailableIndex(int InCurrentIndex, bool bOnlyEnabledAbilities)
 {
-
+	int retval = NO_ABILITY_INDEX;
+	if (AllAbilites.Num() && (InCurrentIndex > NO_ABILITY_INDEX))
+	{
+		retval = (InCurrentIndex + 1) % AllAbilites.Num();
+	}
+	return retval;
 }
 
 void UAbilityComponent::OnReadyNotify()
@@ -128,7 +142,8 @@ void UAbilityComponent::OnReadyNotify()
 	if (IsAbilityValid())
 	{
 		SetIsCastReady(true);
-		CurrentAbility->NotifyOnReady();
+		UAbility* abilitytoready = GetCurrentAbility();
+		abilitytoready->NotifyOnReady();
 	}
 }
 
@@ -136,7 +151,8 @@ void UAbilityComponent::OnLoopNotify()
 {
 	if (IsAbilityValid())
 	{
-		CurrentAbility->NotifyOnLoop();
+		UAbility* abilitytoloop = GetCurrentAbility();
+		abilitytoloop->NotifyOnLoop();
 	}
 }
 
@@ -154,13 +170,32 @@ void UAbilityComponent::EndAbility()
 {
 	if (IsAbilityValid())
 	{
-		CurrentAbility->OnAbilityEnd();
+		UAbility* abilitytoend = GetCurrentAbility();
+		abilitytoend->OnAbilityEnd();
 	}
 }
 
-TWeakObjectPtr<UAbility> UAbilityComponent::GetCurrentAbility() const
+UAbility * UAbilityComponent::GetCurrentAbility() const
 {
-	return CurrentAbility;
+	UAbility* retval = GetAbilityByIndex(CurrentAbilityIndex);
+
+	return retval;
+}
+
+UAbility * UAbilityComponent::GetAbilityByIndex(int InIndex) const
+{
+
+	UAbility * retval = nullptr;
+	if (CurrentAbilityIndex > NO_ABILITY_INDEX)
+	{
+		retval = AllAbilites[InIndex];
+	}
+	return retval;
+}
+
+int UAbilityComponent::GetCurrentAbilityIndex() const
+{
+	return CurrentAbilityIndex;
 }
 
 TArray<TWeakObjectPtr<UAbility>> UAbilityComponent::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
@@ -203,7 +238,7 @@ TWeakObjectPtr<UAbility> UAbilityComponent::AddAbility(TSubclassOf<UAbility> Abi
 		/*If we dont currently have an ability*/
 		if(!IsAbilityValid())
 		{
-			SetCurrentAbility(newability);
+			SetCurrentAbility(0);
 		}
 	}
 	return TWeakObjectPtr<UAbility>(newability);
@@ -211,7 +246,7 @@ TWeakObjectPtr<UAbility> UAbilityComponent::AddAbility(TSubclassOf<UAbility> Abi
 
 bool UAbilityComponent::IsCasting() const
 {
-	return bIsCasting.Get();
+	return bIsCasting.WasSuccessful();
 }
 
 bool UAbilityComponent::WantstoCast() const
@@ -226,7 +261,8 @@ bool UAbilityComponent::IsCastReady() const
 
 bool UAbilityComponent::IsAbilityValid() const
 {
-	bool retval = IsValid(CurrentAbility);
+	const UAbility * ability = GetCurrentAbility();
+	const bool retval = IsValid(ability);
 	return retval;
 }
 
@@ -329,42 +365,42 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void UAbilityComponent::OnRep_bIsCasting()
 {
-	if (bIsCasting.Get() == true)
+	if (bIsCasting.WasSuccessful() == true)
 	{
-		bool authority = GetOwner()->HasAuthority();
+		const int abilityindex = bIsCasting.Index();
 
-		if (!CurrentAbility && !authority)
+		if(abilityindex > NO_ABILITY_INDEX)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Failed")));
-		}
-		else
-		{
-			CurrentAbility->OnAbilityStart();
+			SetCurrentAbility(abilityindex);
+			UAbility* ability = GetAbilityByIndex(abilityindex);
+			ability->OnAbilityStart();
 		}
 	}
 }
 
 void UAbilityComponent::OnRep_bIsCastReleased()
 {
-	if (CurrentAbility)
+	UAbility * castability = GetAbilityByIndex(bReleaseSuccess.Index());
+	if (castability != nullptr)
 	{
-		if (bReleaseSuccess.Get() == true)
+		if (bReleaseSuccess.WasSuccessful() == true)
 		{
 			bIsCastReady = true;
-			CurrentAbility->OnAbilityReleased();
+			castability->OnAbilityReleased();
 		}
 		else
 		{
 			bIsCastReady = false;
-			CurrentAbility->OnAbilityReleased();
+			castability->OnAbilityReleased();
 		}
 	}
 }
 
 void UAbilityComponent::OnRep_AbilityTarget()
 {
-	if (CurrentAbility)
+	UAbility* currentability = GetCurrentAbility();
+	if (currentability)
 	{
-		CurrentAbility->ProcessTarget(AbilityTarget);
+		currentability->ProcessTarget(AbilityTarget);
 	}
 }

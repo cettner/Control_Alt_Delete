@@ -75,6 +75,10 @@ void ACombatCommander::SetupPlayerInputComponent(UInputComponent * ActorInputCom
 	ActorInputComponent->BindAction("RightMouse", IE_Released, this, &ACombatCommander::OnSecondaryFireEnd);
 
 	ActorInputComponent->BindAction("RKey", IE_Pressed, this, &ACombatCommander::OnReload);
+
+	ActorInputComponent->BindAction("QKey", IE_Pressed, this, &ACombatCommander::OnChangePrimaryFire);
+	ActorInputComponent->BindAction("EKey", IE_Pressed, this, &ACombatCommander::OnChangeSecondaryFire);
+
 }
 
 void ACombatCommander::WeaponSwitchComplete()
@@ -282,6 +286,16 @@ void ACombatCommander::OnReload()
 	{
 		CurrentWeapon->StartReload();
 	}
+}
+
+void ACombatCommander::OnChangePrimaryFire()
+{
+	CurrentWeapon->WeaponPrimarySetting(1);
+}
+
+void ACombatCommander::OnChangeSecondaryFire()
+{
+	CurrentWeapon->WeaponSecondarySetting(1);
 }
 
 void ACombatCommander::StartWeaponFire()

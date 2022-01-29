@@ -28,22 +28,17 @@ public:
 
 	bool IsWeaponEquipped();
 
-	/*Get Socket Name, TODO:(based on griptype)*/
+	/*Get Socket Name, (based on griptype)*/
 	virtual FName GetWeaponAttachPoint(AWeapon* Weapon, bool bWantsFirstPerson);
 
-	UFUNCTION(BlueprintCallable)
 	virtual EWeaponState GetWeaponState();
 
 	/*Notifier From Weapon that Unequip Animation has Completed*/
 	void UnEquipComplete();
 
 
-
+/****************************INPUT***********************************/
 protected:
-/////////////////////////////////////////////////
-//INPUT
-
-	/*Starts Weapon  Selection Process, Selection is done Client Side, with final result being replicated to server*/
 	UFUNCTION()
 	void SwitchWeaponUp();
 
@@ -65,6 +60,13 @@ protected:
 	UFUNCTION()
 	void OnReload();
 
+	UFUNCTION()
+	void OnChangePrimaryFire();
+
+	UFUNCTION()
+	void OnChangeSecondaryFire();
+/********************************************************************/
+
 	/*Fire Weapon After Character Status Checks Have been Performed*/
 	void StartWeaponFire();
 
@@ -72,12 +74,7 @@ protected:
 	void StopWeaponFire();
 
 public:
-	UFUNCTION(BlueprintCallable)
 	TEnumAsByte<Combat_Stance> GetWeaponStance() const;
-
-	/*Read by Animation Blueprint to determine which state machine to use*/
-	UPROPERTY(BlueprintReadOnly)
-	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
@@ -168,6 +165,8 @@ protected:
 
 	/*Number of seconds Of inactivity before a weapon will begin equipping when cycling weapons*/
 	const float SwitchWeaponDelayTime = 2.0;
+
+	TEnumAsByte<Combat_Stance> Stance = NO_WEAPON_STANCE;
 
 	/*True If User is currently cycling through available weapons*/
 	UPROPERTY(ReplicatedUsing = OnRep_bIsSwitchingWeapon)

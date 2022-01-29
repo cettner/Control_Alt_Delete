@@ -46,7 +46,7 @@ protected:
 	UAbilityComponent * GetHandAbilityComponent(UAbilityAnimNotify * CallingContext) const;
 	
 	UFUNCTION(reliable, server, WithValidation)
-	void ServerStartUseSecondAbility();
+	void ServerStartUseSecondAbility(int InAbilityIndex);
 
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerStopUseSecondAbility();
@@ -58,4 +58,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UAbility>> RightAbilityClasses;
+
+	int RightHandAbilityIndex = -1;
 };

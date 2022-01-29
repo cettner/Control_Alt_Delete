@@ -58,6 +58,15 @@ void AWeapon::StopSecondaryFire()
 
 }
 
+void AWeapon::WeaponPrimarySetting(int ModeToggle)
+{
+
+}
+
+void AWeapon::WeaponSecondarySetting(int ModeToggle)
+{
+}
+
 void AWeapon::OnEquip()
 {
 	

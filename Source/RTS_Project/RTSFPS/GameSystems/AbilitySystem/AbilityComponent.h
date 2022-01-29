@@ -9,31 +9,41 @@
 #include "AbilityComponent.generated.h"
 
 constexpr int INVALID_ABILITY_COST = -1;
-
+constexpr int NO_ABILITY_INDEX = -1;
 
 USTRUCT()
-struct FReplicationBool
+struct FAbilityReplicationBool
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
-	void Set(bool instate)
+	void Set(bool InSuccess, int InAbilityIndex)
 	{
-		Value = instate;
+		Success = InSuccess;
+		AbilityIndex = InAbilityIndex;
 		ReplicationCounter++;
 	}
 
-	bool Get() const
+	bool WasSuccessful() const
 	{
-		return(Value);
+		return(Success);
 	}
+
+	int Index() const
+	{
+		return AbilityIndex;
+	}
+
 
 private:
 	UPROPERTY()
-	bool Value = false;
+	bool Success = false;
 
 	UPROPERTY()
 	uint8 ReplicationCounter = 0x00U;
+
+	UPROPERTY()
+	int AbilityIndex = -1;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -51,7 +61,7 @@ public:
 
 public:
 	/*Called by Comp Owner on inital attempt to use ability*/
-	virtual void StartAbility();
+	virtual void StartAbility(int InAbilityIndex);
 	/*Called by Comp Owner on end of attempt to use ability*/
 	virtual void ReleaseAbility();
 
@@ -67,13 +77,13 @@ public:
 	void SetAbilityTarget(AActor * NewTarget);
 	/*****************************************/
 
+public:
 	/*Start the Abilities Effect*/
 	virtual void AbilityEffect();
 	/*Notify the ability that it has ended*/
 	virtual void EndAbility();
 
-	virtual void ChangeAbility();
-
+	virtual int GetNextAvailableIndex(const int InCurrentIndex, const bool bOnlyEnabledAbilities = true);
 
 public:
 	virtual void OnReadyNotify();
@@ -82,7 +92,9 @@ public:
 	virtual void OnEndNotify();
 
 public:
-	virtual TWeakObjectPtr<UAbility> GetCurrentAbility() const;
+	virtual UAbility * GetCurrentAbility() const;
+	virtual UAbility * GetAbilityByIndex(int InIndex) const;
+	virtual int GetCurrentAbilityIndex() const;
 	virtual bool IsAbilityUsingCrosshair() const;
 	virtual bool IsUsingAbility() const;
 	AActor * GetAbilityTarget() const;
@@ -138,7 +150,7 @@ public:
 
 protected:
 	virtual FVector GetControlRotation();
-	virtual bool CanUseAbility() const;
+	virtual bool CanUseAbility(int AbilityIndex) const;
 	
 	/*ServerReplication Triggers*/
 	void SetIsCasting(bool CastingState);
@@ -146,7 +158,7 @@ protected:
 	/*****************************/
 
 	void SetWantsToCast(bool InState);
-	void SetCurrentAbility(UAbility * InAbility);
+	void SetCurrentAbility(int InAbilityIndex);
 
 
 protected:
@@ -162,9 +174,9 @@ protected:
 	void OnRep_AbilityTarget();
 
 protected:
-	UPROPERTY()
-	UAbility * CurrentAbility = nullptr;
+	int CurrentAbilityIndex = -1;
 	
+	/*Have to mark this as UPROPERTY or the UObjects are considered Weak Pointers without reference and are "randomly" garbage collected*/
 	UPROPERTY()
 	TArray<UAbility *> AllAbilites;
 
@@ -176,10 +188,10 @@ private:
 	bool bIsCastReady = false;
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
-	FReplicationBool bIsCasting = FReplicationBool();
+	FAbilityReplicationBool bIsCasting = FAbilityReplicationBool();
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
-	FReplicationBool bReleaseSuccess = FReplicationBool();
+	FAbilityReplicationBool bReleaseSuccess = FAbilityReplicationBool();
 
 	UPROPERTY(ReplicatedUsing = OnRep_AbilityTarget)
 	AActor * AbilityTarget = nullptr;

@@ -17,7 +17,10 @@ AAbilityWeapon::AAbilityWeapon() : Super()
 
 void AAbilityWeapon::StartFire()
 {
-	ServerStartUseAbility();
+	if (AbilityIndex > NO_ABILITY_INDEX)
+	{
+		ServerStartUseAbility(AbilityIndex);
+	}
 }
 
 void AAbilityWeapon::StopFire()
@@ -43,7 +46,12 @@ void AAbilityWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 
 }
 
-bool AAbilityWeapon::CanCastAbility()
+void AAbilityWeapon::WeaponPrimarySetting(int ModeToggle)
+{
+	AbilityIndex = AbilityComp->GetNextAvailableIndex(AbilityIndex);
+}
+
+bool AAbilityWeapon::CanCastAbility() const
 {
 	return true;
 }
@@ -135,8 +143,9 @@ bool AAbilityWeapon::InitAbilities()
 	{
 		AbilityComp->AddAbility(AbilityClasses[i]);
 	}
-
-	return (true);
+	AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
+	const bool retval = AbilityIndex > NO_ABILITY_INDEX;
+	return (retval);
 }
 
 void AAbilityWeapon::PostInitializeComponents()
@@ -144,14 +153,14 @@ void AAbilityWeapon::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
-bool AAbilityWeapon::ServerStartUseAbility_Validate()
+bool AAbilityWeapon::ServerStartUseAbility_Validate(int InAbilityIndex)
 {
 	return true;
 }
 
-void AAbilityWeapon::ServerStartUseAbility_Implementation()
+void AAbilityWeapon::ServerStartUseAbility_Implementation(int InAbilityIndex)
 {
-	AbilityComp->StartAbility();
+	AbilityComp->StartAbility(InAbilityIndex);
 }
 
 bool AAbilityWeapon::ServerStopUseAbility_Validate()

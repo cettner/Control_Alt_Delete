@@ -89,6 +89,9 @@ public:
 
 	virtual void StopSecondaryFire();
 
+	virtual void WeaponPrimarySetting(int ModeToggle);
+	
+	virtual void WeaponSecondarySetting(int ModeToggle);
 /*********************************************************************************************/
 
 public:

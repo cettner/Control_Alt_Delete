@@ -5,7 +5,7 @@
 
 // Add default functionality here for any IAbilityUserInterface functions that are not pure virtual.
 
-bool IAbilityUserInterface::CanCastAbility()
+bool IAbilityUserInterface::CanCastAbility() const
 {
 	return (false);
 }

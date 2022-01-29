@@ -379,8 +379,8 @@ void ACommander::SetupPlayerInputComponent(UInputComponent* ActorInputComponent)
 	ActorInputComponent->BindAxis("Turn", this, &ACommander::AddControllerYawInput);
 	/*Mouse Y*/
 	ActorInputComponent->BindAxis("LookUp", this, &ACommander::AddControllerPitchInput);
-	/*E*/
-	ActorInputComponent->BindAction("Interact", IE_Pressed, this, &ACommander::Interact);
+	/*F*/
+	ActorInputComponent->BindAction("FKey", IE_Pressed, this, &ACommander::Interact);
 	
 }
 

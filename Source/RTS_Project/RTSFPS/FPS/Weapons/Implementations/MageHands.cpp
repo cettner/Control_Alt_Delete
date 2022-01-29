@@ -53,6 +53,9 @@ bool AMageHands::InitAbilities()
 		RightHandAbilityComp->AddAbility(RightAbilityClasses[i]);
 	}
 
+	RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
+	retval &= (RightHandAbilityIndex > NO_ABILITY_INDEX);
+	
 	return(retval);
 }
 
@@ -120,7 +123,10 @@ uint32 AMageHands::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
 
 void AMageHands::StartSecondaryFire()
 {
-	ServerStartUseSecondAbility();
+	if (RightHandAbilityIndex > NO_ABILITY_INDEX)
+	{
+		ServerStartUseSecondAbility(RightHandAbilityIndex);
+	}
 }
 
 void AMageHands::StopSecondaryFire()
@@ -128,14 +134,14 @@ void AMageHands::StopSecondaryFire()
 	ServerStopUseSecondAbility();
 }
 
-bool AMageHands::ServerStartUseSecondAbility_Validate()
+bool AMageHands::ServerStartUseSecondAbility_Validate(int RequestedAbilityIndex)
 {
 	return true;
 }
 
-void AMageHands::ServerStartUseSecondAbility_Implementation()
+void AMageHands::ServerStartUseSecondAbility_Implementation(int InAbilityIndex)
 {
-	RightHandAbilityComp->StartAbility();
+	RightHandAbilityComp->StartAbility(InAbilityIndex);
 }
 
 bool AMageHands::ServerStopUseSecondAbility_Validate()

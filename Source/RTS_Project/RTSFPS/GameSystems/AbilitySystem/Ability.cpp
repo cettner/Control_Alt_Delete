@@ -88,6 +88,7 @@ UWorld * UAbility::GetWorld() const
 {
 	return AbilityComp->GetWorld();
 }
+
 bool UAbility::HasAuthority() const
 {
 	return AbilityComp->HasAuthority();
