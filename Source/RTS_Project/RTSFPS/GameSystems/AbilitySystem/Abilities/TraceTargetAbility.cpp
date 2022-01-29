@@ -27,7 +27,7 @@ void UTraceTargetAbility::ProcessTraceHit(FHitResult HitResult, FVector StartTra
 {
 	if(CanHit(HitResult.GetActor()))
 	{
-		AbilityComp->SetAbilityTarget(HitResult.GetActor());
+		AbilityComp->SetAbilityTarget(HitResult.GetActor(), HitResult);
 		ProcessTarget(HitResult.GetActor());
 	}
 

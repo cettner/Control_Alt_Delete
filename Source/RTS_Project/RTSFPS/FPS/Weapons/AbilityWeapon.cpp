@@ -148,9 +148,10 @@ bool AAbilityWeapon::InitAbilities()
 	return (retval);
 }
 
-void AAbilityWeapon::PostInitializeComponents()
+void AAbilityWeapon::EndPlay(EEndPlayReason::Type InReason)
 {
-	Super::PostInitializeComponents();
+	AbilityComp->InterruptAbility();
+	Super::EndPlay(InReason);
 }
 
 bool AAbilityWeapon::ServerStartUseAbility_Validate(int InAbilityIndex)

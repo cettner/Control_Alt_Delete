@@ -59,7 +59,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual bool InitAbilities();
 
 	protected:
-		virtual void PostInitializeComponents() override;
+		virtual void EndPlay(EEndPlayReason::Type InReason) override;
 
 	protected:
 

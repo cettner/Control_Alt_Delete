@@ -79,8 +79,8 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-	virtual void BeginDestroy() override;
 	virtual void PostInitializeComponents() override;
+	virtual void EndPlay(EEndPlayReason::Type InReason) override;
 
 protected:
 	virtual void OnDeath() override;

@@ -49,6 +49,11 @@ void UAbility::OnAbilityEnd()
 	AbilityComp->OnCastEnd();
 }
 
+void UAbility::OnAbilityInterrupted()
+{
+	OnAbilityEnd();
+}
+
 void UAbility::OnTick(float DeltaSeconds)
 {
 

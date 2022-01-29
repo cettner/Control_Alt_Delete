@@ -521,7 +521,7 @@ void ULobbyGameInstance::CreateSession()
 
 
 		// Number of sessions
-		SessionSettings.NumPublicConnections = 2;
+		SessionSettings.NumPublicConnections = 4;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
 		SessionSettings.bAllowInvites = true;

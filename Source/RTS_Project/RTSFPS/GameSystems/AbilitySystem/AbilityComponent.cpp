@@ -49,12 +49,13 @@ void UAbilityComponent::SetIsCastSuccessful(bool ReleaseState)
 	}
 }
 
-void UAbilityComponent::SetAbilityTarget(AActor * NewTarget)
+void UAbilityComponent::SetAbilityTarget(AActor * NewTarget, FHitResult AssociatedHit)
 {
 	if (GetOwner()->HasAuthority())
 	{
 		AbilityTarget = NewTarget;
 	}
+	LastAbilityHit = AssociatedHit;
 }
 
 void UAbilityComponent::SetIsCastReady(bool ReadyState)
@@ -105,6 +106,15 @@ void UAbilityComponent::ReleaseAbility()
 		SetIsCastReady(false);
 	}
 
+}
+
+void UAbilityComponent::InterruptAbility()
+{
+	if (IsCasting() && IsAbilityValid())
+	{
+		UAbility * ability = GetCurrentAbility();
+		ability->OnAbilityInterrupted();
+	}
 }
 
 void UAbilityComponent::OnCastEnd()
@@ -224,6 +234,17 @@ bool UAbilityComponent::IsUsingAbility() const
 AActor * UAbilityComponent::GetAbilityTarget() const
 {
 	return AbilityTarget;
+}
+
+bool UAbilityComponent::GetHitInfoFor(AActor * HitTarget, FHitResult & Hit)
+{
+	bool retval = false;
+	if (LastAbilityHit.Actor == HitTarget)
+	{
+		Hit = LastAbilityHit;
+		retval = true;
+	}
+	return retval;
 }
 
 TWeakObjectPtr<UAbility> UAbilityComponent::AddAbility(TSubclassOf<UAbility> AbilityClass)

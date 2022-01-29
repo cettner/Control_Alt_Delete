@@ -60,10 +60,12 @@ public:
 	bool HasAuthority();
 
 public:
-	/*Called by Comp Owner on inital attempt to use ability*/
+	/*Called by Comp Owner on inital attempt to use Ability*/
 	virtual void StartAbility(int InAbilityIndex);
-	/*Called by Comp Owner on end of attempt to use ability*/
+	/*Called by Comp Owner on end of attempt to use Ability*/
 	virtual void ReleaseAbility();
+	/*Called By Comp Owner to Immediatly Halt the Ability*/
+	virtual void InterruptAbility();
 
 	/*Called by the ability to notify the component that casting has started*/
 	virtual void OnCastStart();
@@ -74,7 +76,7 @@ public:
 	/*Called by Ability to notify that the ability was successfully started*/
 	void SetIsCastSuccessful(bool ReleaseState);
 	/*Called By the Ability to notify that a target has been identified*/
-	void SetAbilityTarget(AActor * NewTarget);
+	void SetAbilityTarget(AActor * NewTarget, FHitResult AssociatedHit = FHitResult());
 	/*****************************************/
 
 public:
@@ -103,6 +105,8 @@ public:
 	{
 		return Cast<T>(GetAbilityTarget());
 	}
+
+	bool GetHitInfoFor(AActor * HitTarget, FHitResult& Hit);
 
 	/*Creates The Abilty and adds it to the list of available ones this component recieves*/
 	virtual TWeakObjectPtr<UAbility> AddAbility(TSubclassOf<UAbility> AbilityClass);
@@ -186,6 +190,8 @@ protected:
 
 private:
 	bool bIsCastReady = false;
+
+	FHitResult LastAbilityHit = FHitResult();
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
 	FAbilityReplicationBool bIsCasting = FAbilityReplicationBool();

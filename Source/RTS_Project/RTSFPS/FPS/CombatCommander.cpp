@@ -337,19 +337,20 @@ void ACombatCommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & 
 	DOREPLIFETIME(ACombatCommander, bIsSwitching_Weapon);
 }
 
-void ACombatCommander::BeginDestroy()
-{
-	Super::BeginDestroy();
-	for (int i = 0; i < Inventory.Num(); i++)
-	{
-		Inventory[i]->Destroy();
-	}
-}
-
 void ACombatCommander::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SpawnDefaultInventory();
+}
+
+void ACombatCommander::EndPlay(EEndPlayReason::Type InReason)
+{
+	Super::EndPlay(InReason);
+
+	for (int i = 0; i < Inventory.Num(); i++)
+	{
+		Inventory[i]->Destroy();
+	}
 }
 
 void ACombatCommander::OnDeath()

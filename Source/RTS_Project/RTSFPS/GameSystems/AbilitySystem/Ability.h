@@ -37,6 +37,7 @@ class RTS_PROJECT_API UAbility : public UObject
 		virtual void OnEffect();
 		virtual void OnAbilityReleased();
 		virtual void OnAbilityEnd();
+		virtual void OnAbilityInterrupted();
 		virtual void OnTick(float DeltaSeconds);
 		virtual void ProcessTarget(AActor * Target);
 

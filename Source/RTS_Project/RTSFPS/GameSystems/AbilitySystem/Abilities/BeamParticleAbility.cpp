@@ -31,13 +31,20 @@ bool UBeamParticleAbility::IsTargetInRange() const
 	check(abilityuser);
 	const FVector beamstart = abilityuser->GetAbilitySocketLocation(EffectSocketName);
 	AActor * targetactor = AbilityComp->GetAbilityTarget();
-	const FVector targetpoint = targetactor->GetComponentsBoundingBox().GetClosestPointTo(beamstart);
-	const float currentbeamrange = FVector::Dist(targetpoint, beamstart);
+	FHitResult lasthit;
+	retval &= AbilityComp->GetHitInfoFor(targetactor, lasthit);
 
-	if (currentbeamrange > Range)
+	if (retval == true)
 	{
-		retval = false;
+		const FVector targetpoint = lasthit.Location;
+		const float currentbeamrange = FVector::Dist(targetpoint, beamstart);
+
+		if (currentbeamrange > Range)
+		{
+			retval = false;
+		}
 	}
+
 
 
 	return retval;
