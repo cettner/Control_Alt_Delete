@@ -54,6 +54,7 @@ class RTS_PROJECT_API UAbilityComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UAbilityComponent();
+	void InitAbilities(IAbilityUserInterface * InAbilitiyUser, TArray<TSubclassOf<UAbility>> InAllAbilityClasses);
 
 public:
 	/*Pass through function for Abilities to dermine if they should Execute Authoritative Commands based on the comps owner*/
@@ -85,7 +86,6 @@ public:
 	/*Notify the ability that it has ended*/
 	virtual void EndAbility();
 
-	virtual int GetNextAvailableIndex(const int InCurrentIndex, const bool bOnlyEnabledAbilities = true);
 
 public:
 	virtual void OnReadyNotify();
@@ -94,9 +94,19 @@ public:
 	virtual void OnEndNotify();
 
 public:
+	virtual bool IsAbilityEnabled(const int InIndex) const;
+	/****************Server Trigger***********/
+	virtual bool SetAbilityEnabledState(int InAbilityIndex, bool InEnabledState);
+	virtual bool SetAbilityEnabledState(TSubclassOf<UAbility> InEnabledClass, bool InEnabledState);
+	/*****************************************/
+
+public:
 	virtual UAbility * GetCurrentAbility() const;
 	virtual UAbility * GetAbilityByIndex(int InIndex) const;
+	virtual int GetAbilityIndexByClass(TSubclassOf<UAbility> InEnabledClass) const;
 	virtual int GetCurrentAbilityIndex() const;
+	virtual int GetNextAvailableIndex(const int InCurrentIndex = NO_ABILITY_INDEX, const bool bOnlyEnabledAbilities = true) const;
+
 	virtual bool IsAbilityUsingCrosshair() const;
 	virtual bool IsUsingAbility() const;
 	AActor * GetAbilityTarget() const;
@@ -108,9 +118,6 @@ public:
 
 	bool GetHitInfoFor(AActor * HitTarget, FHitResult& Hit);
 
-	/*Creates The Abilty and adds it to the list of available ones this component recieves*/
-	virtual TWeakObjectPtr<UAbility> AddAbility(TSubclassOf<UAbility> AbilityClass);
-
 	/*True if the user is currenlty casting or in interim to using the ability, set by the ability after */
 	bool IsCasting() const;
 
@@ -121,6 +128,7 @@ public:
 	bool IsCastReady() const;
 
 	virtual bool IsAbilityValid() const;
+	virtual bool IsAbilityValid(int AbilityIndex) const;
 
 	int GetAbilityCost() const;
 
@@ -154,6 +162,7 @@ public:
 
 protected:
 	virtual FVector GetControlRotation();
+	virtual int GetNextEnabledIndex(int StartIndex = 0) const;
 	virtual bool CanUseAbility(int AbilityIndex) const;
 	
 	/*ServerReplication Triggers*/
@@ -177,7 +186,12 @@ protected:
 	UFUNCTION()
 	void OnRep_AbilityTarget();
 
+	UFUNCTION()
+	void OnRep_EnabledAbilities(TArray<bool> PrevEnabledAbilities);
+
 protected:
+	IAbilityUserInterface* AbilityUser = nullptr;
+
 	int CurrentAbilityIndex = -1;
 	
 	/*Have to mark this as UPROPERTY or the UObjects are considered Weak Pointers without reference and are "randomly" garbage collected*/
@@ -187,6 +201,8 @@ protected:
 	FAbilityAnim CurrentMontage;
 
 	bool bWantstoCast = false;
+
+	bool bAbilitiesInitialized = false;
 
 private:
 	bool bIsCastReady = false;
@@ -201,4 +217,8 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_AbilityTarget)
 	AActor * AbilityTarget = nullptr;
+
+	UPROPERTY(ReplicatedUsing = OnRep_EnabledAbilities)
+	TArray<bool> EnabledAbilities;
+
 };

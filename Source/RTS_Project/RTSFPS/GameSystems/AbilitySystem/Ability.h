@@ -47,8 +47,11 @@ class RTS_PROJECT_API UAbility : public UObject
 		virtual void NotifyOnLoop();
 
 	public:
+		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel() const;
+		bool GetDefaultEnabledState() const;
+	
+	public:
 		int GetManaCost() const;
-		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel();
 		virtual bool ConsumeMana(int amount);
 
 	protected:
@@ -78,6 +81,9 @@ class RTS_PROJECT_API UAbility : public UObject
 
 		UPROPERTY(EditDefaultsOnly)
 		TEnumAsByte<ECollisionChannel>  AbilityEffectChannel;
+
+		UPROPERTY(EditDefaultsOnly)
+		bool DefaultEnabledState = false;
 
 
 	protected:

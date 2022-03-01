@@ -16,7 +16,6 @@ AMageHands::AMageHands() : Super()
 
 }
 
-
 UAbilityComponent * AMageHands::GetHandAbilityComponent(UAbilityAnimNotify * CallingContext) const
 {	
 	UAbilityComponent * retval = nullptr;
@@ -44,17 +43,13 @@ USkeletalMeshComponent * AMageHands::GetWeaponMesh() const
 	return(MyPawn->GetPawnMesh());
 }
 
-bool AMageHands::InitAbilities()
+bool AMageHands::InitAbilities(IAbilityUserInterface * InAbilUser)
 {
-	bool retval = Super::InitAbilities();
+	bool retval = Super::InitAbilities(InAbilUser);
 
-	for (int i = 0; i < RightAbilityClasses.Num(); i++)
-	{
-		RightHandAbilityComp->AddAbility(RightAbilityClasses[i]);
-	}
+	RightHandAbilityComp->InitAbilities(InAbilUser, RightAbilityClasses);
 
 	RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
-	retval &= (RightHandAbilityIndex > NO_ABILITY_INDEX);
 	
 	return(retval);
 }

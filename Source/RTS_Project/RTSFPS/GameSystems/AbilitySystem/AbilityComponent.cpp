@@ -73,6 +73,29 @@ void UAbilityComponent::SetCurrentAbility(int InAbilityIndex)
 	CurrentAbilityIndex = InAbilityIndex;
 }
 
+void UAbilityComponent::InitAbilities(IAbilityUserInterface* InAbilitiyUser, TArray<TSubclassOf<UAbility>> InAllAbilityClasses)
+{
+	if (InAbilitiyUser != nullptr)
+	{
+		AbilityUser = InAbilitiyUser;
+
+		for (int i = 0; i < InAllAbilityClasses.Num(); i++)
+		{
+			UAbility * newability =	NewObject<UAbility>(UAbility::StaticClass(), InAllAbilityClasses[i]);
+			newability->Init(this);
+			AllAbilites.Emplace(newability);
+			const bool enabledstate = newability->GetDefaultEnabledState();
+			EnabledAbilities.Emplace(enabledstate);
+		}
+
+		if (AllAbilites.Num() > 0)
+		{
+			bAbilitiesInitialized = EnabledAbilities.Num() == AllAbilites.Num();
+			SetCurrentAbility(GetNextAvailableIndex(0, true));
+		}
+	}
+}
+
 bool UAbilityComponent::HasAuthority()
 {
 	return GetOwner()->HasAuthority();
@@ -137,13 +160,47 @@ void UAbilityComponent::AbilityEffect()
 	}
 }
 
-int UAbilityComponent::GetNextAvailableIndex(int InCurrentIndex, bool bOnlyEnabledAbilities)
+int UAbilityComponent::GetNextAvailableIndex(int InCurrentIndex, bool bOnlyEnabledAbilities) const
 {
 	int retval = NO_ABILITY_INDEX;
-	if (AllAbilites.Num() && (InCurrentIndex > NO_ABILITY_INDEX))
+	const bool validindex = (AllAbilites.Num() > 0) && (InCurrentIndex >= NO_ABILITY_INDEX);
+
+	if (bOnlyEnabledAbilities == true && validindex == true)
+	{
+		retval = GetNextEnabledIndex(InCurrentIndex);
+	}
+	else if (validindex)
 	{
 		retval = (InCurrentIndex + 1) % AllAbilites.Num();
 	}
+
+	return retval;
+}
+
+int UAbilityComponent::GetNextEnabledIndex(int StartIndex) const
+{
+	int retval = NO_ABILITY_INDEX;
+	const int numabilities = AllAbilites.Num();
+
+	int nextindex = (StartIndex + 1) % numabilities;
+	bool abilityenabled = IsAbilityEnabled(nextindex);
+	if (abilityenabled == true)
+	{
+		retval = nextindex;
+	}
+
+	while ((nextindex != StartIndex) && (retval == NO_ABILITY_INDEX))
+	{
+		nextindex = (nextindex + 1) % numabilities;
+		abilityenabled = IsAbilityEnabled(nextindex);
+
+		if (abilityenabled == true)
+		{
+			retval = nextindex;
+			break;
+		}
+	}
+
 	return retval;
 }
 
@@ -176,6 +233,38 @@ void UAbilityComponent::OnEndNotify()
 	EndAbility();
 }
 
+bool UAbilityComponent::IsAbilityEnabled(const int InIndex) const
+{
+	bool retval = false;
+	const bool validindex = InIndex > NO_ABILITY_INDEX && InIndex < EnabledAbilities.Num();
+	if (validindex == true)
+	{
+		retval = EnabledAbilities[InIndex];
+	}
+	return retval;
+}
+
+bool UAbilityComponent::SetAbilityEnabledState(const int InAbilityIndex, const bool InEnabledState)
+{
+	bool retval = false;
+	if (HasAuthority() && IsAbilityValid(InAbilityIndex))
+	{
+		EnabledAbilities[InAbilityIndex] = InEnabledState;
+		retval = true;
+	}
+	
+	return(retval);
+}
+
+bool UAbilityComponent::SetAbilityEnabledState(TSubclassOf<UAbility> InEnabledClass, bool InEnabledState)
+{
+	const int index = GetAbilityIndexByClass(InEnabledClass);
+
+	const bool retval = SetAbilityEnabledState(index, InEnabledState);
+
+	return retval;
+}
+
 void UAbilityComponent::EndAbility()
 {
 	if (IsAbilityValid())
@@ -194,12 +283,29 @@ UAbility * UAbilityComponent::GetCurrentAbility() const
 
 UAbility * UAbilityComponent::GetAbilityByIndex(int InIndex) const
 {
-
 	UAbility * retval = nullptr;
 	if (CurrentAbilityIndex > NO_ABILITY_INDEX)
 	{
 		retval = AllAbilites[InIndex];
 	}
+	return retval;
+}
+
+int UAbilityComponent::GetAbilityIndexByClass(TSubclassOf<UAbility> InEnabledClass) const
+{
+	int retval = NO_ABILITY_INDEX;
+	if (InEnabledClass != nullptr)
+	{
+		for (int i = 0; i < AllAbilites.Num(); i++)
+		{
+			if (AllAbilites[i]->GetClass() == InEnabledClass)
+			{
+				retval = i;
+				break;
+			}
+		}
+	}
+
 	return retval;
 }
 
@@ -247,24 +353,6 @@ bool UAbilityComponent::GetHitInfoFor(AActor * HitTarget, FHitResult & Hit)
 	return retval;
 }
 
-TWeakObjectPtr<UAbility> UAbilityComponent::AddAbility(TSubclassOf<UAbility> AbilityClass)
-{
-	UAbility * newability = nullptr;
-	if (IsValid(AbilityClass))
-	{
-		newability = NewObject<UAbility>(UAbility::StaticClass(),AbilityClass);
-		check(newability);
-		newability->Init(this);
-		AllAbilites.Emplace(newability);
-		/*If we dont currently have an ability*/
-		if(!IsAbilityValid())
-		{
-			SetCurrentAbility(0);
-		}
-	}
-	return TWeakObjectPtr<UAbility>(newability);
-}
-
 bool UAbilityComponent::IsCasting() const
 {
 	return bIsCasting.WasSuccessful();
@@ -287,6 +375,11 @@ bool UAbilityComponent::IsAbilityValid() const
 	return retval;
 }
 
+bool UAbilityComponent::IsAbilityValid(int AbilityIndex) const
+{
+	return ((AbilityIndex > NO_ABILITY_INDEX) && (AbilityIndex < AllAbilites.Num()));
+}
+
 int UAbilityComponent::GetAbilityCost() const
 {
 	return 0;
@@ -299,7 +392,7 @@ bool UAbilityComponent::ConsumeMana(int amount)
 
 IAbilityUserInterface * UAbilityComponent::GetAbilityUser() const
 {
-	return GetOwner<IAbilityUserInterface>();
+	return AbilityUser;
 }
 
 float UAbilityComponent::PlayAbilityMontage(FAbilityAnim PlayAnim)
@@ -312,7 +405,6 @@ float UAbilityComponent::PlayAbilityMontage(FAbilityAnim PlayAnim)
 		playtime = user->PlayAbilityMontage(PlayAnim);
 		CurrentMontage = PlayAnim;
 	}
-
 
 	return playtime;
 }
@@ -349,6 +441,8 @@ FVector UAbilityComponent::GetControlRotation()
 	return FVector();
 }
 
+
+
 FTransform UAbilityComponent::GetSurfaceTransform()
 {
 	return FTransform();
@@ -356,7 +450,6 @@ FTransform UAbilityComponent::GetSurfaceTransform()
 
 FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 {
-	IAbilityUserInterface* AbilityUser = GetOwner<IAbilityUserInterface>();
 	FVector spawnlocation = FVector();
 	FVector aimdirection = FVector();
 
@@ -382,6 +475,7 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(UAbilityComponent, bIsCasting);
 	DOREPLIFETIME(UAbilityComponent, AbilityTarget);
 	DOREPLIFETIME(UAbilityComponent, bReleaseSuccess);
+	DOREPLIFETIME(UAbilityComponent, EnabledAbilities);
 }
 
 void UAbilityComponent::OnRep_bIsCasting()
@@ -424,4 +518,8 @@ void UAbilityComponent::OnRep_AbilityTarget()
 	{
 		currentability->ProcessTarget(AbilityTarget);
 	}
+}
+
+void UAbilityComponent::OnRep_EnabledAbilities(TArray<bool> PrevEnabledAbilities)
+{
 }

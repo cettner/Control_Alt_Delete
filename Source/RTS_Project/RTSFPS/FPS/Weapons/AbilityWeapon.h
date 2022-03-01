@@ -56,7 +56,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual int GetCurrentMana() const;
 
 	protected:
-		virtual bool InitAbilities();
+		virtual bool InitAbilities(IAbilityUserInterface * InUser);
 
 	protected:
 		virtual void EndPlay(EEndPlayReason::Type InReason) override;

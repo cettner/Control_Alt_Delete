@@ -79,9 +79,14 @@ int UAbility::GetManaCost() const
 	return ManaCost;
 }
 
-TEnumAsByte<ECollisionChannel> UAbility::GetAbilityCollisionChannel()
+TEnumAsByte<ECollisionChannel> UAbility::GetAbilityCollisionChannel() const
 {
 	return AbilityEffectChannel;
+}
+
+bool UAbility::GetDefaultEnabledState() const
+{
+	return DefaultEnabledState;
 }
 
 bool UAbility::ConsumeMana(int amount)

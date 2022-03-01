@@ -39,9 +39,13 @@ void AAbilityWeapon::StopReload()
 void AAbilityWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 {
 	Super::OnEnterInventory(NewOwner);
+
+	IAbilityUserInterface* abilityuser = Cast<IAbilityUserInterface>(NewOwner);
+	checkf(abilityuser,TEXT("AAbilityWeapon::OnEnterInventory : Weapon User Must Inherit IAbilityUserInterface"))
+	
 	if (bAreAbilitiesInitialized == false)
 	{
-		bAreAbilitiesInitialized = InitAbilities();
+		bAreAbilitiesInitialized = InitAbilities(abilityuser);
 	}
 
 }
@@ -137,12 +141,9 @@ int AAbilityWeapon::GetCurrentMana() const
 	return Mana;
 }
 
-bool AAbilityWeapon::InitAbilities()
+bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 {
-	for (int i = 0; i < AbilityClasses.Num(); i++)
-	{
-		AbilityComp->AddAbility(AbilityClasses[i]);
-	}
+	AbilityComp->InitAbilities(InUser, AbilityClasses);
 	AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
 	const bool retval = AbilityIndex > NO_ABILITY_INDEX;
 	return (retval);
