@@ -109,6 +109,11 @@ TArray<TWeakObjectPtr<UAbility>> AAbilityWeapon::GetAbilitiesByClass(TSubclassOf
 	return AbilityComp->GetAbilitiesByClass(AbilityClass);
 }
 
+void AAbilityWeapon::AddAbility(TSubclassOf<UAbility> InAbilityClass)
+{
+	AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+}
+
 void AAbilityWeapon::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 	SetWeaponState(EWeaponState::Firing);
@@ -143,7 +148,7 @@ int AAbilityWeapon::GetCurrentMana() const
 
 bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 {
-	AbilityComp->InitAbilities(InUser, AbilityClasses);
+	AbilityComp->InitAbilities(this, AbilityClasses);
 	AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
 	const bool retval = AbilityIndex > NO_ABILITY_INDEX;
 	return (retval);

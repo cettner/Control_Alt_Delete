@@ -83,7 +83,7 @@ class RTS_PROJECT_API UAbility : public UObject
 		TEnumAsByte<ECollisionChannel>  AbilityEffectChannel;
 
 		UPROPERTY(EditDefaultsOnly)
-		bool DefaultEnabledState = false;
+		bool DefaultEnabledState = true;
 
 
 	protected:

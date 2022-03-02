@@ -47,7 +47,7 @@ bool AMageHands::InitAbilities(IAbilityUserInterface * InAbilUser)
 {
 	bool retval = Super::InitAbilities(InAbilUser);
 
-	RightHandAbilityComp->InitAbilities(InAbilUser, RightAbilityClasses);
+	RightHandAbilityComp->InitAbilities(this, RightAbilityClasses);
 
 	RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
 	
