@@ -3,3 +3,33 @@
 
 #include "PauseMenu.h"
 
+bool UPauseMenu::Initialize()
+{
+    bool Success = Super::Initialize();
+
+    if (!Success) return false;
+
+    ResumePlayButton->OnClicked.AddDynamic(this, &UPauseMenu::OnResumePlayButtonPressed);
+    ReturnToLobbyButton->OnClicked.AddDynamic(this, &UPauseMenu::OnReturnToLobbyButtonPressed);
+    ExitToMainMenuButton->OnClicked.AddDynamic(this, &UPauseMenu::OnExitToMainMenuButtonPressed);
+
+
+    return (true);
+}
+
+
+void UPauseMenu::OnResumePlayButtonPressed()
+{
+
+}
+
+
+void UPauseMenu::OnReturnToLobbyButtonPressed()
+{
+
+}
+
+void UPauseMenu::OnExitToMainMenuButtonPressed()
+{
+
+}
