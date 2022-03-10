@@ -14,7 +14,17 @@ UCLASS()
 class RTS_PROJECT_API UPauseMenu : public UUserWidget
 {
 	GENERATED_BODY()
-    virtual bool Initialize() override;
+
+public:
+   /** Sets the visibility of the widget. */
+  virtual void SetVisibility(ESlateVisibility InVisibility) override;
+
+protected:  
+  virtual bool Initialize() override;
+  virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+public:
+  virtual void SetResumeHotKey(const FName ActionName);
 
 protected:
     UFUNCTION()
@@ -36,4 +46,8 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     UButton* ExitToMainMenuButton;
+
+protected:
+    UPROPERTY(EditDefaultsOnly)
+    FName ResumeHotKey = FName("EscapeKey");
 };

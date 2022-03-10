@@ -15,7 +15,6 @@ ARTSPlayerController::ARTSPlayerController()
 	this->bEnableClickEvents = true;
 	this->bEnableAutoLODGeneration = true;
 	FOWManagerClass = AFogOfWarManager::StaticClass();
-	ExternalMenu = nullptr;
 }
 
 void ARTSPlayerController::BeginPlay()
@@ -127,29 +126,6 @@ void ARTSPlayerController::InitHUD()
 			HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
 		}
 	}
-}
-
-void ARTSPlayerController::OpenExternalMenu(UUserWidget* InMenu)
-{
-	if (InMenu == nullptr || !InMenu->IsValidLowLevel()) return;
-	
-	InMenu->AddToViewport();
-	bShowMouseCursor = true;
-	FInputModeUIOnly inputMode;
-	SetInputMode(inputMode);
-	ExternalMenu = InMenu;
-}
-
-void ARTSPlayerController::CloseExternalMenu()
-{
-	if (ExternalMenu == nullptr) return;
-
-	ExternalMenu->RemoveFromViewport();
-	FInputModeGameOnly inputMode;
-	inputMode.SetConsumeCaptureMouseDown(false);
-	SetInputMode(inputMode);
-	bShowMouseCursor = false;
-	ExternalMenu = nullptr;
 }
 
 bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)

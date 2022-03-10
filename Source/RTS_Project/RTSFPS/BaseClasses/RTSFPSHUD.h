@@ -36,7 +36,9 @@ public:
 	virtual HUDSTATE GetHUDState() const;
 	virtual void ChangeHUDState(HUDSTATE statetype);
 	virtual FVector2D GetMouseLocation() const;
-	virtual bool InitializeUI() override;
+
+protected:
+	virtual bool InitPrimaryUI() override;
 
 protected:
 	virtual void RTSSelectAndMoveHandler();
@@ -47,9 +49,6 @@ protected:
 	virtual void DrawHUD() override;  // HUD "tick" function
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UUserWidget> MainUIClass;
-	URTSFPSWidget* MainUI;
 
 	HUDSTATE state;
 

@@ -110,6 +110,13 @@ void ADefaultPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ADefaultPlayerController, bisregistered);
 }
 
+void ADefaultPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAction("EscapeKey", IE_Pressed, this, &ADefaultPlayerController::OnEscapeActionPressed);
+}
+
 void ADefaultPlayerController::InitPlayerState()
 {
 	Super::InitPlayerState();
@@ -158,4 +165,70 @@ bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)
 	outsettings = GI->GetPlayerSettings();
 
 	return (outsettings.bIsValid);
+}
+
+void ADefaultPlayerController::OpenExternalMenu(UUserWidget* InMenu)
+{
+	if (InMenu == nullptr || !InMenu->IsValidLowLevel()) return;
+
+	InMenu->AddToViewport();
+	bShowMouseCursor = true;
+	DisableInput(this);
+	FInputModeUIOnly inputMode;
+	SetInputMode(inputMode);
+	EnableInput(this);
+
+	ExternalMenu = InMenu;
+}
+
+bool ADefaultPlayerController::IsExternalMenuOpen() const
+{
+	return ExternalMenu != nullptr;
+}
+
+void ADefaultPlayerController::CloseExternalMenu()
+{
+	if (ExternalMenu == nullptr) return;
+
+	ExternalMenu->RemoveFromParent();
+	FInputModeGameOnly inputMode;
+	inputMode.SetConsumeCaptureMouseDown(false);
+	SetInputMode(inputMode);
+	bShowMouseCursor = false;
+	ExternalMenu = nullptr;
+}
+
+void ADefaultPlayerController::OnBeginPause()
+{
+	ADefaultHUD* defaulthud = GetHUD<ADefaultHUD>();
+	bShowMouseCursor = true;
+	DisableInput(this);
+	FInputModeUIOnly inputMode;
+	SetInputMode(inputMode);
+	EnableInput(this);
+	defaulthud->PauseMenuEnable(true);
+}
+
+void ADefaultPlayerController::OnEndPause()
+{
+	ADefaultHUD* defaulthud = GetHUD<ADefaultHUD>();
+	FInputModeGameOnly inputMode;
+	inputMode.SetConsumeCaptureMouseDown(false);
+	SetInputMode(inputMode);
+	bShowMouseCursor = false;
+	defaulthud->PauseMenuEnable(false);
+}
+
+void ADefaultPlayerController::OnEscapeActionPressed()
+{
+	const bool bmenuopen = IsExternalMenuOpen();
+
+	if (bmenuopen)
+	{
+		CloseExternalMenu();
+	}
+	else 
+	{
+		OnBeginPause();
+	}
 }

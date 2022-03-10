@@ -5,7 +5,7 @@
 
 ARTSFPSHUD::ARTSFPSHUD() : Super()
 {
-	MainUIClass = URTSFPSWidget::StaticClass();
+
 }
 
 void ARTSFPSHUD::DrawHUD() //similiar to "tick" of actor class overridden
@@ -34,11 +34,8 @@ void ARTSFPSHUD::ChangeHUDState(HUDSTATE statetype)
 	if (statetype > LBOUND&& statetype < UBOUND)
 	{
 		state = statetype;
-		
-		if (MainUI != nullptr)
-		{
-			MainUI->OnHUDStateChange();
-		}
+		URTSFPSWidget* mainui = GetPrimaryUI<URTSFPSWidget>();
+		mainui->OnHUDStateChange();
 	}
 }
 
@@ -55,19 +52,13 @@ FVector2D ARTSFPSHUD::GetMouseLocation() const
 	return(FVector2D(PosX, PosY));
 }
 
-bool ARTSFPSHUD::InitializeUI()
+bool ARTSFPSHUD::InitPrimaryUI()
 {
-	Super::InitializeUI();
+	bool retval = Super::InitPrimaryUI();
+	URTSFPSWidget* mainui = GetPrimaryUI<URTSFPSWidget>();
+	mainui->Setup();
 
-	if (MainUIClass == nullptr || MainUI != nullptr) return(false);
-	MainUI = CreateWidget<URTSFPSWidget>(GetOwningPlayerController(), MainUIClass,"MainUI");
-
-	if (MainUI == nullptr) return(false);
-	MainUI->Setup();
-	MainUI->AddToViewport();
-	SetPrimaryUI(MainUI);
-
-	return (true);
+	return retval;
 }
 
 void ARTSFPSHUD::RTSSelectAndMoveHandler()

@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Blueprint/UserWidget.h"
+
 #include "RTS_Project/LobbySystem/GameArchitecture/Instance/LobbyGameInstance.h"
 #include "DefaultPlayerController.generated.h"
 
@@ -36,6 +38,17 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		/*Called By DefaultGameState After Initial Data Has Been Replicated Down*/
 		virtual void ClientInitUI();
 
+	public:
+		virtual void OpenExternalMenu(UUserWidget* InMenu);
+		virtual bool IsExternalMenuOpen() const;
+		virtual void CloseExternalMenu();
+		virtual void OnBeginPause();
+		virtual void OnEndPause();
+
+	protected:
+		UFUNCTION()
+		virtual void OnEscapeActionPressed();
+
 	protected:
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRegisterPlayerInfo(FPlayerSettings settings);
@@ -52,6 +65,11 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		void OnRep_bisregistered();
 
 	protected:
+		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+		virtual void SetupInputComponent() override;
+		virtual void InitPlayerState() override;
+
+	protected:
 		/*Replicated After Player data is registered by the server during post login or on request*/
 		UPROPERTY(ReplicatedUsing = OnRep_bisregistered)
 		bool bisregistered = false;
@@ -60,7 +78,9 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		/*set to to true when the gamestate is initally replicated down if it beats player registration*/
 		bool battemptedHudinit = false;
+
 	protected:
-		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-		virtual void InitPlayerState() override;
+		UUserWidget* ExternalMenu = nullptr;
+
+
 };

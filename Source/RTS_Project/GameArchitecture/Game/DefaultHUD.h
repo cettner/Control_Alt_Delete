@@ -15,10 +15,15 @@ class RTS_PROJECT_API ADefaultHUD : public AHUD
 {
 	GENERATED_BODY()
 
+	protected:
+		virtual void PostInitializeComponents() override;
+
 	public:
 		virtual bool InitializeUI();
 		UUserWidget* GetPrimaryUI() const;
-		
+
+		virtual void PauseMenuEnable(bool bInEnabled);
+
 		template <class T>
 		T* GetPrimaryUI() const
 		{
@@ -26,8 +31,19 @@ class RTS_PROJECT_API ADefaultHUD : public AHUD
 			return(retval);
 		}
 
-		virtual void SetPrimaryUI(UUserWidget * InUI);
+	protected:
+		virtual bool InitPrimaryUI();
+		UUserWidget* GetPauseMenu() const;
+
+	protected:
+		UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<UUserWidget> PauseMenuClass;
+
+		UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<UUserWidget> PrimaryUIClass;
 
 	protected:
 		UUserWidget * MainUI = nullptr;
+
+		UUserWidget* PauseMenu = nullptr;
 };

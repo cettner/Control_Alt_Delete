@@ -426,7 +426,7 @@ bool UAbilityComponent::StopCurrentAnimation()
 AActor* UAbilityComponent::SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform)
 {
 	UWorld* world = GetWorld();
-	AActor* spawnedactor = world->SpawnActorDeferred<AActor>(ActorClass, SpawnTransform, GetOwner(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	AActor* spawnedactor = world->SpawnActorDeferred<AActor>(ActorClass, SpawnTransform, GetOwner(), Cast<APawn>(AbilityUser), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	
 	return spawnedactor;
 }

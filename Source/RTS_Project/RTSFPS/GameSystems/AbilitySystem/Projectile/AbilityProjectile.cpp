@@ -22,9 +22,12 @@ AAbilityProjectile::AAbilityProjectile()
 	//Definition for the SphereComponent that will serve as the Root component for the projectile and its collision.
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
 	SphereComponent->InitSphereRadius(5.5f);
+	SphereComponent->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+
 	if (HasAuthority())
 	{
 		SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
 	}
 	else
 	{
