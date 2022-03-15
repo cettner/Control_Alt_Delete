@@ -2,10 +2,21 @@
 
 
 #include "RTSFPSHUD.h"
+#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
 
 ARTSFPSHUD::ARTSFPSHUD() : Super()
 {
+	/*Can't See Cursor */
+	FPSDefaultInput.bIsCursorVisible = false;
+	/*Don't Care*/
+	FPSDefaultInput.CursorType = EMouseCursor::Default;
+	FPSDefaultInput.InputType = EWisgetStackInputType::GAMEONLY;
+	FPSDefaultInput.StackSettings = EWidgetStackOperation::ALWAYSACTIVE;
 
+	DefaultInputSettings.bIsCursorVisible = true;
+	DefaultInputSettings.CursorType = EMouseCursor::Crosshairs;
+	DefaultInputSettings.InputType = EWisgetStackInputType::GAMEONLY;
+	DefaultInputSettings.StackSettings = EWidgetStackOperation::ALWAYSACTIVE;
 }
 
 void ARTSFPSHUD::DrawHUD() //similiar to "tick" of actor class overridden
@@ -52,11 +63,40 @@ FVector2D ARTSFPSHUD::GetMouseLocation() const
 	return(FVector2D(PosX, PosY));
 }
 
-bool ARTSFPSHUD::InitPrimaryUI()
+bool ARTSFPSHUD::ClientInitializeHUD()
 {
-	bool retval = Super::InitPrimaryUI();
-	URTSFPSWidget* mainui = GetPrimaryUI<URTSFPSWidget>();
-	mainui->Setup();
+	const ARTFPSPlayerState * ps = GetOwningPlayerController()->GetPlayerState<ARTFPSPlayerState>();
+	bool retval = Super::ClientInitializeHUD();
+
+
+	if (!ps->IsRTSPlayer())
+	{
+		ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
+	}
+	else
+	{
+		ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
+	}
+
+
+
+	return retval;
+}
+
+FStackWidgetInfo ARTSFPSHUD::GetDefaultInputSettings() const
+{
+	FStackWidgetInfo retval;
+	const HUDSTATE currentstate = GetHUDState();
+	const bool isrtsmode = (currentstate == RTS_SELECT_AND_MOVE) || (currentstate == RTS_STRUCTURE_SELECT);
+
+	if (isrtsmode == true)
+	{
+		retval = DefaultInputSettings;
+	}
+	else
+	{
+		retval = FPSDefaultInput;
+	}
 
 	return retval;
 }

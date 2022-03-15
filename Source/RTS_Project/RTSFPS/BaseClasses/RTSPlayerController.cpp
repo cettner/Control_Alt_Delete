@@ -53,19 +53,10 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 	SelectedUnits.Empty();
 	SelectedStructures.Empty();
 
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-
-	/*Iterate through all minions in the map, set team color on all minons that don't match our team ID*/
-	for (TActorIterator<ARTSMinion> It(World); It; ++It)
-	{
-	}
-
 }
 
 void ARTSPlayerController::FinishLocalPlayerSetup()
 {
-
 	UWorld* world = GetWorld();
 	if (IsValid(world))
 	{
@@ -86,8 +77,6 @@ void ARTSPlayerController::FinishLocalPlayerSetup()
 			}
 		}
 	}
-
-	InitHUD();
 }
 
 AFogOfWarManager * ARTSPlayerController::InitFOW()
@@ -109,24 +98,7 @@ AFogOfWarManager * ARTSPlayerController::InitFOW()
 	return(FOWManager);
 }
 
-void ARTSPlayerController::InitHUD()
-{
-    /*Initialize Hud*/
-	HudPtr = Cast<ARTSHUD>(GetHUD());
-	ARTFPSPlayerState * PS = GetPlayerState<ARTFPSPlayerState>();
-	if (HudPtr && PS)
-	{
-		if (!PS->IsRTSPlayer())
-		{
-			bShowMouseCursor = false;
-			HudPtr->ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
-		}
-		else
-		{
-			HudPtr->ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
-		}
-	}
-}
+
 
 bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
 {

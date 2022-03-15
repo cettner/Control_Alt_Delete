@@ -10,6 +10,11 @@ bool UPauseMenu::Initialize()
 
     if (!Success) return false;
 	
+    DefaultInputSettings.bIsCursorVisible = true;
+    DefaultInputSettings.CursorType = EMouseCursor::Hand;
+    DefaultInputSettings.StackSettings = EWidgetStackOperation::ACIVEONPUSH;
+    DefaultInputSettings.InputType = EWisgetStackInputType::UIONLY;
+
 	if (ResumePlayButton == nullptr) return false;
     ResumePlayButton->OnClicked.AddDynamic(this, &UPauseMenu::OnResumePlayButtonPressed);
 
@@ -19,22 +24,9 @@ bool UPauseMenu::Initialize()
 	if (ExitToMainMenuButton == nullptr) return false;
     ExitToMainMenuButton->OnClicked.AddDynamic(this, &UPauseMenu::OnExitToMainMenuButtonPressed);
 
-    ReturnToLobbyButton->SetIsEnabled(GetOwningPlayer()->HasAuthority());
+    // ReturnToLobbyButton->SetIsEnabled(GetOwningPlayer()->HasAuthority());
 
     return (Success);
-}
-
-FReply UPauseMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{
-    FReply retval = FReply::Unhandled();
-
-    if (InKeyEvent.GetKey() == EKeys::Escape)
-    {
-        OnResumePlayButtonPressed();
-        retval = FReply::Handled();
-    }
-
-    return retval;
 }
 
 void UPauseMenu::SetVisibility(ESlateVisibility InVisibility)
@@ -60,8 +52,7 @@ void UPauseMenu::SetResumeHotKey(const FName ActionName)
 
 void UPauseMenu::OnResumePlayButtonPressed()
 {
-    ADefaultPlayerController * pc = GetOwningPlayer<ADefaultPlayerController>();
-    pc->OnEndPause();
+    OnEscapeAction();
 }
 
 void UPauseMenu::OnReturnToLobbyButtonPressed()

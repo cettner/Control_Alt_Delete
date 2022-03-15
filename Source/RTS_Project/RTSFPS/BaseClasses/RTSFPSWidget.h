@@ -19,10 +19,11 @@ class RTS_PROJECT_API URTSFPSWidget : public UUserWidget
 
 	public:
 		URTSFPSWidget(const FObjectInitializer & ObjectInitializer);
-		
-    public:
 
-		virtual void Setup();
+	protected:
+		virtual bool Initialize() override;
+
+    public:
 		virtual void OnHUDStateChange();
 		
 		UFPSUI* GetFPSUI() const;

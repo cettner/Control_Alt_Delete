@@ -137,7 +137,7 @@ void ADefaultPlayerController::PostRegisterInit()
 	{
 		/*If Player Registration was Behind Gamestate Replication*/
 		ADefaultHUD * hud = GetHUD<ADefaultHUD>();
-		isHUDInitialized = hud->InitializeUI();
+		isHUDInitialized = hud->ClientInitializeHUD();
 	}
 
 	FinishLocalPlayerSetup();
@@ -148,7 +148,7 @@ void ADefaultPlayerController::ClientInitUI()
 	if (IsRegistered() && IsLocalController())
 	{
 		ADefaultHUD * hud = GetHUD<ADefaultHUD>();
-		isHUDInitialized = hud->InitializeUI();
+		isHUDInitialized = hud->ClientInitializeHUD();
 	}
 	else if (!IsRegistered() && IsLocalController())
 	{
@@ -200,35 +200,14 @@ void ADefaultPlayerController::CloseExternalMenu()
 
 void ADefaultPlayerController::OnBeginPause()
 {
-	ADefaultHUD* defaulthud = GetHUD<ADefaultHUD>();
-	bShowMouseCursor = true;
-	DisableInput(this);
-	FInputModeUIOnly inputMode;
-	SetInputMode(inputMode);
-	EnableInput(this);
-	defaulthud->PauseMenuEnable(true);
 }
 
 void ADefaultPlayerController::OnEndPause()
 {
-	ADefaultHUD* defaulthud = GetHUD<ADefaultHUD>();
-	FInputModeGameOnly inputMode;
-	inputMode.SetConsumeCaptureMouseDown(false);
-	SetInputMode(inputMode);
-	bShowMouseCursor = false;
-	defaulthud->PauseMenuEnable(false);
 }
 
 void ADefaultPlayerController::OnEscapeActionPressed()
 {
-	const bool bmenuopen = IsExternalMenuOpen();
-
-	if (bmenuopen)
-	{
-		CloseExternalMenu();
-	}
-	else 
-	{
-		OnBeginPause();
-	}
+	ADefaultHUD* defaulthud = GetHUD<ADefaultHUD>();
+	defaulthud->OnEscapeAction();
 }

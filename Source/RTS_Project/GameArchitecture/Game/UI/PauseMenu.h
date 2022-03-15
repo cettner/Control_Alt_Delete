@@ -3,25 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+
+#include "ExternalWidget.h"
 #include "PauseMenu.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API UPauseMenu : public UUserWidget
+class RTS_PROJECT_API UPauseMenu : public UExternalWidget
 {
 	GENERATED_BODY()
-
 public:
    /** Sets the visibility of the widget. */
   virtual void SetVisibility(ESlateVisibility InVisibility) override;
 
 protected:  
   virtual bool Initialize() override;
-  virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 
 public:
   virtual void SetResumeHotKey(const FName ActionName);

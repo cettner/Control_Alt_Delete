@@ -11,17 +11,21 @@ URTSFPSWidget::URTSFPSWidget(const FObjectInitializer& ObjectInitializer) : Supe
 	RTSFPSUISwitcher = CreateDefaultSubobject<UWidgetSwitcher>(TEXT("RTSFPSUISwitcher"));
 }
 
-void URTSFPSWidget::Setup()
+bool URTSFPSWidget::Initialize()
 {
-	if (RTSFPSUISwitcher == nullptr) return;
+	bool retval =  Super::Initialize();
+
+	if (RTSFPSUISwitcher == false) return false;
 
 	FPSUI = CreateWidget<UFPSUI>(this, FPSUIClass, "FPSUI");
 	RTSFPSUISwitcher->AddChild(FPSUI);
-	
+
 	RTSUI = CreateWidget<URTSUI>(this, RTSUIClass, "RTSUI");
 	RTSFPSUISwitcher->AddChild(RTSUI);
 
 	OnHUDStateChange();
+
+	return true;
 }
 
 void URTSFPSWidget::OnHUDStateChange()
@@ -36,7 +40,7 @@ void URTSFPSWidget::OnHUDStateChange()
 	}
 	else
 	{
-		RTSFPSUISwitcher->SetActiveWidget(FPSUI);
+	    RTSFPSUISwitcher->SetActiveWidget(FPSUI);
 	}
 }
 

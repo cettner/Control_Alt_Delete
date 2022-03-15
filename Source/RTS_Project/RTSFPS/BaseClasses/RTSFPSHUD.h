@@ -38,7 +38,8 @@ public:
 	virtual FVector2D GetMouseLocation() const;
 
 protected:
-	virtual bool InitPrimaryUI() override;
+	virtual bool ClientInitializeHUD() override;
+	virtual FStackWidgetInfo GetDefaultInputSettings() const override;
 
 protected:
 	virtual void RTSSelectAndMoveHandler();
@@ -51,5 +52,9 @@ protected:
 protected:
 
 	HUDSTATE state;
+
+	/*Adding a new default input to handle FPS Players*/
+	UPROPERTY(EditDefaultsOnly)
+	FStackWidgetInfo FPSDefaultInput;
 
 };

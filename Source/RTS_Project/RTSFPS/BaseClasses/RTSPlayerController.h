@@ -60,10 +60,6 @@ public:
 	virtual AFogOfWarManager * InitFOW();
 
 
-public: 
-	virtual void InitHUD();
-
-
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fog Of War")
 	TSubclassOf<AFogOfWarManager> FOWManagerClass;
