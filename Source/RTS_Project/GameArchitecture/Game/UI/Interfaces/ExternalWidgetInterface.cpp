@@ -10,13 +10,3 @@ FStackWidgetInfo IExternalWidgetInterface::GetWidgetInputSettings() const
 {
 	return FStackWidgetInfo();
 }
-
-void IExternalWidgetInterface::OnPop()
-{
-
-}
-
-void IExternalWidgetInterface::OnPush()
-{
-
-}

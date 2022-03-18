@@ -63,12 +63,70 @@ FVector2D ARTSFPSHUD::GetMouseLocation() const
 	return(FVector2D(PosX, PosY));
 }
 
+bool ARTSFPSHUD::TryToggleUpgradeTree(ETalentTreeTypes InTreeToToggle)
+{
+	bool retval = false;
+	UUpgradeTreeWidget * upgradetree = nullptr;
+
+	if (InTreeToToggle == ETalentTreeTypes::AUTO)
+	{
+		const HUDSTATE currentstate = GetHUDState();
+		
+		if (currentstate == HUDSTATE::RTS_SELECT_AND_MOVE || currentstate == HUDSTATE::RTS_STRUCTURE_SELECT)
+		{
+			upgradetree = RTSUpgradeTree;
+		}
+		else if (currentstate == HUDSTATE::FPS_AIM_AND_SHOOT || currentstate == HUDSTATE::FPS_AWAITING_RESPAWN)
+		{
+			upgradetree = FPSUpgradeTree;
+		}
+
+	}
+	else if (InTreeToToggle == ETalentTreeTypes::FPS && IsValid(FPSUpgradeTree))
+	{
+		upgradetree = FPSUpgradeTree;
+	}
+	else if (InTreeToToggle == ETalentTreeTypes::RTS && IsValid(RTSUpgradeTree))
+	{
+		upgradetree = RTSUpgradeTree;
+	}
+
+	const bool treeisvalid = IsValid(upgradetree);
+	if (treeisvalid == true)
+	{
+		PushExternalWidget(upgradetree);
+		retval = true;
+	}
+
+	return retval;
+}
+
+void ARTSFPSHUD::RefreshUpgradeTree()
+{
+	UUpgradeTreeWidget* upgradetree = nullptr;
+	const HUDSTATE currentstate = GetHUDState();
+
+	if (currentstate == HUDSTATE::RTS_SELECT_AND_MOVE || currentstate == HUDSTATE::RTS_STRUCTURE_SELECT)
+	{
+		upgradetree = RTSUpgradeTree;
+	}
+	else if (currentstate == HUDSTATE::FPS_AIM_AND_SHOOT || currentstate == HUDSTATE::FPS_AWAITING_RESPAWN)
+	{
+		upgradetree = FPSUpgradeTree;
+	}
+
+	if (IsValid(upgradetree))
+	{
+		upgradetree->RefreshNodes();
+	}
+}
+
 bool ARTSFPSHUD::ClientInitializeHUD()
 {
-	const ARTFPSPlayerState * ps = GetOwningPlayerController()->GetPlayerState<ARTFPSPlayerState>();
 	bool retval = Super::ClientInitializeHUD();
 
-
+	const ARTFPSPlayerState* ps = GetOwningPlayerController()->GetPlayerState<ARTFPSPlayerState>();
+	
 	if (!ps->IsRTSPlayer())
 	{
 		ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
@@ -78,6 +136,15 @@ bool ARTSFPSHUD::ClientInitializeHUD()
 		ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
 	}
 
+	if (FPSTalentTreeClass != nullptr)
+	{
+		FPSUpgradeTree = CreateWidget<UUpgradeTreeWidget>(PlayerOwner, FPSTalentTreeClass);
+	}
+	
+	if(RTSTalentTreeClass != nullptr)
+	{
+		RTSUpgradeTree = CreateWidget<UUpgradeTreeWidget>(PlayerOwner, RTSTalentTreeClass);
+	}
 
 
 	return retval;

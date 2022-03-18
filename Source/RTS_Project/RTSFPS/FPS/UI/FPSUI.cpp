@@ -12,12 +12,6 @@ UFPSUI::UFPSUI(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitia
 	TeamResourceList = CreateDefaultSubobject<UPanelWidget>(TEXT("Team Resource List"));
 
 	ResourceWidgetClass = nullptr;
-	/*
-	FloatingPointOptions.MaximumFractionalDigits = 2;
-	FloatingPointOptions.MinimumFractionalDigits = 0;
-	FloatingPointOptions.UseGrouping = false;
-	FloatingPointOptions.MaximumIntegralDigits = 324;
-	*/
 }
 
 bool UFPSUI::Initialize()
@@ -44,24 +38,4 @@ bool UFPSUI::Initialize()
 	}
 
 	return success;
-}
-
-void  UFPSUI::ShouldShowUpgradeTree(bool bShowTree)
-{
-	checkf(UpgradeTreeWidget, TEXT("UFPSUI::ShouldShowUpgradeTree Does not have valid Tree Widget"));
-	if (bShowTree == true)
-	{
-		UpgradeTreeWidget->RefreshNodes();
-		FPSTabSwitcher->SetActiveWidget(UpgradeTreeWidget);
-	}
-	else
-	{
-		FPSTabSwitcher->SetActiveWidget(MainFPSUI);
-	}
-}
-
-void UFPSUI::RefreshUpgradeTree()
-{
-	checkf(UpgradeTreeWidget, TEXT("UFPSUI::ShouldShowUpgradeTree Does not have valid Tree Widget"));
-	UpgradeTreeWidget->RefreshNodes();
 }

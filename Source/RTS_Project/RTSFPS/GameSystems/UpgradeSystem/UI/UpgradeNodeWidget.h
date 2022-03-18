@@ -27,7 +27,7 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		
 
 	protected:
-		virtual void NativeConstruct() override;
+		virtual bool Initialize() override;
 
 	public:
 		virtual bool Setup(UUpgradeTreeWidget* InParentTree);

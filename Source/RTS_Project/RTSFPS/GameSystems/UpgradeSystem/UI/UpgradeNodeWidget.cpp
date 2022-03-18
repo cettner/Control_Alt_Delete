@@ -6,10 +6,12 @@
 #include "UpgradeTreeWidget.h"
 
 
-void UUpgradeNodeWidget::NativeConstruct()
+bool UUpgradeNodeWidget::Initialize()
 {
-	Super::NativeConstruct();
+	const bool retval = Super::Initialize();
 	UpgradeButton->OnClicked.AddDynamic(this, &UUpgradeNodeWidget::OnUpgradeButtonClicked);
+
+	return retval;
 }
 
 void UUpgradeNodeWidget::AddExternalDependencies(TArray<FUpgradeDependencyInfo>& OutInfo) const
@@ -52,8 +54,6 @@ void UUpgradeNodeWidget::OnUpgradeButtonClicked()
 		ApplyUpgrade(upgradeuser);
 	}
 }
-
-
 
 uint32 UUpgradeNodeWidget::GetUpgradeMaxRank() const
 {

@@ -66,6 +66,5 @@ class RTS_PROJECT_API IExternalWidgetInterface
 
 	public:
 		virtual FStackWidgetInfo GetWidgetInputSettings() const;
-		virtual void OnPop();
-		virtual void OnPush();
+
 };

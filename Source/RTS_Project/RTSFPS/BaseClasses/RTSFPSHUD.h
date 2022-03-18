@@ -3,10 +3,8 @@
 #pragma once
 
 
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UI/UpgradeTreeWidget.h"
 #include "RTS_Project/GameArchitecture/Game/DefaultHUD.h"
-
-#include "CoreMinimal.h"
-#include "GameFramework/HUD.h"
 #include "RTSFPSWidget.h"
 #include "RTSFPSHUD.generated.h"
 
@@ -25,6 +23,12 @@ enum HUDSTATE
 	UBOUND
 };
 
+enum ETalentTreeTypes
+{
+	AUTO,
+	RTS,
+	FPS
+};
 
 UCLASS()
 class RTS_PROJECT_API ARTSFPSHUD : public ADefaultHUD
@@ -36,6 +40,8 @@ public:
 	virtual HUDSTATE GetHUDState() const;
 	virtual void ChangeHUDState(HUDSTATE statetype);
 	virtual FVector2D GetMouseLocation() const;
+	virtual bool TryToggleUpgradeTree(ETalentTreeTypes InTreeToToggle = ETalentTreeTypes::AUTO);
+	virtual void RefreshUpgradeTree();
 
 protected:
 	virtual bool ClientInitializeHUD() override;
@@ -50,11 +56,25 @@ protected:
 	virtual void DrawHUD() override;  // HUD "tick" function
 
 protected:
-
-	HUDSTATE state;
-
-	/*Adding a new default input to handle FPS Players*/
+	/*Adding a new default input to handle FPS Players RTS Is Handeled In Base Class*/
 	UPROPERTY(EditDefaultsOnly)
 	FStackWidgetInfo FPSDefaultInput;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUpgradeTreeWidget> FPSTalentTreeClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUpgradeTreeWidget> RTSTalentTreeClass;
+
+
+
+protected:
+	HUDSTATE state;
+
+	UPROPERTY()
+	UUpgradeTreeWidget * FPSUpgradeTree = nullptr;
+
+	UPROPERTY()
+	UUpgradeTreeWidget * RTSUpgradeTree = nullptr;
 
 };

@@ -90,51 +90,10 @@ void AFPSServerController::OnPawnDeath()
 
 void AFPSServerController::ToggleUpgradeMenu()
 {
-	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
+	ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
 	if (hud == nullptr) return;
 
-	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
-	if (mainui == nullptr) return;
-
-	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
-	
-	/*If we're in FPS mode, this wont return null*/
-	if (fpsui != nullptr && !bisUpgradeMenuOpen)
-	{
-		fpsui->ShouldShowUpgradeTree(true);
-		FInputModeGameAndUI inputmode;
-		SetInputMode(inputmode);
-		bShowMouseCursor = true;
-
-		bisUpgradeMenuOpen = true;
-	}
-	else if (fpsui != nullptr && bisUpgradeMenuOpen)
-	{
-		fpsui->ShouldShowUpgradeTree(false);
-		FInputModeGameOnly inputMode;
-		inputMode.SetConsumeCaptureMouseDown(false);
-		SetInputMode(inputMode);
-		bShowMouseCursor = false;
-
-		bisUpgradeMenuOpen = false;
-	}
-}
-
-void AFPSServerController::RefreshUpgradeMenu()
-{
-	const ARTSFPSHUD* hud = GetHUD<ARTSFPSHUD>();
-	if (hud == nullptr) return;
-
-	const URTSFPSWidget * mainui = hud->GetPrimaryUI<URTSFPSWidget>();
-	if (mainui == nullptr) return;
-
-	UFPSUI * fpsui = mainui->GetCurrentUI<UFPSUI>();
-
-	if (fpsui != nullptr)
-	{
-		fpsui->RefreshUpgradeTree();
-	}
-
+	hud->TryToggleUpgradeTree();
 }
 
 void AFPSServerController::OnPossess(APawn* InPawn)

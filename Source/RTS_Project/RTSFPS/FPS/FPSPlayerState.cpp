@@ -39,22 +39,22 @@ void AFPSPlayerState::SetSpentUpgradePoints(uint32 InSpentUpgradePoints)
 void AFPSPlayerState::OnRep_TotalUpgradePoints()
 {
 	const UWorld * world = GetWorld();
-	AFPSServerController * pc = world->GetFirstPlayerController<AFPSServerController>();
-	pc->RefreshUpgradeMenu();
+	ARTSFPSHUD * hud = world->GetFirstPlayerController()->GetHUD<ARTSFPSHUD>();
+	hud->RefreshUpgradeTree();
 }
 
 void AFPSPlayerState::OnRep_SpentUpgradePoints()
 {
-	const UWorld * world = GetWorld();
-	AFPSServerController * pc = world->GetFirstPlayerController<AFPSServerController>();
-	pc->RefreshUpgradeMenu();
+	const UWorld* world = GetWorld();
+	ARTSFPSHUD* hud = world->GetFirstPlayerController()->GetHUD<ARTSFPSHUD>();
+	hud->RefreshUpgradeTree();
 }
 
 void AFPSPlayerState::OnRep_AppliedUpgrades()
 {
-	const UWorld * world = GetWorld();
-	AFPSServerController * pc = world->GetFirstPlayerController<AFPSServerController>();
-	pc->RefreshUpgradeMenu();
+	const UWorld* world = GetWorld();
+	ARTSFPSHUD* hud = world->GetFirstPlayerController()->GetHUD<ARTSFPSHUD>();
+	hud->RefreshUpgradeTree();
 }
 
 bool AFPSPlayerState::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
