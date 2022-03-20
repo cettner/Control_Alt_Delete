@@ -3,6 +3,7 @@
 
 #include "PauseMenu.h"
 #include "..\DefaultPlayerController.h"
+#include "..\DefaultMode.h"
 
 bool UPauseMenu::Initialize()
 {
@@ -21,10 +22,16 @@ bool UPauseMenu::Initialize()
 	if (ReturnToLobbyButton == nullptr) return false;
     ReturnToLobbyButton->OnClicked.AddDynamic(this, &UPauseMenu::OnReturnToLobbyButtonPressed);
 
+    bool hasservercontrol = false;
+    const APlayerController* pc = GetOwningPlayer();
+    if (pc && pc->HasAuthority())
+    {
+        hasservercontrol = true;
+    }
+    ReturnToLobbyButton->SetIsEnabled(hasservercontrol);
+
 	if (ExitToMainMenuButton == nullptr) return false;
     ExitToMainMenuButton->OnClicked.AddDynamic(this, &UPauseMenu::OnExitToMainMenuButtonPressed);
-
-    // ReturnToLobbyButton->SetIsEnabled(GetOwningPlayer()->HasAuthority());
 
     return (Success);
 }
@@ -57,7 +64,15 @@ void UPauseMenu::OnResumePlayButtonPressed()
 
 void UPauseMenu::OnReturnToLobbyButtonPressed()
 {
+    const UWorld* world = GetWorld();
+    ADefaultMode * gm = world->GetAuthGameMode<ADefaultMode>();
 
+    /*This will return null on clients anyway so no need to check for authority*/
+    if (IsValid(gm))
+    {
+        gm->EndMatch();
+    }
+    
 }
 
 void UPauseMenu::OnExitToMainMenuButtonPressed()
