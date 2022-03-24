@@ -21,18 +21,11 @@ AAbilityProjectile::AAbilityProjectile()
 
 	//Definition for the SphereComponent that will serve as the Root component for the projectile and its collision.
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("RootComponent"));
-	SphereComponent->InitSphereRadius(5.5f);
+	SphereComponent->InitSphereRadius(2.5f);
 	SphereComponent->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
+	
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	if (HasAuthority())
-	{
-		SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-
-	}
-	else
-	{
-		SphereComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
-	}
 
 	RootComponent = SphereComponent;
 
@@ -45,30 +38,13 @@ void AAbilityProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
+	SphereComponent->SetCollisionObjectType(CollisionChannel);
 	if (HasAuthority())
 	{
-		SphereComponent->SetCollisionResponseToChannel(CollisionChannel, ECollisionResponse::ECR_Block);
 		SphereComponent->OnComponentHit.AddDynamic(this, &AAbilityProjectile::OnProjectileImpact);
-
 		SetLifeSpan(ProjectileLifeTime);
 		OnRep_InitialSpeed();
 	}
-}
-
-// Called every frame
-void AAbilityProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void AAbilityProjectile::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	if (OnHitParticles)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticles, GetTransform());
-	}
-	Super::EndPlay(EndPlayReason);
 }
 
 void AAbilityProjectile::OnRep_Owner()
@@ -94,6 +70,18 @@ void AAbilityProjectile::SetIgnoredActor(AActor * IgnoreThis)
 	IgnoredActors.AddUnique(IgnoreThis);
 }
 
+AAbilityExplosion* AAbilityProjectile::SpawnExplosionatLocation(FTransform InTransform) const
+{
+	UWorld* world = GetWorld();
+	FActorSpawnParameters spawnparams;
+	spawnparams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	spawnparams.Owner = GetOwner();
+
+	AAbilityExplosion* explosion = world->SpawnActor<AAbilityExplosion>(ExplosionClass, InTransform, spawnparams);
+
+	return explosion;
+}
+
 void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
 {
 	if (OtherActor && !IgnoredActors.Contains(OtherActor))
@@ -104,8 +92,33 @@ void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, 
 			OtherActor->TakeDamage(DirectDamage, ondamageevent, nullptr, this);
 		}
 
-		Destroy();
+		if (bDetonatesOnImpact == true)
+		{
+			OnDetonation(Hit);
+		}
+
 	}
+}
+
+void AAbilityProjectile::OnDetonation(const FHitResult& Hit)
+{
+	if (IsValid(FlightParticles))
+	{
+		FlightParticles->Deactivate();
+	}
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
+	if (HasAuthority())
+	{
+		bHasDetonated = true;
+		
+		const FTransform explosiontransform = FTransform(Hit.Normal.Rotation(), Hit.Location,FVector(1.0,1.0,1.0));
+
+		SpawnExplosionatLocation(explosiontransform);
+		SetLifeSpan(2.0f);
+	}
+
+
 }
 
 void AAbilityProjectile::OnRep_InitialSpeed()
@@ -115,9 +128,17 @@ void AAbilityProjectile::OnRep_InitialSpeed()
 	MovementComp->Velocity = InitialSpeed * fv;
 }
 
+void AAbilityProjectile::OnRep_bHasDetonated()
+{
+	if (bHasDetonated == true)
+	{
+		OnDetonation();
+	}
+}
 
 void AAbilityProjectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(AAbilityProjectile, InitialSpeed, COND_InitialOnly);
+	DOREPLIFETIME(AAbilityProjectile, bHasDetonated);
 }

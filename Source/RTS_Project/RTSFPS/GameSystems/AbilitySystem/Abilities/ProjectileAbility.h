@@ -26,6 +26,9 @@ public:
 	virtual float GetProjectileDamage() const;
 
 protected:
+	virtual void HandleFailedSpawn(const FTransform transform);
+
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AAbilityProjectile> ProjectileClass;
 

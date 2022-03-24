@@ -29,25 +29,6 @@ void ACommander::StopAnimMontage(UAnimMontage* AnimMontage)
 	}
 }
 
-void ACommander::Tick(float DeltaTime)
-{
-	FHitResult hit;
-	FVector fwd = FPS_Camera->GetForwardVector();
-	FVector start = FPS_Camera->GetComponentLocation();
-	FVector end = (fwd * 500.0f) + start;
-	
-
-	//DrawDebugLine(GetWorld(), start, end, FColor(255, 0, 0), false, -1, 0, 12.33);
-	AActor * hitSelectable = GetSelectableActor();
-	if (hitSelectable)
-	{
-		//if (Cast<ARTSMinion>(hit.GetActor()))
-		//{
-			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Hit!")));
-		//}
-	}
-}
-
 void ACommander::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -82,8 +63,8 @@ ACommander::ACommander() : Super()
 	trace.bReturnPhysicalMaterial = false;
 	trace.AddIgnoredActor(this);
 
-	PrimaryActorTick.bCanEverTick = GetLocalRole() != ROLE_Authority;
-	PrimaryActorTick.bStartWithTickEnabled = GetLocalRole() != ROLE_Authority;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
 void ACommander::MoveForward(float Val)

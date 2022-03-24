@@ -9,6 +9,7 @@ ACombatCommander::ACombatCommander() : Super()
 {
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Block);
+	FPS_Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 }
 
 FName ACombatCommander::GetWeaponAttachPoint(AWeapon * Weapon, bool bWantsFirstPerson)

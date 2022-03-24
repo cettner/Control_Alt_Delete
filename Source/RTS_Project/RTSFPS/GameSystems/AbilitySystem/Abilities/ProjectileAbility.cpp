@@ -6,14 +6,18 @@
 
 void UProjectileAbility::OnEffect()
 {
+	UWorld* world = GetWorld();
 	FTransform spawntransform = AbilityComp->GetCrosshairTransform(EffectSocketName);
-	AAbilityProjectile * Projectile = AbilityComp->SpawnUninitializedActor<AAbilityProjectile>(ProjectileClass, spawntransform);
-	Projectile->SetOwner(AbilityComp->GetOwner());
-	Projectile->InitialSpeed = ProjectileSpeed;
-	Projectile->DirectDamage = ProjectileDamage;
-	Projectile->CollisionChannel = AbilityEffectChannel;
-	Projectile->SetIgnoredActors(AbilityComp->GetAbilityUser()->GetIgnoredTraceActors());
-
+	AAbilityProjectile* Projectile = world->SpawnActorDeferred<AAbilityProjectile>(ProjectileClass, spawntransform, Cast<AActor>(AbilityComp->GetAbilityUser()), nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding);
+	if (IsValid(Projectile))
+	{
+		Projectile->SetOwner(AbilityComp->GetOwner());
+		Projectile->InitialSpeed = ProjectileSpeed;
+		Projectile->DirectDamage = ProjectileDamage;
+		Projectile->CollisionChannel = AbilityEffectChannel;
+		Projectile->SetIgnoredActors(AbilityComp->GetAbilityUser()->GetIgnoredTraceActors());
+	}
+	
 	AbilityComp->FinishSpawningActor(Projectile, spawntransform);
 }
 
@@ -35,4 +39,8 @@ void UProjectileAbility::SetProjectileDamage(float NewDamage)
 float UProjectileAbility::GetProjectileDamage() const
 {
 	return ProjectileDamage;
+}
+
+void UProjectileAbility::HandleFailedSpawn(const FTransform transform)
+{
 }
