@@ -109,7 +109,7 @@ TArray<TWeakObjectPtr<UAbility>> AAbilityWeapon::GetAbilitiesByClass(TSubclassOf
 	return AbilityComp->GetAbilitiesByClass(AbilityClass);
 }
 
-void AAbilityWeapon::AddAbility(TSubclassOf<UAbility> InAbilityClass)
+void AAbilityWeapon::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource, TArray<FName> InInstallTags)
 {
 	AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
 }

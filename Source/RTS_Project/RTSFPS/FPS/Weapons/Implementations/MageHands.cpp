@@ -96,6 +96,21 @@ TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(TSubclassOf<UAb
 	return retval;
 }
 
+void AMageHands::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource, TArray<FName> InInstallTags)
+{
+	const FName offhandkey = FName("OffHand");
+	const bool bisoffhandability = InInstallTags.Contains(offhandkey);
+	
+	if (bisoffhandability == true)
+	{
+		RightHandAbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+	}
+	else
+	{
+		AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+	}
+}
+
 void AMageHands::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
 {
 	Cast<IResourceGatherer>(GetPawnOwner())->AddResource(ResourceClass, amount);

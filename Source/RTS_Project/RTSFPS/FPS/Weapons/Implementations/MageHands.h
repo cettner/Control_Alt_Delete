@@ -33,6 +33,7 @@ protected:
 	virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
+	virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr, TArray<FName> InInstallTags = TArray<FName>()) override;
 
 protected:
 	/**********************Resource Gatherer Overrides***************************/
