@@ -9,6 +9,6 @@ void URTSAbilityEnableUpgrade::ApplyUpgrade(UObject * ToUpgrade) const
 	IAbilityUserInterface * abilityuser = Cast<IAbilityUserInterface>(ToUpgrade);
 	for (int i = 0; i < TargetAbilities.Num(); i++)
 	{
-		abilityuser->AddAbility(TargetAbilities[i], nullptr, InstallTags);
+		abilityuser->AddAbility(TargetAbilities[i], nullptr);
 	}
 }

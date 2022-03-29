@@ -89,6 +89,11 @@ bool UAbility::GetDefaultEnabledState() const
 	return DefaultEnabledState;
 }
 
+TArray<FName> UAbility::GetAbilityTags() const
+{
+	return AbilityTags;
+}
+
 bool UAbility::ConsumeMana(int amount)
 {
 	return AbilityComp->ConsumeMana(amount);

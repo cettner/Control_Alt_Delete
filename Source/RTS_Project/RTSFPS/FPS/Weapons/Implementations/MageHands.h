@@ -33,7 +33,7 @@ protected:
 	virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
-	virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr, TArray<FName> InInstallTags = TArray<FName>()) override;
+	virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr) override;
 
 protected:
 	/**********************Resource Gatherer Overrides***************************/
@@ -59,6 +59,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UAbility>> RightAbilityClasses;
+
+	UPROPERTY(EditDefaultsOnly)
+	FName OffHandAbilityTag = "OffHand";
+
+	UPROPERTY(EditDefaultsOnly)
+	FName MainHandAbilityTag = "MainHand";
 
 	int RightHandAbilityIndex = -1;
 };

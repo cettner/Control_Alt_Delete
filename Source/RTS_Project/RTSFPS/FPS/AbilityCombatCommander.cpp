@@ -55,11 +55,11 @@ TArray<TWeakObjectPtr<UAbility>> AAbilityCombatCommander::GetAbilitiesByClass(TS
 	return retval;
 }
 
-void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource, TArray<FName> InInstallTags)
+void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource)
 {
 	IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
 
-	abilityweapon->AddAbility(InAbilityClass, InSource, InInstallTags);
+	abilityweapon->AddAbility(InAbilityClass, InSource);
 }
 
 void AAbilityCombatCommander::CalculateCurrentWeight()

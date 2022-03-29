@@ -247,12 +247,18 @@ bool UAbilityComponent::IsAbilityEnabled(const int InIndex) const
 bool UAbilityComponent::SetAbilityEnabledState(const int InAbilityIndex, const bool InEnabledState)
 {
 	bool retval = false;
+	TArray<bool> oldabilitystates = EnabledAbilities;
 	if (HasAuthority() && IsAbilityValid(InAbilityIndex))
 	{
 		EnabledAbilities[InAbilityIndex] = InEnabledState;
 		retval = true;
 	}
 	
+	if (HasAuthority() && (GetNetMode() == NM_ListenServer))
+	{
+		OnRep_EnabledAbilities(oldabilitystates);
+	}
+
 	return(retval);
 }
 
@@ -522,4 +528,15 @@ void UAbilityComponent::OnRep_AbilityTarget()
 
 void UAbilityComponent::OnRep_EnabledAbilities(TArray<bool> PrevEnabledAbilities)
 {
+	const int checkindex = GetNextAvailableIndex();
+	if (checkindex == NO_ABILITY_INDEX && !IsCasting())
+	{
+		/*If we have no avialable abilities, prevent user from attempting*/
+		CurrentAbilityIndex = NO_ABILITY_INDEX;
+	}
+	else if (CurrentAbilityIndex == NO_ABILITY_INDEX)
+	{
+		/*If we dont have an ability Picked out, give the first one that shows up*/
+		CurrentAbilityIndex = checkindex;
+	}
 }

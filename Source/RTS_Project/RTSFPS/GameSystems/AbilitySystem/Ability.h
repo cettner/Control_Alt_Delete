@@ -49,6 +49,7 @@ class RTS_PROJECT_API UAbility : public UObject
 	public:
 		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel() const;
 		bool GetDefaultEnabledState() const;
+		TArray<FName> GetAbilityTags() const;
 	
 	public:
 		int GetManaCost() const;
@@ -85,6 +86,8 @@ class RTS_PROJECT_API UAbility : public UObject
 		UPROPERTY(EditDefaultsOnly)
 		bool DefaultEnabledState = true;
 
+		UPROPERTY(EditDefaultsOnly)
+		TArray<FName> AbilityTags = TArray<FName>();
 
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;

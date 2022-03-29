@@ -40,7 +40,12 @@ TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByClass(TSub
 	return TArray<TWeakObjectPtr<UAbility>>();
 }
 
-void IAbilityUserInterface::AddAbility(TSubclassOf<UAbility> AbilityClass, AActor* InSource, TArray<FName> InInstallTags)
+TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByTag(FName InTag) const
+{
+	return TArray<TWeakObjectPtr<UAbility>>();
+}
+
+void IAbilityUserInterface::AddAbility(TSubclassOf<UAbility> AbilityClass, AActor* InSource)
 {
 }
 

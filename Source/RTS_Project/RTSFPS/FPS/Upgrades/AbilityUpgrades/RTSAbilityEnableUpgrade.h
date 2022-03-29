@@ -14,9 +14,4 @@ class RTS_PROJECT_API URTSAbilityEnableUpgrade : public URTSAbilityUpgrade
 {
 	GENERATED_BODY()
 	virtual void ApplyUpgrade(UObject * ToUpgrade) const override;
-
-
-	protected:
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FName> InstallTags = TArray<FName>();
 };

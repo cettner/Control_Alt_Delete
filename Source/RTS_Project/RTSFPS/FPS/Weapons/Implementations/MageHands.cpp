@@ -96,18 +96,37 @@ TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(TSubclassOf<UAb
 	return retval;
 }
 
-void AMageHands::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource, TArray<FName> InInstallTags)
+void AMageHands::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource)
 {
-	const FName offhandkey = FName("OffHand");
-	const bool bisoffhandability = InInstallTags.Contains(offhandkey);
+	const UAbility* defaultability = InAbilityClass.GetDefaultObject();
+	const TArray<FName> abilitytags = defaultability->GetAbilityTags();
+	const bool ismainhandability = abilitytags.Contains(MainHandAbilityTag);
+	const bool bisoffhandability = abilitytags.Contains(OffHandAbilityTag);
 	
-	if (bisoffhandability == true)
+
+	if (bisoffhandability == true && ismainhandability == true)
+	{
+		RightHandAbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+		AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+	}
+	else if (bisoffhandability == true)
 	{
 		RightHandAbilityComp->SetAbilityEnabledState(InAbilityClass, true);
 	}
 	else
 	{
 		AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+	}
+
+	/*If we didnt have an ability before and added one get a new index*/
+	if (RightHandAbilityIndex == NO_ABILITY_INDEX)
+	{
+		RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
+	}
+
+	if (AbilityIndex == NO_ABILITY_INDEX)
+	{
+		AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
 	}
 }
 

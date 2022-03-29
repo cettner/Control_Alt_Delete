@@ -31,7 +31,8 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const;
-		virtual void AddAbility(TSubclassOf<UAbility> AbilityClass, AActor * InSource = nullptr, TArray<FName> InInstallTags = TArray<FName>());
+		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByTag(FName InTag) const;
+		virtual void AddAbility(TSubclassOf<UAbility> AbilityClass, AActor * InSource = nullptr);
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr);
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr);
