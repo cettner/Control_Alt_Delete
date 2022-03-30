@@ -38,6 +38,20 @@ UAbilityComponent * AMageHands::GetHandAbilityComponent(UAbilityAnimNotify * Cal
 	return retval;
 }
 
+void AMageHands::OnRightHandAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies)
+{
+	if (RightHandAbilityIndex == NO_ABILITY_INDEX && MyPawn->IsLocallyControlled())
+	{
+		RightHandAbilityIndex = RightHandAbilityComp->GetNextAvailableIndex();
+	}
+}
+
+void AMageHands::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	RightHandAbilityComp->AbilityChangeDelegate.AddDynamic(this, &AMageHands::OnRightHandAbilityEnableStateChanged);
+}
+
 USkeletalMeshComponent * AMageHands::GetWeaponMesh() const
 {
 	return(MyPawn->GetPawnMesh());

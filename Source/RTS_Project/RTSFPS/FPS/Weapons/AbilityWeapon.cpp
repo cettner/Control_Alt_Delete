@@ -154,6 +154,20 @@ bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 	return (retval);
 }
 
+void AAbilityWeapon::OnAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies)
+{
+	if (AbilityIndex == NO_ABILITY_INDEX && MyPawn->IsLocallyControlled())
+	{
+		AbilityIndex = AbilityComp->GetNextAvailableIndex();
+	}
+}
+
+void AAbilityWeapon::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AbilityComp->AbilityChangeDelegate.AddDynamic(this, &AAbilityWeapon::OnAbilityEnableStateChanged);
+}
+
 void AAbilityWeapon::EndPlay(EEndPlayReason::Type InReason)
 {
 	AbilityComp->InterruptAbility();

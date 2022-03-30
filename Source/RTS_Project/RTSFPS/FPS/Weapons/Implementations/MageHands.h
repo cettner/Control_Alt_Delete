@@ -17,15 +17,16 @@ class RTS_PROJECT_API AMageHands : public AAbilityWeapon, public IResourceGather
 	
 protected:
 	AMageHands();
+	virtual void PostInitializeComponents() override;
 
 protected:
-	virtual USkeletalMeshComponent* GetWeaponMesh() const override;
 	virtual bool InitAbilities(IAbilityUserInterface * ) override;
 
 protected:
 	/**********************AWeapon Overrides***************************/
 	virtual void StartSecondaryFire() override;
 	virtual void StopSecondaryFire() override;
+	virtual USkeletalMeshComponent* GetWeaponMesh() const override;
 	/*****************************************************************/
 protected:
 	virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
@@ -52,11 +53,10 @@ protected:
 	UFUNCTION(reliable, server, WithValidation)
 	void ServerStopUseSecondAbility();
 
+	UFUNCTION()
+	virtual void OnRightHandAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies);
 
 protected:
-	/*Container For All Right Hand Assets*/
-	UAbilityComponent * RightHandAbilityComp = nullptr;
-
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UAbility>> RightAbilityClasses;
 
@@ -65,6 +65,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FName MainHandAbilityTag = "MainHand";
+
+
+protected:
+	/*Container For All Right Hand Assets*/
+	UAbilityComponent* RightHandAbilityComp = nullptr;
 
 	int RightHandAbilityIndex = -1;
 };

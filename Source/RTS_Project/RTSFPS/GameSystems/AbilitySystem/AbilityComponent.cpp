@@ -189,7 +189,8 @@ int UAbilityComponent::GetNextEnabledIndex(int StartIndex) const
 		retval = nextindex;
 	}
 
-	while ((nextindex != StartIndex) && (retval == NO_ABILITY_INDEX))
+	int abilitycount = 0;
+	while ((nextindex != StartIndex) && (retval == NO_ABILITY_INDEX) && (abilitycount < EnabledAbilities.Num()))
 	{
 		nextindex = (nextindex + 1) % numabilities;
 		abilityenabled = IsAbilityEnabled(nextindex);
@@ -199,6 +200,7 @@ int UAbilityComponent::GetNextEnabledIndex(int StartIndex) const
 			retval = nextindex;
 			break;
 		}
+		abilitycount++;
 	}
 
 	return retval;
@@ -539,4 +541,12 @@ void UAbilityComponent::OnRep_EnabledAbilities(TArray<bool> PrevEnabledAbilities
 		/*If we dont have an ability Picked out, give the first one that shows up*/
 		CurrentAbilityIndex = checkindex;
 	}
+	
+	if (AbilityChangeDelegate.IsBound())
+	{
+		TArray<int> changedabilityindexs = TArray<int>();
+
+		AbilityChangeDelegate.Broadcast(changedabilityindexs);
+	}
+
 }

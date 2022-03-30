@@ -11,6 +11,8 @@
 constexpr int INVALID_ABILITY_COST = -1;
 constexpr int NO_ABILITY_INDEX = -1;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilitiesChangedDelegate, TArray<int>, InChangedAbilities);
+
 USTRUCT()
 struct FAbilityReplicationBool
 {
@@ -173,6 +175,10 @@ protected:
 	void SetWantsToCast(bool InState);
 	void SetCurrentAbility(int InAbilityIndex);
 
+
+
+public:
+	FOnAbilitiesChangedDelegate AbilityChangeDelegate = FOnAbilitiesChangedDelegate();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
