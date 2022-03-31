@@ -373,13 +373,11 @@ void ACombatCommander::SpawnDefaultInventory()
 }
 
 void ACombatCommander::SetCurrentWeapon(AWeapon * NewWeapon)
-{
-		AWeapon * lastweapon = CurrentWeapon;
-		
-		CurrentWeapon = NewWeapon;
-
+{	
 		if (HasAuthority())
 		{
+			AWeapon * lastweapon = CurrentWeapon;
+			CurrentWeapon = NewWeapon;
 			OnRep_CurrentWeapon(lastweapon);
 		}
 }

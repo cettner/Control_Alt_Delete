@@ -17,7 +17,6 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 		SetLocalPlayerState(true);
 	}
 
-
 	ADefaultPlayerController * pc = Cast<ADefaultPlayerController>(Controller);
 	check(pc);
 
@@ -26,7 +25,7 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 		pc->PostRegisterInit();
 	}
 
-	/*Try to Iniitalize GameModePresets on the client, if it fails just wait for the gamestate to do it for us*/
+	/*Try to Iniitalize GameModePresets on the client, if it fails just wait for the gamestate to do it for us in ADefaultGameState::ReceivedGameModeClass*/
 	if (!bHasDefaultGameModeDataLoaded)
 	{
 		const UWorld* world = GetWorld();
@@ -34,6 +33,7 @@ void ADefaultPlayerState::ClientInitialize(AController* Controller)
 		if (gs != nullptr)
 		{
 			LoadGameModeDefaults(gs->GetDefaultGameMode());
+			pc->ClientInitUI();
 		}
 	}
 

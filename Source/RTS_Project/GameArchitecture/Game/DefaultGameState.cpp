@@ -85,13 +85,13 @@ void ADefaultGameState::ReceivedGameModeClass()
 	{
 		const UWorld* world = GetWorld();
 		ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
-
-		firstcontroller->ClientInitUI();
-
 		ADefaultPlayerState * ps = firstcontroller->GetPlayerState<ADefaultPlayerState>();
+
+		/*if this fails, it is handeled when the playerstate replicates in ADefaultPlayerState::ClientInitialize*/
 		if (ps != nullptr && !ps->HasDefaultGameModeLoaded())
 		{
 			ps->LoadGameModeDefaults(GetDefaultGameMode());
+			firstcontroller->ClientInitUI();
 		}
 	}
 }

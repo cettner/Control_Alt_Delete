@@ -140,7 +140,11 @@ public:
 	/**Assign Net Owner*/
 	virtual void SetOwningPawn(ACombatCommander* NewOwner);
 
+	/*On Clients, the Current Weapon may replicate before the pawn does, this allows the ability to check if Pawn Replication is still in progress*/
 	virtual bool HasPawnReplicated() const;
+
+	/*Returns True if the Weapon is currently equipped by the players local Pawn*/
+	virtual bool IsLocallyEquipped() const;
 
 protected:
 	/** Attaches weapon mesh to pawn's mesh */

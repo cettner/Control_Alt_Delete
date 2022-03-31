@@ -179,6 +179,11 @@ bool AWeapon::HasPawnReplicated() const
 	return retval;
 }
 
+bool AWeapon::IsLocallyEquipped() const
+{
+	return (IsValid(MyPawn) && MyPawn->IsLocallyControlled());
+}
+
 bool AWeapon::IsAttachedToPawn() const
 {
 	return(bIsEquipped || bPendingEquip);
