@@ -102,7 +102,7 @@ void AWeapon::OnEquipFinished()
 	DetermineWeaponState();
 }
 
-void AWeapon::OnUnEquip(const AWeapon* NextWeapon)
+void AWeapon::OnUnEquip()
 {
 	if (bPendingEquip)
 	{
@@ -140,7 +140,7 @@ void AWeapon::OnUnEquipFinished()
 
 void AWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 {
-	SetOwningPawn(NewOwner);
+
 }
 
 void AWeapon::OnLeaveInventory()
@@ -165,7 +165,18 @@ void AWeapon::SetOwningPawn(ACombatCommander* NewOwner)
 		
 		// net owner for RPC calls
 		SetOwner(NewOwner);
+
+		if (HasAuthority())
+		{
+			OnRep_MyPawn();
+		}
 	}
+}
+
+bool AWeapon::HasPawnReplicated() const
+{
+	const bool retval = IsValid(MyPawn);
+	return retval;
 }
 
 bool AWeapon::IsAttachedToPawn() const
@@ -357,18 +368,14 @@ EWeaponState AWeapon::GetCurrentState() const
 
 void AWeapon::OnRep_MyPawn()
 {
-	if (MyPawn)
+	if (IsValid(MyPawn))
 	{
 		OnEnterInventory(MyPawn);
-	}
-	else
-	{
-		OnLeaveInventory();
 	}
 }
 
 void AWeapon::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AWeapon, MyPawn);
+	DOREPLIFETIME_CONDITION(AWeapon, MyPawn, COND_InitialOnly);
 }

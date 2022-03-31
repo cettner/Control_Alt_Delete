@@ -20,9 +20,6 @@ public:
 	ACombatCommander();
 
 public:
-	/*Add Weapon to Inventory*/
-	void AddWeapon(AWeapon * Added_Weapon);
-
 	/*Remove Weapon From Inventory*/
 	void RemoveWeapon(AWeapon* Weapon);
 

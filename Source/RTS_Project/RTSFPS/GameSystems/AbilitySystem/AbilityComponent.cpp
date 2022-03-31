@@ -449,8 +449,6 @@ FVector UAbilityComponent::GetControlRotation()
 	return FVector();
 }
 
-
-
 FTransform UAbilityComponent::GetSurfaceTransform()
 {
 	return FTransform();

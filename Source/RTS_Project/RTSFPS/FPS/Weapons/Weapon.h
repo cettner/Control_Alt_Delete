@@ -126,7 +126,7 @@ public:
 	virtual void OnEquipFinished();
 
 	/** weapon is being unequipped by owner pawn */
-	virtual void OnUnEquip(const AWeapon* NextWeapon = NULL);
+	virtual void OnUnEquip();
 
 	/** weapon is now unequipped by owner pawn */
 	virtual void OnUnEquipFinished();
@@ -139,6 +139,8 @@ public:
 
 	/**Assign Net Owner*/
 	virtual void SetOwningPawn(ACombatCommander* NewOwner);
+
+	virtual bool HasPawnReplicated() const;
 
 protected:
 	/** Attaches weapon mesh to pawn's mesh */
@@ -197,17 +199,15 @@ protected:
 	EWeaponState CurrentState;
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_MyPawn)
-	ACombatCommander* MyPawn;
+	ACombatCommander* MyPawn = nullptr;
 
 
 public:
 
 	/** get weapon mesh (needs pawn owner to determine variant) */
-	UFUNCTION(BlueprintCallable)
 	virtual USkeletalMeshComponent* GetWeaponMesh() const;
 
 	/** get pawn owner */
-	UFUNCTION(BlueprintCallable, Category = "Game|Weapon")
 	ACombatCommander* GetPawnOwner() const;
 
 	EWeaponState GetCurrentState() const;
