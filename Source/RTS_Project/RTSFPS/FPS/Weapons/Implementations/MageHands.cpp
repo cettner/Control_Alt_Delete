@@ -40,7 +40,7 @@ UAbilityComponent * AMageHands::GetHandAbilityComponent(UAbilityAnimNotify * Cal
 
 void AMageHands::OnRightHandAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies)
 {
-	if (RightHandAbilityIndex == NO_ABILITY_INDEX && MyPawn->IsLocallyControlled())
+	if (RightHandAbilityIndex == NO_ABILITY_INDEX)
 	{
 		RightHandAbilityIndex = RightHandAbilityComp->GetNextAvailableIndex();
 	}

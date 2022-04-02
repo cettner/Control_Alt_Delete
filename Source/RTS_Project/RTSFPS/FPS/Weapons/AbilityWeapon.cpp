@@ -156,7 +156,7 @@ bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 
 void AAbilityWeapon::OnAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies)
 {
-	if (AbilityIndex == NO_ABILITY_INDEX && MyPawn->IsLocallyControlled())
+	if (AbilityIndex == NO_ABILITY_INDEX)
 	{
 		AbilityIndex = AbilityComp->GetNextAvailableIndex();
 	}

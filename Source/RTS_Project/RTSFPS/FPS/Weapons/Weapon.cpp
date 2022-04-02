@@ -166,10 +166,7 @@ void AWeapon::SetOwningPawn(ACombatCommander* NewOwner)
 		// net owner for RPC calls
 		SetOwner(NewOwner);
 
-		if (HasAuthority())
-		{
-			OnRep_MyPawn();
-		}
+		OnRep_MyPawn();
 	}
 }
 
