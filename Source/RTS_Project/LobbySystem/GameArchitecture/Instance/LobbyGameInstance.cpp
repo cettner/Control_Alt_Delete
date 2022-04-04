@@ -68,7 +68,7 @@ void ULobbyGameInstance::LoadMainMenu()
 		if (MainMenu == nullptr) return;
 	}
 	
-	MainMenu->Setup(this);
+	//MainMenu->Setup(this);
 }
 
 void ULobbyGameInstance::LoadLobbyMenu()
@@ -337,7 +337,7 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 
 				ServerData.Add(Data);
 			}
-			MainMenu->InitializeSessionsList(ServerData);
+		//	MainMenu->InitializeSessionsList(ServerData);
 		}
 	}
 	else

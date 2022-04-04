@@ -17,5 +17,5 @@ void UJoinSessionInfoWidget::OnClicked()
 
 	UE_LOG(LogTemp, Warning, TEXT("[USessionRow::OnClicked] Index %i"), Index);
 
-	Parent->SelectIndexSessionList(Index);
+	//Parent->SelectIndexSessionList(Index);
 }
