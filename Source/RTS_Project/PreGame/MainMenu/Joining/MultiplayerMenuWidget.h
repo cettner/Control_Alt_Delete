@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/WidgetSwitcher.h"
 
 #include "RTS_Project/LobbySystem/Interfaces/SessionMenuInterface.h"
 #include "MultiplayerMenuWidget.generated.h"
@@ -22,19 +23,26 @@ protected:
 	virtual bool Initialize() override;
 	virtual void Setup(ISessionMenuInterface* InSessionInterface);
 
-	UPROPERTY(meta = (BindWidget))
-	UButton* HostSessionButton;
-
+protected:
 	UFUNCTION()
 	virtual void OnHostSessionPressed();
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* JoinSessionButton;
 
 	UFUNCTION()
 	virtual void OnJoinSessionPressed();
 
+protected:
 	virtual ISessionMenuInterface* GetSessionInterface();
+
+protected:
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* SessionWidgetSwitcher = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* JoinSessionButton = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* HostSessionButton = nullptr;
+
 
 protected:
 	ISessionMenuInterface* SessionMenuInterface = nullptr;

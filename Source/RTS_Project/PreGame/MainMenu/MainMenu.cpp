@@ -23,14 +23,18 @@ void UMainMenu::AddToScreen(ULocalPlayer * LocalPlayer, int32 ZOrder)
 {
 	Super::AddToScreen(LocalPlayer, ZOrder);
 	const UWorld * world = GetWorld();
+
+	/*Will return null in editor preview, valid in PIE*/
 	APlayerController * pc = world->GetFirstPlayerController();
+	if (pc != nullptr)
+	{
+		FInputModeUIOnly InputModeData;
+		InputModeData.SetWidgetToFocus(this->TakeWidget());
+		InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	FInputModeUIOnly InputModeData;
-	InputModeData.SetWidgetToFocus(this->TakeWidget());
-	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	pc->SetInputMode(InputModeData);
-	pc->bShowMouseCursor = true;
+		pc->SetInputMode(InputModeData);
+		pc->bShowMouseCursor = true;
+	}
 }
 
 void UMainMenu::Teardown()
@@ -49,15 +53,6 @@ void UMainMenu::Teardown()
 	PlayerController->bShowMouseCursor = false;
 }
 
-
-void UMainMenu::OnPlayOfflineButtonPressed()
-{
-	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
-	if (GI)
-	{
-		GI->StartOfflineGame();
-	}
-}
 
 
 

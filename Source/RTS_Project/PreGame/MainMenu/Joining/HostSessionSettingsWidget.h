@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
+#include "Components/EditableTextBox.h"
+#include "Components/CheckBox.h"
+
 #include "HostSessionSettingsWidget.generated.h"
 
 /**
@@ -14,14 +17,36 @@ UCLASS()
 class RTS_PROJECT_API UHostSessionSettingsWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
 
+
+	UPROPERTY(meta = (BindWidget))
+	UButton * BeginHostingButton = nullptr;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UEditableTextBox* ServerNameEditTextBox = nullptr;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UEditableTextBox* PasswordEditTextBox = nullptr;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UCheckBox* PrivateGameCheckBox = nullptr;
 
 protected:
-	/*User Input TODO:: Make Setable from UI*/
-	UPROPERTY(EditDefaultsOnly, Category = Session)
-	FString DesiredServerName;
+	virtual bool Initialize() override;
 
-	UPROPERTY(EditDefaultsOnly, Category = Session)
-	int PlayersPerTeam;
+protected:
+	UFUNCTION()
+	virtual void OnBeginHostingButtonPressed();
+
+protected:
+	
+	FString DesiredServerName = "Default Server Name";
+
+	bool bAllowSpectators = false;
+
+	int NumAllowedSpectators = 3;
+
+	bool bIsPrivateGame = false;
+
+	
 };

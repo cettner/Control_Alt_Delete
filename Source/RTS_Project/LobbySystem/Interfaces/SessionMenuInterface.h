@@ -13,9 +13,13 @@ class USessionMenuInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+enum ESessionPrivacyType
+{
+	Public,
+	FriendsOnly,
+	Private
+};
+
 class RTS_PROJECT_API ISessionMenuInterface
 {
 	GENERATED_BODY()

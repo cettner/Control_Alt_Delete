@@ -51,14 +51,6 @@ protected:
 	UWidget* HostSessionMenuWidget;
 
 
-	// Link to buttons
-
-	UPROPERTY(meta = (BindWidgetOptional))
-	UButton* PlayOfflineButton;
-
-	UFUNCTION()
-	void OnPlayOfflineButtonPressed();
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
