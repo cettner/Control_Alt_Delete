@@ -6,25 +6,85 @@
 // Sets default values
 AMenuPawn::AMenuPawn()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootTransform"));
+	DebugMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DebugMesh"));
+	DebugMesh->SetupAttachment(RootComponent);
 }
 
-// Called when the game starts or when spawned
-void AMenuPawn::BeginPlay()
+bool AMenuPawn::GetIsTrackEnabled() const
 {
-	Super::BeginPlay();
+	return bIsTrackEnabled;
 }
 
-// Called every frame
-void AMenuPawn::Tick(float DeltaTime)
+void AMenuPawn::SetIsTrackEnabled(bool InTrackEnable)
 {
-	Super::Tick(DeltaTime);
+	bIsTrackEnabled = InTrackEnable;
+
+	if (bIsTrackEnabled == true && !MyTimeline.IsPlaying())
+	{
+		const float totalplayduration = 1.0f / DurationofTrack;
+		MyTimeline.SetPlayRate(totalplayduration);
+		MyTimeline.SetNewTime(StartOffsetTime);
+		MyTimeline.SetLooping(true);
+		MyTimeline.PlayFromStart();
+	}
+
 }
 
-// Called to bind functionality to input
-void AMenuPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AMenuPawn::UpdateTrackPosition()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (IsValid(CurrentSplineActor))
+	{
+
+		const USplineComponent * splinecomp = CurrentSplineActor->GetSplineComponent(this);
+
+		if (IsValid(splinecomp))
+		{
+			const float timelineindex = MyTimeline.GetPlaybackPosition();
+			const float trackalpha = TrackAlphaCurve->GetFloatValue(timelineindex);
+			const float splinelength = splinecomp->GetSplineLength();
+
+			const float currenttrackposition = FMath::Lerp(0.0f, splinelength, trackalpha);
+
+
+			const FVector newlocation = splinecomp->GetLocationAtDistanceAlongSpline(currenttrackposition, ESplineCoordinateSpace::World);
+			const FRotator newrotation = splinecomp->GetRotationAtDistanceAlongSpline(currenttrackposition, ESplineCoordinateSpace::World);
+			SetActorLocationAndRotation(newlocation, newrotation);
+		}
+	}
+
+
+
 }
 
+void AMenuPawn::OnTrackCompleted()
+{
+}
+
+void AMenuPawn::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (IsValid(TrackAlphaCurve))
+	{
+		TimelineCallback.BindUFunction(this, FName("UpdateTrackPosition"));
+		TimelineFinishedCallback.BindUFunction(this, FName("OnTrackCompleted"));
+
+		MyTimeline.AddInterpFloat(TrackAlphaCurve, TimelineCallback);
+		MyTimeline.SetTimelineFinishedFunc(TimelineFinishedCallback);
+	}
+
+
+
+	SetIsTrackEnabled(bEnabledAtStart);
+
+}
+
+void AMenuPawn::Tick(float InDeltaTime)
+{
+	Super::Tick(InDeltaTime);
+	MyTimeline.TickTimeline(InDeltaTime);
+}

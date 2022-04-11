@@ -45,10 +45,13 @@ protected:
 
 	// Menus
 	UPROPERTY(meta = (BindWidget))
-	UWidgetSwitcher* MenuSwitcher;
+	UButton* GameSettingsButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UWidget* HostSessionMenuWidget;
+	UButton* ExitGameButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* MultiPlayerButton;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
