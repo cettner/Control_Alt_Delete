@@ -4,12 +4,11 @@
 #include "MenuPawn.h"
 
 // Sets default values
-AMenuPawn::AMenuPawn()
+AMenuPawn::AMenuPawn() : Super()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootTransform"));
 	DebugMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DebugMesh"));
 	DebugMesh->SetupAttachment(RootComponent);
 }
@@ -27,7 +26,7 @@ void AMenuPawn::SetIsTrackEnabled(bool InTrackEnable)
 	{
 		const float totalplayduration = 1.0f / DurationofTrack;
 		MyTimeline.SetPlayRate(totalplayduration);
-		MyTimeline.SetNewTime(StartOffsetTime);
+		MyTimeline.SetNewTime(PercentTrackStartOffset);
 		MyTimeline.SetLooping(true);
 		MyTimeline.PlayFromStart();
 	}

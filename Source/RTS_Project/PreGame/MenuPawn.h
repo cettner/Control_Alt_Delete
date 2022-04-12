@@ -3,8 +3,7 @@
 #pragma once
 
 
-#include "GameFramework/Actor.h"
-#include "Camera/CameraComponent.h"
+#include "Camera/CameraActor.h"
 #include "Curves/CurveFloat.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/TimelineComponent.h"
@@ -13,7 +12,7 @@
 #include "MenuPawn.generated.h"
 
 UCLASS()
-class RTS_PROJECT_API AMenuPawn : public AActor
+class RTS_PROJECT_API AMenuPawn : public ACameraActor
 {
 	GENERATED_BODY()
 
@@ -43,7 +42,7 @@ protected:
 	float DurationofTrack = 1.0f;
 	
 	UPROPERTY(EditDefaultsOnly, meta = (ClampMin = "0.0", ClampMax = "1.0", UIMin = "0.0", UIMax = "1.0"))
-	float StartOffsetTime = 0.0f;
+	float PercentTrackStartOffset = 0.0f;
 
 	UPROPERTY(EditDefaultsOnly)
 	UCurveFloat * TrackAlphaCurve;
@@ -52,9 +51,6 @@ protected:
 	AMenuSplinePathActor * CurrentSplineActor = nullptr;
 
 protected:
-
-	UPROPERTY()
-	UCameraComponent * Camera = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent * DebugMesh = nullptr;
