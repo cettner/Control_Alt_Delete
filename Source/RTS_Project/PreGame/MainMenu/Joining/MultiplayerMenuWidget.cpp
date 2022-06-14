@@ -22,27 +22,21 @@ void UMultiplayerMenuWidget::Setup(ISessionMenuInterface * InSessionInterface)
 
 void UMultiplayerMenuWidget::OnHostSessionPressed()
 {
-	/*
-	if (SessionMenuInterface == nullptr) return;
-	SessionMenuInterface->Host(DesiredServerName);
-	*/
+	if (SessionWidgetSwitcher != nullptr)
+	{
+		SessionWidgetSwitcher->SetActiveWidget(HostSessionMenu);
+	}
 }
 
 void UMultiplayerMenuWidget::OnJoinSessionPressed()
 {
-	/*
-	if ((MenuSwitcher == nullptr) || (SessionListMenuWidget == nullptr)) return;
-
-	MenuSwitcher->SetActiveWidget(SessionListMenuWidget);
-
-	if (SessionMenuInterface == nullptr) return;
-
-	SessionMenuInterface->OpenSessionListMenu();
-
-	*/
+	if (SessionWidgetSwitcher != nullptr)
+	{
+		SessionWidgetSwitcher->SetActiveWidget(JoinSessionMenu);
+	}
 }
 
-ISessionMenuInterface * UMultiplayerMenuWidget::GetSessionInterface()
+ISessionMenuInterface * UMultiplayerMenuWidget::GetSessionInterface() const
 {
 	return SessionMenuInterface;
 }

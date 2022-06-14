@@ -31,17 +31,23 @@ protected:
 	virtual void OnJoinSessionPressed();
 
 protected:
-	virtual ISessionMenuInterface* GetSessionInterface();
+	virtual ISessionMenuInterface* GetSessionInterface() const;
 
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* SessionWidgetSwitcher = nullptr;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidgetOptional))
 	UButton* JoinSessionButton = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* HostSessionButton = nullptr;
+
+	UPROPERTY(meta = (BindWidget))
+	UWidget * HostSessionMenu = nullptr;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UWidget * JoinSessionMenu = nullptr;
 
 
 protected:

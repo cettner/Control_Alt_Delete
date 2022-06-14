@@ -7,12 +7,13 @@
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Components/CheckBox.h"
+#include "Components/ComboBoxString.h"
 
 #include "HostSessionSettingsWidget.generated.h"
 
-/**
- * 
- */
+
+
+
 UCLASS()
 class RTS_PROJECT_API UHostSessionSettingsWidget : public UUserWidget
 {
@@ -30,6 +31,8 @@ class RTS_PROJECT_API UHostSessionSettingsWidget : public UUserWidget
 
 	UPROPERTY(meta = (BindWidgetOptional))
 	UCheckBox* PrivateGameCheckBox = nullptr;
+
+
 
 protected:
 	virtual bool Initialize() override;

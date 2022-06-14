@@ -8,21 +8,30 @@ bool UHostSessionSettingsWidget::Initialize()
 {
     bool retval = Super::Initialize();
 
-    if (PrivateGameCheckBox != nullptr)
-    {
-        PrivateGameCheckBox->SetIsChecked(false);
-    }
+	/*Set Up Default Server Name with the Players Session Username*/
+	if (ServerNameEditTextBox != nullptr)
+	{
+		const APlayerController * pc = GetOwningPlayer();
+		if (pc != nullptr)
+		{
+			const APlayerState* ps = pc->PlayerState;
+			const FString defaultservername = ps->GetPlayerName() += FString("'s Server");
+			PasswordEditTextBox->SetText(FText::FromString(defaultservername));
+		}
+
+	}
+
+
+	/*Allow Enable Private Game*/
+	if (PrivateGameCheckBox != nullptr)
+	{
+		PrivateGameCheckBox->SetIsChecked(false);
+	}
 
     /*Password Edit */
     if (PasswordEditTextBox != nullptr)
     {
-        const APlayerController * pc = GetOwningPlayer();
-        if (pc != nullptr)
-        {
-            const APlayerState* ps = pc->PlayerState;
-            const FString defaultservername = ps->GetPlayerName() += FString("'s Server");
-            PasswordEditTextBox->SetText(FText::FromString(defaultservername));
-        }
+		PasswordEditTextBox->SetIsPassword(true);
 
         if (PrivateGameCheckBox != nullptr)
         {
