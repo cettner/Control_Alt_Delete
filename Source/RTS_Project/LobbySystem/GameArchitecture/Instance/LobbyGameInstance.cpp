@@ -4,9 +4,9 @@
 #include "LobbyGameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystemTypes.h"
-
-#include "RTS_Project/PreGame/MainMenu/MainMenu.h"
 #include "Kismet/GameplayStatics.h"
+
+#include "RTS_Project/PreGame/MainMenu/MainMenuWidgetManager.h"
 #include "../../UI/LobbyMenu.h"
 
 const static FName SESSION_NAME = TEXT("RTSFPSGameSession");
@@ -15,7 +15,7 @@ const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");
 
 ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializer)
 {
-	MenuClass = UMainMenu::StaticClass();
+	MenuClass = UMainMenuWidgetManager::StaticClass();
 	LobbyClass = ULobbyMenu::StaticClass();
 	RestartSession = false;
 	bIsPlayingOffline = false;
@@ -64,11 +64,20 @@ void ULobbyGameInstance::LoadMainMenu()
 	}
 	else if (MainMenu == nullptr)
 	{
-		MainMenu = CreateWidget<UMainMenu>(this, MenuClass);
-		if (MainMenu == nullptr) return;
+		MainMenu = CreateWidget<UUserWidget>(this, MenuClass);
 	}
-	
-	//MainMenu->Setup(this);
+}
+
+void ULobbyGameInstance::CloseCurrentMenu()
+{
+	if (MainMenu != nullptr)
+	{
+		MainMenu = nullptr;
+	}
+	else if (LobbyMenu != nullptr)
+	{
+		LobbyMenu = nullptr;
+	}
 }
 
 void ULobbyGameInstance::LoadLobbyMenu()
@@ -171,12 +180,8 @@ void ULobbyGameInstance::StartOfflineGame()
 	UWorld* World = GetWorld();
 	if (World)
 	{
+		CloseCurrentMenu();
 
-		if (MainMenu != nullptr)
-		{
-			MainMenu->Teardown();
-			MainMenu = nullptr;
-		}
 
 		bIsPlayingOffline = true;
 		UGameplayStatics::OpenLevel(World, FName(*LobbyMapName));
@@ -260,12 +265,7 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 
 	UE_LOG(LogTemp, Warning, TEXT("[UNetTileMazeGameInstance::OnCreateSessionComplete] SUCESS SessionName: %s"), *SessionName.ToString());
 
-	// Teardown Menu and change levels
-	if (MainMenu != nullptr)
-	{
-		MainMenu->Teardown();
-		MainMenu = nullptr;
-	}
+	CloseCurrentMenu();
 
 	UEngine* Engine = GetEngine();
 
@@ -348,11 +348,7 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 
 void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	if (MainMenu != nullptr)
-	{
-		MainMenu->Teardown();
-		MainMenu = nullptr;
-	}
+	CloseCurrentMenu();
 	if (!SessionInterface.IsValid()) return;
 
 	FString Url;

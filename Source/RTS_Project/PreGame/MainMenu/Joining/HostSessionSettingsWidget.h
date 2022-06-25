@@ -9,6 +9,7 @@
 #include "Components/CheckBox.h"
 #include "Components/ComboBoxString.h"
 
+#include "RTS_Project/LobbySystem/Interfaces/SessionMenuInterface.h"
 #include "HostSessionSettingsWidget.generated.h"
 
 
@@ -20,8 +21,22 @@ class RTS_PROJECT_API UHostSessionSettingsWidget : public UUserWidget
 	GENERATED_BODY()
 
 
+protected:
+	virtual bool Initialize() override;
+	virtual void InitSessionInterface();
+
+protected:
+	UFUNCTION()
+	virtual void OnBeginHostingButtonPressed();
+
+public:
+	ISessionMenuInterface * GetSessionInterface() const;
+	virtual FString GetServerName() const;
+	virtual FString GetDefaultServerName() const;
+
+protected:
 	UPROPERTY(meta = (BindWidget))
-	UButton * BeginHostingButton = nullptr;
+	UButton* BeginHostingButton = nullptr;
 
 	UPROPERTY(meta = (BindWidgetOptional))
 	UEditableTextBox* ServerNameEditTextBox = nullptr;
@@ -32,18 +47,9 @@ class RTS_PROJECT_API UHostSessionSettingsWidget : public UUserWidget
 	UPROPERTY(meta = (BindWidgetOptional))
 	UCheckBox* PrivateGameCheckBox = nullptr;
 
-
-
-protected:
-	virtual bool Initialize() override;
-
-protected:
-	UFUNCTION()
-	virtual void OnBeginHostingButtonPressed();
-
 protected:
 	
-	FString DesiredServerName = "Default Server Name";
+	FString DefaultServerName = "Default Server Name";
 
 	bool bAllowSpectators = false;
 
@@ -51,5 +57,7 @@ protected:
 
 	bool bIsPrivateGame = false;
 
-	
+protected:
+
+	ISessionMenuInterface * SessionInterface = nullptr;
 };

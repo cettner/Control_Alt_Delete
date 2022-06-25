@@ -5,19 +5,30 @@
 
 bool UMultiplayerMenuWidget::Initialize()
 {
-	bool Success = Super::Initialize();
+	bool success = Super::Initialize();
 
-	if (HostSessionButton == nullptr) return false;
-	HostSessionButton->OnClicked.AddDynamic(this, &UMultiplayerMenuWidget::OnHostSessionPressed);
+	InitSessionInterface();
+	success &= SessionMenuInterface != nullptr;
 
-	if (JoinSessionButton == nullptr) return false;
-	JoinSessionButton->OnClicked.AddDynamic(this, &UMultiplayerMenuWidget::OnJoinSessionPressed);
+	/*Required Binding*/
+	if (HostSessionButton == nullptr && HostSessionButton->GetButton() != nullptr) return false;
+	HostSessionButton->GetButton()->OnClicked.AddDynamic(this, &UMultiplayerMenuWidget::OnHostSessionPressed);
+	HostSessionButton->SetBoundWidget(HostSessionMenu);
 
-	return Success;
+	/*Optional Binding*/
+	if (JoinSessionButton == nullptr && JoinSessionButton->GetButton() != nullptr)
+	{
+		JoinSessionButton->GetButton()->OnClicked.AddDynamic(this, &UMultiplayerMenuWidget::OnJoinSessionPressed);
+		JoinSessionButton->SetBoundWidget(JoinSessionMenu);
+	}
+
+
+	return success;
 }
 
-void UMultiplayerMenuWidget::Setup(ISessionMenuInterface * InSessionInterface)
+void UMultiplayerMenuWidget::InitSessionInterface()
 {
+	SessionMenuInterface = GetGameInstance<ISessionMenuInterface>();
 }
 
 void UMultiplayerMenuWidget::OnHostSessionPressed()
@@ -30,7 +41,9 @@ void UMultiplayerMenuWidget::OnHostSessionPressed()
 
 void UMultiplayerMenuWidget::OnJoinSessionPressed()
 {
-	if (SessionWidgetSwitcher != nullptr)
+	UWidget* buttonbinding = JoinSessionButton->GetBoundWidget();
+	const bool swapsuccess = SetActiveWidgetTab(buttonbinding);
+	if (swapsuccess == true)
 	{
 		SessionWidgetSwitcher->SetActiveWidget(JoinSessionMenu);
 	}
@@ -39,6 +52,32 @@ void UMultiplayerMenuWidget::OnJoinSessionPressed()
 ISessionMenuInterface * UMultiplayerMenuWidget::GetSessionInterface() const
 {
 	return SessionMenuInterface;
+}
+
+bool UMultiplayerMenuWidget::SetActiveWidgetTab(UWidget* InSetActive)
+{
+	bool retval = false;
+
+	if (IsValid(SessionWidgetSwitcher) && IsValid(InSetActive))
+	{
+		SessionWidgetSwitcher->SetActiveWidget(InSetActive);
+		retval = true;
+	}
+
+	return retval;
+}
+
+bool UMultiplayerMenuWidget::SetActiveWidgetTab(UTabButtonWidget* InSetActive)
+{
+	bool retval = false;
+	if (IsValid(InSetActive))
+	{
+		UWidget* buttonbinding = InSetActive->GetBoundWidget();
+		retval = SetActiveWidgetTab(buttonbinding);
+	}
+	
+		
+	return retval;
 }
 
 

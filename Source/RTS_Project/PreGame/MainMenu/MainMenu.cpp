@@ -3,18 +3,38 @@
 
 #include "MainMenu.h"
 #include "MainMenuPlayerController.h"
+#include "Joining/MultiplayerMenuWidget.h"
+#include "GameplaySettings/GameplaySettingsWidget.h"
 #include "RTS_Project/LobbySystem/GameArchitecture/Instance/LobbyGameInstance.h"
+
+
+
+void UMainMenu::InitMenuBindings()
+{
+	if (IsValid(MultiPlayerButton))
+	{
+		FMenuClickBindingInfo multiplayerbinding;
+		multiplayerbinding.BindingDelegate = &MultiPlayerButton->OnClicked;
+		multiplayerbinding.BindToClass = UMultiplayerMenuWidget::StaticClass();
+		BindingInfo.Emplace(multiplayerbinding);
+	}
+
+	if (IsValid(GameSettingsButton))
+	{
+		FMenuClickBindingInfo gamesettingsbinding;
+		gamesettingsbinding.BindingDelegate = &GameSettingsButton->OnClicked;
+		gamesettingsbinding.BindToClass = UGameplaySettingsWidget::StaticClass();
+		BindingInfo.Emplace(gamesettingsbinding);
+	}
+}
 
 bool UMainMenu::Initialize()
 {
 	bool Success = Super::Initialize();
 
-	if (!Success) return false;
-
 	/*Setting this so that input can be set to UI only from controller*/
-	bIsFocusable = true;
-	AddToViewport();
-
+	//bIsFocusable = true;
+	//AddToViewport();
 
 	return true;
 }
@@ -37,21 +57,6 @@ void UMainMenu::AddToScreen(ULocalPlayer * LocalPlayer, int32 ZOrder)
 	}
 }
 
-void UMainMenu::Teardown()
-{
-	this->RemoveFromViewport();
-
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-
-	AMainMenuPlayerController* PlayerController = Cast<AMainMenuPlayerController>(World->GetFirstPlayerController());
-	if (PlayerController == nullptr) return;
-
-	// Set the Input Mode for game mode: allows only the player input / player controller to respond to user input.
-	FInputModeGameOnly InputModeData;
-	PlayerController->SetInputMode(InputModeData);
-	PlayerController->bShowMouseCursor = false;
-}
 
 
 

@@ -6,7 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
+#include "Components/PanelWidget.h"
 
+#include "TabButtonWidget.h"
 #include "RTS_Project/LobbySystem/Interfaces/SessionMenuInterface.h"
 #include "MultiplayerMenuWidget.generated.h"
 
@@ -21,7 +23,7 @@ class RTS_PROJECT_API UMultiplayerMenuWidget : public UUserWidget
 
 protected:
 	virtual bool Initialize() override;
-	virtual void Setup(ISessionMenuInterface* InSessionInterface);
+	virtual void InitSessionInterface();
 
 protected:
 	UFUNCTION()
@@ -31,17 +33,19 @@ protected:
 	virtual void OnJoinSessionPressed();
 
 protected:
-	virtual ISessionMenuInterface* GetSessionInterface() const;
+	ISessionMenuInterface* GetSessionInterface() const;
+	bool SetActiveWidgetTab(UWidget * InSetActive);
+	bool SetActiveWidgetTab(UTabButtonWidget* InSetActive);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* SessionWidgetSwitcher = nullptr;
 
 	UPROPERTY(meta = (BindWidgetOptional))
-	UButton* JoinSessionButton = nullptr;
+	UTabButtonWidget* JoinSessionButton = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* HostSessionButton = nullptr;
+	UTabButtonWidget* HostSessionButton = nullptr;
 
 	UPROPERTY(meta = (BindWidget))
 	UWidget * HostSessionMenu = nullptr;
@@ -49,7 +53,13 @@ protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	UWidget * JoinSessionMenu = nullptr;
 
+	UPROPERTY(meta = (BindWidget))
+	UPanelWidget* TabContainer = nullptr;
+
 
 protected:
+
 	ISessionMenuInterface* SessionMenuInterface = nullptr;
+
+	
 };

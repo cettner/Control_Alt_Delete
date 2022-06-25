@@ -16,6 +16,6 @@ class RTS_PROJECT_API UJoinSessionWidget : public UUserWidget
 	
 	UPROPERTY(meta = (BindWidget))
 	UPanelWidget* SessionSelectionList;
-
+	
 
 };

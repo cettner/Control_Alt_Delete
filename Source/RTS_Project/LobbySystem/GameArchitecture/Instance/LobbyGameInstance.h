@@ -7,6 +7,7 @@
 #include "OnlineSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Interfaces/OnlineFriendsInterface.h"
+#include "Blueprint/UserWidget.h"
 
 #include "../../Interfaces/SessionMenuInterface.h"
 #include "LobbyGameInstance.generated.h"
@@ -61,7 +62,7 @@ struct FServerSettings
 	bool bIsValid = false;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FBPUniqueNetId
 {
 	GENERATED_USTRUCT_BODY()
@@ -139,7 +140,6 @@ struct FSubSytemFriendInfo
 DECLARE_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>);
 
 /*Forward Declarations*/
-class UMainMenu;
 class ULobbyMenu;
 
 
@@ -176,6 +176,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadLobbyMenu();
+
+	void CloseCurrentMenu();
 
 	//template <typename WidgetT = UUserWidget, typename OwnerT = UObject>
 	ULobbyMenu * GetLobbyMenu();
@@ -247,7 +249,7 @@ protected:
 	// Main Menu
 	UPROPERTY(EditDefaultsOnly, Category = UI)
 	TSubclassOf<UUserWidget> MenuClass;
-	UMainMenu* MainMenu;
+	UUserWidget* MainMenu;
 
 	//Lobby
 	UPROPERTY(EditDefaultsOnly, Category = UI)

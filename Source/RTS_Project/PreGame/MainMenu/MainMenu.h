@@ -6,9 +6,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "Components/Button.h"
-#include "Components/WidgetSwitcher.h"
-
-#include "RTS_Project/PreGame/MainMenu/Joining/JoinSessionInfoWidget.h"
+#include "MenuWidgetBase.h"
 #include "MainMenu.generated.h"
 
 
@@ -30,12 +28,12 @@ struct FServerData
  * 
  */
 UCLASS()
-class RTS_PROJECT_API UMainMenu : public UUserWidget
+class RTS_PROJECT_API UMainMenu : public UMenuWidgetBase
 {
 	GENERATED_BODY()
 
-public:
-	virtual void Teardown();
+protected:
+	virtual void InitMenuBindings() override;
 
 protected:
 	virtual bool Initialize() override;
