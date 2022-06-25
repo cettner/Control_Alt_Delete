@@ -18,7 +18,9 @@ class RTS_PROJECT_API UTabButtonWidget : public UUserWidget
 	
 
 public:
-	void SetActive(bool InActiveState);
+	void SetActive(const bool InActiveState);
+
+	bool IsActiveTab() const;
 
 	UFUNCTION()
 	FSlateColor GetTitleColor();
@@ -30,9 +32,11 @@ public:
 	bool IsWidgetBound() const;
 	
 
-
 protected:
 	virtual bool Initialize() override;
+
+protected:
+	virtual void OnTabActiveStateChange(bool InNewState);
 
 protected:
 	UPROPERTY(meta = (BindWidget))

@@ -11,12 +11,12 @@ bool UMultiplayerMenuWidget::Initialize()
 	success &= SessionMenuInterface != nullptr;
 
 	/*Required Binding*/
-	if (HostSessionButton == nullptr && HostSessionButton->GetButton() != nullptr) return false;
+	if (HostSessionButton == nullptr || HostSessionButton->GetButton() == nullptr) return false;
 	HostSessionButton->GetButton()->OnClicked.AddDynamic(this, &UMultiplayerMenuWidget::OnHostSessionPressed);
 	HostSessionButton->SetBoundWidget(HostSessionMenu);
 
 	/*Optional Binding*/
-	if (JoinSessionButton == nullptr && JoinSessionButton->GetButton() != nullptr)
+	if (JoinSessionButton != nullptr && JoinSessionButton->GetButton() != nullptr)
 	{
 		JoinSessionButton->GetButton()->OnClicked.AddDynamic(this, &UMultiplayerMenuWidget::OnJoinSessionPressed);
 		JoinSessionButton->SetBoundWidget(JoinSessionMenu);
@@ -33,19 +33,18 @@ void UMultiplayerMenuWidget::InitSessionInterface()
 
 void UMultiplayerMenuWidget::OnHostSessionPressed()
 {
-	if (SessionWidgetSwitcher != nullptr)
+	if (SetActiveWidgetTab(HostSessionButton))
 	{
-		SessionWidgetSwitcher->SetActiveWidget(HostSessionMenu);
+		HostSessionButton->SetActive(true);
 	}
+
 }
 
 void UMultiplayerMenuWidget::OnJoinSessionPressed()
 {
-	UWidget* buttonbinding = JoinSessionButton->GetBoundWidget();
-	const bool swapsuccess = SetActiveWidgetTab(buttonbinding);
-	if (swapsuccess == true)
+	if (SetActiveWidgetTab(JoinSessionButton))
 	{
-		SessionWidgetSwitcher->SetActiveWidget(JoinSessionMenu);
+		HostSessionButton->SetActive(false);
 	}
 }
 

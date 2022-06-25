@@ -5,9 +5,16 @@
 
 
 
+void UTabButtonWidget::SetActive(const bool InActiveState)
+{
+	bIsActiveTab = InActiveState;
+	OnTabActiveStateChange(bIsActiveTab);
+}
 
-
-
+bool UTabButtonWidget::IsActiveTab() const
+{
+	return bIsActiveTab;
+}
 
 FSlateColor UTabButtonWidget::GetTitleColor()
 {
@@ -55,4 +62,9 @@ bool UTabButtonWidget::Initialize()
 
 
 	return retval;
+}
+
+void UTabButtonWidget::OnTabActiveStateChange(bool InNewState)
+{
+
 }
