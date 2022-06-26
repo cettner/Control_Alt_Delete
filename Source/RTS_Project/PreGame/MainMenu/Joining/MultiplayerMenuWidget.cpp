@@ -8,7 +8,10 @@ bool UMultiplayerMenuWidget::Initialize()
 	bool success = Super::Initialize();
 
 	InitSessionInterface();
-	success &= SessionMenuInterface != nullptr;
+	/*In Editor, If we're not in PIE skip delegate bindings*/
+	#if !WITH_EDITOR
+		success &= SessionMenuInterface != nullptr;
+	#endif
 
 	/*Required Binding*/
 	if (HostSessionButton == nullptr || HostSessionButton->GetButton() == nullptr) return false;

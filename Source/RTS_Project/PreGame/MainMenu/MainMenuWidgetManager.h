@@ -27,12 +27,13 @@ protected:
 
 protected:
 	virtual bool Initialize() override;
+	virtual void AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder) override;
 
 protected:
 
 	virtual void StitchMenuBindings();
 
-	virtual TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr GetWidgetBindFunctionHandler(UWidget* InFindWidgetHandle) const;
+	virtual TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr GetWidgetBindFunctionHandler(const UWidget* InFindWidgetHandle) const;
 
 	UFUNCTION()
 	virtual void DisplayMainMenu();

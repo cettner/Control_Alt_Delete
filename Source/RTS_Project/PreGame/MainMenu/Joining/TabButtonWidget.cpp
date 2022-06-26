@@ -57,6 +57,7 @@ bool UTabButtonWidget::Initialize()
 
 	if (IsValid(TabNameTextBlock))
 	{
+		TabNameTextBlock->SetText(TabTitleName);
 		TabNameTextBlock->ColorAndOpacityDelegate.BindDynamic(this, &UTabButtonWidget::GetTitleColor);
 	}
 

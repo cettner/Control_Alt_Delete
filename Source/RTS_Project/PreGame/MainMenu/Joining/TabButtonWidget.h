@@ -47,12 +47,14 @@ protected:
 
 
 protected:
-	UPROPERTY()
+	UPROPERTY(EditAnyWhere)
 	FLinearColor ActiveTextColor = FLinearColor();
 
-	UPROPERTY()
+	UPROPERTY(EditAnyWhere)
 	FLinearColor InActiveTextColor = FLinearColor();
 
+	UPROPERTY(EditDefaultsOnly)
+	FText TabTitleName = FText(FText::FromString("Tab Name"));
 
 protected:
 	bool bIsActiveTab = false;

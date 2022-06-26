@@ -10,7 +10,7 @@
 struct FMenuClickBindingInfo
 {
 	TSubclassOf<UWidget> BindToClass = nullptr;
-	FOnButtonClickedEvent * BindingDelegate = nullptr;
+	UButton * BindingButton = nullptr;
 };
 
 UCLASS()

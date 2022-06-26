@@ -36,10 +36,6 @@ protected:
 	virtual void InitMenuBindings() override;
 
 protected:
-	virtual bool Initialize() override;
-	virtual void AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder) override;
-
-protected:
 
 	// Menus
 	UPROPERTY(meta = (BindWidget))
