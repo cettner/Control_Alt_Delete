@@ -22,6 +22,7 @@ bool UHostSessionSettingsWidget::Initialize()
 	if (PrivateGameCheckBox != nullptr)
 	{
 		PrivateGameCheckBox->SetIsChecked(false);
+		PrivateGameCheckBox->OnCheckStateChanged.AddDynamic(this, &UHostSessionSettingsWidget::OnPrivateGameCheckStateChanged);
 	}
 
     /*Password Edit */
@@ -34,8 +35,12 @@ bool UHostSessionSettingsWidget::Initialize()
             const bool shouldenabletextbox = PrivateGameCheckBox->IsChecked();
             PasswordEditTextBox->SetIsEnabled(shouldenabletextbox);
         }
-
     }
+
+	if (BeginHostingButton != nullptr)
+	{
+		BeginHostingButton->OnClicked.AddDynamic(this, &UHostSessionSettingsWidget::OnBeginHostingButtonPressed);
+	}
 
     return retval;
 }
@@ -44,6 +49,18 @@ void UHostSessionSettingsWidget::OnBeginHostingButtonPressed()
 {
 	const FString servername = GetServerName();
 	SessionInterface->Host(servername);
+}
+
+void UHostSessionSettingsWidget::OnPrivateGameCheckStateChanged(bool InState)
+{
+	if (InState == true)
+	{
+		PasswordEditTextBox->SetIsEnabled(true);
+	}
+	else
+	{
+		PasswordEditTextBox->SetIsEnabled(false);
+	}
 }
 
 void UHostSessionSettingsWidget::InitSessionInterface()

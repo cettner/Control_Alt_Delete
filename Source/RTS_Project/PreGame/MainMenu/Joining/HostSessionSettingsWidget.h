@@ -29,6 +29,9 @@ protected:
 	UFUNCTION()
 	virtual void OnBeginHostingButtonPressed();
 
+	UFUNCTION()
+	virtual void OnPrivateGameCheckStateChanged(bool InState);
+
 public:
 	ISessionMenuInterface * GetSessionInterface() const;
 	virtual FString GetServerName() const;

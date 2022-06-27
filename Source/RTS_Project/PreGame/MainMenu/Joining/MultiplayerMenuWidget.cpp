@@ -8,7 +8,7 @@ bool UMultiplayerMenuWidget::Initialize()
 	bool success = Super::Initialize();
 
 	InitSessionInterface();
-	/*In Editor, If we're not in PIE skip delegate bindings*/
+	/*In Editor, this will fail since there's no gameinstance or session per player*/
 	#if !WITH_EDITOR
 		success &= SessionMenuInterface != nullptr;
 	#endif
