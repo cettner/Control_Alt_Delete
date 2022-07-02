@@ -2,9 +2,9 @@
 
 
 #include "MenuGameMode.h"
-#include "RTS_Project/PreGame\MainMenu\MainMenuPlayerController.h"
+#include "RTS_Project/PreGame/MenuPlayerController.h"
 
 AMenuGameMode::AMenuGameMode(const FObjectInitializer& ObjectInitializer)
 {
-	PlayerControllerClass = AMainMenuPlayerController::StaticClass();
+	PlayerControllerClass = AMenuPlayerController::StaticClass();
 }

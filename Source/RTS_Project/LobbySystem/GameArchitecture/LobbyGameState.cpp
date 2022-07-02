@@ -50,7 +50,8 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].OwningPlayerID = ULobbyGameInstance::GetUniquePlayerNetId(NewPlayer);
 	LobbyData[smallestteamindex].TeamData[emptyslotindex].PlayerName = NewPlayer->PlayerState->GetPlayerName();
 
-	NewPlayer->PlayerSlotInfo = LobbyData[smallestteamindex].TeamData[emptyslotindex];
+	const FSlotPlayerData playerdata = LobbyData[smallestteamindex].TeamData[emptyslotindex];
+	NewPlayer->SetPlayerSlotInfo(playerdata);
 
 	PlayersinLobby++;
 
@@ -303,7 +304,8 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	LobbyData[requestedteamid].TeamData[requestedslotid].OwningPlayerID = ULobbyGameInstance::GetUniquePlayerNetId(RequestingPlayer);
 	
 	/*Store its new location*/
-	RequestingPlayer->PlayerSlotInfo = LobbyData[requestedteamid].TeamData[requestedslotid];
+	const FSlotPlayerData playerdata = LobbyData[requestedteamid].TeamData[requestedslotid];
+	RequestingPlayer->SetPlayerSlotInfo(playerdata);
 	
 	/*Refresh the lobby UI for listen servers*/
 	UWorld* World = GetWorld();

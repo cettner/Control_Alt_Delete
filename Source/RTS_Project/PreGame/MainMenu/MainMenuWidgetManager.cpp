@@ -21,19 +21,7 @@ bool UMainMenuWidgetManager::Initialize()
 void UMainMenuWidgetManager::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder)
 {
 	Super::AddToScreen(LocalPlayer, ZOrder);
-	const UWorld* world = GetWorld();
 
-	/*Will return null in editor preview, valid in PIE*/
-	APlayerController* pc = world->GetFirstPlayerController();
-	if (pc != nullptr)
-	{
-		FInputModeUIOnly InputModeData;
-		InputModeData.SetWidgetToFocus(this->TakeWidget());
-		InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
-
-		pc->SetInputMode(InputModeData);
-		pc->bShowMouseCursor = true;
-	}
 }
 
 void UMainMenuWidgetManager::StitchMenuBindings()
@@ -53,33 +41,36 @@ void UMainMenuWidgetManager::StitchMenuBindings()
 				if (menuwidget->IsA(currentbinding.BindToClass))
 				{
 					UButton * transitionbutton = currentbinding.BindingButton;
-					/*Typically dont use the "auto" keyword but the type declaratiion is very long for a simple function adress..*/
-					const auto stitchfunction = GetWidgetBindFunctionHandler(menuwidget);
-					transitionbutton->OnClicked.AddDynamic(this, &UMainMenuWidgetManager::DisplayMultiPlayerMenu);
-					int debug = 9;
+					const FButtonDelegateBinding stitchfunction = GetWidgetBindFunctionHandler(menuwidget);
+					transitionbutton->OnClicked.__Internal_AddDynamic(this, stitchfunction.GetMethod(), stitchfunction.GetName());
 				}
 			}
 		}
 	}
 }
 
-TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr UMainMenuWidgetManager::GetWidgetBindFunctionHandler(const UWidget* InFindWidgetHandle) const
+UMainMenuWidgetManager::FButtonDelegateBinding UMainMenuWidgetManager::GetWidgetBindFunctionHandler(const UWidget* InFindWidgetHandle) const
 {
 	/*Default Handle*/
-	TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr retval = &UMainMenuWidgetManager::DefaultMenuHandle;
+	FButtonDelegateBinding retval;
 	
 	if (InFindWidgetHandle == MainMenuWidget)
 	{
-		retval = &UMainMenuWidgetManager::DisplayMainMenu;
+		retval = CREATE_DELEGATE_BINDING(&UMainMenuWidgetManager::DisplayMainMenu);
 	}
 	else if (InFindWidgetHandle == MultiplayerMenuWidget)
 	{
-		retval = &UMainMenuWidgetManager::DisplayMultiPlayerMenu;
+		retval = CREATE_DELEGATE_BINDING(&UMainMenuWidgetManager::DisplayMultiPlayerMenu);
 	}
 	else if (InFindWidgetHandle == GameSettingsMenuWidget)
 	{
-		retval = &UMainMenuWidgetManager::DisplayGameSettingsMenu;
+		retval = CREATE_DELEGATE_BINDING(&UMainMenuWidgetManager::DisplayGameSettingsMenu);
 	}
+	else
+	{
+		retval = CREATE_DELEGATE_BINDING(&UMainMenuWidgetManager::DefaultMenuHandle);
+	}
+
 	return retval;
 }
 

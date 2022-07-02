@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/PlayerController.h"
+#include "RTS_Project/PreGame/MenuPlayercontroller.h"
 #include "LobbyGameState.h"
 #include "LobbyPlayerController.generated.h"
 
@@ -11,19 +11,24 @@
 class ULobbyMenu;
 
 UCLASS()
-class RTS_PROJECT_API ALobbyPlayerController : public APlayerController
+class RTS_PROJECT_API ALobbyPlayerController : public AMenuPlayerController
 {
 	GENERATED_BODY()
 
 	ULobbyMenu* LobbyMenu;
 
-public:
+protected:
+	virtual void PreInitializeComponents() override;
+
+protected:
 	ALobbyPlayerController(const FObjectInitializer& ObjectInitializer);
 
 public:
 	ULobbyMenu* GetLobbyMenu();
-	FSlotPlayerData PlayerSlotInfo;
-	bool SetLobbyMenu(ULobbyMenu * menu);
+
+	FSlotPlayerData GetPlayerSlotInfo() const;
+
+	void SetPlayerSlotInfo(FSlotPlayerData InSlotData);
 
 	void RequestMoveSlot(FSlotPlayerData RequestedSlot);
 
@@ -37,6 +42,9 @@ public:
 
 	/*Only used by Listen server*/
 	void RefreshLobbyUI();
+
+protected:
+	FSlotPlayerData PlayerSlotInfo;
 
 
 };

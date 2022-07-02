@@ -137,6 +137,13 @@ struct FSubSytemFriendInfo
 	FBPUniqueNetId PlayerUniqueNetID;
 };
 
+struct FStoredSessionSettings
+{
+	FString ServerName = "";
+	FOnlineSessionSettings Settings = FOnlineSessionSettings();
+	bool bIsValid = false;
+};
+
 DECLARE_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>);
 
 /*Forward Declarations*/
@@ -151,12 +158,11 @@ class RTS_PROJECT_API ULobbyGameInstance : public UGameInstance, public ISession
 public:
 	ULobbyGameInstance(const FObjectInitializer& ObjectInitializer);
 
-	virtual void Init();
-
 	/*Called by server at lobby startup*/
 	FLobbySettings GetLobbySettings();
 
 	bool SetPlayerSettings(FPlayerSettings settings);
+
 	FPlayerSettings GetPlayerSettings();
 
 	bool SetServerSettings(FServerSettings settings);
@@ -164,65 +170,68 @@ public:
 
 	TArray<FName> GetAvailableSubsystems() const;
 
+	FOnlineSessionSettings GetDefaultSessionSettings(FSessionSettings CustomSettings = FSessionSettings()) const;
+
 	static FUniqueNetIdRepl GetUniquePlayerNetId(APlayerController* InPlayer);
 
 	void StartOfflineGame();
 
 	bool IsPlayingOffline();
 
-	// Create menu called from the level blueprint
-	UFUNCTION(BlueprintCallable)
 	void LoadMainMenu();
 
-	UFUNCTION(BlueprintCallable)
 	void LoadLobbyMenu();
 
 	void CloseCurrentMenu();
 
-	//template <typename WidgetT = UUserWidget, typename OwnerT = UObject>
 	ULobbyMenu * GetLobbyMenu();
 
 	void StartGame();
 
 	virtual void TravelToLobby();
 
-protected:
-	bool RestartSession;
-
-	bool bIsPlayingOffline;
 
 public:
 	///// ISessionMenuInterface /////////////////// 
-	UFUNCTION()
-	void Host(FString ServerName) override;
+	void Host(const FString InServerName, const FSessionSettings CustomSettings = FSessionSettings()) override;
 
-	UFUNCTION()
 	void JoinSession(uint32 Index) override;
 
-	UFUNCTION()
 	void EndSession() override;
 
-	UFUNCTION()
 	void OpenSessionListMenu() override;
 	///// ISessionMenuInterface /////////////////// 
 
+protected:
+	virtual void InitDefaultSessionSettings(FOnlineSessionSettings& OutSettings) const;
+	virtual void InitCustomSessionSettings(FSessionSettings& OutSettings) const;
+	virtual FOnlineSessionSettings GetHostSettings(FSessionSettings InAdditionalSettings) const;
+
+/**************************************UGameInstance*********************************************/
+protected:
+	virtual void Init() override;
+	virtual void PreloadContentForURL(FURL InURL) override;
+	virtual void OnWorldChanged(UWorld * InOldWorld, UWorld * InNewWorld) override;
+/*************************************************************************************************/
 private:
 	// Session Events
 	void OnCreateSessionComplete(FName SessionName, bool Success);
 	void OnDestroySessionComplete(FName SessionName, bool Success);
 	void OnFindSessionsComplete(bool Success);
 	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-	void CreateSession();
-
+	void CreateSession( const FOnlineSessionSettings SessionSettings, const FString InServerName);
+	
+	/*Settings are stored if a session needs a restart and cleared once a restart is requested*/
+	void StoreSessionSettings(FStoredSessionSettings InSettings);
+	void ClearStoredSettings();
+	bool GetStoredSessionSettings(FStoredSessionSettings &OutSettings) const;
+	bool AreSessionSettingsStored() const;
 /**********************************************************************************************/
 
 //Friend Events
 public:
 	/*Call This to Poke the Given Subsytem and Request a Friends List, Request is Returned from FriendslistReadyDelegate Call if */
 	void ReadFriendsList(FName SubSystemName);
-
-	/*Bindable Delagate that is fired after the friends list for the selected SubSystem has been Retrieved*/
-	FFriendsListReadyDelegate FriendsListReadyDelegate;
 
 	/*Call this to send a invite through the default SubSystem to the designated player*/
 	void SendSessionInviteToFriend(APlayerController* InvitingPlayer, const FBPUniqueNetId& FriendID);
@@ -237,13 +246,10 @@ protected:
 	/*"Pure" Virtual Function, Override Per Implemented Subsystem IE Steam, Epic...etc*/
 	virtual UTexture2D * GetFriendAvatar(FBPUniqueNetId PlayerNetID, FName SubSystemName);
 
-	/*Delegates for Above Events*/
-	FOnReadFriendsListComplete ReadFriendListCompleteDelagate;
-	FOnAcceptInviteComplete SessionInviteAcceptedDelegate;
 
-	/*Last Called Subsystem through ReadFriendsList*/
-	FName LastReadSubSystem;
-
+public:
+	/*Bindable Delagate that is fired after the friends list for the selected SubSystem has been Retrieved*/
+	FFriendsListReadyDelegate FriendsListReadyDelegate;
 /**********************************************************************************************/
 protected:
 	// Main Menu
@@ -268,12 +274,25 @@ protected:
 	FString GameMapName;
 /**********************************************************************************************/
 
+	
 protected:
-	/*User Input TODO:: Make Setable from UI*/
-	UPROPERTY(EditDefaultsOnly, Category = Settings)
-	FString DesiredServerName;
+	bool RestartSession;
+
+	bool bIsPlayingOffline;
+
+	FOnlineSessionSettings DefaultSessionSettings;
 
 	FLobbySettings LobbySettings;
+
+	FOnReadFriendsListComplete ReadFriendListCompleteDelagate;
+	FOnAcceptInviteComplete SessionInviteAcceptedDelegate;
+
+	/*Last Called Subsystem through ReadFriendsList*/
+	FName LastReadSubSystem;
+
+private:
+	/*Stored SessionData for use between Session Resets*/
+	FStoredSessionSettings StoredSessionSettings;
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = Settings)

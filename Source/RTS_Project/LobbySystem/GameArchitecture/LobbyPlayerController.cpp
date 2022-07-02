@@ -4,6 +4,11 @@
 #include "LobbyPlayerController.h"
 #include "../UI/LobbyMenu.h"
 
+void ALobbyPlayerController::PreInitializeComponents()
+{
+	LobbyMenu = GetGameInstance<ULobbyGameInstance>()->GetLobbyMenu();
+}
+
 ALobbyPlayerController::ALobbyPlayerController(const FObjectInitializer& ObjectInitializer)
 {
 	PlayerSlotInfo.isSlotActive = false;
@@ -17,14 +22,14 @@ ULobbyMenu* ALobbyPlayerController::GetLobbyMenu()
 	return LobbyMenu;
 }
 
-bool ALobbyPlayerController::SetLobbyMenu(ULobbyMenu* menu)
+FSlotPlayerData ALobbyPlayerController::GetPlayerSlotInfo() const
 {
-	if (menu != nullptr)
-	{
-		LobbyMenu = menu;
-	}
+	return PlayerSlotInfo;
+}
 
-	return(LobbyMenu != nullptr);
+void ALobbyPlayerController::SetPlayerSlotInfo(FSlotPlayerData InSlotData)
+{
+	PlayerSlotInfo = InSlotData;
 }
 
 void ALobbyPlayerController::RequestMoveSlot(FSlotPlayerData RequestedSlot)

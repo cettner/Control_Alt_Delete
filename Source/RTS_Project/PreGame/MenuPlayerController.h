@@ -4,14 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "MainMenuPlayerController.generated.h"
+#include "MenuPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API AMainMenuPlayerController : public APlayerController
+class RTS_PROJECT_API AMenuPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+		virtual void SetupInputComponent() override;
+
+
 };

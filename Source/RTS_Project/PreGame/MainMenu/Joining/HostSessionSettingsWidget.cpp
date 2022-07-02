@@ -47,8 +47,12 @@ bool UHostSessionSettingsWidget::Initialize()
 
 void UHostSessionSettingsWidget::OnBeginHostingButtonPressed()
 {
-	const FString servername = GetServerName();
-	SessionInterface->Host(servername);
+	FSessionSettings hostsettings = DefaultSessionSettings;
+
+	if (BuildHostSettings(hostsettings))
+	{
+		SessionInterface->Host("SESSION_NAME", hostsettings);
+	}
 }
 
 void UHostSessionSettingsWidget::OnPrivateGameCheckStateChanged(bool InState)
@@ -66,6 +70,10 @@ void UHostSessionSettingsWidget::OnPrivateGameCheckStateChanged(bool InState)
 void UHostSessionSettingsWidget::InitSessionInterface()
 {
 	SessionInterface = GetGameInstance<ISessionMenuInterface>();
+}
+
+void UHostSessionSettingsWidget::InitSessionSettings()
+{
 }
 
 ISessionMenuInterface* UHostSessionSettingsWidget::GetSessionInterface() const
@@ -104,4 +112,56 @@ FString UHostSessionSettingsWidget::GetDefaultServerName() const
 	}
 
 	return retval;
+}
+
+bool UHostSessionSettingsWidget::IsPasswordProtected() const
+{
+	bool retval = false;
+	if (PrivateGameCheckBox != nullptr)
+	{
+		retval = PrivateGameCheckBox->IsChecked();
+	}
+	else if (PasswordEditTextBox != nullptr)
+	{
+		retval = PasswordEditTextBox->GetIsEnabled();
+	}
+
+	return retval;
+}
+
+FString UHostSessionSettingsWidget::GetPassword() const
+{
+	FString retval = "";
+	if (IsValid(PasswordEditTextBox))
+	{
+		retval = PasswordEditTextBox->GetText().ToString();
+	}
+
+	return retval;
+}
+
+bool UHostSessionSettingsWidget::BuildHostSettings(FSessionSettings& OutSettings) const
+{
+	const FName ServerNameKey = "ServerName";
+	FOnlineSessionSetting servernamesetting;
+	servernamesetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineServiceAndPing;
+	servernamesetting.Data = GetServerName();
+
+	const FName IsPrivateGameKey = "IsPasswordProtected";
+	FOnlineSessionSetting haspasswordsetting;
+	haspasswordsetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineServiceAndPing;
+	haspasswordsetting.Data = IsPasswordProtected();
+
+	const FName PasswordKey = "Password";
+	FOnlineSessionSetting passwordsetting;
+	passwordsetting.AdvertisementType = EOnlineDataAdvertisementType::DontAdvertise;
+	passwordsetting.Data = GetPassword();
+
+	OutSettings.Add(ServerNameKey, servernamesetting);
+	OutSettings.Add(IsPrivateGameKey, haspasswordsetting);
+	OutSettings.Add(PasswordKey, passwordsetting);
+
+
+	/*Todo:: add Setting Validation*/
+	return true;
 }

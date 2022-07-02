@@ -22,7 +22,6 @@ class RTS_PROJECT_API ULobbyMenu : public UUserWidget
 {
 	GENERATED_BODY()
 	public:
-		virtual void Setup();
 		virtual void Teardown();
 		virtual void DrawLobbySlots(TArray<FLobbyData> TeamSlots);
 
@@ -35,6 +34,9 @@ class RTS_PROJECT_API ULobbyMenu : public UUserWidget
 
 		UFUNCTION()
 		void OnPressedLeaveLobbyButton();
+
+		UFUNCTION()
+	    virtual bool CanStartGame();
 
 	protected:
 		UPROPERTY(EditDefaultsOnly)

@@ -2,7 +2,6 @@
 
 
 #include "LobbyGameInstance.h"
-#include "OnlineSessionSettings.h"
 #include "OnlineSubsystemTypes.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -19,7 +18,6 @@ ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializ
 	LobbyClass = ULobbyMenu::StaticClass();
 	RestartSession = false;
 	bIsPlayingOffline = false;
-	DesiredServerName = "Default Server";
 	PlayerName = "";
 	LobbyMapName = "/Game/Maps/LobbyMap";
 	GameMapName = "/Game/Maps/DevMap";
@@ -28,6 +26,7 @@ ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializ
 
 void ULobbyGameInstance::Init()
 {
+	Super::Init();
 	IOnlineSubsystem* SubSystem = IOnlineSubsystem::Get();
 
 	if (SubSystem != nullptr)
@@ -36,7 +35,6 @@ void ULobbyGameInstance::Init()
 
 		if (SessionInterface.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::Init] SessionInterface.IsValid"));
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &ULobbyGameInstance::OnCreateSessionComplete);
 
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &ULobbyGameInstance::OnDestroySessionComplete);
@@ -54,6 +52,34 @@ void ULobbyGameInstance::Init()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::Init] Found NO SUBSYSTEM"));
 	}
+	
+	InitDefaultSessionSettings(DefaultSessionSettings);
+}
+
+void ULobbyGameInstance::PreloadContentForURL(FURL InURL)
+{
+	Super::PreloadContentForURL(InURL);
+}
+
+void ULobbyGameInstance::OnWorldChanged(UWorld* InOldWorld, UWorld* InNewWorld)
+{
+	Super::OnWorldChanged(InOldWorld, InNewWorld);
+
+	if (IsValid(InNewWorld))
+	{
+		const FString mapname = InNewWorld->GetPackage()->GetName();
+
+		if (mapname == MainMenuMapName)
+		{
+			LoadMainMenu();
+		}
+		else if (mapname == LobbyMapName)
+		{
+			LoadLobbyMenu();
+		}
+
+	}
+
 }
 
 void ULobbyGameInstance::LoadMainMenu()
@@ -90,8 +116,6 @@ void ULobbyGameInstance::LoadLobbyMenu()
 	{
 		LobbyMenu = CreateWidget<ULobbyMenu>(this, LobbyClass);
 	}
-	
-	LobbyMenu->Setup();
 }
 
 ULobbyMenu * ULobbyGameInstance::GetLobbyMenu()
@@ -147,6 +171,13 @@ TArray<FName> ULobbyGameInstance::GetAvailableSubsystems() const
 	return IntegratedSubSystems;
 }
 
+FOnlineSessionSettings ULobbyGameInstance::GetDefaultSessionSettings(FSessionSettings CustomSettings) const
+{
+	FOnlineSessionSettings retval = DefaultSessionSettings;
+	retval.Settings = CustomSettings;
+	return retval;
+}
+
 FUniqueNetIdRepl ULobbyGameInstance::GetUniquePlayerNetId(APlayerController* PlayerController)
 {
 	FUniqueNetIdRepl UniqueNetIdRepl;
@@ -193,28 +224,32 @@ bool ULobbyGameInstance::IsPlayingOffline()
 	return bIsPlayingOffline;
 }
 
-void ULobbyGameInstance::Host(FString ServerName)
+void ULobbyGameInstance::Host(const FString InServerName, const FSessionSettings CustomSettings)
 {
-	DesiredServerName = ServerName;
 
 	if (SessionInterface.IsValid())
 	{
 		// Checks for an existing session
-		auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
+		FNamedOnlineSession* ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
 
 		if (ExistingSession != nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::Host] There is an existing session about to remove the current one"));
 			RestartSession = true;
+
+			FStoredSessionSettings settingstostore;
+			settingstostore.ServerName = InServerName;
+			settingstostore.Settings = GetDefaultSessionSettings(CustomSettings);
+			settingstostore.bIsValid = true;
+			StoreSessionSettings(settingstostore);
+
 			SessionInterface->DestroySession(SESSION_NAME);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::Host] About to create session"));
-
 			// Create a new session
-			CreateSession();
-
+			const FOnlineSessionSettings sessionsettings = GetDefaultSessionSettings(CustomSettings);
+			CreateSession(sessionsettings, InServerName);
 		}
 	}
 	else
@@ -254,6 +289,35 @@ void ULobbyGameInstance::OpenSessionListMenu()
 	}
 }
 
+void ULobbyGameInstance::InitDefaultSessionSettings(FOnlineSessionSettings& OutSettings) const
+{
+	OutSettings.NumPublicConnections = 4;
+	OutSettings.bShouldAdvertise = true;
+	OutSettings.bUsesPresence = true;
+	OutSettings.bAllowInvites = true;
+	OutSettings.bAllowJoinInProgress = true;
+	OutSettings.bShouldAdvertise = true;
+	OutSettings.bAllowJoinViaPresence = true;
+	OutSettings.bAllowJoinViaPresenceFriendsOnly = false;
+	OutSettings.bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL";
+
+	InitCustomSessionSettings(OutSettings.Settings);
+}
+
+void ULobbyGameInstance::InitCustomSessionSettings(FSessionSettings& OutSettings) const
+{
+	//OutSettings.Add(SERVER_NAME_SETTINGS_KEY, );
+	//OutSettings.Set(SERVER_NAME_SETTINGS_KEY, InServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+}
+
+FOnlineSessionSettings ULobbyGameInstance::GetHostSettings(FSessionSettings InAdditionalSettings) const
+{
+	FOnlineSessionSettings retval = DefaultSessionSettings;
+	retval.Settings.Append(InAdditionalSettings);
+
+	return retval;
+}
+
 void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success)
 {
 	// It will not be success if there are more than one session with the same name already created
@@ -284,8 +348,18 @@ void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Succes
 	{	
 		if (RestartSession)
 		{
-			CreateSession();
-			RestartSession = false;
+			FStoredSessionSettings storedsettings;
+			if (GetStoredSessionSettings(storedsettings))
+			{
+				CreateSession(storedsettings.Settings, storedsettings.ServerName);
+				RestartSession = false;
+				ClearStoredSettings();
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnDestroySessionComplete] Sesstion Restart Failed, Valid Session Settings not found"));
+			}
+
 		}
 	}
 	else
@@ -321,13 +395,11 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 				FString ServerName;
 				if (SearchResult.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, ServerName))
 				{
-					UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] Data found in settings %s"), *ServerName);
 					Data.Name = ServerName;
 				}
 				else
 				{
 					UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] Data NOT found in settings"));
-
 					Data.Name = "Could not find name";
 				}
 
@@ -337,7 +409,7 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 
 				ServerData.Add(Data);
 			}
-		//	MainMenu->InitializeSessionsList(ServerData);
+
 		}
 	}
 	else
@@ -479,9 +551,6 @@ void ULobbyGameInstance::OnSessionUserInviteAccepted(bool bWasSuccessful, int32 
 		if (Sessions.IsValid())
 		{
 			Sessions->JoinSession(LocalUserNum, SESSION_NAME, TheSessionInvitedTo);
-
-			// Set the Handle again? Dont think this is needed
-            //OnJoinSessionCompleteDelegateHandle = Sessions->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
 		}
 	}
 }
@@ -491,46 +560,35 @@ UTexture2D * ULobbyGameInstance::GetFriendAvatar(FBPUniqueNetId PlayerNetID, FNa
 	return nullptr;
 }
 
-void ULobbyGameInstance::CreateSession()
+void ULobbyGameInstance::CreateSession(const FOnlineSessionSettings InSettings, const FString InServerName)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::CreateSession] Creating %s"), *SESSION_NAME.ToString());
-
 	if (SessionInterface.IsValid())
 	{
-
-		FOnlineSessionSettings SessionSettings;
-
-		// Switch between bIsLANMatch when using NULL subsystem
-		if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
-		{
-			SessionSettings.bIsLANMatch = true;
-		}
-		else
-		{
-			SessionSettings.bIsLANMatch = false;
-		}
-
-		if (DesiredServerName == "")
-		{
-			DesiredServerName = "Default Server";
-		}
-
-
-		// Number of sessions
-		SessionSettings.NumPublicConnections = 4;
-		SessionSettings.bShouldAdvertise = true;
-		SessionSettings.bUsesPresence = true;
-		SessionSettings.bAllowInvites = true;
-		SessionSettings.bAllowJoinInProgress = true;
-		SessionSettings.bShouldAdvertise = true;
-		SessionSettings.bAllowJoinViaPresence = true;
-		SessionSettings.bAllowJoinViaPresenceFriendsOnly = false;
-
-		//Custom Game Settings
-		SessionSettings.Set(SERVER_NAME_SETTINGS_KEY, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-
-		SessionInterface->CreateSession(0, SESSION_NAME, SessionSettings);
+		SessionInterface->CreateSession(0, SESSION_NAME, InSettings);
 	}
+}
+
+void ULobbyGameInstance::StoreSessionSettings(FStoredSessionSettings InSettings)
+{
+	StoredSessionSettings = InSettings;
+	InSettings.bIsValid = true;
+}
+
+void ULobbyGameInstance::ClearStoredSettings()
+{
+	StoredSessionSettings.bIsValid = false;
+}
+
+bool ULobbyGameInstance::GetStoredSessionSettings(FStoredSessionSettings& OutSettings) const
+{
+	OutSettings = StoredSessionSettings;
+
+	return OutSettings.bIsValid;
+}
+
+bool ULobbyGameInstance::AreSessionSettingsStored() const
+{
+	return StoredSessionSettings.bIsValid;
 }
 
 void ULobbyGameInstance::EndSession()

@@ -13,17 +13,43 @@
 
 
 
-
 UCLASS()
 class RTS_PROJECT_API UMainMenuWidgetManager : public UUserWidget
 {
 	GENERATED_BODY()
 
+
+
+#define CREATE_DELEGATE_BINDING(n) FButtonDelegateBinding(n, STATIC_FUNCTION_FNAME( TEXT(#n)))
+
+struct FButtonDelegateBinding
+{
+public:
+		FButtonDelegateBinding(){};
+
+		FButtonDelegateBinding(TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr InMethod, FName InName)
+		{
+			Method = InMethod;
+			FunctionName = InName;
+		}
+		
+		TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr GetMethod() const
+		{
+			return Method;
+		}
+
+		FName GetName() const
+		{
+			return FunctionName;
+		}
+
+private:
+		TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr Method;
+		FName FunctionName;
+};
+
 public:
 	UWidget* GetCurrentMenu() const;
-
-protected:
-	//virtual void DisplayMainMenu();
 
 protected:
 	virtual bool Initialize() override;
@@ -33,7 +59,8 @@ protected:
 
 	virtual void StitchMenuBindings();
 
-	virtual TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr GetWidgetBindFunctionHandler(const UWidget* InFindWidgetHandle) const;
+	virtual FButtonDelegateBinding GetWidgetBindFunctionHandler(const UWidget* InFindWidgetHandle) const;
+
 
 	UFUNCTION()
 	virtual void DisplayMainMenu();

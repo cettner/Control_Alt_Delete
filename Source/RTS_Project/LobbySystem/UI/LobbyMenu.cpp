@@ -51,11 +51,19 @@ bool ULobbyMenu::Initialize()
 
 	if (StartGameButton == nullptr) return false;
 	StartGameButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedStartGameButton);
+	StartGameButton->bIsEnabledDelegate.BindDynamic(this, &ULobbyMenu::CanStartGame);
 
 	if (LeaveLobbyButton == nullptr) return false;
 	LeaveLobbyButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedLeaveLobbyButton);
 
-	bIsFocusable = true;
+	AddToViewport();
+
+
+	//ALobbyGameState* GS = Cast<ALobbyGameState>(World->GetGameState());
+	
+	/*Draw the initial team slots*/
+	//DrawLobbySlots(GS->GetLobbyData());
+
 	return(true);
 }
 
@@ -77,42 +85,25 @@ void ULobbyMenu::OnPressedLeaveLobbyButton()
 	}
 }
 
-void ULobbyMenu::Setup()
+bool ULobbyMenu::CanStartGame()
 {
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
+	bool retval = true;
 
-	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
-	if (PC == nullptr) return;
-	PC->SetLobbyMenu(this);
-
-
-	ALobbyGameState* GS = Cast<ALobbyGameState>(World->GetGameState());
-	if (GS == nullptr) return;
-
-	/*Only the Lobby host can start the game*/
-	if (PC->HasAuthority())
+	const UWorld* world = GetWorld();
+	if (!IsValid(world))
 	{
-		StartGameButton->SetIsEnabled(true);
-	}
-	else
-	{
-		StartGameButton->SetIsEnabled(false);
+		const ALobbyPlayerController* pc = world->GetFirstPlayerController<ALobbyPlayerController>();
+
+		/*Only the Lobby host can start the game*/
+		if (IsValid(pc) && pc->HasAuthority())
+		{
+			retval = true;
+		}
+		else
+		{
+			retval = false;
+		}
 	}
 
-
-	/*Draw the initial team slots*/
-	DrawLobbySlots(GS->GetLobbyData());
-
-
-	this->AddToViewport();
-
-	// Set the Input Mode for the Player Controller as the UI only
-	FInputModeUIOnly InputModeData;
-	InputModeData.SetWidgetToFocus(this->TakeWidget());
-	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	PC->SetInputMode(InputModeData);
-	PC->bShowMouseCursor = true;
-
+	return retval;
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "OnlineSessionSettings.h"
 #include "SessionMenuInterface.generated.h"
 
 // This class does not need to be modified.
@@ -27,11 +28,14 @@ class RTS_PROJECT_API ISessionMenuInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	virtual void Host(FString ServerName) = 0;
+	virtual void Host(const FString InServerName, const FSessionSettings CustomSettings = FSessionSettings()) = 0;
 
 	virtual void JoinSession(uint32 Index) = 0;
 
 	virtual void EndSession() = 0;
 
 	virtual void OpenSessionListMenu() = 0;
+
+	//virtual bool IsHosting() const = 0;
+
 };

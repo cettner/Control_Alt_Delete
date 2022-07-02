@@ -24,6 +24,7 @@ class RTS_PROJECT_API UHostSessionSettingsWidget : public UUserWidget
 protected:
 	virtual bool Initialize() override;
 	virtual void InitSessionInterface();
+	virtual void InitSessionSettings();
 
 protected:
 	UFUNCTION()
@@ -36,6 +37,11 @@ public:
 	ISessionMenuInterface * GetSessionInterface() const;
 	virtual FString GetServerName() const;
 	virtual FString GetDefaultServerName() const;
+	virtual bool IsPasswordProtected() const;
+	virtual FString GetPassword() const;
+
+protected:
+	virtual bool BuildHostSettings(FSessionSettings & OutSettings) const;
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -59,6 +65,8 @@ protected:
 	int NumAllowedSpectators = 3;
 
 	bool bIsPrivateGame = false;
+
+	FSessionSettings DefaultSessionSettings = FSessionSettings();
 
 protected:
 
