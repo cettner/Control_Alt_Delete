@@ -34,8 +34,9 @@ public:
 
 	virtual void EndSession() = 0;
 
-	virtual void OpenSessionListMenu() = 0;
+	virtual void BeginSearchQuery() = 0;
 
+	virtual bool IsSearchingSession(const FName SessionName = "") = 0;
 	//virtual bool IsHosting() const = 0;
 
 };

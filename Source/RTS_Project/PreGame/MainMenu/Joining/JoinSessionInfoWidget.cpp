@@ -4,18 +4,28 @@
 #include "JoinSessionInfoWidget.h"
 #include "RTS_Project/PreGame/MainMenu/MainMenu.h"
 
-void UJoinSessionInfoWidget::Setup(UMainMenu * InParent, uint32 InIndex)
+
+void UJoinSessionInfoWidget::Setup(FOnlineSessionSearchResult InSearchResult, int32 InIndex)
 {
-	Parent = InParent;
-	Index = InIndex;
-	RowButton->OnClicked.AddDynamic(this, &UJoinSessionInfoWidget::OnClicked);
+
 }
 
-void UJoinSessionInfoWidget::OnClicked()
+void UJoinSessionInfoWidget::SetSelected(bool bIsSelected)
 {
-	if (Parent == nullptr) return;
+}
 
-	UE_LOG(LogTemp, Warning, TEXT("[USessionRow::OnClicked] Index %i"), Index);
+int32 UJoinSessionInfoWidget::GetIndex() const
+{
+	return Index;
+}
 
-	//Parent->SelectIndexSessionList(Index);
+bool UJoinSessionInfoWidget::Initialize()
+{
+	bool retval = Super::Initialize();
+	return retval;
+}
+
+void UJoinSessionInfoWidget::OnSelectServerButtonPressed()
+{
+
 }

@@ -6,14 +6,13 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
+#include "RTS_Project/LobbySystem/Interfaces/SessionMenuInterface.h"
 #include "JoinSessionInfoWidget.generated.h"
 
 /**
  * 
  */
 
-/*Foward Declarations*/
-class UMainMenu;
 
 UCLASS()
 class RTS_PROJECT_API UJoinSessionInfoWidget : public UUserWidget
@@ -22,30 +21,33 @@ class RTS_PROJECT_API UJoinSessionInfoWidget : public UUserWidget
 		
 
 public:
+	void Setup(FOnlineSessionSearchResult InSearchResult, int32 InIndex);
+	virtual void SetSelected(bool bIsSelected);
+	int32 GetIndex() const;
+
+protected:
+	virtual bool Initialize() override;
+
+protected:
+	UFUNCTION()
+	void OnSelectServerButtonPressed();
+
+protected:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ServerName;
+	UTextBlock* ServerNameTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* HostUser;
+	UTextBlock* HostUserTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ConnectionFraction;
 
-	UPROPERTY(BlueprintReadOnly)
-	bool Selected = false;
-
-	void Setup(UMainMenu * InParent, uint32 InIndex);
-
-private:
 	UPROPERTY(meta = (BindWidget))
-	UButton* RowButton;
+	UButton* SelectServerButton;
 
-	UPROPERTY()
-	UMainMenu * Parent;
+protected:
+	int32 Index = -1;
 
-	uint32 Index = -1;
-
-	UFUNCTION()
-	void OnClicked();
+	bool bISelected = false;
 	
 };

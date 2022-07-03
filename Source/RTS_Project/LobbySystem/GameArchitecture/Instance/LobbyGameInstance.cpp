@@ -9,7 +9,6 @@
 #include "../../UI/LobbyMenu.h"
 
 const static FName SESSION_NAME = TEXT("RTSFPSGameSession");
-const static FName SERVER_NAME_SETTINGS_KEY = TEXT("ServerName");
 
 
 ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializer)
@@ -270,23 +269,37 @@ void ULobbyGameInstance::JoinSession(uint32 Index)
 	}
 }
 
-void ULobbyGameInstance::OpenSessionListMenu()
+void ULobbyGameInstance::BeginSearchQuery()
 {
-//	if (MainMenu == nullptr) return;
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = true;
+		SessionSearch->bIsLanQuery = DefaultSessionSettings.bIsLANMatch;
 		SessionSearch->MaxSearchResults = 100;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OpenSessionListMenu] Session is Invalid"));
+		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::BeginSearchQuery] Session is Invalid"));
 	}
+}
+
+bool ULobbyGameInstance::IsSearchingSession(const FName SessionName)
+{
+	bool retval = false;
+	if (SessionSearch.IsValid())
+	{
+		const EOnlineAsyncTaskState::Type searchstatus = SessionSearch->SearchState;
+		if (searchstatus == EOnlineAsyncTaskState::InProgress)
+		{
+			retval = true;
+		}
+	}
+
+	return retval;
 }
 
 void ULobbyGameInstance::InitDefaultSessionSettings(FOnlineSessionSettings& OutSettings) const
@@ -380,17 +393,13 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 
 	if (Success && SessionSearch.IsValid())
 	{
-		if (SessionSearch->SearchResults.Num() <= 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] No Sessions Found"));
-		}
-		else
-		{
+		const TArray<FOnlineSessionSearchResult> searchresults = SessionSearch->SearchResults;
+
+			SearchResultsReadyDelegate.ExecuteIfBound(FSessionSearchResults(searchresults));
+			/*
 			TArray<FServerData> ServerData;
 			for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] Session Name %s"), *SearchResult.GetSessionIdStr());
-
 				FServerData Data;
 				FString ServerName;
 				if (SearchResult.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, ServerName))
@@ -409,8 +418,7 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 
 				ServerData.Add(Data);
 			}
-
-		}
+			*/
 	}
 	else
 	{

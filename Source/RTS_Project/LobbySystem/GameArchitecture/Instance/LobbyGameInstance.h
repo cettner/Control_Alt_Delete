@@ -137,6 +137,25 @@ struct FSubSytemFriendInfo
 	FBPUniqueNetId PlayerUniqueNetID;
 };
 
+/*Have to wrap this in USTRUCT otherwise cannot be braodcast through delegate*/
+USTRUCT()
+struct FSessionSearchResults
+{
+	GENERATED_USTRUCT_BODY()
+	
+	FSessionSearchResults()
+	{
+		SearchResults = TArray<FOnlineSessionSearchResult>();
+	}
+
+	FSessionSearchResults(const TArray<FOnlineSessionSearchResult> InResults)
+	{
+		SearchResults = InResults;
+	}
+
+	TArray<FOnlineSessionSearchResult> SearchResults;
+};
+
 struct FStoredSessionSettings
 {
 	FString ServerName = "";
@@ -145,6 +164,7 @@ struct FStoredSessionSettings
 };
 
 DECLARE_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>);
+DECLARE_DELEGATE_OneParam(FSessionSearchResultsDelegate, const FSessionSearchResults);
 
 /*Forward Declarations*/
 class ULobbyMenu;
@@ -199,7 +219,9 @@ public:
 
 	void EndSession() override;
 
-	void OpenSessionListMenu() override;
+	void BeginSearchQuery() override;
+
+	virtual bool IsSearchingSession(const FName SessionName = "") override;
 	///// ISessionMenuInterface /////////////////// 
 
 protected:
@@ -250,6 +272,7 @@ protected:
 public:
 	/*Bindable Delagate that is fired after the friends list for the selected SubSystem has been Retrieved*/
 	FFriendsListReadyDelegate FriendsListReadyDelegate;
+	FSessionSearchResultsDelegate SearchResultsReadyDelegate;
 /**********************************************************************************************/
 protected:
 	// Main Menu
@@ -280,6 +303,8 @@ protected:
 
 	bool bIsPlayingOffline;
 
+	bool bisSearching = false;
+
 	FOnlineSessionSettings DefaultSessionSettings;
 
 	FLobbySettings LobbySettings;
@@ -309,6 +334,9 @@ protected:
 
 	// Session
 	IOnlineSessionPtr SessionInterface;
+	
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
+
+
 
 };
