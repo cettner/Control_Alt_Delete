@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 
 #include "RTS_Project/LobbySystem/GameArchitecture/Instance/LobbyGameInstance.h"
+#include "JoinSessionInfoWidget.h"
 #include "JoinSessionWidget.generated.h"
 
 /**
@@ -42,6 +43,10 @@ protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	UButton* RefreshListButton;
 
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UJoinSessionInfoWidget> SessionInfoWidgetClass;
 
 protected:
 	ISessionMenuInterface* SessionInterface = nullptr;

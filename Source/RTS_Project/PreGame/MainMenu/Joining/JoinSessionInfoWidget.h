@@ -18,12 +18,14 @@ UCLASS()
 class RTS_PROJECT_API UJoinSessionInfoWidget : public UUserWidget
 {
 	GENERATED_BODY()
-		
+
+
 
 public:
-	void Setup(FOnlineSessionSearchResult InSearchResult, int32 InIndex);
+	void Setup(const FOnlineSessionSearchResult InSearchResult, int32 InIndex);
 	virtual void SetSelected(bool bIsSelected);
 	int32 GetIndex() const;
+	virtual bool IsPrivateGame(const FOnlineSessionSettings  InSettings) const;
 
 protected:
 	virtual bool Initialize() override;
@@ -36,11 +38,17 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ServerNameTextBlock;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* HostUserTextBlock;
+	UPROPERTY(meta = (BindWidgetOptional))
+	UTextBlock* HostUserNameTextBlock;
 
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ConnectionFraction;
+	UPROPERTY(meta = (BindWidgetOptional))
+	UTextBlock* ConnectionFractionTextBlock;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UTextBlock* GamePrivacyTypeTextBlock;
+
+	UPROPERTY(meta = (BindWidgetOptional))
+	UTextBlock* PingTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SelectServerButton;

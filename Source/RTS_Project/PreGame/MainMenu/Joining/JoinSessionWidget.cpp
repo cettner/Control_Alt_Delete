@@ -35,6 +35,7 @@ bool UJoinSessionWidget::StartSearch()
 	bool retval = false;
 	if (!IsSearchPending())
 	{
+		SessionSelectionPanel->ClearChildren();
 		SessionInterface->BeginSearchQuery();
 		retval = true;
 	}
@@ -55,7 +56,18 @@ bool UJoinSessionWidget::IsSearchPending() const
 
 void UJoinSessionWidget::OnSearchResultsRecieved(const FSessionSearchResults InSearchResults)
 {
-	int debug = 9;
+	for (int i = 0; i < InSearchResults.SearchResults.Num(); i++)
+	{
+		const FOnlineSessionSearchResult& currentresult = InSearchResults.SearchResults[i];
+
+		if (currentresult.IsValid() && SessionInfoWidgetClass != nullptr)
+		{
+			UJoinSessionInfoWidget * sessioninfowidget = CreateWidget<UJoinSessionInfoWidget>(this, SessionInfoWidgetClass);
+			sessioninfowidget->Setup(currentresult, i);
+			SessionSelectionPanel->AddChild(sessioninfowidget);
+		}
+
+	}
 }
 
 void UJoinSessionWidget::OnRefreshButtonListButtonPressed()
