@@ -37,6 +37,8 @@ protected:
 	bool SetActiveWidgetTab(UWidget * InSetActive);
 	bool SetActiveWidgetTab(UTabButtonWidget* InSetActive);
 
+	UTabButtonWidget* GetActiveTabWidgetButton() const;
+
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UWidgetSwitcher* SessionWidgetSwitcher = nullptr;
@@ -59,7 +61,7 @@ protected:
 
 protected:
 
-	ISessionMenuInterface* SessionMenuInterface = nullptr;
+	ISessionMenuInterface * SessionMenuInterface = nullptr;
 
-	
+	UTabButtonWidget* ActiveTabButton = nullptr;
 };

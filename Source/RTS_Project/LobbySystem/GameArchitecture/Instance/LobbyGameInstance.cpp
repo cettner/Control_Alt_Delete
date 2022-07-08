@@ -389,41 +389,21 @@ void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Succes
 
 void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 {
-	if (MainMenu == nullptr) return;
+	FSessionSearchResults broadcast;
 
 	if (Success && SessionSearch.IsValid())
 	{
 		const TArray<FOnlineSessionSearchResult> searchresults = SessionSearch->SearchResults;
-
-			SearchResultsReadyDelegate.ExecuteIfBound(FSessionSearchResults(searchresults));
-			/*
-			TArray<FServerData> ServerData;
-			for (const FOnlineSessionSearchResult& SearchResult : SessionSearch->SearchResults)
-			{
-				FServerData Data;
-				FString ServerName;
-				if (SearchResult.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, ServerName))
-				{
-					Data.Name = ServerName;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] Data NOT found in settings"));
-					Data.Name = "Could not find name";
-				}
-
-				Data.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
-				Data.CurrentPlayers = Data.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
-				Data.HostUsername = SearchResult.Session.OwningUserName;
-
-				ServerData.Add(Data);
-			}
-			*/
+		broadcast = FSessionSearchResults(searchresults);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] Error session not found"));
+		broadcast = FSessionSearchResults();
+		UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnFindSessionsComplete] Error Session Search Failed"));
 	}
+
+	SearchResultsReadyDelegate.ExecuteIfBound(broadcast);
+	SessionSearch.Reset();
 }
 
 void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)

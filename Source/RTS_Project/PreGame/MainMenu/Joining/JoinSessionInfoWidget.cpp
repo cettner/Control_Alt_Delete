@@ -10,7 +10,7 @@ void UJoinSessionInfoWidget::Setup(const FOnlineSessionSearchResult InSearchResu
 	const FName ServerNameKey = "ServerName";
 	/*Required Binding*/
 	FString outstring = "NULL";
-	const bool getsuccess = InSearchResult.Session.SessionSettings.Get(ServerNameKey, outstring);
+	InSearchResult.Session.SessionSettings.Get(ServerNameKey, outstring);
 	ServerNameTextBlock->SetText(FText::FromString(outstring));
 
 	const bool bisprivategame = IsPrivateGame(InSearchResult.Session.SessionSettings);

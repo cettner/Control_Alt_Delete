@@ -35,6 +35,12 @@ protected:
 	UFUNCTION()
 	virtual void OnRefreshButtonListButtonPressed();
 
+	UFUNCTION()
+	virtual bool ShouldEnableRefreshButton();
+
+	UFUNCTION()
+	virtual ESlateVisibility ShouldShowSearchingWidgets();
+
 protected:
 
 	UPROPERTY(meta = (BindWidget))
@@ -42,7 +48,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidgetOptional))
 	UButton* RefreshListButton;
-
+	
+	UPROPERTY(meta = (BindWidgetOptional))
+	UWidget* SearchInProgressWidget;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

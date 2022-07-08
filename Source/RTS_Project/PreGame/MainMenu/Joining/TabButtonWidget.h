@@ -53,7 +53,7 @@ protected:
 	UPROPERTY(EditAnyWhere)
 	FLinearColor InActiveTextColor = FLinearColor();
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FText TabTitleName = FText(FText::FromString("Tab Name"));
 
 protected:

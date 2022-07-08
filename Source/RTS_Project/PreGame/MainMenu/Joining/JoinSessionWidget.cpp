@@ -19,8 +19,13 @@ bool UJoinSessionWidget::Initialize()
 	if (IsValid(RefreshListButton))
 	{
 		RefreshListButton->OnClicked.AddDynamic(this, &UJoinSessionWidget::OnRefreshButtonListButtonPressed);
+		RefreshListButton->bIsEnabledDelegate.BindDynamic(this, &UJoinSessionWidget::ShouldEnableRefreshButton);
 	}
 
+	if (IsValid(SearchInProgressWidget))
+	{
+		SearchInProgressWidget->VisibilityDelegate.BindDynamic(this, &UJoinSessionWidget::ShouldShowSearchingWidgets);
+	}
 
 	return retval;
 }
@@ -73,4 +78,22 @@ void UJoinSessionWidget::OnSearchResultsRecieved(const FSessionSearchResults InS
 void UJoinSessionWidget::OnRefreshButtonListButtonPressed()
 {
 	StartSearch();
+}
+
+bool UJoinSessionWidget::ShouldEnableRefreshButton()
+{
+	const bool retval = !IsSearchPending();
+	return retval;
+}
+
+ESlateVisibility UJoinSessionWidget::ShouldShowSearchingWidgets()
+{
+	ESlateVisibility retval = ESlateVisibility::Hidden;
+
+	if (IsSearchPending())
+	{
+		retval = ESlateVisibility::Visible;
+	}
+
+	return retval;
 }
