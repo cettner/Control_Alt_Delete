@@ -58,17 +58,13 @@ bool ALobbyGameState::AddPlayertoLobby(ALobbyPlayerController* NewPlayer)
 	/*Refresh the lobby UI for listen servers, Clients Will draw during lobby info replication*/
 	if (GetNetMode() == NM_ListenServer)
 	{
-		UWorld* World = GetWorld();
-		if (World == nullptr) return false;
-		ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
-		if (PC == nullptr) return false;
-		PC->RefreshLobbyUI();
+		OnRep_LobbyInfo();
 	}
 
 	return true;
 }
 
-bool ALobbyGameState::RemovePlayerFromLobby(ALobbyPlayerController* LeavingPlayer)
+bool ALobbyGameState::RemovePlayerFromLobby(APlayerController* LeavingPlayer)
 {
 	FSlotPlayerData settings;
 	bool retval = false;
@@ -85,18 +81,14 @@ bool ALobbyGameState::RemovePlayerFromLobby(ALobbyPlayerController* LeavingPlaye
 		/*Refresh the lobby UI for listen servers, Clients Will draw during lobby info replication*/
 		if (GetNetMode() == NM_ListenServer)
 		{
-			UWorld* World = GetWorld();
-			if (World == nullptr) return false;
-			ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
-			if (PC == nullptr) return false;
-			PC->RefreshLobbyUI();
+			OnRep_LobbyInfo();
 		}
 	}
 
 	return(retval);
 }
 
-bool ALobbyGameState::RequestStartGame(ALobbyPlayerController * RequestingPlayer)
+bool ALobbyGameState::RequestStartGame(APlayerController * RequestingPlayer)
 {
 	if (RequestingPlayer == nullptr) return false;
 
@@ -111,7 +103,7 @@ bool ALobbyGameState::RequestStartGame(ALobbyPlayerController * RequestingPlayer
 	return(true);
 }
 
-bool ALobbyGameState::CanPlayerStartGame(ALobbyPlayerController * Player)
+bool ALobbyGameState::CanPlayerStartGame(APlayerController * Player) const
 {
 	if (HasAuthority() == false) return(false);
 	ULobbyGameInstance* GI = GetGameInstance<ULobbyGameInstance>();
@@ -119,7 +111,7 @@ bool ALobbyGameState::CanPlayerStartGame(ALobbyPlayerController * Player)
 	if (GetNetMode() == NM_ListenServer)
 	{
 		UWorld * World = GetWorld();
-		ALobbyPlayerController * LocalPC = World->GetFirstPlayerController<ALobbyPlayerController>();
+		APlayerController * LocalPC = World->GetFirstPlayerController<APlayerController>();
 		if (World == nullptr || LocalPC == nullptr) return false;
 
 		if (LocalPC == Player)
@@ -229,22 +221,13 @@ ALobbyGameState::ALobbyGameState()
 }
 
 void ALobbyGameState::OnRep_LobbyInfo()
-{
-	UWorld * World = GetWorld();
-	if (World == nullptr) return;
-	
-	ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
-	if (PC == nullptr) return;
-	
+{	
 	/*Store Our Data Locally in the Game Instance Then Draw the new Lobby*/
 	StoreLobbyData();
-
-	ULobbyMenu* Lobby = PC->GetLobbyMenu();
-	if (Lobby == nullptr) return;
-	Lobby->DrawLobbySlots(LobbyData);
+	LobbyDataDelegate.ExecuteIfBound(LobbyData);
 }
 
-bool ALobbyGameState::FindPlayerinLobby(ALobbyPlayerController * player, FSlotPlayerData& OutSlot)
+bool ALobbyGameState::FindPlayerinLobby(APlayerController * player, FSlotPlayerData& OutSlot) const
 { 
 	if (player == nullptr || player->PlayerState == nullptr) return false;
 	FUniqueNetIdRepl idtosearch = ULobbyGameInstance::GetUniquePlayerNetId(player);
@@ -308,11 +291,10 @@ void ALobbyGameState::ServerRequestMoveSlot_Implementation(ALobbyPlayerControlle
 	RequestingPlayer->SetPlayerSlotInfo(playerdata);
 	
 	/*Refresh the lobby UI for listen servers*/
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-	ALobbyPlayerController * PC = World->GetFirstPlayerController<ALobbyPlayerController>();
-	if (PC == nullptr) return;
-	PC->RefreshLobbyUI();
+	if (GetNetMode() == NM_ListenServer)
+	{
+		OnRep_LobbyInfo();
+	}
 
 	
 }

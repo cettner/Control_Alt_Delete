@@ -2,6 +2,7 @@
 
 
 #include "MenuPlayerController.h"
+#include "RTS_Project\LobbySystem\GameArchitecture\Instance\LobbyGameInstance.h"
 
 void AMenuPlayerController::SetupInputComponent()
 {
@@ -10,10 +11,17 @@ void AMenuPlayerController::SetupInputComponent()
 	if (IsLocalPlayerController())
 	{
 		FInputModeUIOnly inputmodedata;
-		//InputModeData.SetWidgetToFocus(this->TakeWidget());
-		inputmodedata.SetLockMouseToViewportBehavior(EMouseLockMode::LockInFullscreen);
+		inputmodedata.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		SetInputMode(inputmodedata);
 		bShowMouseCursor = true;
 	}
 
+}
+
+void AMenuPlayerController::PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel)
+{
+	Super::PreClientTravel(PendingURL, TravelType, bIsSeamlessTravel);
+	
+	ULobbyGameInstance * gi = GetGameInstance<ULobbyGameInstance>();
+	gi->StartLoadingLevel(FURL(*PendingURL), TravelType, bIsSeamlessTravel);
 }

@@ -6,11 +6,6 @@
 #include "../GameArchitecture/LobbyGameState.h"
 
 
-void ULobbyMenu::Teardown()
-{
-	this->RemoveFromViewport();
-}
-
 void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 {
 	UWorld* World = this->GetWorld();
@@ -47,7 +42,6 @@ void ULobbyMenu::DrawLobbySlots(TArray<FLobbyData> TeamSlots)
 bool ULobbyMenu::Initialize()
 {
 	bool Success = Super::Initialize();
-	if (!Success) return false;
 
 	if (StartGameButton == nullptr) return false;
 	StartGameButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedStartGameButton);
@@ -56,21 +50,43 @@ bool ULobbyMenu::Initialize()
 	if (LeaveLobbyButton == nullptr) return false;
 	LeaveLobbyButton->OnClicked.AddDynamic(this, &ULobbyMenu::OnPressedLeaveLobbyButton);
 
+	bIsLobbyDataBound = InitLobbyDataBinding();
+
 	AddToViewport();
 
+	return(Success);
+}
 
-	//ALobbyGameState* GS = Cast<ALobbyGameState>(World->GetGameState());
+void ULobbyMenu::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (!bIsLobbyDataBound)
+	{
+		bIsLobbyDataBound = InitLobbyDataBinding();
+	}
+}
+
+bool ULobbyMenu::InitLobbyDataBinding()
+{
+	bool retval = false;
+	/*The below may fail if the menu is created before the gamestate is created so its called from tick in event of offset*/
+	const UWorld* world = GetWorld();
+	ALobbyGameState* gs = Cast<ALobbyGameState>(world->GetGameState());
+	if (IsValid(gs))
+	{
+		DrawLobbySlots(gs->GetLobbyData());
+		gs->LobbyDataDelegate.BindUFunction(this, "DrawLobbySlots");
+		retval = true;
+	}
 	
-	/*Draw the initial team slots*/
-	//DrawLobbySlots(GS->GetLobbyData());
-
-	return(true);
+	return retval;
 }
 
 void ULobbyMenu::OnPressedStartGameButton()
 {
-	UWorld* World = GetWorld();
-	ALobbyPlayerController* PC = World->GetFirstPlayerController<ALobbyPlayerController>();
+	const UWorld* world = GetWorld();
+	ALobbyPlayerController* PC = world->GetFirstPlayerController<ALobbyPlayerController>();
 	if (PC == nullptr) return;
 	PC->RequestStartGame();
 }
@@ -92,7 +108,7 @@ bool ULobbyMenu::CanStartGame()
 	const UWorld* world = GetWorld();
 	if (!IsValid(world))
 	{
-		const ALobbyPlayerController* pc = world->GetFirstPlayerController<ALobbyPlayerController>();
+		const APlayerController* pc = world->GetFirstPlayerController<ALobbyPlayerController>();
 
 		/*Only the Lobby host can start the game*/
 		if (IsValid(pc) && pc->HasAuthority())

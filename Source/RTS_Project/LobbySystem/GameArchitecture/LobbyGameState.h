@@ -54,6 +54,7 @@ struct FLobbyData
 	FLobbyData() { TeamData = TArray<FSlotPlayerData>();}
 };
 
+DECLARE_DELEGATE_OneParam(FLobbyDataChangedDelegate, const TArray<FLobbyData>);
 
 
 class ALobbyPlayerController;
@@ -69,15 +70,16 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		TArray<FLobbyData> GetLobbyData();
 		bool AddPlayertoLobby(ALobbyPlayerController * NewPlayer);
 
-		bool RemovePlayerFromLobby(ALobbyPlayerController * LeavingPlayer);
+		bool RemovePlayerFromLobby(APlayerController * LeavingPlayer);
 
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerRequestMoveSlot(ALobbyPlayerController * RequestingPlayer, FSlotPlayerData RequestedSlot);
 
-		virtual bool RequestStartGame(ALobbyPlayerController * RequestingPlayer);
-		virtual bool CanPlayerStartGame(ALobbyPlayerController * Player);
+		virtual bool RequestStartGame(APlayerController * RequestingPlayer);
+		virtual bool CanPlayerStartGame(APlayerController * Player) const;
 		virtual bool StoreLobbyData();
 		
+		bool FindPlayerinLobby(APlayerController* player, FSlotPlayerData& OutSlot) const;
 		virtual bool IsGameStarting() const;
 	
 	protected:
@@ -86,21 +88,22 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		virtual void SetCustomPlayerSettings(FPlayerSettings &outsettings, const FSlotPlayerData StoredSlot);
 
 
+	protected:
+		void PostInitializeComponents() override;
+		void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:
-
-		UPROPERTY(ReplicatedUsing = OnRep_LobbyInfo)
-		TArray<FLobbyData> LobbyData;
-
 		UFUNCTION()
 		void OnRep_LobbyInfo();
 
-		bool bisGameStarting = false;
+	public:
+		FLobbyDataChangedDelegate LobbyDataDelegate;
 
-	private:
-		bool FindPlayerinLobby(ALobbyPlayerController * player ,FSlotPlayerData& OutSlot);
+	protected:
+		UPROPERTY(ReplicatedUsing = OnRep_LobbyInfo)
+		TArray<FLobbyData> LobbyData;
 
-	private:
+	protected:
 		uint32 PlayersinLobby = 0;
 		uint32 MaxPlayers = 0;
 
@@ -108,7 +111,5 @@ class RTS_PROJECT_API ALobbyGameState : public AGameStateBase
 		uint32 NumTeams = 0;
 		uint32 NumPlayersPerTeam = 0;
 
-protected:
-		void PostInitializeComponents() override;
-		void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+		bool bisGameStarting = false;
 };

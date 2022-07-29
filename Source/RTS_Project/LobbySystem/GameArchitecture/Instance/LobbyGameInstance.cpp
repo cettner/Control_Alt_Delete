@@ -13,8 +13,6 @@ const static FName SESSION_NAME = TEXT("RTSFPSGameSession");
 
 ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializer)
 {
-	MenuClass = UMainMenuWidgetManager::StaticClass();
-	LobbyClass = ULobbyMenu::StaticClass();
 	RestartSession = false;
 	bIsPlayingOffline = false;
 	PlayerName = "";
@@ -58,68 +56,65 @@ void ULobbyGameInstance::Init()
 void ULobbyGameInstance::PreloadContentForURL(FURL InURL)
 {
 	Super::PreloadContentForURL(InURL);
+	StartLoadingLevel(InURL);
 }
 
 void ULobbyGameInstance::OnWorldChanged(UWorld* InOldWorld, UWorld* InNewWorld)
 {
 	Super::OnWorldChanged(InOldWorld, InNewWorld);
+}
 
-	if (IsValid(InNewWorld))
+void ULobbyGameInstance::LoadComplete(const float LoadTime, const FString& MapName)
+{
+	ULoadingWidget * loadscreen = GetLoadingWidget();
+
+	if (IsValid(loadscreen))
 	{
-		const FString mapname = InNewWorld->GetPackage()->GetName();
+		loadscreen->OnLevelLoadComplete();
+	}
+}
 
-		if (mapname == MainMenuMapName)
+void ULobbyGameInstance::StartLoadingLevel(FURL InURL, ETravelType TravelType, bool bIsSeamlessTravel)
+{
+	if (!IsLoadingLevel())
+	{
+		ULoadingWidget* loadingmenu = CreateWidget<ULoadingWidget>(this, OfflineLoadMenuClass);
+		loadingmenu->SetTransitionURL(InURL, this);
+		SetLoadingScreen(loadingmenu);
+	}
+}
+
+bool ULobbyGameInstance::IsLoadingLevel() const
+{
+	bool retval = false;
+	const ULoadingWidget* loadmenu = GetLoadingWidget();
+	
+	if (IsValid(loadmenu) && loadmenu->IsLoading())
+	{
+		retval = true;
+	}
+
+	return retval;
+}
+
+void ULobbyGameInstance::OnLoadLevelComplete(FURL InLoadDestination, bool InLoadSuccess)
+{
+	CloseLoadingScreen();
+}
+
+void ULobbyGameInstance::CloseLoadingScreen()
+{
+		if (IsValid(LoadingScreen))
 		{
-			LoadMainMenu();
+			UGameViewportClient* viewport = GetGameViewportClient();
+			viewport->RemoveViewportWidgetContent(LoadingScreen->TakeWidget());
 		}
-		else if (mapname == LobbyMapName)
-		{
-			LoadLobbyMenu();
-		}
-
-	}
-
+		LoadingScreen = nullptr;
 }
 
-void ULobbyGameInstance::LoadMainMenu()
+void ULobbyGameInstance::SetLoadingScreen(ULoadingWidget* InMenu)
 {
-	if (MenuClass == nullptr)
-	{
-		return;
-	}
-	else if (MainMenu == nullptr)
-	{
-		MainMenu = CreateWidget<UUserWidget>(this, MenuClass);
-	}
-}
-
-void ULobbyGameInstance::CloseCurrentMenu()
-{
-	if (MainMenu != nullptr)
-	{
-		MainMenu = nullptr;
-	}
-	else if (LobbyMenu != nullptr)
-	{
-		LobbyMenu = nullptr;
-	}
-}
-
-void ULobbyGameInstance::LoadLobbyMenu()
-{
-	if (LobbyClass == nullptr)
-	{
-		return;
-	}
-	else
-	{
-		LobbyMenu = CreateWidget<ULobbyMenu>(this, LobbyClass);
-	}
-}
-
-ULobbyMenu * ULobbyGameInstance::GetLobbyMenu()
-{
-	return LobbyMenu;
+	LoadingScreen = InMenu;
 }
 
 void ULobbyGameInstance::StartGame()
@@ -149,7 +144,7 @@ bool ULobbyGameInstance::SetPlayerSettings(FPlayerSettings settings)
 	return true;
 }
 
-FPlayerSettings ULobbyGameInstance::GetPlayerSettings()
+FPlayerSettings ULobbyGameInstance::GetPlayerSettings() const
 {
 	return PlayerSettings;
 }
@@ -207,18 +202,17 @@ FUniqueNetIdRepl ULobbyGameInstance::GetUniquePlayerNetId(APlayerController* Pla
 
 void ULobbyGameInstance::StartOfflineGame()
 {
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 	if (World)
 	{
-		CloseCurrentMenu();
-
+		CloseLoadingScreen();
 
 		bIsPlayingOffline = true;
 		UGameplayStatics::OpenLevel(World, FName(*LobbyMapName));
 	}
 }
 
-bool ULobbyGameInstance::IsPlayingOffline()
+bool ULobbyGameInstance::IsPlayingOffline() const
 {
 	return bIsPlayingOffline;
 }
@@ -319,8 +313,7 @@ void ULobbyGameInstance::InitDefaultSessionSettings(FOnlineSessionSettings& OutS
 
 void ULobbyGameInstance::InitCustomSessionSettings(FSessionSettings& OutSettings) const
 {
-	//OutSettings.Add(SERVER_NAME_SETTINGS_KEY, );
-	//OutSettings.Set(SERVER_NAME_SETTINGS_KEY, InServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
 }
 
 FOnlineSessionSettings ULobbyGameInstance::GetHostSettings(FSessionSettings InAdditionalSettings) const
@@ -342,7 +335,7 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 
 	UE_LOG(LogTemp, Warning, TEXT("[UNetTileMazeGameInstance::OnCreateSessionComplete] SUCESS SessionName: %s"), *SessionName.ToString());
 
-	CloseCurrentMenu();
+	CloseLoadingScreen();
 
 	UEngine* Engine = GetEngine();
 
@@ -408,7 +401,7 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 
 void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	CloseCurrentMenu();
+	CloseLoadingScreen();
 	if (!SessionInterface.IsValid()) return;
 
 	FString Url;
@@ -581,14 +574,6 @@ bool ULobbyGameInstance::AreSessionSettingsStored() const
 
 void ULobbyGameInstance::EndSession()
 {
-
-	// Teardown Menu and change levels
-	if (LobbyMenu != nullptr)
-	{
-		LobbyMenu->Teardown();
-		LobbyMenu = nullptr;
-	}
-
 	if (SessionInterface.IsValid() && (SessionInterface->GetNamedSession(SESSION_NAME) != nullptr))
 	{
 		/*Should be false but just to be sure*/

@@ -53,14 +53,12 @@ public:
 
 protected:
 	virtual bool Initialize() override;
-	virtual void AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder) override;
 
 protected:
 
 	virtual void StitchMenuBindings();
 
 	virtual FButtonDelegateBinding GetWidgetBindFunctionHandler(const UWidget* InFindWidgetHandle) const;
-
 
 	UFUNCTION()
 	virtual void DisplayMainMenu();

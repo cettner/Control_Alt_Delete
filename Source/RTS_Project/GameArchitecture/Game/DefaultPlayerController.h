@@ -19,7 +19,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 	
 
 	public:
-		bool GetPlayerInfo(FPlayerSettings& outsettings);
+		bool GetPlayerInfo(FPlayerSettings& outsettings) const;
 
 		UFUNCTION(Client, reliable)
 		void ClientRequestRegistration();
@@ -55,7 +55,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		virtual void RegisterPlayerInfo(FPlayerSettings settings);
 
-
 		virtual void RequestRegistration();
 
 		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
@@ -68,6 +67,7 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 		virtual void SetupInputComponent() override;
 		virtual void InitPlayerState() override;
+		virtual void PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel) override;
 
 	protected:
 		/*Replicated After Player data is registered by the server during post login or on request*/

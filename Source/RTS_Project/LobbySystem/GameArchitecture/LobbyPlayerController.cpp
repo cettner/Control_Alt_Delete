@@ -4,10 +4,6 @@
 #include "LobbyPlayerController.h"
 #include "../UI/LobbyMenu.h"
 
-void ALobbyPlayerController::PreInitializeComponents()
-{
-	LobbyMenu = GetGameInstance<ULobbyGameInstance>()->GetLobbyMenu();
-}
 
 ALobbyPlayerController::ALobbyPlayerController(const FObjectInitializer& ObjectInitializer)
 {
@@ -15,11 +11,6 @@ ALobbyPlayerController::ALobbyPlayerController(const FObjectInitializer& ObjectI
 	PlayerSlotInfo.SlotId = -1;
 	PlayerSlotInfo.TeamId = -1;
 	PlayerSlotInfo.PlayerName = "";
-}
-
-ULobbyMenu* ALobbyPlayerController::GetLobbyMenu()
-{
-	return LobbyMenu;
 }
 
 FSlotPlayerData ALobbyPlayerController::GetPlayerSlotInfo() const
@@ -66,21 +57,6 @@ void ALobbyPlayerController::RequestStartGame()
 	{
 		ServerRequestStartGame();
 	}
-}
-
-void ALobbyPlayerController::RefreshLobbyUI()
-{
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
-
-	ALobbyGameState* GS = World->GetGameState<ALobbyGameState>();
-	if (GS == nullptr) return;
-
-	/*Store the Data Locally and Draw the Lobby*/
-	GS->StoreLobbyData();
-
-	if (LobbyMenu == nullptr) return;
-	LobbyMenu->DrawLobbySlots(GS->GetLobbyData());
 }
 
 bool ALobbyPlayerController::ServerRequestMoveSlot_Validate(FSlotPlayerData RequestedSlot)

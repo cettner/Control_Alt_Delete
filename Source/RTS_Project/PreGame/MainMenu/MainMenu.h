@@ -48,43 +48,4 @@ protected:
 	UButton* MultiPlayerButton;
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//// JOIN SESSIONS ///////
-
-/*
-protected:
-	UPROPERTY(meta = (BindWidget))
-	UWidget* SessionListMenuWidget;
-
-	UPROPERTY(meta = (BindWidget))
-	UPanelWidget* ScrollSessionList;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UJoinSessionInfoWidget> SessionRowClass;
-	TOptional<uint32> SelectedScrollIndex;
-
-	// Buttons
-	UFUNCTION()
-	void OnCancelJoinSession();
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* CancelJoinSessionButton;
-
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* JoinSelectedSessionButton;
-
-	UFUNCTION()
-	void OnJoinSelectedSession();
-
-
-public:
-	void InitializeSessionsList(TArray<FServerData> Data);
-	void SelectIndexSessionList(uint32 Index);
-	void UpdateSessionList();
-*/
 };

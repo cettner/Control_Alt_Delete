@@ -13,7 +13,4 @@ UCLASS()
 class RTS_PROJECT_API ALobbyPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-
-	protected:
-	void ClientInitialize(AController* Controller) override;
 };

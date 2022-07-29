@@ -3,13 +3,3 @@
 
 #include "LobbyPlayerState.h"
 #include "LobbyPlayerController.h"
-
-void ALobbyPlayerState::ClientInitialize(AController* Controller)
-{
-	Super::ClientInitialize(Controller);
-	ALobbyPlayerController * PC = Cast<ALobbyPlayerController>(Controller);
-	if (PC)
-	{
-		PC->RefreshLobbyUI();
-	}
-}

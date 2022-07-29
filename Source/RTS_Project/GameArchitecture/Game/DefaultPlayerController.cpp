@@ -120,10 +120,22 @@ void ADefaultPlayerController::SetupInputComponent()
 void ADefaultPlayerController::InitPlayerState()
 {
 	Super::InitPlayerState();
-	if (IsLocalPlayerController() && (GetNetMode() != NM_DedicatedServer))
+	if (IsLocalPlayerController() && (GetNetMode() != NM_DedicatedServer)  && IsValid(PlayerState))
 	{
 		GetPlayerState<ADefaultPlayerState>()->SetLocalPlayerState(true);
 	}
+	else
+	{
+		/*This Happens in EditMode of BP versions*/
+		UE_LOG(LogTemp, Warning, TEXT("[DefaultPlayerController::InitPlayerState] Failed to Obtain PlayerState"));
+	}
+}
+
+void ADefaultPlayerController::PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel)
+{
+	Super::PreClientTravel(PendingURL, TravelType, bIsSeamlessTravel);
+	ULobbyGameInstance* gi = GetGameInstance<ULobbyGameInstance>();
+	gi->StartLoadingLevel(FURL(*PendingURL), TravelType, bIsSeamlessTravel);
 }
 
 void ADefaultPlayerController::PostRegisterInit()
@@ -157,9 +169,9 @@ void ADefaultPlayerController::ClientInitUI()
 	}
 }
 
-bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings)
+bool ADefaultPlayerController::GetPlayerInfo(FPlayerSettings& outsettings) const
 {
-	ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
+	const ULobbyGameInstance * GI = GetGameInstance<ULobbyGameInstance>();
 	if (GI == nullptr) return false;
 
 	outsettings = GI->GetPlayerSettings();

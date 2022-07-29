@@ -13,15 +13,9 @@ bool UMainMenuWidgetManager::Initialize()
 		StitchMenuBindings();
 	#endif
 	DisplayMainMenu();
+	
 	AddToViewport();
-
 	return retval;
-}
-
-void UMainMenuWidgetManager::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder)
-{
-	Super::AddToScreen(LocalPlayer, ZOrder);
-
 }
 
 void UMainMenuWidgetManager::StitchMenuBindings()

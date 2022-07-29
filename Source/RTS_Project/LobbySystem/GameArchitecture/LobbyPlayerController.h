@@ -15,16 +15,11 @@ class RTS_PROJECT_API ALobbyPlayerController : public AMenuPlayerController
 {
 	GENERATED_BODY()
 
-	ULobbyMenu* LobbyMenu;
-
-protected:
-	virtual void PreInitializeComponents() override;
 
 protected:
 	ALobbyPlayerController(const FObjectInitializer& ObjectInitializer);
 
 public:
-	ULobbyMenu* GetLobbyMenu();
 
 	FSlotPlayerData GetPlayerSlotInfo() const;
 
@@ -39,9 +34,6 @@ public:
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void ServerRequestStartGame();
-
-	/*Only used by Listen server*/
-	void RefreshLobbyUI();
 
 protected:
 	FSlotPlayerData PlayerSlotInfo;

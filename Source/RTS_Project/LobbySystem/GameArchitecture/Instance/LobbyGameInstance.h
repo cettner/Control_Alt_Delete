@@ -9,6 +9,7 @@
 #include "Interfaces/OnlineFriendsInterface.h"
 #include "Blueprint/UserWidget.h"
 
+#include "RTS_Project/PreGame/Loading/LoadingWidget.h"
 #include "../../Interfaces/SessionMenuInterface.h"
 #include "LobbyGameInstance.generated.h"
 
@@ -166,9 +167,6 @@ struct FStoredSessionSettings
 DECLARE_DELEGATE_OneParam(FFriendsListReadyDelegate, const TArray<FSubSytemFriendInfo>);
 DECLARE_DELEGATE_OneParam(FSessionSearchResultsDelegate, const FSessionSearchResults);
 
-/*Forward Declarations*/
-class ULobbyMenu;
-
 
 UCLASS()
 class RTS_PROJECT_API ULobbyGameInstance : public UGameInstance, public ISessionMenuInterface
@@ -183,9 +181,10 @@ public:
 
 	bool SetPlayerSettings(FPlayerSettings settings);
 
-	FPlayerSettings GetPlayerSettings();
+	FPlayerSettings GetPlayerSettings() const;
 
 	bool SetServerSettings(FServerSettings settings);
+
 	FServerSettings GetServerSettings() const;
 
 	TArray<FName> GetAvailableSubsystems() const;
@@ -196,15 +195,23 @@ public:
 
 	void StartOfflineGame();
 
-	bool IsPlayingOffline();
+	bool IsPlayingOffline() const;
 
-	void LoadMainMenu();
+	void SetLoadingScreen(ULoadingWidget* InMenu);
+	
+	template<class T>
+	T* GetLoadingWidget() const { return Cast<T>(GetCurrentMenu()); }
 
-	void LoadLobbyMenu();
+	ULoadingWidget* GetLoadingWidget()  const { return LoadingScreen; }
 
-	void CloseCurrentMenu();
+	virtual void StartLoadingLevel(FURL InURL, ETravelType TravelType = ETravelType::TRAVEL_MAX, bool bIsSeamlessTravel = false);
 
-	ULobbyMenu * GetLobbyMenu();
+	bool IsLoadingLevel() const;
+
+	/*Called By Load Menu when it is safe to remove the widget*/
+	void OnLoadLevelComplete(FURL InLoadDestination, bool InLoadSuccess);
+
+	void CloseLoadingScreen();
 
 	void StartGame();
 
@@ -234,6 +241,7 @@ protected:
 	virtual void Init() override;
 	virtual void PreloadContentForURL(FURL InURL) override;
 	virtual void OnWorldChanged(UWorld * InOldWorld, UWorld * InNewWorld) override;
+	virtual void LoadComplete(const float LoadTime, const FString& MapName) override;
 /*************************************************************************************************/
 private:
 	// Session Events
@@ -275,16 +283,9 @@ public:
 	FSessionSearchResultsDelegate SearchResultsReadyDelegate;
 /**********************************************************************************************/
 protected:
-	// Main Menu
+	//OfflineLoadingMenu
 	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UUserWidget> MenuClass;
-	UUserWidget* MainMenu;
-
-	//Lobby
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UUserWidget> LobbyClass;
-	ULobbyMenu* LobbyMenu;
-
+	TSubclassOf<ULoadingWidget> OfflineLoadMenuClass;
 /***********************************************************************************************/
 	//Maps
 	UPROPERTY(EditDefaultsOnly, Category = Maps)
@@ -314,6 +315,8 @@ protected:
 
 	/*Last Called Subsystem through ReadFriendsList*/
 	FName LastReadSubSystem;
+
+	ULoadingWidget * LoadingScreen = nullptr;
 
 private:
 	/*Stored SessionData for use between Session Resets*/
