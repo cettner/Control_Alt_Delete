@@ -2,7 +2,7 @@
 
 
 #include "RTSFPSUpgradeNodeWidget.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 
 void URTSFPSUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const

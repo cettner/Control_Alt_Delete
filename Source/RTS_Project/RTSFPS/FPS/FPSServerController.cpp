@@ -2,11 +2,11 @@
 
 #include "FPSServerController.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSFPSHUD.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSFPSWidget.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTSFPSHUD.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTSFPSWidget.h"
 #include "RTS_Project/RTSFPS/FPS/UI/FPSUI.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "FPSPlayerState.h"
 
 #include "Net/UnrealNetwork.h"

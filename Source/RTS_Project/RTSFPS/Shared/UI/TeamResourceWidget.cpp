@@ -2,7 +2,7 @@
 
 
 #include "TeamResourceWidget.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h" 
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h" 
 
 void UTeamResourceWidget::Setup(FResourceUIData UIData)
 {

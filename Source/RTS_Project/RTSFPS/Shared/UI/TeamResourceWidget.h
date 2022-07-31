@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 
-#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
 #include "TeamResourceWidget.generated.h"
 
 /**

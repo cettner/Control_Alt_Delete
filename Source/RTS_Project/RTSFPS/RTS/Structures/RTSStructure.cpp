@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.=
 #include "RTSStructure.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "UI/StructureSpawnQueueWidget.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimableSquareGameGrid.h"
 

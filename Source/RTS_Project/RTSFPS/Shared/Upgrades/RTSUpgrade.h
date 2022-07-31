@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Upgrade.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTSUpgrade.generated.h"
 
 /**

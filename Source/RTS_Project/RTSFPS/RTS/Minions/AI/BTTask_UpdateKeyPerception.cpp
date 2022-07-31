@@ -3,7 +3,7 @@
 
 #include "BTTask_UpdateKeyPerception.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"

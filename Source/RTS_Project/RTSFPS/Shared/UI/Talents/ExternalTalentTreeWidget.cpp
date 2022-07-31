@@ -2,7 +2,7 @@
 
 
 #include "ExternalTalentTreeWidget.h"
-#include "RTS_Project/GameArchitecture/Game/DefaultHUD.h"
+#include "RTS_Project/TeamMultiplayerGame/Game/GameArchitecture/DefaultHUD.h"
 
 UExternalTalentTreeWidget::UExternalTalentTreeWidget() : Super()
 {

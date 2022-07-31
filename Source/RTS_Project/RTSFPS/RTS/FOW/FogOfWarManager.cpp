@@ -2,7 +2,7 @@
 
 #include "FogOfWarManager.h"
 #include "FogOfWarWorker.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSPlayerController.h"
+#include "RTS_Project/RTSFPS/RTS/RTSPlayerController.h"
 
 #include "Engine.h"
 #include "RenderingThread.h"

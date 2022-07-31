@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 #include "Camera/CameraComponent.h"
 #include "Commander.generated.h"
 

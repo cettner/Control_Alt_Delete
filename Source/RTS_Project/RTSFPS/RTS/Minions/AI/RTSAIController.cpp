@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSAIController.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"

@@ -2,7 +2,8 @@
 
 
 #include "StructureSpawnQueueWidget.h"
-
+#include "RTS_Project/RTSFPS/RTS/RTSPLayerController.h"
+#include "RTS_Project/RTSFPS/FPS/Commander.h"
 
 void UStructureSpawnQueueWidget::Setup(ARTSStructure* InStructure)
 {

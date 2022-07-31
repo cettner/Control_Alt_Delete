@@ -2,8 +2,8 @@
 
 
 #include "FPSPlayerState.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSMode.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSMode.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 

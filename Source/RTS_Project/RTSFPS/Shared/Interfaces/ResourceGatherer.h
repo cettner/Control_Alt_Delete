@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
 
 #include "ResourceGatherer.generated.h"
 

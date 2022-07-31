@@ -2,6 +2,9 @@
 
 
 #include "RTSGridPlacementCamera.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
+#include "RTS_Project/TeamMultiplayerGame/Game/GameArchitecture/DefaultPlayerController.h"
+
 #include "Kismet/GameplayStatics.h"
 
 

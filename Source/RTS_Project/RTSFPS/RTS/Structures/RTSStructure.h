@@ -4,18 +4,17 @@
 
 #include "CoreMinimal.h"
 
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
 #include "Interfaces/BuildableInterface.h"
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
-#include "RTS_Project/AssetHelpers/GameAssets.h"
 #include "RTSStructure.generated.h"
 
 enum ERTSStructureSpawnSuccess

@@ -2,7 +2,7 @@
 
 
 #include "MineResourceAbility.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/AbilityComponent.h"
 
 

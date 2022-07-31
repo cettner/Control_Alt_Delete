@@ -2,7 +2,6 @@
 
 #include "BTService_CheckForCommand.h"
 #include "RTSAIController.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -20,10 +19,4 @@ UBTService_CheckForCommand::UBTService_CheckForCommand()
 
 void UBTService_CheckForCommand::TickNode(UBehaviorTreeComponent& OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
 {
-	ARTSAIController *RTSPC = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-
-	if (RTSPC != NULL)
-	{
-		ARTSMinion *Minion = Cast<ARTSMinion>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	}
 }

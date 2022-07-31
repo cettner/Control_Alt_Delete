@@ -2,8 +2,7 @@
 
 
 #include "BTDecorator_IsTargetEnemy.h"
-#include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
@@ -17,7 +16,7 @@ UBTDecorator_IsTargetEnemy::UBTDecorator_IsTargetEnemy()
 bool UBTDecorator_IsTargetEnemy::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	bool result = false;
-	ARTSAIController* Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+	AAIController* Controller = OwnerComp.GetAIOwner();
 	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 
 	if (Controller && target)

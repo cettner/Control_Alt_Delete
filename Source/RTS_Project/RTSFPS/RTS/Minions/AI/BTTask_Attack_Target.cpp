@@ -3,7 +3,7 @@
 
 #include "BTTask_Attack_Target.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"

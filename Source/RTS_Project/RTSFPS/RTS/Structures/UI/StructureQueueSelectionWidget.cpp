@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "StructureQueueSelectionWidget.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 
 
 void UStructureQueueSelectionWidget::SynchronizeProperties()

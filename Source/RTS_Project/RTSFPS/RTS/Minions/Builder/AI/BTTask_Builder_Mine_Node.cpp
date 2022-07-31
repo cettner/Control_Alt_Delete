@@ -3,7 +3,7 @@
 #include "BTTask_Builder_Mine_Node.h"
 #include "BuilderAIController.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resource.h"
+#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"

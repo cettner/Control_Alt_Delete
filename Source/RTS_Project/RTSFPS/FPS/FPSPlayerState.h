@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Curves/CurveFloat.h"
 
-#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "FPSPlayerState.generated.h"

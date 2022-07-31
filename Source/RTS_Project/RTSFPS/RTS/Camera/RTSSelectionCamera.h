@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "RTSCamera.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTSSelectionCamera.generated.h"
 

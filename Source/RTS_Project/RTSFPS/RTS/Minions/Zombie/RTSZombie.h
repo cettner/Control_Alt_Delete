@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSMinion.h"
+#include "../../RTSMinion.h"
 #include "RTSZombie.generated.h"
 
 /**

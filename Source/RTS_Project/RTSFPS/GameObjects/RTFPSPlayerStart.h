@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TeamPlayerStart.h"
+#include "RTS_Project/TeamMultiplayerGame/Game/TeamPlayerStart.h"
 #include "RTFPSPlayerStart.generated.h"
 
 /**

@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Commander.h"
 #include "FPSServerController.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/MenuInteractableInterface.h"
-#include "RTS_Project/RTSFPS/BaseClasses/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/MenuInteractableInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 
 #include "Net/UnrealNetwork.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -340,8 +340,8 @@ FVector ACommander::GetSquareFormation(int index, float width)
 	}
 	else
 	{
-		xcalc = -width - (width)*(index / 4);
-		ycalc = -width - (width)*(index / 4);
+		xcalc = -width - (width)*static_cast<float>((index / 4));
+		ycalc = -width - (width)*static_cast<float>((index / 4));
 	}
 
 	FVector RetVal = mylocation + FVector(xcalc, ycalc, 0);

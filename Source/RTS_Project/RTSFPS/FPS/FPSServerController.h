@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 
-#include "../BaseClasses/RTSPlayerController.h"
+#include "../RTS/RTSPlayerController.h"
 #include "Commander.h"
 #include "FPSServerController.generated.h"
 

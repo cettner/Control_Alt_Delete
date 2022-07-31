@@ -5,7 +5,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTS_Project/RTSFPS/BaseClasses/RTSHUD.h"
+#include "../RTS/RTSHUD.h"
 #include "UI/FPSUI.h"
 #include "FPSHUD.generated.h"
 

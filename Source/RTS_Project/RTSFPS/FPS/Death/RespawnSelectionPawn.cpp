@@ -2,7 +2,7 @@
 
 
 #include "RespawnSelectionPawn.h"
-#include "RTS_Project/GameArchitecture/Game/RTFPSPlayerState.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "../FPSServerController.h"
 

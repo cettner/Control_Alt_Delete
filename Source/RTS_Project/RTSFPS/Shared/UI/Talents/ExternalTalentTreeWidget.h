@@ -6,7 +6,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UI/UpgradeTreeWidget.h"
 
 
-#include "RTS_Project/GameArchitecture/Game/UI/Interfaces/ExternalWidgetInterface.h"
+#include "RTS_Project\TeamMultiplayerGame\Game\UI\Interfaces\ExternalWidgetInterface.h"
 #include "ExternalTalentTreeWidget.generated.h"
 /**
  * 
