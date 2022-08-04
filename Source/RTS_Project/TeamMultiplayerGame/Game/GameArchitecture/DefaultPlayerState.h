@@ -19,7 +19,7 @@ public:
 
 public:
 	/*Returns wether the first set of data has been replicated from the server after game login, this always returns true on the server.*/
-	bool IsClientInitialized();
+	bool IsClientInitialized() const;
 	
 	/*Whether Gameode Data has been loaded through the gamestate to the local player*/
 	bool HasDefaultGameModeLoaded();

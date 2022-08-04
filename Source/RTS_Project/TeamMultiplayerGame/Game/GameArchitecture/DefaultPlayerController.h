@@ -21,9 +21,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 	public:
 		bool GetPlayerInfo(FPlayerSettings& outsettings) const;
 
-		UFUNCTION(Client, reliable)
-		void ClientRequestRegistration();
-
 		bool IsRegistered() const { return(bisregistered); }
 
 		virtual void ClientNotifyTeamChange(int newteamid);
@@ -50,12 +47,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 		virtual void OnEscapeActionPressed();
 
 	protected:
-		UFUNCTION(Server, reliable, WithValidation)
-		void ServerRegisterPlayerInfo(FPlayerSettings settings);
-
-		virtual void RegisterPlayerInfo(FPlayerSettings settings);
-
-		virtual void RequestRegistration();
 
 		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
 		virtual void FinishLocalPlayerSetup();

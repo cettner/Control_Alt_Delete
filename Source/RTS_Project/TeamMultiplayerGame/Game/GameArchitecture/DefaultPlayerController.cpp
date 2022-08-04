@@ -9,20 +9,6 @@
 #include "Net/UnrealNetwork.h"
 
 
-bool ADefaultPlayerController::ServerRegisterPlayerInfo_Validate(FPlayerSettings settings)
-{
-	return(true);
-}
-
-void ADefaultPlayerController::ServerRegisterPlayerInfo_Implementation(FPlayerSettings settings)
-{
-		RegisterPlayerInfo(settings);
-}
-
-void ADefaultPlayerController::ClientRequestRegistration_Implementation()
-{
-	RequestRegistration();
-}
 
 void ADefaultPlayerController::ClientNotifyTeamChange(int newteamid)
 {
@@ -49,50 +35,12 @@ void ADefaultPlayerController::SetIsRegistered(bool bregistered)
 	}
 }
 
-void ADefaultPlayerController::RegisterPlayerInfo(FPlayerSettings settings)
-{
-	if (HasAuthority() && (bisregistered == false))
-	{
-		UWorld* World = GetWorld();
-		if (World == nullptr) return;
-
-		ADefaultMode * GM = World->GetAuthGameMode<ADefaultMode>();
-		if (GM == nullptr) return;
-
-		bisregistered = GM->RegisterPlayerData(this,settings);
-
-		/*Inititalize the local server*/
-		if (bisregistered && (World->GetFirstPlayerController() == this) && (World->GetNetMode() == NM_ListenServer))
-		{
-			PostRegisterInit();
-		}
-	}
-	else
-	{
-		ServerRegisterPlayerInfo(settings);
-	}
-}
-
-void ADefaultPlayerController::RequestRegistration()
-{
-	if (GetLocalRole() == ROLE_AutonomousProxy)
-	{
-		FPlayerSettings mysettings;
-		if (!GetPlayerInfo(mysettings)) /*NOT WORKING IN EDITOR BECAUSE DATA IS INVALID*/
-		{
-			UE_LOG(LogTemp, Warning, TEXT("[DefaultPlayerController::RequestRegistration] Failed to get player settings"));
-		}
-
-		ServerRegisterPlayerInfo(mysettings);
-	}
-}
-
 void ADefaultPlayerController::OnRep_bisregistered()
 {
 	/*If Registration happens after Client Initialization or we're the server, finish the local player setup otherwise wait for playerstate to initialize*/
 	/*Warning: On Client Player State may not even be created yet.*/
 
-	ADefaultPlayerState * ps = GetPlayerState<ADefaultPlayerState>();
+	const ADefaultPlayerState * ps = GetPlayerState<ADefaultPlayerState>();
 	if (IsValid(ps) && ps->IsClientInitialized() && bisregistered == true)
 	{
 		PostRegisterInit();

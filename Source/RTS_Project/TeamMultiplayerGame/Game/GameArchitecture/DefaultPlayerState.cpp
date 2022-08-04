@@ -45,7 +45,7 @@ ADefaultPlayerState::ADefaultPlayerState(const FObjectInitializer& ObjectInitial
 	TeamID = -1;
 }
 
-bool ADefaultPlayerState::IsClientInitialized()
+bool ADefaultPlayerState::IsClientInitialized() const
 {
 	if (!HasAuthority())
 	{
