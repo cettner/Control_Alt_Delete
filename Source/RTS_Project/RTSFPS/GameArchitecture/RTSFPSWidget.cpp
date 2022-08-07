@@ -2,7 +2,8 @@
 
 
 #include "RTSFPSWidget.h"
-#include "RTSFPSHUD.h"
+
+#include "RTFPSPlayerState.h"
 
 URTSFPSWidget::URTSFPSWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -30,11 +31,9 @@ bool URTSFPSWidget::Initialize()
 
 void URTSFPSWidget::OnHUDStateChange()
 {
-	ARTSFPSHUD * hud = GetOwningPlayer()->GetHUD<ARTSFPSHUD>();
-	if (hud == nullptr) return;
-	HUDSTATE CurrentState = hud->GetHUDState();
+	const ARTFPSPlayerState * ps = GetOwningPlayer()->GetPlayerState<ARTFPSPlayerState>();
 
-	if (CurrentState <= HUDSTATE::RTS_SELECT_AND_MOVE && RTSFPSUISwitcher && RTSUI)
+	if (ps->IsRTSPlayer())
 	{
 		RTSFPSUISwitcher->SetActiveWidget(RTSUI);
 	}

@@ -9,7 +9,6 @@ void IRTSObjectInterface::SetSelected()
 {
 }
 
-
 void IRTSObjectInterface::SetDeselected()
 {
 }
@@ -25,4 +24,31 @@ void IRTSObjectInterface::SetTeam(int teamid)
 
 void IRTSObjectInterface::SetTeamColors(FLinearColor TeamColor)
 {
+}
+
+bool IRTSObjectInterface::IsAlive() const
+{
+	return false;
+}
+
+void IRTSObjectInterface::SetTarget(AActor* InNewTarget)
+{
+}
+
+void IRTSObjectInterface::SetTargetLocation(FVector InTargetLocation)
+{
+}
+
+AActor* IRTSObjectInterface::GetTarget()
+{
+	return nullptr;
+}
+
+void IRTSObjectInterface::ClearTarget()
+{
+}
+
+IRTSObjectInterface* IRTSObjectInterface::GetLeadRTSObject()
+{
+	return nullptr;
 }

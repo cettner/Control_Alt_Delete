@@ -138,7 +138,7 @@ void ARTSAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stim
 
 }
 
-ACommander * ARTSAIController::GetCommander()
+ACommander * ARTSAIController::GetLeadRTSObject()
 {
 	return(Cast<ACommander>(BlackboardComp->GetValueAsObject("OwningCommander")));
 }

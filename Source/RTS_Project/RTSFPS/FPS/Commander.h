@@ -44,7 +44,7 @@ public:
 	bool IsFirstPerson() const;
 
 	/**************RTSMinion Overrides************/
-	virtual ACommander * GetCommander() override;
+	virtual IRTSObjectInterface * GetLeadRTSObject() override;
 
 	virtual void ClearCommander() override;
 

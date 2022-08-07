@@ -34,29 +34,14 @@ public:
 
 	virtual void StartAttack(AActor * AttackMe);
 
-	virtual bool IsAlive() const;
-
 	UFUNCTION()
 	virtual void OnDeath();
 
 	virtual bool IsEnemy(AActor *  InMinion);
 
-	virtual AActor* GetTarget();
-
-	UFUNCTION(BlueprintCallable)
-	virtual void SetTarget(AActor * NewTarget);
-
-	virtual void ClearTarget();
-
 	virtual void ReleaseAssets();
 
 	virtual bool HasAssets();
-
-	virtual void RtsMove(FVector Local);
-
-	virtual void RtsMoveToActor(AActor * move_to_me);
-
-	virtual ACommander * GetCommander();
 
 	virtual void ClearCommander();
 
@@ -78,7 +63,17 @@ public:
 
 	virtual int GetTeam() const override;
 
+	virtual IRTSObjectInterface * GetLeadRTSObject() override;
+
 	virtual void SetTeamColors(FLinearColor TeamColor) override; 
+
+	virtual AActor* GetTarget() override;
+
+	virtual void SetTarget(AActor* NewTarget) override;
+
+	virtual void ClearTarget() override;
+
+	virtual bool IsAlive() const override;
 /*************************************************/
 
 /**************IUpgradableInterface****************/

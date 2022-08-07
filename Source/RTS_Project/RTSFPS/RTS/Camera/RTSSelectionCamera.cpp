@@ -26,7 +26,7 @@ void  ARTSSelectionCamera::SelectPressed()
 		PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 
 		HudPtr->Initial_select = HudPtr->GetMouseLocation();
-		HudPtr->SelctionInProcess = true;
+		HudPtr->bIsSelectionInProcess = true;
 }
 
 void ARTSSelectionCamera::SelectReleased()
@@ -34,7 +34,7 @@ void ARTSSelectionCamera::SelectReleased()
 		ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
 
 		ARTSHUD * HudPtr = Cast<ARTSHUD>(PC->GetHUD());
-		HudPtr->SelctionInProcess = false;
+		HudPtr->bIsSelectionInProcess = false;
 		HudPtr->Selected_Structure.Empty();
 
 		SelectedStructures.Empty();

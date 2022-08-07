@@ -49,10 +49,6 @@ void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
 {
 	Super::ClientNotifyTeamChange(newteam);
 
-	/*Clear the units we currently have under our control*/
-	SelectedUnits.Empty();
-	SelectedStructures.Empty();
-
 }
 
 void ARTSPlayerController::FinishLocalPlayerSetup()
@@ -108,16 +104,20 @@ bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const
 void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
 {
 	AActor * target = Hit.GetActor();
+
+
+
+
 	for (int i = 0; i < Units.Num(); i++)
 	{
-		if (!Units[i] || Units[i]->IsPendingKill() || !Units[i]->IsAlive()) /*Skip Dead or Invalid Minions*/
+		if (!IsValid(Units[i]) || !Units[i]->IsAlive()) /*Skip Dead or Invalid Minions*/
 		{
 
 		}
-		else if (!Units[i]->GetCommander()) /*Unit is or has a commander, notify him instead*/
+		else if (!Units[i]->GetLeadRTSObject()) /*Unit is or has a commander, notify him instead*/
 		{
 
-			if (Cast<ARTSMinion>(target) || Cast<IRTSObjectInterface>(target))
+			if (Cast<IRTSObjectInterface>(target))
 			{
 				Units[i]->SetTarget(target);
 			}
@@ -127,7 +127,7 @@ void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC,
 
 				Units[i]->ClearTarget(); /*Unit might be doing something, if he is, clear internal data*/
 				Units[i]->ReleaseAssets();
-				Units[i]->RtsMove(MoveLocal);
+				Units[i]->SetTargetLocation(MoveLocal);
 			}
 		}
 		else //Notify the Commander of the new Target

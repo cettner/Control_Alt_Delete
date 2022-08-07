@@ -12,22 +12,14 @@
  * 
  */
 
-enum HUDSTATE 
-{
-	LBOUND,
-	GAME_INIT,
-	RTS_SELECT_AND_MOVE,
-	RTS_STRUCTURE_SELECT,
-	FPS_AIM_AND_SHOOT,
-	FPS_AWAITING_RESPAWN,
-	UBOUND
-};
 
-enum ETalentTreeTypes
+
+enum EGenrePlayType
 {
 	AUTO,
 	RTS,
-	FPS
+	FPS,
+	NONE
 };
 
 UCLASS()
@@ -37,23 +29,16 @@ class RTS_PROJECT_API ARTSFPSHUD : public ADefaultHUD
 
 public:
 	ARTSFPSHUD();
-	virtual HUDSTATE GetHUDState() const;
-	virtual void ChangeHUDState(HUDSTATE statetype);
-	virtual FVector2D GetMouseLocation() const;
-	virtual bool TryToggleUpgradeTree(ETalentTreeTypes InTreeToToggle = ETalentTreeTypes::AUTO);
+	virtual EGenrePlayType GetGenrePlayType() const;
+	virtual void SetGenrePlayType(EGenrePlayType InGenreType);
+	virtual bool TryToggleUpgradeTree(EGenrePlayType InTreeToToggle = EGenrePlayType::AUTO);
 	virtual void RefreshUpgradeTree();
 
 protected:
 	virtual bool ClientInitializeHUD() override;
 	virtual FStackWidgetInfo GetDefaultInputSettings() const override;
 
-protected:
-	virtual void RTSSelectAndMoveHandler();
-	virtual void RTSStructureSelectHandler();
-	virtual void FPSAimAndShootHandler();
-
-protected:
-	virtual void DrawHUD() override;  // HUD "tick" function
+  // HUD "tick" function
 
 protected:
 	/*Adding a new default input to handle FPS Players RTS Is Handeled In Base Class*/
@@ -69,12 +54,13 @@ protected:
 
 
 protected:
-	HUDSTATE state;
 
 	UPROPERTY()
 	UUpgradeTreeWidget * FPSUpgradeTree = nullptr;
 
 	UPROPERTY()
 	UUpgradeTreeWidget * RTSUpgradeTree = nullptr;
+
+
 
 };

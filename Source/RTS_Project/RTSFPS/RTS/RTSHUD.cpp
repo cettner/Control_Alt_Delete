@@ -9,11 +9,6 @@
 #include "EngineUtils.h"
 
 
-ARTSHUD::ARTSHUD() : Super()
-{
-	state = GAME_INIT;
-}
-
 template<typename ClassFilter>
 inline bool ARTSHUD::GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
 {
@@ -108,50 +103,57 @@ void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilte
 	}
 }
 
+void ARTSHUD::DrawHUD()
+{
+	Super::DrawHUD();
+
+	if (IsBoxSelectionEnabled())
+	{
+		RTSSelectAndMoveHandler();
+	}
+
+}
+
+FVector2D ARTSHUD::GetMouseLocation() const
+{
+	float PosX;
+	float PosY;
+	GetOwningPlayerController()->GetMousePosition(PosX, PosY);
+	return(FVector2D(PosX, PosY));
+}
+
+bool ARTSHUD::ClientInitializeHUD()
+{
+	bool retval = Super::ClientInitializeHUD();
+
+	const EGenrePlayType playtype = GetGenrePlayType();
+
+	if (playtype == EGenrePlayType::RTS)
+	{
+		SetBoxSelectionEnabled(true);
+	}
+
+
+	return retval;
+}
+
 void ARTSHUD::RTSSelectAndMoveHandler()
 {
-	if (SelctionInProcess)
+	if (bIsSelectionInProcess)
 	{
 		CleanSelectedActors();
 		GetSelectedUnits();
-	}
-	else if (StructureSelected)
-	{
-		CleanSelectedActors();
-		Selected_Units.Empty();
-		GetSelectedStructures();
-	}
-}
-
-void ARTSHUD::RTSStructureSelectHandler()
-{
-
-}
-
-void ARTSHUD::FPSAimAndShootHandler()
-{
-	if(IsValid(CrosshairTex))
-	{ 
-		const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
-
-		// offset by half the texture's dimensions so that the center of the texture aligns with the center of the Canvas
-		const FVector2D CrosshairDrawPosition((Center.X), (Center.Y + 20.0f));
-
-		// draw the crosshair
-		FCanvasTileItem TileItem(CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
-		TileItem.BlendMode = SE_BLEND_Translucent;
-		Canvas->DrawItem(TileItem);
 	}
 }
 
 void ARTSHUD::GetSelectedUnits()
 {
-	End_Select = GetMouseLocation();
+	FVector2D End_Select = GetMouseLocation();
 	Selected_Units.Empty();
 	Selected_Structure.Empty();
 	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
 
-	DrawRect(FLinearColor(0, 0, 1, selection_transparency), Initial_select.X, Initial_select.Y, End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
+	DrawRect(FLinearColor(0, 0, 1, SelectionAlpha), Initial_select.X, Initial_select.Y, End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
 	GetActorsInSelectionRectangle<ARTSMinion>(Initial_select, End_Select, Selected_Units, false, false);
 
 	if (Selected_Units.Num() > 0 && PS)
@@ -161,7 +163,7 @@ void ARTSHUD::GetSelectedUnits()
 		for (int32 i = 0; i < endindex; i++)
 		{
 			/*Remove Minions that are dead, dieing, or being removed from memory*/
-			if (!Selected_Units[i] || Selected_Units[i]->IsPendingKill() || !Selected_Units[i]->IsAlive())
+			if (!Selected_Units[i] ||  !Selected_Units[i]->IsAlive())
 			{
 				Selected_Units.RemoveAt(i);
 				endindex--;
@@ -174,18 +176,18 @@ void ARTSHUD::GetSelectedUnits()
 				endindex--;
 				i--;
 			}
-			/*Unit has Commander, Get their squad and add it in*/
-			else if(Selected_Units[i]->GetCommander())
+			/*Unit is Commander, Get their squad and add it in*/
+			else if(ACommander * cmdr = Cast<ACommander>(Selected_Units[i]->GetLeadRTSObject()))
 			{
 				/*Add the Commander*/
-				Selected_Units.AddUnique(Selected_Units[i]->GetCommander());
-				Selected_Units[i]->GetCommander()->SetSelected();
+				Selected_Units.AddUnique(cmdr);
+				cmdr->SetSelected();
 
 				/*Add His Squad*/
-				for(int j = 0; j < Selected_Units[i]->GetCommander()->Squad.Num(); j++)
+				for(int j = 0; j < cmdr->Squad.Num(); j++)
 				{
-					Selected_Units.AddUnique(Selected_Units[i]->GetCommander()->Squad[j]);
-					Selected_Units[i]->GetCommander()->Squad[j]->SetSelected();
+					Selected_Units.AddUnique(cmdr->Squad[j]);
+					cmdr->Squad[j]->SetSelected();
 				}
 				Selected_Units[i]->SetSelected();
 			}
@@ -212,12 +214,22 @@ void ARTSHUD::CleanSelectedActors()
 {
 	if (Selected_Units.Num() > 0)
 	{
-		int endindex = Selected_Units.Num();
-		for (int32 i = 0; i < endindex; i++)
+		for (int i = 0; i < Selected_Units.Num(); i++)
 		{
 			Selected_Units[i]->SetDeselected();
 		}
 	}
+}
+
+bool ARTSHUD::IsBoxSelectionEnabled() const
+{
+	return bIsBoxSelectEnabled;
+}
+
+void ARTSHUD::SetBoxSelectionEnabled(const bool InEnabled)
+{
+	bIsBoxSelectEnabled = InEnabled;
+
 }
 
 

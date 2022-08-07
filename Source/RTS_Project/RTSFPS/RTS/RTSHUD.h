@@ -22,45 +22,53 @@ class RTS_PROJECT_API ARTSHUD : public ARTSFPSHUD
 	GENERATED_BODY()
 	
 public:
-	ARTSHUD();
+	virtual FVector2D GetMouseLocation() const;
 
-	
+protected:
 	//overriden engine functions to give more control over unit selection
 	template <typename ClassFilter>
 	bool GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false);
 
 	virtual void GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
 	
-	FVector2D Initial_select;  // intial mouse cursor location on click
-	FVector2D End_Select;		//mouse cursor location on release
+protected:
+	/*AHUD overrides*/
+	virtual void DrawHUD() override;
 	
+protected:
+	/*DefaultHUD Overrides*/
+	virtual bool ClientInitializeHUD() override;
+
+protected:
+	virtual void RTSSelectAndMoveHandler();
+
+private:
+	void GetSelectedUnits();
+	void GetSelectedStructures();
+	void CleanSelectedActors();
+	bool IsBoxSelectionEnabled() const;
+	void SetBoxSelectionEnabled(const bool InEnabled);
+
+
+public:
+	FVector2D Initial_select;  // intial mouse cursor location on click
+
 	TArray <ARTSMinion*> Selected_Units;
 	TArray <ARTSStructure*> Selected_Structure;
 
-	bool SelctionInProcess = false;
-	bool StructureSelected = false;
-
+	bool bIsSelectionInProcess = false;
 
 
 protected:
-
-	UPROPERTY(EditAnywhere)
-	float selection_transparency = 0.15f;
+	UPROPERTY(EditDefaultsOnly)
+	float SelectionAlpha = 0.15f;
 
 	/** Crosshair asset pointer */
 	UPROPERTY(EditDefaultsOnly)
 	UTexture2D* CrosshairTex;
 
 protected:
-	virtual void RTSSelectAndMoveHandler() override;
-	virtual void RTSStructureSelectHandler() override;
-	virtual void FPSAimAndShootHandler() override;
-
-
-private:
-	void GetSelectedUnits();
-	void GetSelectedStructures();
-	void CleanSelectedActors();
+	bool bIsBoxSelectEnabled = false;
 
 };
 

@@ -10,7 +10,8 @@ void ADefaultHUD::PostInitializeComponents()
 
 	if (PauseMenuClass != nullptr)
 	{
-		PauseMenu = CreateWidget(PlayerOwner, PauseMenuClass);
+		APlayerController * pc = GetOwningPlayerController();
+		PauseMenu = CreateWidget(pc, PauseMenuClass);
 	}
 }
 

@@ -48,7 +48,7 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 public:
-	class ACommander * GetCommander();
+	class ACommander * GetLeadRTSObject();
 	void ClearCommander();
 	void SetCommander(ACommander * Commander);
 

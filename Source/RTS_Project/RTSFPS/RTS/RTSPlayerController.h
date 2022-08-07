@@ -25,18 +25,6 @@ class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
 public:
 	ARTSPlayerController();
 
-	ARTSHUD * HudPtr;
-
-
-/**************************LOCAL DATA**************************************/
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	TArray <ARTSMinion*> SelectedUnits;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	TArray <ARTSStructure*> SelectedStructures;
-/*************************************************************************/
-
-
 	UFUNCTION(Server, reliable, WithValidation)
 	void MoveMinions(ARTSPlayerController * PC, const TArray<ARTSMinion *>& Units, FHitResult Hit);
 

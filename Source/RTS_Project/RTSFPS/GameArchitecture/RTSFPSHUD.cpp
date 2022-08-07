@@ -19,74 +19,56 @@ ARTSFPSHUD::ARTSFPSHUD() : Super()
 	DefaultInputSettings.StackSettings = EWidgetStackOperation::ALWAYSACTIVE;
 }
 
-void ARTSFPSHUD::DrawHUD() //similiar to "tick" of actor class overridden
+void ARTSFPSHUD::SetGenrePlayType(EGenrePlayType InGenreType)
 {
-	switch (state)
+}
+
+EGenrePlayType ARTSFPSHUD::GetGenrePlayType() const
+{
+	EGenrePlayType retval = EGenrePlayType::NONE;
+
+	const ARTFPSPlayerState* ps = GetOwningPlayerController()->GetPlayerState<ARTFPSPlayerState>();
+
+	if (ps != nullptr)
 	{
-	case HUDSTATE::GAME_INIT:
-		break;
-	case HUDSTATE::RTS_SELECT_AND_MOVE:
-		RTSSelectAndMoveHandler();
-		break;
-	case HUDSTATE::FPS_AIM_AND_SHOOT:
-		FPSAimAndShootHandler();
-		break;
-	case HUDSTATE::RTS_STRUCTURE_SELECT:
-		RTSStructureSelectHandler();
-		break;
-	default:
-		break;
+		if (ps->IsRTSPlayer())
+		{
+			retval = EGenrePlayType::RTS;
+		}
+		else
+		{
+			retval = EGenrePlayType::FPS;
+		}
 	}
 
+	return (retval);
 }
 
-void ARTSFPSHUD::ChangeHUDState(HUDSTATE statetype)
-{
-	if (statetype > LBOUND&& statetype < UBOUND)
-	{
-		state = statetype;
-		URTSFPSWidget* mainui = GetPrimaryUI<URTSFPSWidget>();
-		mainui->OnHUDStateChange();
-	}
-}
-
-HUDSTATE ARTSFPSHUD::GetHUDState() const
-{
-	return (state);
-}
-
-FVector2D ARTSFPSHUD::GetMouseLocation() const
-{
-	float PosX;
-	float PosY;
-	GetOwningPlayerController()->GetMousePosition(PosX, PosY);
-	return(FVector2D(PosX, PosY));
-}
-
-bool ARTSFPSHUD::TryToggleUpgradeTree(ETalentTreeTypes InTreeToToggle)
+bool ARTSFPSHUD::TryToggleUpgradeTree(EGenrePlayType InTreeToToggle)
 {
 	bool retval = false;
 	UUpgradeTreeWidget * upgradetree = nullptr;
 
-	if (InTreeToToggle == ETalentTreeTypes::AUTO)
+	if (InTreeToToggle == EGenrePlayType::AUTO)
 	{
-		const HUDSTATE currentstate = GetHUDState();
+		const EGenrePlayType playtype = GetGenrePlayType();
 		
-		if (currentstate == HUDSTATE::RTS_SELECT_AND_MOVE || currentstate == HUDSTATE::RTS_STRUCTURE_SELECT)
+		if (playtype == EGenrePlayType::RTS)
 		{
 			upgradetree = RTSUpgradeTree;
 		}
-		else if (currentstate == HUDSTATE::FPS_AIM_AND_SHOOT || currentstate == HUDSTATE::FPS_AWAITING_RESPAWN)
+		else if(InTreeToToggle == EGenrePlayType::FPS)
 		{
+
 			upgradetree = FPSUpgradeTree;
 		}
 
 	}
-	else if (InTreeToToggle == ETalentTreeTypes::FPS && IsValid(FPSUpgradeTree))
+	else if (InTreeToToggle == EGenrePlayType::FPS)
 	{
 		upgradetree = FPSUpgradeTree;
 	}
-	else if (InTreeToToggle == ETalentTreeTypes::RTS && IsValid(RTSUpgradeTree))
+	else if (InTreeToToggle == EGenrePlayType::RTS)
 	{
 		upgradetree = RTSUpgradeTree;
 	}
@@ -104,13 +86,14 @@ bool ARTSFPSHUD::TryToggleUpgradeTree(ETalentTreeTypes InTreeToToggle)
 void ARTSFPSHUD::RefreshUpgradeTree()
 {
 	UUpgradeTreeWidget* upgradetree = nullptr;
-	const HUDSTATE currentstate = GetHUDState();
 
-	if (currentstate == HUDSTATE::RTS_SELECT_AND_MOVE || currentstate == HUDSTATE::RTS_STRUCTURE_SELECT)
+	const EGenrePlayType playtype = GetGenrePlayType();
+
+	if (playtype == EGenrePlayType::RTS)
 	{
 		upgradetree = RTSUpgradeTree;
 	}
-	else if (currentstate == HUDSTATE::FPS_AIM_AND_SHOOT || currentstate == HUDSTATE::FPS_AWAITING_RESPAWN)
+	else if (playtype == EGenrePlayType::FPS)
 	{
 		upgradetree = FPSUpgradeTree;
 	}
@@ -124,26 +107,16 @@ void ARTSFPSHUD::RefreshUpgradeTree()
 bool ARTSFPSHUD::ClientInitializeHUD()
 {
 	bool retval = Super::ClientInitializeHUD();
-
-	const ARTFPSPlayerState* ps = GetOwningPlayerController()->GetPlayerState<ARTFPSPlayerState>();
-	
-	if (!ps->IsRTSPlayer())
-	{
-		ChangeHUDState(HUDSTATE::FPS_AIM_AND_SHOOT);
-	}
-	else
-	{
-		ChangeHUDState(HUDSTATE::RTS_SELECT_AND_MOVE);
-	}
+	APlayerController* pc = GetOwningPlayerController();
 
 	if (FPSTalentTreeClass != nullptr)
 	{
-		FPSUpgradeTree = CreateWidget<UUpgradeTreeWidget>(PlayerOwner, FPSTalentTreeClass);
+		FPSUpgradeTree = CreateWidget<UUpgradeTreeWidget>(pc, FPSTalentTreeClass);
 	}
 	
 	if(RTSTalentTreeClass != nullptr)
 	{
-		RTSUpgradeTree = CreateWidget<UUpgradeTreeWidget>(PlayerOwner, RTSTalentTreeClass);
+		RTSUpgradeTree = CreateWidget<UUpgradeTreeWidget>(pc, RTSTalentTreeClass);
 	}
 
 
@@ -153,10 +126,9 @@ bool ARTSFPSHUD::ClientInitializeHUD()
 FStackWidgetInfo ARTSFPSHUD::GetDefaultInputSettings() const
 {
 	FStackWidgetInfo retval;
-	const HUDSTATE currentstate = GetHUDState();
-	const bool isrtsmode = (currentstate == RTS_SELECT_AND_MOVE) || (currentstate == RTS_STRUCTURE_SELECT);
+	const EGenrePlayType currentplaymode = GetGenrePlayType();
 
-	if (isrtsmode == true)
+	if (currentplaymode == EGenrePlayType::RTS)
 	{
 		retval = DefaultInputSettings;
 	}
@@ -166,16 +138,4 @@ FStackWidgetInfo ARTSFPSHUD::GetDefaultInputSettings() const
 	}
 
 	return retval;
-}
-
-void ARTSFPSHUD::RTSSelectAndMoveHandler()
-{
-}
-
-void ARTSFPSHUD::RTSStructureSelectHandler()
-{
-}
-
-void ARTSFPSHUD::FPSAimAndShootHandler()
-{
 }

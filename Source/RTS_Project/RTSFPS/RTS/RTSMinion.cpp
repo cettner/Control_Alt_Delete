@@ -127,7 +127,7 @@ void ARTSMinion::OnDeath()
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 {
 	bool Enemy = false;
-	if (!FriendOrFoe->IsValidLowLevel()) return false;
+	if (!IsValid(FriendOrFoe)) return false;
 
 	IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(FriendOrFoe);
 
@@ -141,7 +141,7 @@ bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 
 AActor * ARTSMinion::GetTarget()
 {
-	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());
+	ARTSAIController * rtscontrol = GetController<ARTSAIController>();
 	if (rtscontrol)
 	{
 		return(rtscontrol->GetTarget());
@@ -156,7 +156,7 @@ void ARTSMinion::SetTarget(AActor * NewTarget)
 {
 	ClearTarget();
 
-	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());
+	ARTSAIController * rtscontrol = GetController<ARTSAIController>();
 	if (rtscontrol)
 	{
 		rtscontrol->SetTarget(NewTarget);
@@ -196,18 +196,12 @@ void ARTSMinion::SetTeamColors(FLinearColor TeamColor)
 	}
 }
 
-ACommander * ARTSMinion::GetCommander()
+IRTSObjectInterface * ARTSMinion::GetLeadRTSObject()
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
-		ACommander * commander = AIC->GetCommander();
-
-		//Do a double check to make sure replicated commander and blackboard are in sync, should never happen
-		if (Cmdr != commander)
-		{
-			Cmdr = commander;
-		}
+		ARTSAIController * AIC = GetController<ARTSAIController>();
+		ACommander * commander = AIC->GetLeadRTSObject();
 
 		return(commander);
 	}
@@ -227,7 +221,7 @@ void ARTSMinion::ClearCommander()
 
 void ARTSMinion::SetCommander(ACommander * Commander)
 {
-	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
+	ARTSAIController * AIC = GetController<ARTSAIController>();
 	AIC->SetCommander(Commander);
 	Cmdr = Commander;
 }
@@ -275,11 +269,8 @@ FRTSAIPerceptionConfig ARTSMinion::GetAIConfig() const
 //interface function for override;
 void ARTSMinion::ReleaseAssets()
 {
-	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
-	if (AIC != NULL)
-	{
-		AIC->ReleaseAssets();
-	}
+	ARTSAIController* AIC = GetController<ARTSAIController>();
+	AIC->ReleaseAssets();
 }
 
 bool ARTSMinion::HasAssets()
@@ -289,24 +280,6 @@ bool ARTSMinion::HasAssets()
 		return(true);
 	}
 	return (false);
-}
-
-void ARTSMinion::RtsMove(FVector Local)
-{
-	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
-	if (AIC != NULL)
-	{
-		AIC->MoveToLocation(Local, 5.0f, false, true, true, true, 0, false);
-	}
-}
-
-void ARTSMinion::RtsMoveToActor(AActor * move_to_me)
-{
-	ARTSAIController * AIC = Cast<ARTSAIController>(GetController());
-	if (AIC != NULL)
-	{
-		AIC->MoveToActor(move_to_me, 5.0f, true, true, false, 0, false);
-	}
 }
 
 void ARTSMinion::PostInstallUpgrades()

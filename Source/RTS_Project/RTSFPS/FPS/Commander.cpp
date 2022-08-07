@@ -204,7 +204,7 @@ bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
 	return(false);
 }
 
-ACommander * ACommander::GetCommander()
+IRTSObjectInterface * ACommander::GetLeadRTSObject()
 {
 	return(this);
 }
@@ -231,7 +231,7 @@ void ACommander::SetCommander(ACommander * Commander)
 
 bool ACommander::AddtoSquad(ARTSMinion * squadmate)
 {
-	if (Squad.Contains(squadmate)  || squadmate->GetCommander())
+	if (Squad.Contains(squadmate)  || squadmate->GetLeadRTSObject())
 	{
 		return(false);
 	}
