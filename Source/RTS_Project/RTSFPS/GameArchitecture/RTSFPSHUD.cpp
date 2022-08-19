@@ -57,7 +57,7 @@ bool ARTSFPSHUD::TryToggleUpgradeTree(EGenrePlayType InTreeToToggle)
 		{
 			upgradetree = RTSUpgradeTree;
 		}
-		else if(InTreeToToggle == EGenrePlayType::FPS)
+		else if(playtype == EGenrePlayType::FPS)
 		{
 
 			upgradetree = FPSUpgradeTree;

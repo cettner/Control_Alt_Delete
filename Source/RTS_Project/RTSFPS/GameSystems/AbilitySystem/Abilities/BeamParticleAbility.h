@@ -27,7 +27,6 @@ protected:
 	virtual bool IsTargetInLineOfSight() const;
 
 protected:
-	UBeamParticleAbility();
 	virtual void Init(UAbilityComponent * InAbilityComp) override;
 	virtual void NotifyOnReady() override;
 	virtual void OnAbilityEnd() override;

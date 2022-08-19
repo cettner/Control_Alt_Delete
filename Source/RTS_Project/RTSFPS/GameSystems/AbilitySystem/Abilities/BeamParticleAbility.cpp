@@ -74,11 +74,6 @@ bool UBeamParticleAbility::IsTargetInLineOfSight() const
 	return retval;
 }
 
-UBeamParticleAbility::UBeamParticleAbility()
-{
-	BeamEmitter = CreateDefaultSubobject<UNiagaraSystem>(TEXT("BeamSystem"));
-}
-
 void UBeamParticleAbility::UpdateBeamParameters()
 {
 	if (BeamComp == nullptr) return;
