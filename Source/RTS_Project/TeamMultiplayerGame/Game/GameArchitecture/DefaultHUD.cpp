@@ -44,6 +44,8 @@ void ADefaultHUD::ProcessInputSettings(const FStackWidgetInfo InWidgetinfo)
 	if (inputtype == EWisgetStackInputType::GAMEONLY)
 	{
 		FInputModeGameOnly gameinput;
+		const bool bconsumesmouseinput = InWidgetinfo.bConsumeCaptureMouseDown;
+		gameinput.SetConsumeCaptureMouseDown(bconsumesmouseinput);
 		SetInputMode(gameinput);
 	}
 	else if (inputtype == EWisgetStackInputType::UIONLY)

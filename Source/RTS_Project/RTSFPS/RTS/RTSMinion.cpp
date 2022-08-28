@@ -61,20 +61,28 @@ ARTSMinion::ARTSMinion()
 void ARTSMinion::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	UWorld* World = GetWorld();
-	UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
-	if (PerceptionSystem)
-	{
-		PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
-	}
 
+	if (HasAuthority())
+	{
+		UWorld* World = GetWorld();
+		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+		if (PerceptionSystem)
+		{
+			PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+		}
+	}
 }
 
 void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
-	bAreComponentsReadyforUpgrades = true;
-	PostInstallUpgrades();
+	if (HasAuthority())
+	{
+		bAreComponentsReadyforUpgrades = true;
+		PostInstallUpgrades();
+	}
+	
+	RegisterRTSObject();
 }
 
 bool ARTSMinion::CanInteract(AActor * Interactable)
@@ -103,6 +111,30 @@ bool ARTSMinion::IsAlive() const
 	return (retval);
 }
 
+bool ARTSMinion::IsBoxSelectable() const
+{
+	return bIsBoxSelectable;
+}
+
+void ARTSMinion::RegisterRTSObject()
+{
+	const UWorld * world = GetWorld();
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+
+	/*This can miss during game startup for actors placed on the map it's corrected in ARTSFPSGamestate::RefreshAllUnits()*/
+	if (IsValid(gs))
+	{
+		gs->RegisterRTSObject(this);
+	}
+}
+
+void ARTSMinion::UnRegisterRTSObject()
+{
+	const UWorld* world = GetWorld();
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	gs->UnRegisterRTSObject(this);
+}
+
 void ARTSMinion::OnDeath()
 {
 	if (HasAuthority())
@@ -112,6 +144,7 @@ void ARTSMinion::OnDeath()
 		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
 		PerceptionSystem->UnregisterSource(*this);
 
+		/*Notify the Gamestate We Died*/
 		ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
 		GS->OnUnitDeath(this);
 	}
@@ -122,6 +155,10 @@ void ARTSMinion::OnDeath()
 		hud->Selected_Units.Remove(this);
 	}
 
+	if (GetNetMode() == NM_ListenServer || GetNetMode() == NM_Client)
+	{
+		UnRegisterRTSObject();
+	}
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
@@ -228,12 +265,22 @@ void ARTSMinion::SetCommander(ACommander * Commander)
 
 void ARTSMinion::SetTeam(int team_id)
 {
-	team_index = team_id;
+	TeamID = team_id;
+
+	if (HasAuthority() && (GetNetMode() == NM_DedicatedServer))
+	{
+		OnRep_TeamID();
+	}
 }
 
 int ARTSMinion::GetTeam() const
 {
-	return team_index;
+	return TeamID;
+}
+
+void ARTSMinion::OnLocalPlayerTeamChange(int InLocalTeamID)
+{
+	OnRep_TeamID();
 }
 
 void ARTSMinion::OnRep_TeamID()
@@ -245,13 +292,15 @@ void ARTSMinion::OnRep_TeamID()
 	if (PC == nullptr) return;
 
 	ADefaultPlayerState* PS = PC->GetPlayerState<ADefaultPlayerState>();
-	if (PS && PS->TeamID != team_index)
+	if (PS && PS->GetTeamID() != TeamID)
 	{
 		SetTeamColors(FLinearColor::Red);
 		SetSelected();
 	}
 	else
 	{
+		/*Enable box selection*/
+		bIsBoxSelectable = true;
 		SetDeselected();
 	}
 }
@@ -316,5 +365,5 @@ void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ARTSMinion, Cmdr);
-	DOREPLIFETIME(ARTSMinion, team_index)
+	DOREPLIFETIME(ARTSMinion, TeamID)
 }

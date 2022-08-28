@@ -33,7 +33,7 @@ FText UTeamResourceWidget::UpdateCurrentResourceValueText()
 	ADefaultPlayerState * PS = GetOwningPlayerState<ADefaultPlayerState>();
 	if (PS == nullptr) return(Text);
 
-	int retval = GS->GetTeamResourceValue(PS->TeamID, SetupData.Key);
+	int retval = GS->GetTeamResourceValue(PS->GetTeamID(), SetupData.Key);
 
 	Text = FText::FromString(FString::FromInt(retval));
 

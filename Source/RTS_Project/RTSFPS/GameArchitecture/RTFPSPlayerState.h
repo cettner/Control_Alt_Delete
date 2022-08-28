@@ -29,6 +29,6 @@ protected:
 	bool isRtsPlayer = false;
 
 	UPROPERTY(Replicated)
-	TArray<ARTSStructure *> TeamStructures;
+	TArray<ARTSStructure*> TeamStructures;
 	
 };

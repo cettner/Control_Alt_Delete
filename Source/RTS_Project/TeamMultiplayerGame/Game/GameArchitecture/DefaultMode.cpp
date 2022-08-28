@@ -70,9 +70,9 @@ AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, cons
 
 	if (PS && GS)
 	{
-		if (GS->IsTeamValid(PS->TeamID) && TeamStartingPoints.Num())
+		if (GS->IsTeamValid(PS->GetTeamID()) && TeamStartingPoints.Num())
 		{
-			ATeamPlayerStart * retval = TeamStartingPoints[PS->TeamID].GetNextSpawn();
+			ATeamPlayerStart * retval = TeamStartingPoints[PS->GetTeamID()].GetNextSpawn();
 			if (retval)
 			{
 				return(retval);
@@ -227,7 +227,7 @@ bool ADefaultMode::FinishPlayerRegistration(ADefaultPlayerController* Registerin
 	
 	if (playerindex <= INDEX_NONE || PS == nullptr) return(false);
 
-	PS->TeamID = LobbyPlayers[playerindex].TeamId;
+	PS->SetTeamID(LobbyPlayers[playerindex].TeamId);
 
 	return true;
 }

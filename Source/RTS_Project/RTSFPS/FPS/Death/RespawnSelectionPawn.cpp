@@ -73,8 +73,6 @@ void ARespawnSelectionPawn::Tick(float DeltaTime)
 
 void ARespawnSelectionPawn::OnRep_Controller()
 {
-	UWorld * world = GetWorld();
-
 	const APlayerController * pc = GetController<APlayerController>();
 
 	const ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(pc->PlayerState);

@@ -75,6 +75,12 @@ void ARTSStructure::PostInitializeComponents()
 
 }
 
+void ARTSStructure::BeginPlay()
+{
+	Super::BeginPlay();
+	RegisterRTSObject();
+}
+
 UUserWidget* ARTSStructure::GetMenu()
 {
 	UWorld* World = GetWorld();
@@ -156,6 +162,8 @@ void ARTSStructure::OnDeath()
 		GS->OnUnitDeath(this);
 	}
 
+	UnRegisterRTSObject();
+
 	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (pgrid != nullptr)
 	{
@@ -201,6 +209,25 @@ void ARTSStructure::SetTeamColors(FLinearColor TeamColor)
 	{
 		Selection->SetSelectionColor(TeamColor);
 	}
+}
+
+void ARTSStructure::RegisterRTSObject()
+{
+	const UWorld* world = GetWorld();
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+
+	/*This can miss during game startup for actors placed on the map it's corrected in ARTSFPSGamestate::RefreshAllUnits()*/
+	if (IsValid(gs))
+	{
+		gs->RegisterRTSObject(this);
+	}
+}
+
+void ARTSStructure::UnRegisterRTSObject()
+{
+	const UWorld* world = GetWorld();
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	gs->UnRegisterRTSObject(this);
 }
 
 bool ARTSStructure::IsDropPointFor(TSubclassOf<AResource> ResourceType) const
@@ -502,7 +529,7 @@ void ARTSStructure::OnRep_TeamIndex()
 	const APlayerController* pc = world->GetFirstPlayerController<APlayerController>();
 
 	ADefaultPlayerState* ps = pc->GetPlayerState<ADefaultPlayerState>();
-	if (ps && ps->TeamID != TeamIndex)
+	if (ps && ps->GetTeamID() != TeamIndex)
 	{
 		SetTeamColors(FLinearColor::Red);
 		SetSelected();

@@ -73,6 +73,10 @@ public:
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
 	virtual void SetTeamColors(FLinearColor TeamColor) override;
+
+protected:
+	virtual void RegisterRTSObject() override;
+	virtual void UnRegisterRTSObject() override;
 	/************************************************************/
 
 	/***********IMenuInteractable Interface overrides************/
@@ -100,6 +104,7 @@ protected:
 
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 
@@ -174,9 +179,25 @@ protected:
 	USkeletalMeshComponent* MeshComp;
 
 protected:
-
-	UPROPERTY(EditDefaultsOnly, Replicated, Category = Gameplay)
+	UPROPERTY(EditAnywhere, Replicated, Category = Gameplay)
 	int TeamIndex = -1;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Spawning)
+	TArray< FStructureSpawnData> SpawnableUnits;
+
+	UPROPERTY(EditDefaultsOnly, Category = Spawning)
+	TEnumAsByte<ECollisionChannel> SpawnTraceChannel;
+
+	UPROPERTY(EditDefaultsOnly)
+	uint32 MaxQueueSize = 10;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UStructureSpawnQueueWidget> MenuClass;
+
+	/***********************Runtime DATA****************************/
 
 protected:
 	/*SPAWN DATA*/
@@ -184,27 +205,13 @@ protected:
 
 	uint32 CurrentQueueSize = 0;
 
-	UPROPERTY(EditDefaultsOnly)
-	uint32 MaxQueueSize = 10;
-
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float queuestatus = 0.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = Spawning)
-	TArray< FStructureSpawnData> SpawnableUnits;
-
-	UPROPERTY(EditDefaultsOnly, Category = Spawning)
-	TEnumAsByte<ECollisionChannel> SpawnTraceChannel;
-
 	TQueue<FStructureQueueData> StructureQueue;
 
-
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = UI)
-	TSubclassOf<UStructureSpawnQueueWidget> MenuClass;
-
 	UStructureSpawnQueueWidget* Menu;
-
 
 
 #if WITH_EDITOR

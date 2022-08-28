@@ -34,13 +34,9 @@ public:
 	UFUNCTION(Server, reliable, WithValidation)
 	void ServerPurchaseStructure(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation);
 
-	virtual void BeginPlay() override;
-
 	virtual void SetupInputComponent() override;
 
 	virtual void SetPawn(APawn* InPawn) override;
-
-	virtual void ClientNotifyTeamChange(int newteam) override;
 
 	virtual void FinishLocalPlayerSetup() override;
 	

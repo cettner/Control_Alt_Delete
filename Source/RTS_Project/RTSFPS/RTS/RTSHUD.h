@@ -24,13 +24,14 @@ class RTS_PROJECT_API ARTSHUD : public ARTSFPSHUD
 public:
 	virtual FVector2D GetMouseLocation() const;
 
+
 protected:
 	//overriden engine functions to give more control over unit selection
 	template <typename ClassFilter>
-	bool GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false);
+	bool GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false);
 
-	virtual void GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
-	
+	virtual void GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
+
 protected:
 	/*AHUD overrides*/
 	virtual void DrawHUD() override;
@@ -65,7 +66,7 @@ protected:
 
 	/** Crosshair asset pointer */
 	UPROPERTY(EditDefaultsOnly)
-	UTexture2D* CrosshairTex;
+	UTexture2D* CrosshairTex = nullptr;
 
 protected:
 	bool bIsBoxSelectEnabled = false;

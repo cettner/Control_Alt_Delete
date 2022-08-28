@@ -28,3 +28,11 @@ bool URTSUpgrade::IsPersistent() const
 {
 	return bPersistsThroughRespawn;
 }
+
+void URTSUpgrade::RegisterRTSObject()
+{
+}
+
+void URTSUpgrade::UnRegisterRTSObject()
+{
+}

@@ -12,19 +12,9 @@ ARTSPlayerController::ARTSPlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
-	this->bEnableClickEvents = true;
-	this->bEnableAutoLODGeneration = true;
+	bEnableClickEvents = true;
+	bEnableAutoLODGeneration = true;
 	FOWManagerClass = AFogOfWarManager::StaticClass();
-}
-
-void ARTSPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-
-	/*This is carryover from the lobby UI set it back so that the initial click is used*/
-	FInputModeGameOnly InputMode;
-	InputMode.SetConsumeCaptureMouseDown(false);
-	SetInputMode(InputMode);
 }
 
 void ARTSPlayerController::SetupInputComponent()
@@ -40,39 +30,14 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 	
 	if (Cast<ADefaultPlayerState>(PlayerState) && Cast<ACommander>(InPawn))
 	{
-		int team_id = Cast<ADefaultPlayerState>(PlayerState)->TeamID;
+		int team_id = Cast<ADefaultPlayerState>(PlayerState)->GetTeamID();
 		Cast<ACommander>(InPawn)->SetTeam(team_id);
 	}	
 }
 
-void ARTSPlayerController::ClientNotifyTeamChange(int newteam)
-{
-	Super::ClientNotifyTeamChange(newteam);
-
-}
 
 void ARTSPlayerController::FinishLocalPlayerSetup()
 {
-	UWorld* world = GetWorld();
-	if (IsValid(world))
-	{
-		for (TActorIterator<ARTSMinion> It(world); It; ++It)
-		{
-			ARTSMinion* Minion = *It;
-			if (IsValid(Minion) && !Minion->IsPendingKill())
-			{
-				Minion->SetDeselected();
-				const int tid = GetTeamID();
-				const int mid = Minion->GetTeam();
-
-				if (mid != tid)
-				{
-					Minion->SetTeamColors(FLinearColor::Red);
-					Minion->SetSelected();
-				}
-			}
-		}
-	}
 }
 
 AFogOfWarManager * ARTSPlayerController::InitFOW()
@@ -104,9 +69,6 @@ bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const
 void ARTSPlayerController::MoveMinions_Implementation(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
 {
 	AActor * target = Hit.GetActor();
-
-
-
 
 	for (int i = 0; i < Units.Num(); i++)
 	{

@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Curves/CurveFloat.h"
 
-#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSPlayerState.h"
+#include "RTS_Project/RTSFPS/RTS/RTSPlayerState.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "FPSPlayerState.generated.h"
@@ -25,7 +25,7 @@ enum EPlayerReswpawnState
 
 
 UCLASS()
-class RTS_PROJECT_API AFPSPlayerState : public ARTFPSPlayerState, public IUpgradableInterface, public IExpAccumulatorInterface
+class RTS_PROJECT_API AFPSPlayerState : public ARTSPlayerState, public IUpgradableInterface, public IExpAccumulatorInterface
 {
 	GENERATED_BODY()
 

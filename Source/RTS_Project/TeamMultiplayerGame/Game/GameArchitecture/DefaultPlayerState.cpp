@@ -95,18 +95,23 @@ void ADefaultPlayerState::SetLocalPlayerState(bool inLocalState)
 	}
 }
 
+void ADefaultPlayerState::SetTeamID(int InTeamID)
+{
+	TeamID = InTeamID;
+
+	if (HasAuthority() && IsLocalPlayerState())
+	{
+		OnRep_TeamID();
+	}
+}
+
+int ADefaultPlayerState::GetTeamID() const
+{
+	return TeamID;
+}
+
 void ADefaultPlayerState::OnRep_TeamID()
 {
-	/*Skip Replication actions if we havnt set up locally yet.*/
-	if (!IsClientInitialized()) return;
-
-	UWorld* World =  GetWorld();
-	check(World);
-
-	ADefaultPlayerController * pc = World->GetFirstPlayerController<ADefaultPlayerController>();
-	check(pc)
-
-	pc->ClientNotifyTeamChange(TeamID);
 }
 
 void ADefaultPlayerState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

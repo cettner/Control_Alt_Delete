@@ -12,6 +12,7 @@
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
 {
 	AllUnits = TArray<RTSTeamUnits>();
+	RTSObjects = TArray<IRTSObjectInterface*>();
 }
 
 int ARTFPSGameState::NumRTSPlayers(int Team_Index)
@@ -33,16 +34,35 @@ int ARTFPSGameState::NumRTSPlayers(int Team_Index)
 
 void ARTFPSGameState::RefreshAllUnits()
 {
-	UWorld * world = GetWorld();
-	for (TActorIterator<ARTSMinion> Itr(world); Itr; ++Itr)
+
+	RTSObjects.Reset();
+
+	const UWorld * world = GetWorld();
+	TArray<AActor*> rtsactors = TArray<AActor*>();
+	UGameplayStatics::GetAllActorsWithInterface(world, URTSObjectInterface::StaticClass(), rtsactors);
+
+	if (HasAuthority())
 	{
-		IRTSObjectInterface * rtsobj = *Itr;
-		AddRTSObjectToTeam(rtsobj);
+		/*TODO, Add way to add back in Upgrades if this is called during runtime*/
+		for (int i = 0; i < AllUnits.Num(); i++)
+		{
+			AllUnits[i].Minions.Reset();
+			AllUnits[i].Structures.Reset();
+			AllUnits[i].Upgrades.Reset();
+		}
+
+		for (int i = 0; i < rtsactors.Num(); i++)
+		{
+			AddRTSObjectToTeam(Cast<IRTSObjectInterface>(rtsactors[i]));
+			RegisterRTSObject(Cast<IRTSObjectInterface>(rtsactors[i]));
+		}
 	}
-	for (TActorIterator<ARTSStructure> Itr(world); Itr; ++Itr)
+	else
 	{
-		IRTSObjectInterface * rtsobj = *Itr;
-		AddRTSObjectToTeam(rtsobj);
+		for (int i = 0; i < rtsactors.Num(); i++)
+		{
+			RegisterRTSObject(Cast<IRTSObjectInterface>(rtsactors[i]));
+		}
 	}
 }
 
@@ -83,7 +103,7 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 	RespawnActorParams.Owner = Controller;
 
 	ADefaultPlayerState* PS = Controller->GetPlayerState<ADefaultPlayerState>();
-	TArray<ARTSStructure*> structures = GetAllStructuresOfTeam(PS->TeamID);
+	TArray<ARTSStructure*> structures = GetAllStructuresOfTeam(PS->GetTeamID());
 
 	ARespawnSelectionPawn * Respawnactor =  World->SpawnActor<ARespawnSelectionPawn>(ARespawnSelectionPawn::StaticClass(), RespawnActorParams);
 	if (Respawnactor)
@@ -126,7 +146,7 @@ bool ARTFPSGameState::SpawnObjectFromStructure(ARTSStructure* SpawningStructure,
 		const bool isvalidforpossession = (Cast<ACommander>(Minion) != nullptr) && (ps != nullptr);
 		if ((isvalidforpossession == true) && (ps->GetRespawnState() == EPlayerReswpawnState::AWAITINGRESPAWN))
 		{
-			Minion->SetTeam(pc->GetPlayerState<ADefaultPlayerState>()->TeamID);
+			Minion->SetTeam(pc->GetPlayerState<ADefaultPlayerState>()->GetTeamID());
 			/*Apply Upgrades that are global to the team*/
 			ApplyGlobalUpgrades(Minion);
 			/*Apply Upgrades that are specific to the player*/
@@ -473,11 +493,9 @@ void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
 			else
 			{
 				/*New Upgrade, Add it to the list*/
-				AllUnits[teamid].Upgrades.Emplace(infocheck);
+				AllUnits[teamid].Upgrades.AddUnique(infocheck);
 			}
-
 		}
-
 	}
 }
 
@@ -513,6 +531,21 @@ bool ARTFPSGameState::RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject)
 
 	}
 	return retval;
+}
+
+void ARTFPSGameState::RegisterRTSObject(IRTSObjectInterface* InObject)
+{
+	RTSObjects.AddUnique(InObject);
+}
+
+void ARTFPSGameState::UnRegisterRTSObject(IRTSObjectInterface* InObject)
+{
+	RTSObjects.Remove(InObject);
+}
+
+const TArray<IRTSObjectInterface*>& ARTFPSGameState::GetRegisteredRTSObjects() const
+{
+	return RTSObjects;
 }
 
 int ARTFPSGameState::GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const
@@ -622,7 +655,7 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 void ARTFPSGameState::PlayerGameDataInit(APlayerState * Player)
 {
 	ARTFPSPlayerState * ps = Cast<ARTFPSPlayerState>(Player);
-	const int teamid = ps->TeamID;
+	const int teamid = ps->GetTeamID();
 
 	TArray<ARTSStructure *> initstructures = GetAllStructuresOfTeam(teamid);
 	ps->SetTeamStructures(initstructures);
@@ -654,7 +687,10 @@ void ARTFPSGameState::PostInitializeComponents()
 	{
 		UpgradeManager = SpawnUpgradeManager();
 	}
-
+	else
+	{
+		RefreshAllUnits();
+	}
 }
 
 void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

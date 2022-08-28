@@ -25,8 +25,6 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		
 		void PurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass);
 
-		virtual void ClientNotifyTeamChange(int newteamid) override;
-
 		virtual void OnPawnDeath();
 
 		UFUNCTION()

@@ -13,6 +13,11 @@ void IRTSObjectInterface::SetDeselected()
 {
 }
 
+bool IRTSObjectInterface::IsBoxSelectable() const
+{
+	return false;
+}
+
 int IRTSObjectInterface::GetTeam() const
 {
 	return -1;
@@ -26,9 +31,18 @@ void IRTSObjectInterface::SetTeamColors(FLinearColor TeamColor)
 {
 }
 
+void IRTSObjectInterface::OnLocalPlayerTeamChange(int InLocalTeamID)
+{
+}
+
 bool IRTSObjectInterface::IsAlive() const
 {
 	return false;
+}
+
+bool IRTSObjectInterface::IsRTSObjectValid(const IRTSObjectInterface* InRTSObject)
+{
+	return IsValid(Cast<UObject>(InRTSObject));
 }
 
 void IRTSObjectInterface::SetTarget(AActor* InNewTarget)

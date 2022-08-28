@@ -10,17 +10,12 @@
 
 
 
-void ADefaultPlayerController::ClientNotifyTeamChange(int newteamid)
-{
-	/*Pure Virtual Function*/
-}
-
 int ADefaultPlayerController::GetTeamID() const
 {
-	ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
+	const ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
 	if (PS)
 	{
-		return(PS->TeamID);
+		return(PS->GetTeamID());
 	}
 	return -1;
 }

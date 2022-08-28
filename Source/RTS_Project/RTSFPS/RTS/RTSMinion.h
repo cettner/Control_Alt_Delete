@@ -55,6 +55,7 @@ public:
 	virtual FRTSAIPerceptionConfig GetAIConfig() const;
 
 /**************IRTSObjectInterface****************/
+public:
 	virtual void SetSelected()  override;
 
 	virtual void SetDeselected() override;
@@ -62,6 +63,8 @@ public:
 	virtual void SetTeam(int team_id) override;
 
 	virtual int GetTeam() const override;
+
+	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
 
 	virtual IRTSObjectInterface * GetLeadRTSObject() override;
 
@@ -74,6 +77,12 @@ public:
 	virtual void ClearTarget() override;
 
 	virtual bool IsAlive() const override;
+
+	virtual bool IsBoxSelectable() const override;
+
+protected:
+	virtual void RegisterRTSObject() override;
+	virtual void UnRegisterRTSObject() override;
 /*************************************************/
 
 /**************IUpgradableInterface****************/
@@ -98,7 +107,7 @@ protected:
 	UHealthComponent * Health;
 
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	int team_index = -1;
+	int TeamID = -1;
 
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * RTSBehavior;
@@ -115,5 +124,8 @@ protected:
 protected:
 	bool bAreComponentsReadyforUpgrades = false;
 	TArray<TSubclassOf<UUpgrade>> AppliedUpgrades;
+
+protected:
+	bool bIsBoxSelectable = false;
 };
 

@@ -22,10 +22,16 @@ class RTS_PROJECT_API IRTSObjectInterface
 public:
 	virtual void SetSelected();
 	virtual void SetDeselected();
+	virtual bool IsBoxSelectable() const;
+
 	virtual int GetTeam() const;
 	virtual void SetTeam(int teamid);
 	virtual void SetTeamColors(FLinearColor TeamColor);
+	/*Called when the local players team has been set either from initializtion, replication, or runtime*/
+	virtual void OnLocalPlayerTeamChange(int InLocalTeamID);
+
 	virtual bool IsAlive() const;
+	static bool IsRTSObjectValid(const IRTSObjectInterface * InRTSObject);
 
 	virtual void SetTarget(AActor* InNewTarget);
 	virtual void SetTargetLocation(FVector InTargetLocation);
@@ -39,4 +45,7 @@ public:
 
 
 
+protected:
+	virtual void RegisterRTSObject() = 0;
+	virtual void UnRegisterRTSObject() = 0;
 };

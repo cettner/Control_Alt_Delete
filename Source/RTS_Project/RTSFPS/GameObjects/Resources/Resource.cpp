@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Resource.h"
-
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 
 
 
@@ -44,7 +44,7 @@ uint32 AResource::Mine(uint32 AmountToMine)
 	{
 		uint32 retval = ResourceVal;
 		ResourceVal = 0;
-		Destroy();
+		OnResourcesDepleted();
 
 		return(retval);
 	}
@@ -92,6 +92,37 @@ void AResource::SetSelected()
 void AResource::SetDeselected()
 {
 	SelectionComp->SetHiddenInGame(true);
+}
+
+void AResource::RegisterRTSObject()
+{
+	const UWorld* world = GetWorld();
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	/*This can miss during game startup for actors placed on the map it's corrected in ARTSFPSGamestate::RefreshAllUnits()*/
+	if (IsValid(gs))
+	{
+		gs->RegisterRTSObject(this);
+	}
+
+}
+
+void AResource::UnRegisterRTSObject()
+{
+	const UWorld* world = GetWorld();
+	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	gs->UnRegisterRTSObject(this);
+}
+
+void AResource::OnResourcesDepleted()
+{
+	UnRegisterRTSObject();
+	Destroy();
+}
+
+void AResource::BeginPlay()
+{
+	Super::BeginPlay();
+	RegisterRTSObject();
 }
 
 

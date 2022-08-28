@@ -23,8 +23,6 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 		bool IsRegistered() const { return(bisregistered); }
 
-		virtual void ClientNotifyTeamChange(int newteamid);
-
 		virtual int GetTeamID() const;
 
 		void SetIsRegistered(bool bregistered);

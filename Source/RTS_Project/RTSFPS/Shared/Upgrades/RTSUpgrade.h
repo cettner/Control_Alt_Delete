@@ -21,6 +21,10 @@ public:
 	bool IsPersistent() const;
 
 protected:
+	virtual void RegisterRTSObject() override;
+	virtual void UnRegisterRTSObject() override;
+
+protected:
 	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"))
 	TArray<TSubclassOf<AActor>> TargetClasses;
 

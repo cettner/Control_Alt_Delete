@@ -11,7 +11,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Resource.generated.h"
 
-USTRUCT(Blueprintable)
+USTRUCT()
 struct FResourceUIData
 {
 	GENERATED_USTRUCT_BODY()
@@ -152,6 +152,16 @@ public:
 	/*RTSObject Interface Overrides*/
 	virtual void SetSelected() override;
 	virtual void SetDeselected() override;
+	virtual void RegisterRTSObject() override;
+	virtual void UnRegisterRTSObject() override;
+
+protected:
+	virtual void OnResourcesDepleted();
+
+
+protected:
+	/*AActor Override*/
+	virtual void BeginPlay() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)

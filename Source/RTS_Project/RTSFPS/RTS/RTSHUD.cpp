@@ -5,12 +5,13 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSPlayerState.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
+#include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 
 #include "EngineUtils.h"
 
 
 template<typename ClassFilter>
-inline bool ARTSHUD::GetActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
+inline bool ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
 {
 	//Is Actor subclass?
 	if (!ClassFilter::StaticClass()->IsChildOf(AActor::StaticClass()))
@@ -20,7 +21,7 @@ inline bool ARTSHUD::GetActorsInSelectionRectangle(const FVector2D& FirstPoint, 
 
 	//Run Inner Function, output to Base AActor Array
 	TArray<AActor*> OutActorsBaseArray;
-	GetActorsInSelectionRectangle(ClassFilter::StaticClass(), FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed);
+	GetRTSActorsInSelectionRectangle(FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed);
 
 	//Construct casted template type array
 	for (AActor* EachActor : OutActorsBaseArray)
@@ -31,10 +32,11 @@ inline bool ARTSHUD::GetActorsInSelectionRectangle(const FVector2D& FirstPoint, 
 	return true;
 }
 
-void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilter, const FVector2D & FirstPoint, const FVector2D & SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
+void ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
 {
+
 	// Because this is a HUD function it is likely to get called each tick,
-	// so make sure any previous contents of the out actor array have been cleared!
+// so make sure any previous contents of the out actor array have been cleared!
 	OutActors.Reset();
 
 	//Create Selection Rectangle from Points
@@ -61,43 +63,48 @@ void ARTSHUD::GetActorsInSelectionRectangle(TSubclassOf<class AActor> ClassFilte
 	//~~~
 
 	//For Each Actor of the Class Filter Type
-	for (TActorIterator<AActor> Itr(GetWorld(), ClassFilter); Itr; ++Itr)
+	ARTFPSGameState* gs = GetWorld()->GetGameState<ARTFPSGameState>();
+	const TArray<IRTSObjectInterface*> allobs = gs->GetRegisteredRTSObjects();
+
+	for (int i = 0;i < allobs.Num(); i++)
 	{
-		AActor* EachActor = *Itr;
-
-		//Engine Line modified to get root of actor for selction
-		const FBox EachActorBounds = EachActor->GetRootComponent()->Bounds.GetBox(); 
-
-		//Center
-		const FVector BoxCenter = EachActorBounds.GetCenter();
-
-		//Extents
-		const FVector BoxExtents = EachActorBounds.GetExtent();
-
-		// Build 2D bounding box of actor in screen space
-		FBox2D ActorBox2D(ForceInit);
-		for (uint8 BoundsPointItr = 0; BoundsPointItr < 8; BoundsPointItr++)
+		AActor* EachActor = Cast<AActor>(allobs[i]);
+		if (IsValid(EachActor) && allobs[i]->IsBoxSelectable())
 		{
-			// Project vert into screen space.
-			const FVector ProjectedWorldLocation = Project(BoxCenter + (BoundsPointMapping[BoundsPointItr] * BoxExtents));
-			// Add to 2D bounding box
-			ActorBox2D += FVector2D(ProjectedWorldLocation.X, ProjectedWorldLocation.Y);
-		}
+			//Engine Line modified to get root of actor for selction
+			const FBox EachActorBounds = EachActor->GetRootComponent()->Bounds.GetBox();
 
-		//Selection Box must fully enclose the Projected Actor Bounds
-		if (bActorMustBeFullyEnclosed)
-		{
-			if (SelectionRectangle.IsInside(ActorBox2D))
+			//Center
+			const FVector BoxCenter = EachActorBounds.GetCenter();
+
+			//Extents
+			const FVector BoxExtents = EachActorBounds.GetExtent();
+
+			// Build 2D bounding box of actor in screen space
+			FBox2D ActorBox2D(ForceInit);
+			for (uint8 BoundsPointItr = 0; BoundsPointItr < 8; BoundsPointItr++)
 			{
-				OutActors.Add(EachActor);
+				// Project vert into screen space.
+				const FVector ProjectedWorldLocation = Project(BoxCenter + (BoundsPointMapping[BoundsPointItr] * BoxExtents));
+				// Add to 2D bounding box
+				ActorBox2D += FVector2D(ProjectedWorldLocation.X, ProjectedWorldLocation.Y);
 			}
-		}
-		//Partial Intersection with Projected Actor Bounds
-		else
-		{
-			if (SelectionRectangle.Intersect(ActorBox2D))
+
+			//Selection Box must fully enclose the Projected Actor Bounds
+			if (bActorMustBeFullyEnclosed)
 			{
-				OutActors.Add(EachActor);
+				if (SelectionRectangle.IsInside(ActorBox2D))
+				{
+					OutActors.Add(EachActor);
+				}
+			}
+			//Partial Intersection with Projected Actor Bounds
+			else
+			{
+				if (SelectionRectangle.Intersect(ActorBox2D))
+				{
+					OutActors.Add(EachActor);
+				}
 			}
 		}
 	}
@@ -154,7 +161,7 @@ void ARTSHUD::GetSelectedUnits()
 	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
 
 	DrawRect(FLinearColor(0, 0, 1, SelectionAlpha), Initial_select.X, Initial_select.Y, End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
-	GetActorsInSelectionRectangle<ARTSMinion>(Initial_select, End_Select, Selected_Units, false, false);
+	GetRTSActorsInSelectionRectangle<ARTSMinion>(Initial_select, End_Select, Selected_Units, false, false);
 
 	if (Selected_Units.Num() > 0 && PS)
 	{
@@ -170,7 +177,7 @@ void ARTSHUD::GetSelectedUnits()
 				i--;
 			}
 			/*Remove Enemy Minions*/
-			else if (Selected_Units[i]->GetTeam() != PS->TeamID)
+			else if (Selected_Units[i]->GetTeam() != PS->GetTeamID())
 			{
 				Selected_Units.RemoveAt(i);
 				endindex--;

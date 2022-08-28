@@ -35,7 +35,7 @@ void ACommander::PossessedBy(AController* NewController)
 	ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
 	if (PS == nullptr) return;
 
-	SetTeam(PS->TeamID);
+	SetTeam(PS->GetTeamID());
 
 }
 
@@ -164,11 +164,11 @@ int ACommander::GetTeam() const
 		ADefaultPlayerState *  PS = Cast<ADefaultPlayerState>(PC->PlayerState);
 		if (PS)
 		{
-			return(PS->TeamID);
+			return(PS->GetTeamID());
 		}
 	}
 
-	return(team_index);
+	return(TeamID);
 }
 
 bool ACommander::IsServerPawn() const

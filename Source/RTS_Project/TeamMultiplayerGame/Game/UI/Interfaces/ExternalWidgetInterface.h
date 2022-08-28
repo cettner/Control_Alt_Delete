@@ -40,6 +40,9 @@ struct FStackWidgetInfo
 		bool bIsCursorVisible = false;
 
 		UPROPERTY(EditDefaultsOnly)
+		bool bConsumeCaptureMouseDown = false;
+
+		UPROPERTY(EditDefaultsOnly)
 		TEnumAsByte<EMouseCursor::Type> CursorType = EMouseCursor::Default;
 
 		UPROPERTY(EditDefaultsOnly)

@@ -8,12 +8,14 @@ ARTSFPSHUD::ARTSFPSHUD() : Super()
 {
 	/*Can't See Cursor */
 	FPSDefaultInput.bIsCursorVisible = false;
+	FPSDefaultInput.bConsumeCaptureMouseDown = false;
 	/*Don't Care*/
 	FPSDefaultInput.CursorType = EMouseCursor::Default;
 	FPSDefaultInput.InputType = EWisgetStackInputType::GAMEONLY;
 	FPSDefaultInput.StackSettings = EWidgetStackOperation::ALWAYSACTIVE;
 
 	DefaultInputSettings.bIsCursorVisible = true;
+	DefaultInputSettings.bConsumeCaptureMouseDown = false;
 	DefaultInputSettings.CursorType = EMouseCursor::Crosshairs;
 	DefaultInputSettings.InputType = EWisgetStackInputType::GAMEONLY;
 	DefaultInputSettings.StackSettings = EWidgetStackOperation::ALWAYSACTIVE;
@@ -59,7 +61,6 @@ bool ARTSFPSHUD::TryToggleUpgradeTree(EGenrePlayType InTreeToToggle)
 		}
 		else if(playtype == EGenrePlayType::FPS)
 		{
-
 			upgradetree = FPSUpgradeTree;
 		}
 

@@ -31,6 +31,9 @@ public:
 
 	void SetLocalPlayerState(bool inLocalState);
 
+	void SetTeamID(int InTeamID);
+	int GetTeamID() const;
+
 protected:
 	/*Virtual Function For Override*/
 	UFUNCTION()
@@ -47,8 +50,8 @@ protected:
 	bool bHasDefaultGameModeDataLoaded = false;
 	bool bisLocalPlayerState = false;
 
-public:
+protected:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
-	int TeamID;
+	int TeamID = -1;
 	
 };

@@ -67,7 +67,7 @@ AActor * ARTFPSMode::FindPlayerStart_Implementation(AController * Player, const 
 		for (TActorIterator<ATeamPlayerStart> It(world); It; ++It)
 		{
 			ATeamPlayerStart * start = *It;
-			if (start->teamid == PS->TeamID)
+			if (start->teamid == PS->GetTeamID())
 			{
 				retval = start;
 				ARTFPSPlayerStart * rtsfpsstart = Cast<ARTFPSPlayerStart>(start);

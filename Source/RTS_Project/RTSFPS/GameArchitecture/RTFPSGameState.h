@@ -86,6 +86,10 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual void AddRTSObjectToTeam(IRTSObjectInterface * const InObject);
 		virtual bool RemoveRTSObjectFromTeam(IRTSObjectInterface * InObject);
 
+	public:
+		virtual void RegisterRTSObject(IRTSObjectInterface* InObject);
+		virtual void UnRegisterRTSObject(IRTSObjectInterface* InObject);
+		virtual const TArray<IRTSObjectInterface*>& GetRegisteredRTSObjects() const;
 
     protected:
 		virtual bool InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> ResourceClasses);
@@ -112,8 +116,11 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		UPROPERTY(Replicated)
 		TArray<FResourceUIData> MapResourceInfo;
 
-		private:
+	private:
 		TArray<RTSTeamUnits> AllUnits;
 
 		RTSTeamUnits InvalidUnits;
+
+	protected:
+		TArray<IRTSObjectInterface*> RTSObjects;
 };
