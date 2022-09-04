@@ -13,25 +13,60 @@
  */
 #define SELECTION_CHANNEL  ECC_GameTraceChannel1
 
+DECLARE_DELEGATE_OneParam(RTSSelectionUpdateDelegate, const TArray<TScriptInterface<IRTSObjectInterface>>);
+
+enum ESelectionType
+{
+	NotSelecting,
+	SingleSelect,
+	BoxSelect,
+	DoubleSelect,
+
+};
+
+
 UCLASS()
 class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 {
 	GENERATED_BODY()
 	
-	public:
+	protected:
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+		virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	TArray <ARTSMinion*> SelectedUnits;
+	protected:
+		void SelectPressed();
+		void SelectReleased();
+		void SelectDoublePressed();
+		void MoveSelected();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	TArray <ARTSStructure*> SelectedStructures;
+		void ProcessSelection();
 
-	private:
-	void SelectPressed();
-	void SelectReleased();
-	void MoveSelected();
-	
-	
+		void AddObjectToSelection(IRTSObjectInterface* InObj);
+		void AddObjectToSelection(TArray<IRTSObjectInterface*> InObjs);
+		int32 ClearSelection();
+
+	protected:
+		virtual void HandleBoxSelect();
+		virtual void BoxSelectionStart();
+		virtual void BoxSelectionEnd();
+		virtual void HandleDoubleSelect();
+		virtual void HandleSingleSelect();
+
+	/*Config*/
+	protected:
+		/*Time in Seconds The mouse must be pressed to enable box selection*/
+		UPROPERTY(EditDefaultsOnly)
+		float BoxSelectDelayBuffer = .3f;
+
+	/*Runtime*/
+	protected:
+		/*Since Box Selection is Delayed, this is used to capture the inital mouse click Position*/
+		FVector2D InitialMouseScreenPosition = FVector2D();
+		FTimerHandle SelectionTimerHandle = FTimerHandle();
+		ESelectionType CurrentSelectionType = NotSelecting;
+		TArray <TScriptInterface<IRTSObjectInterface>> SelectedUnits = TArray< TScriptInterface<IRTSObjectInterface>>();
+
+	public:
+		RTSSelectionUpdateDelegate SelectionUpdateDelegate = RTSSelectionUpdateDelegate();
 };

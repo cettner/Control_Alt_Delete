@@ -59,6 +59,44 @@ AFogOfWarManager * ARTSPlayerController::InitFOW()
 	return(FOWManager);
 }
 
+TArray<IRTSObjectInterface*> ARTSPlayerController::GetOrderableUnits(TSubclassOf<AActor> InObjectClass) const
+{
+	TArray<IRTSObjectInterface*> retval = TArray<IRTSObjectInterface*>();
+	const UWorld* world = GetWorld();
+	const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	/*this could in theory fail during inital replication setup, there is no time dependent function, so it is not called again from elsewhere*/
+	if (IsValid(gs))
+	{
+		const TArray<IRTSObjectInterface*> registeredobjects = gs->GetRegisteredRTSObjects();
+		for (int i = 0; i < registeredobjects.Num(); i++)
+		{
+			if (IsUnitOrderable(registeredobjects[i])  && CastChecked<UObject>(registeredobjects[i])->IsA(InObjectClass))
+			{
+				retval.Emplace(registeredobjects[i]);
+			}
+		}
+	}
+
+	return retval;
+}
+
+template<typename ClassFilter>
+inline TArray<IRTSObjectInterface*> ARTSPlayerController::GetOrderableUnits()
+{
+	return GetOrderableUnits(ClassFilter::StaticClass());
+}
+
+bool ARTSPlayerController::IsUnitOrderable(const IRTSObjectInterface* InObj) const
+{
+	bool retval = IRTSObjectInterface::IsRTSObjectValid(InObj);
+
+	if (retval == true && InObj->IsAlive())
+	{
+		retval &= (InObj->GetTeam() == GetTeamID());
+	}
+	return retval;
+}
+
 
 
 bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)

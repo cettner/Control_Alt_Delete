@@ -11,28 +11,22 @@
 
 
 template<typename ClassFilter>
-inline bool ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
+inline bool ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<IRTSObjectInterface*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
 {
-	//Is Actor subclass?
-	if (!ClassFilter::StaticClass()->IsChildOf(AActor::StaticClass()))
-	{
-		return false;
-	}
-
 	//Run Inner Function, output to Base AActor Array
 	TArray<AActor*> OutActorsBaseArray;
-	GetRTSActorsInSelectionRectangle(FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed);
+	GetRTSActorsInSelectionRectangle(FirstPoint, SecondPoint, OutActorsBaseArray, bIncludeNonCollidingComponents, bActorMustBeFullyEnclosed, ClassFilter::StaticClass());
 
 	//Construct casted template type array
 	for (AActor* EachActor : OutActorsBaseArray)
 	{
-		OutActors.Add(CastChecked<ClassFilter>(EachActor));
+		OutActors.Add(CastChecked<IRTSObjectInterface>(EachActor));
 	}
 
 	return true;
 }
 
-void ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed)
+void ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed, TSubclassOf<AActor> InActorClass)
 {
 
 	// Because this is a HUD function it is likely to get called each tick,
@@ -62,14 +56,15 @@ void ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, cons
 
 	//~~~
 
-	//For Each Actor of the Class Filter Type
 	ARTFPSGameState* gs = GetWorld()->GetGameState<ARTFPSGameState>();
+	checkf(gs,TEXT("ARTSHUD::GetRTSActorsInSelectionRectangle : Failed to obtain Gamestate"))
 	const TArray<IRTSObjectInterface*> allobs = gs->GetRegisteredRTSObjects();
 
+	//For Each Actor of the Class Filter Type
 	for (int i = 0;i < allobs.Num(); i++)
 	{
 		AActor* EachActor = Cast<AActor>(allobs[i]);
-		if (IsValid(EachActor) && allobs[i]->IsBoxSelectable())
+		if (IsValid(EachActor) && EachActor->IsA(InActorClass) && allobs[i]->IsBoxSelectable())
 		{
 			//Engine Line modified to get root of actor for selction
 			const FBox EachActorBounds = EachActor->GetRootComponent()->Bounds.GetBox();
@@ -108,6 +103,58 @@ void ARTSHUD::GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, cons
 			}
 		}
 	}
+}
+
+void ARTSHUD::StartRTSSelection(const FVector2D InStartScreenPosition, const TArray<IRTSObjectInterface*>& StartingSelection)
+{
+	if (!bIsSelectionInProcess)
+	{
+		for (int i = 0; i < StartingSelection.Num(); i++)
+		{
+			RetainedSelection.AddUnique(StartingSelection[i]);
+		}
+		SelectionStartPosition = InStartScreenPosition;
+		bIsSelectionInProcess = true;
+	}
+
+}
+
+bool ARTSHUD::IsSelectionInProgress() const
+{
+	return bIsSelectionInProcess;
+}
+
+TArray<IRTSObjectInterface*> ARTSHUD::FinishRTSSelection()
+{
+	TArray<IRTSObjectInterface*> retval;
+	
+	if (bIsSelectionInProcess)
+	{
+		retval = Selected_Units;
+		
+		/*Add in the previous selection if we've attempted to retain additional units from a different selection*/
+		for (int i = 0; i < RetainedSelection.Num();)
+		{
+			retval.AddUnique(RetainedSelection[i]);
+		}
+		Selected_Units.Reset();
+		RetainedSelection.Reset();
+		bIsSelectionInProcess = false;
+	}
+	else
+	{
+		retval = TArray<IRTSObjectInterface*>();
+	}
+
+	return  retval;
+}
+
+bool ARTSHUD::ForceRemoveSelection(IRTSObjectInterface* InObject)
+{
+	int32 removal = 0;
+	removal += Selected_Units.Remove(InObject);
+	removal += RetainedSelection.Remove(InObject);
+	return (removal > 0);
 }
 
 void ARTSHUD::DrawHUD()
@@ -149,19 +196,24 @@ void ARTSHUD::RTSSelectAndMoveHandler()
 	if (bIsSelectionInProcess)
 	{
 		CleanSelectedActors();
-		GetSelectedUnits();
+		ScanSelectedUnits();
 	}
 }
 
-void ARTSHUD::GetSelectedUnits()
+void ARTSHUD::ScanSelectedUnits()
 {
-	FVector2D End_Select = GetMouseLocation();
-	Selected_Units.Empty();
-	Selected_Structure.Empty();
-	ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
+	const FVector2D End_Select = GetMouseLocation();
+	Selected_Units.Reset();
+	const ADefaultPlayerState * PS = Cast<ADefaultPlayerState>(GetOwningPlayerController()->PlayerState);
 
-	DrawRect(FLinearColor(0, 0, 1, SelectionAlpha), Initial_select.X, Initial_select.Y, End_Select.X - Initial_select.X, End_Select.Y - Initial_select.Y);
-	GetRTSActorsInSelectionRectangle<ARTSMinion>(Initial_select, End_Select, Selected_Units, false, false);
+	/*Draw a Rectangle */
+	DrawRect(FLinearColor(0, 0, 1, SelectionAlpha), SelectionStartPosition.X, SelectionStartPosition.Y, End_Select.X - SelectionStartPosition.X, End_Select.Y - SelectionStartPosition.Y);
+	GetRTSActorsInSelectionRectangle<AActor>(SelectionStartPosition, End_Select, Selected_Units, false, false);
+
+	for (int i = 0; i < RetainedSelection.Num(); i++)
+	{
+		Selected_Units.Emplace(RetainedSelection[i]);
+	}
 
 	if (Selected_Units.Num() > 0 && PS)
 	{
@@ -202,17 +254,6 @@ void ARTSHUD::GetSelectedUnits()
 			{
 				Selected_Units[i]->SetSelected();
 			}
-		}
-	}
-}
-
-void ARTSHUD::GetSelectedStructures()
-{
-	if (Selected_Structure.Num() > 0)
-	{
-		for (int32 i = 0; i < Selected_Structure.Num(); i++)
-		{
-			Selected_Structure[i]->SetSelected();
 		}
 	}
 }

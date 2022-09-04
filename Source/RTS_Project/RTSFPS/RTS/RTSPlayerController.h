@@ -42,6 +42,12 @@ public:
 	
 	virtual AFogOfWarManager * InitFOW();
 
+	virtual TArray<IRTSObjectInterface*> GetOrderableUnits(TSubclassOf<AActor> InObjectClass = AActor::StaticClass()) const;
+
+	template<typename ClassFilter>
+	TArray<IRTSObjectInterface*> GetOrderableUnits();
+
+	virtual bool IsUnitOrderable(const IRTSObjectInterface * InObj) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Fog Of War")
@@ -49,3 +55,5 @@ protected:
 	AFogOfWarManager * FOWManager;
 
 };
+
+

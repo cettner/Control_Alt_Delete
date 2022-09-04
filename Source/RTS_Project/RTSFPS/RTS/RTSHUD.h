@@ -28,9 +28,9 @@ public:
 protected:
 	//overriden engine functions to give more control over unit selection
 	template <typename ClassFilter>
-	bool GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<ClassFilter*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false);
+	bool GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<IRTSObjectInterface*>& OutActors, bool bIncludeNonCollidingComponents = true, bool bActorMustBeFullyEnclosed = false);
 
-	virtual void GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed);
+	virtual void GetRTSActorsInSelectionRectangle(const FVector2D& FirstPoint, const FVector2D& SecondPoint, TArray<AActor*>& OutActors, bool bIncludeNonCollidingComponents, bool bActorMustBeFullyEnclosed, TSubclassOf<AActor> ActorClass = AActor::StaticClass());
 
 protected:
 	/*AHUD overrides*/
@@ -44,18 +44,23 @@ protected:
 	virtual void RTSSelectAndMoveHandler();
 
 private:
-	void GetSelectedUnits();
-	void GetSelectedStructures();
 	void CleanSelectedActors();
 	bool IsBoxSelectionEnabled() const;
 	void SetBoxSelectionEnabled(const bool InEnabled);
+	void ScanSelectedUnits();
 
 
 public:
-	FVector2D Initial_select;  // intial mouse cursor location on click
+	void StartRTSSelection(const FVector2D InStartScreenPosition, const TArray<IRTSObjectInterface*> &StartingSelection = TArray<IRTSObjectInterface*>());
+	bool IsSelectionInProgress() const;
+	TArray <IRTSObjectInterface*> FinishRTSSelection();
+	bool ForceRemoveSelection(IRTSObjectInterface* InObject);
 
-	TArray <ARTSMinion*> Selected_Units;
-	TArray <ARTSStructure*> Selected_Structure;
+protected:
+	FVector2D SelectionStartPosition;  // intial mouse cursor location on click
+
+	TArray <IRTSObjectInterface *> Selected_Units = TArray<IRTSObjectInterface*>();
+	TArray <IRTSObjectInterface*> RetainedSelection = TArray<IRTSObjectInterface*>();
 
 	bool bIsSelectionInProcess = false;
 

@@ -152,13 +152,11 @@ void ARTSMinion::OnDeath()
 	ARTSHUD * hud = GetWorld()->GetFirstPlayerController()->GetHUD<ARTSHUD>();
 	if (hud)
 	{
-		hud->Selected_Units.Remove(this);
+		hud->ForceRemoveSelection(this);
 	}
 
-	if (GetNetMode() == NM_ListenServer || GetNetMode() == NM_Client)
-	{
-		UnRegisterRTSObject();
-	}
+	UnRegisterRTSObject();
+
 }
 
 bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)

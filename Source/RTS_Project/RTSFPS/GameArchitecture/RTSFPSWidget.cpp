@@ -31,9 +31,15 @@ bool URTSFPSWidget::Initialize()
 
 void URTSFPSWidget::OnHUDStateChange()
 {
-	const ARTFPSPlayerState * ps = GetOwningPlayer()->GetPlayerState<ARTFPSPlayerState>();
+	const APlayerController* pc = GetOwningPlayer();
+	/*Editor Protection from Initialize()*/
 
-	if (ps->IsRTSPlayer())
+	#if WITH_EDITOR
+	if (!IsValid(pc)) return;
+	#endif
+	const ARTFPSPlayerState * ps = pc->GetPlayerState<ARTFPSPlayerState>();
+
+	if (IsValid(ps) && ps->IsRTSPlayer())
 	{
 		RTSFPSUISwitcher->SetActiveWidget(RTSUI);
 	}
