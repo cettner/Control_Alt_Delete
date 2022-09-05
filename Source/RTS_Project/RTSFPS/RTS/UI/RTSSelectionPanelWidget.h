@@ -28,10 +28,10 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	uint32 NumRows = 4;
+	uint32 NumRows = 3;
 
 	UPROPERTY(EditDefaultsOnly)
-	uint32 NumColumns = 4;
+	uint32 NumColumns = 6;
 
 protected:
 	UPROPERTY(meta = (BindWidget))

@@ -34,10 +34,13 @@ void URTSSelectionPanelWidget::OnSelectionUpdated(const TArray<TScriptInterface<
 		{
 			URTSSelectionSlotWidget * widgetslot = CreateWidget<URTSSelectionSlotWidget>(this, SelectionSlotClass);
 			const uint32 colindex = i % NumColumns;
-			const uint32 rowindex = i / NumRows;
+			const uint32 rowindex = i / NumColumns;
 			UGridSlot * placedslot = SelectionGrid->AddChildToGrid(widgetslot, rowindex, colindex);
 			placedslot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
 			placedslot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+
+			/*Note: this is the padding for widget, not the slot, they are in fact different*/
+			widgetslot->SetPadding(FMargin(4.0f));
 		}
 	}
 }
