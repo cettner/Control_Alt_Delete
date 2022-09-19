@@ -6,6 +6,8 @@
 #include "Components/GridSlot.h"
 
 
+
+
 void URTSSelectionPanelWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
@@ -20,7 +22,6 @@ void URTSSelectionPanelWidget::NativeTick(const FGeometry& MyGeometry, float InD
 			bIsSelectionDelegatebound = true;
 		}
 	}
-	
 }
 
 void URTSSelectionPanelWidget::OnSelectionUpdated(const TArray<TScriptInterface<IRTSObjectInterface>> InSelectedUnits)
@@ -28,19 +29,53 @@ void URTSSelectionPanelWidget::OnSelectionUpdated(const TArray<TScriptInterface<
 	SelectionGrid->ClearChildren();
 	if (SelectionSlotClass != nullptr)
 	{
-		const uint32 maxslots = NumColumns * NumRows;
-
-		for (size_t i = 0; i < maxslots; i++)
+		if (InSelectedUnits.Num() <= MaxSlots)
 		{
-			URTSSelectionSlotWidget * widgetslot = CreateWidget<URTSSelectionSlotWidget>(this, SelectionSlotClass);
-			const uint32 colindex = i % NumColumns;
-			const uint32 rowindex = i / NumColumns;
-			UGridSlot * placedslot = SelectionGrid->AddChildToGrid(widgetslot, rowindex, colindex);
-			placedslot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-			placedslot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
-
-			/*Note: this is the padding for widget, not the slot, they are in fact different*/
-			widgetslot->SetPadding(FMargin(4.0f));
+			/*If we can draw all the units in available slots do it*/
+			DrawSingleUnitPane(InSelectedUnits);
+		}
+		else
+		{
+			/*Truncate Minions down to select by class, then draw the number of units selected instead*/
+			DrawMultiSelectionPane(InSelectedUnits);
 		}
 	}
+}
+
+void URTSSelectionPanelWidget::DrawSingleUnitPane(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits)
+{
+	for (int i = 0; i < InSelectedUnits.Num(); i++)
+	{
+		TScriptInterface<IRTSObjectInterface> rtsobj = InSelectedUnits[i];
+		URTSSelectionSlotWidget* widgetslot = CreateWidget<URTSSelectionSlotWidget>(this, SelectionSlotClass);
+		widgetslot->Setup(rtsobj);
+		widgetslot->SetPadding(FMargin(4.0f));
+
+		const uint32 colindex = i % NumColumns;
+		const uint32 rowindex = i / NumColumns;
+
+		UGridSlot* placedslot = SelectionGrid->AddChildToGrid(widgetslot, rowindex, colindex);
+		placedslot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
+		placedslot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+	}
+}
+
+void URTSSelectionPanelWidget::DrawMultiSelectionPane(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits)
+{
+
+}
+
+TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits) const
+{
+	/*Properties are unique to a class, not an individual unit, so to save time / data flow only get the CDO pointers*/
+	TArray<UClass*> objectclasses = TArray<UClass*>();
+	for (int i = 0; i < InSelectedUnits.Num(); i++)
+	{
+		const UObject * rtsobject = InSelectedUnits[i].GetObject();
+		checkf(rtsobject, TEXT("URTSSelectionPanelWidget::BuildPropertiesFromSelection Scanned Object was null"));
+		objectclasses.AddUnique(rtsobject->GetClass());
+	}
+
+	//TODO, Finish this....
+	return TArray<FSelectionPropertyMap>();
 }

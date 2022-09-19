@@ -16,4 +16,12 @@ class RTS_PROJECT_API URTSSelectionSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+	virtual void Setup(TScriptInterface<IRTSObjectInterface> InObj,const uint8 InNumUnits = 1U);
+	virtual void SetPrimarySelectionState(const bool InState);
+	virtual bool IsPrimarySelection() const;
+
+protected:
+	TScriptInterface<IRTSObjectInterface> SelectedObjectReference = nullptr;
+	bool bIsPrimarySelected = false;
 };

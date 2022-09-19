@@ -88,7 +88,6 @@ public:
 	/*Notify the ability that it has ended*/
 	virtual void EndAbility();
 
-
 public:
 	virtual void OnReadyNotify();
 	virtual void OnLoopNotify();

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "../../RTS/Orders/RTSOrder.h"
 #include "RTSObjectInterface.generated.h"
 
 // This class does not need to be modified.
@@ -38,12 +39,18 @@ public:
 	virtual AActor* GetTarget();
 	virtual void ClearTarget();
 
+	virtual bool IsOrderablebyController(const AController * InController) const;
+	virtual bool CanCompleteOrder(const TSubclassOf<URTSOrder> InOrderClass) const;
+	virtual const TArray<TSubclassOf<URTSOrder>> GetAvailableOrders() const;
+	virtual TSubclassOf<URTSOrder> GetDefaultOrder(const FHitResult& InHitContext) const;
+	virtual void IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
+	virtual TSubclassOf<URTSOrder> GetCurrentOrder() const;
+	virtual TArray<TSubclassOf<URTSOrder>> GetAllIssuedOrders() const;
+
 	virtual IRTSObjectInterface* GetLeadRTSObject();
 
 	template<class T>
 	T* GetLeadRTSObject() { return Cast<T>(GetLeadRTSObject()); }
-
-
 
 protected:
 	virtual void RegisterRTSObject() = 0;

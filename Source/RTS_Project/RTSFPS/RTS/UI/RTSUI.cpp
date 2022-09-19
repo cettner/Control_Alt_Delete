@@ -3,7 +3,12 @@
 
 #include "RTSUI.h"
 
-void URTSUI::Setup()
+URTSSelectionPanelWidget* URTSUI::GetRTSSelectionPanel() const
 {
+	return RTSSelectionPanel;
+}
 
+URTSPropertyPanelWidget* URTSUI::GetRTSPropertyPanel() const
+{
+	return RTSPropertyPanel;
 }

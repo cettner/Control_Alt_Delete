@@ -62,6 +62,43 @@ void IRTSObjectInterface::ClearTarget()
 {
 }
 
+bool IRTSObjectInterface::IsOrderablebyController(const AController* InController) const
+{
+	return false;
+}
+
+bool IRTSObjectInterface::CanCompleteOrder(const TSubclassOf<URTSOrder> InOrderClass) const
+{
+	const TArray<TSubclassOf<URTSOrder>> availableorders = GetAvailableOrders();
+	const bool retval = availableorders.Find(InOrderClass) > INDEX_NONE;
+	return retval;
+}
+
+const TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAvailableOrders() const
+{
+	return TArray<TSubclassOf<URTSOrder>>();
+}
+
+TSubclassOf<URTSOrder> IRTSObjectInterface::GetDefaultOrder(const FHitResult& InHitContext) const
+{
+	return nullptr;
+}
+
+TSubclassOf<URTSOrder> IRTSObjectInterface::GetCurrentOrder() const
+{
+	return TSubclassOf<URTSOrder>();
+}
+
+TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAllIssuedOrders() const
+{
+	return TArray<TSubclassOf<URTSOrder>>();
+}
+
+void IRTSObjectInterface::IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass, const bool InbIsQueuedOrder)
+{
+
+}
+
 IRTSObjectInterface* IRTSObjectInterface::GetLeadRTSObject()
 {
 	return nullptr;

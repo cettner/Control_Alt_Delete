@@ -3,7 +3,6 @@
 #include "RTSSelectionCamera.h"
 
 #include "../RTSPlayerController.h"
-#include "../RTSHUD.h"
 
 
 
@@ -121,6 +120,12 @@ int32 ARTSSelectionCamera::ClearSelection()
 		}
 	}
 	SelectedUnits.Reset();
+
+	/*BroadCast the Results of our Selection*/
+	if (SelectionUpdateDelegate.IsBound())
+	{
+		SelectionUpdateDelegate.ExecuteIfBound(SelectedUnits);
+	}
 
 	return retval;
 }

@@ -21,10 +21,10 @@ public:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-		TSubclassOf<UUpgrade> Parent = nullptr;
+	TSubclassOf<UUpgrade> Parent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly)
-		uint32 Rank = 1U;
+	uint32 Rank = 1U;
 };
 
 enum EUpgradeDependencyCategory
