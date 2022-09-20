@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "../../RTS/Orders/RTSOrder.h"
+#include "../../RTS/UI/Properties/RTSProperty.h"
 #include "RTSObjectInterface.generated.h"
 
 // This class does not need to be modified.
@@ -46,6 +47,9 @@ public:
 	virtual void IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
 	virtual TSubclassOf<URTSOrder> GetCurrentOrder() const;
 	virtual TArray<TSubclassOf<URTSOrder>> GetAllIssuedOrders() const;
+
+	virtual TArray<TSubclassOf<URTSProperty>> GetRTSProperties() const;
+	virtual bool ContainsProperty(TSubclassOf<URTSProperty> InPropCheck) const;
 
 	virtual IRTSObjectInterface* GetLeadRTSObject();
 

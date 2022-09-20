@@ -67,15 +67,42 @@ void URTSSelectionPanelWidget::DrawMultiSelectionPane(const TArray<TScriptInterf
 
 TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits) const
 {
-	/*Properties are unique to a class, not an individual unit, so to save time / data flow only get the CDO pointers*/
-	TArray<UClass*> objectclasses = TArray<UClass*>();
+	TArray<FSelectionPropertyMap> retval = TArray<FSelectionPropertyMap>();
+	TArray<IRTSObjectInterface*> allclassess = TArray<IRTSObjectInterface*>();
+	TArray<TSubclassOf<URTSProperty>> allproperties = TArray<TSubclassOf<URTSProperty>>();
+
 	for (int i = 0; i < InSelectedUnits.Num(); i++)
 	{
-		const UObject * rtsobject = InSelectedUnits[i].GetObject();
-		checkf(rtsobject, TEXT("URTSSelectionPanelWidget::BuildPropertiesFromSelection Scanned Object was null"));
-		objectclasses.AddUnique(rtsobject->GetClass());
+		const UObject* rtsobj = InSelectedUnits[i].GetObject();
+		checkf(rtsobj, TEXT("URTSSelectionPanelWidget::BuildPropertiesFromSelection"));
+		IRTSObjectInterface* objCDO = CastChecked<IRTSObjectInterface>(rtsobj->GetClass()->GetDefaultObject());
+		allclassess.AddUnique(objCDO);
 	}
 
-	//TODO, Finish this....
-	return TArray<FSelectionPropertyMap>();
+	for (int i = 0; i < allclassess.Num(); i++)
+	{
+		/*Get all properties for one instance of the class*/
+		TArray<TSubclassOf<URTSProperty>> classproperties = allclassess[i]->GetRTSProperties();
+			
+		/*map each of those properties to all instances that contain it*/
+		for (int k = 0; k < classproperties.Num(); k++)
+		{
+			int32 isunique = allproperties.AddUnique(classproperties[k]);
+			if (isunique > INDEX_NONE)
+			{
+				FSelectionPropertyMap propinsert = FSelectionPropertyMap();
+				propinsert.Property = classproperties[k];
+				for (int h = 0; h < InSelectedUnits.Num(); h++)
+				{
+					if (InSelectedUnits[h]->ContainsProperty(propinsert.Property))
+					{
+						propinsert.PropertyOwners.Emplace(InSelectedUnits[h]);
+					}
+				}
+				retval.Emplace(propinsert);
+			}
+		}
+	}
+
+	return retval;
 }

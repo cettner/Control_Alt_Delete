@@ -94,6 +94,16 @@ TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAllIssuedOrders() const
 	return TArray<TSubclassOf<URTSOrder>>();
 }
 
+TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetRTSProperties() const
+{
+	return TArray<TSubclassOf<URTSProperty>>();
+}
+
+bool IRTSObjectInterface::ContainsProperty(TSubclassOf<URTSProperty> InPropCheck) const
+{
+	return false;
+}
+
 void IRTSObjectInterface::IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass, const bool InbIsQueuedOrder)
 {
 
