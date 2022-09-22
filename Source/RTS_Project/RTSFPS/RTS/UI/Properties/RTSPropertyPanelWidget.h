@@ -25,8 +25,8 @@ protected:
 	UFUNCTION()
 	virtual void OnSelectedPropertiesUpdated(const TArray<FSelectionPropertyMap> InSelectionProperties);
 
-protected:
-	virtual bool Initialize() override;
+public:
+	virtual void Setup(RTSSelectionPropertyDelegate & InPropertyDelegate);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

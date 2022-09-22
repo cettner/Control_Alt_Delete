@@ -3,7 +3,6 @@
 
 #include "RTSPropertyPanelWidget.h"
 #include "Components/GridSlot.h"
-#include "../RTSUI.h"
 
 
 
@@ -30,13 +29,7 @@ void URTSPropertyPanelWidget::OnSelectedPropertiesUpdated(const TArray<FSelectio
 	}
 }
 
-bool URTSPropertyPanelWidget::Initialize()
+void URTSPropertyPanelWidget::Setup(RTSSelectionPropertyDelegate& InPropertyDelegate)
 {
-	bool retval = Super::Initialize();
-
-	//GetParent<URTSUI>();
-
-
-
-	return retval;
+	InPropertyDelegate.BindUFunction(this, "OnSelectedPropertiesUpdated");
 }

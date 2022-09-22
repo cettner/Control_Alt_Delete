@@ -30,8 +30,8 @@ class RTS_PROJECT_API URTSSelectionPanelWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-	protected:
-		virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+protected:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	
 protected:
 	UFUNCTION()
@@ -40,7 +40,8 @@ protected:
 	virtual void DrawMultiSelectionPane(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits);
 
 protected:
-	virtual TArray<FSelectionPropertyMap> BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits) const;
+	virtual const TArray<TScriptInterface<IRTSObjectInterface>> GetRequestedPropertyUnits(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits);
+	static TArray<FSelectionPropertyMap> BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits);
 
 public:
 	/*Broadcast the requested Properties from the selection Pane, this is done here instead of multicast to the properties panel 

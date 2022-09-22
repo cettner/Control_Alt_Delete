@@ -40,6 +40,13 @@ void URTSSelectionPanelWidget::OnSelectionUpdated(const TArray<TScriptInterface<
 			DrawMultiSelectionPane(InSelectedUnits);
 		}
 	}
+
+	const TArray<TScriptInterface<IRTSObjectInterface>> groomedselection = GetRequestedPropertyUnits(InSelectedUnits);
+	const TArray<FSelectionPropertyMap> propertymap = BuildPropertiesFromSelection(groomedselection);
+
+	
+	SelectedPropertiesDelegate.ExecuteIfBound(propertymap);
+
 }
 
 void URTSSelectionPanelWidget::DrawSingleUnitPane(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits)
@@ -65,16 +72,23 @@ void URTSSelectionPanelWidget::DrawMultiSelectionPane(const TArray<TScriptInterf
 
 }
 
-TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits) const
+const TArray<TScriptInterface<IRTSObjectInterface>> URTSSelectionPanelWidget::GetRequestedPropertyUnits(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits)
+{
+	return InSelectedUnits;
+}
+
+TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits)
 {
 	TArray<FSelectionPropertyMap> retval = TArray<FSelectionPropertyMap>();
 	TArray<IRTSObjectInterface*> allclassess = TArray<IRTSObjectInterface*>();
 	TArray<TSubclassOf<URTSProperty>> allproperties = TArray<TSubclassOf<URTSProperty>>();
+	/*Anthony Will fix this*/
 
+	/*Get All Unique CDO's for the selection, this saves time as the number of units in*/
 	for (int i = 0; i < InSelectedUnits.Num(); i++)
 	{
 		const UObject* rtsobj = InSelectedUnits[i].GetObject();
-		checkf(rtsobj, TEXT("URTSSelectionPanelWidget::BuildPropertiesFromSelection"));
+		checkf(rtsobj, TEXT("URTSSelectionPanelWidget::BuildPropertiesFromSelection Interface Object was Null"));
 		IRTSObjectInterface* objCDO = CastChecked<IRTSObjectInterface>(rtsobj->GetClass()->GetDefaultObject());
 		allclassess.AddUnique(objCDO);
 	}

@@ -19,6 +19,9 @@ public:
 	URTSSelectionPanelWidget* GetRTSSelectionPanel() const;
 
 protected:
+	virtual bool Initialize() override;
+
+protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	URTSPropertyPanelWidget* RTSPropertyPanel = nullptr;
 
