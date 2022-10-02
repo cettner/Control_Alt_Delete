@@ -38,12 +38,13 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 					const uint32 resourcescored = resources[i].Value;
 					expuser->GrantExp(resourcescored);
 				}
-
-				const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-				ATeamResourceState* ts = gs->GetTeamState<ATeamResourceState>(rtsobject->GetTeam());
-				ts->TransferResourceFromSource(gatherer);
-
 			}
+
+			const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+			ATeamResourceState* ts = gs->GetTeamState<ATeamResourceState>(rtsobject->GetTeam());
+			ts->TransferResourceFromSource(gatherer);
+
+
 		}
 	}
 
