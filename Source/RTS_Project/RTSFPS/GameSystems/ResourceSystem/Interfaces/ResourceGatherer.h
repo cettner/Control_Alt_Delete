@@ -28,6 +28,9 @@ public:
 	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount);
 	virtual void AddResource(const FReplicationResourceMap InResourceMap);
 	virtual bool RemoveResource(const FReplicationResourceMap InResourceMap);
+	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar);
+	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const FReplicationResourceMap InAmounttoTransfer);
+	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<AResource> ResourceType, const int InAmountToTransfer);
 
 	virtual bool HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount = 0U) const;
 	virtual bool HasResource(const FReplicationResourceMap InResourceMap) const;

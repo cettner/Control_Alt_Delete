@@ -13,13 +13,13 @@ bool UTeamResourcePanelWidget::Initialize()
 		const UWorld* world = GetWorld();
 		if (world == nullptr) return false;
 
-		ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+		const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
 		if (gs != nullptr)
 		{
-			ATeamResourceState* tr = gs->GetDefaultTeamState<ATeamResourceState>();
+			const ATeamResourceState* tr = gs->GetDefaultTeamState<ATeamResourceState>();
 			if (tr != nullptr)
 			{
-				FReplicationResourceMap teamresources = tr->GetAllHeldResources();
+				const FReplicationResourceMap teamresources = tr->GetAllHeldResources();
 
 				for (int i = 0; i < teamresources.Num(); i++)
 				{

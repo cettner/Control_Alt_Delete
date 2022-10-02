@@ -34,6 +34,47 @@ bool IResourceGatherer::RemoveResource(const FReplicationResourceMap InResourceM
 	return retval;
 }
 
+bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar)
+{
+	const FReplicationResourceMap  allresources = InDonar->GetAllHeldResources();
+
+	//todo, add check for if the transfer can be completed for the reciever.
+	const bool retval = InDonar->RemoveResource(allresources);
+
+	if (retval == true)
+	{
+		AddResource(allresources);
+	}
+
+	return retval;
+}
+
+bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, const FReplicationResourceMap InAmounttoTransfer)
+{
+	//todo, add check for if the transfer can be completed for the reciever
+	const bool retval = InDonar->RemoveResource(InAmounttoTransfer);
+
+	if (retval == true)
+	{
+		AddResource(InAmounttoTransfer);
+	}
+
+	return retval;
+}
+
+bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<AResource> ResourceType, const int InAmountToTransfer)
+{
+	//todo, add check for if the transfer can be completed for the reciever
+	const bool retval = InDonar->RemoveResource(ResourceType, InAmountToTransfer);
+
+	if (retval == true)
+	{
+		AddResource(ResourceType, InAmountToTransfer);
+	}
+
+	return retval;
+}
+
 bool IResourceGatherer::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
 {
 	return false;

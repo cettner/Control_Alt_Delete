@@ -22,12 +22,12 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 	if (HasAuthority())
 	{
 		IResourceGatherer * gatherer = Cast<IResourceGatherer>(OtherActor);
-		IRTSObjectInterface * rtsobject = Cast<IRTSObjectInterface>(OtherActor);
+		const IRTSObjectInterface * rtsobject = Cast<IRTSObjectInterface>(OtherActor);
 		const UWorld * world = GetWorld();
 		
-		if (gatherer != nullptr)
+		if (gatherer != nullptr && rtsobject != nullptr)
 		{
-			FReplicationResourceMap resources = gatherer->GetAllHeldResources();
+			const FReplicationResourceMap resources = gatherer->GetAllHeldResources();
 
 			for (int i = 0; i < resources.Num(); i++)
 			{
@@ -39,9 +39,10 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 					expuser->GrantExp(resourcescored);
 				}
 
-				ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-				//gs->ScoreResource(resources[i].Key,resources[i].Value, rtsobject);
-				gatherer->RemoveResource(resources[i].Key, resources[i].Value);
+				const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+				ATeamResourceState* ts = gs->GetTeamState<ATeamResourceState>(rtsobject->GetTeam());
+				ts->TransferResourceFromSource(gatherer);
+
 			}
 		}
 	}
