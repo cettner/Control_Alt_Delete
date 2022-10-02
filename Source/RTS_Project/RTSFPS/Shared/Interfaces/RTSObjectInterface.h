@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "../../RTS/Orders/RTSOrder.h"
-#include "../../RTS/UI/Properties/RTSProperty.h"
+#include "../../RTS/UI/Properties/RTSPropertyContainer.h"
 #include "RTSObjectInterface.generated.h"
 
 // This class does not need to be modified.
@@ -48,13 +48,18 @@ public:
 	virtual TSubclassOf<URTSOrder> GetCurrentOrder() const;
 	virtual TArray<TSubclassOf<URTSOrder>> GetAllIssuedOrders() const;
 
-	virtual TArray<TSubclassOf<URTSProperty>> GetRTSProperties() const;
+	virtual TArray<TSubclassOf<URTSProperty>> GetRTSProperties(bool bIncludeNestedProperties = false) const;
 	virtual bool ContainsProperty(TSubclassOf<URTSProperty> InPropCheck) const;
+	virtual TArray<TSubclassOf<URTSProperty>> GetNestedPropertiesFor(TSubclassOf<URTSPropertyContainer> InPropertyContainer) const;
 
 	virtual IRTSObjectInterface* GetLeadRTSObject();
 
 	template<class T>
 	T* GetLeadRTSObject() { return Cast<T>(GetLeadRTSObject()); }
+
+public:
+	virtual UTexture* GetThumbnail(const UUserWidget * InDisplayContext = nullptr) const;
+	virtual FName GetUnitName() const;
 
 protected:
 	virtual void RegisterRTSObject() = 0;

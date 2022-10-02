@@ -8,6 +8,8 @@
 #include "RTFPSMode.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeManager.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
+#include "TeamResourceState.h"
 #include "RTFPSGameState.generated.h"
 
 
@@ -31,56 +33,36 @@ struct RTSTeamUnits
 
 
 UCLASS()
-class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
+class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResourceVendorInterface
 {
 	GENERATED_BODY()
 
 	public:
 		ARTFPSGameState(const FObjectInitializer & FOI);
-		int NumRTSPlayers(int Team_Index);
+
 		/*******************Unit Event Handling*****************/
 		virtual void RefreshAllUnits();
 		virtual void OnUnitDeath(IRTSObjectInterface* Unit);
 		virtual void HandlePlayerDeath(AFPSServerController * Controller);
-		virtual bool SpawnObjectFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData);
-		virtual void HandleStructureSpawn(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController * InvokedController = nullptr);
-		virtual void ApplyGlobalUpgrades(ARTSMinion * Minion) const;
-		virtual void ApplyPlayerUpgrades(ARTSMinion * PlayerPawn, AFPSPlayerState * InController) const;
 		/******************************************************/
 
-		virtual TArray<ARTSMinion *> GetAllMinionsOfTeam(int teamindex) const;
-		virtual TArray<ARTSStructure *> GetAllStructuresOfTeam(int teamindex) const;
-		
-		virtual TArray<TSubclassOf<AResource>> GetResourceTypes() const;
-		virtual TArray<FResourceUIData> GetMapResourceInfo() const;
-		virtual bool IsTeamResourceAvailable(int TeamID, TSubclassOf<AResource> ResourceClass, int requestedamount) const;
-		virtual bool IsTeamResourceAvailable(int TeamID, FReplicationResourceMap requestedamount) const;
-		virtual int GetTeamResourceValue(int TeamID, TSubclassOf<AResource> ResourceClass) const;
-		virtual bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, IRTSObjectInterface* Donar);
-
-	/********************Purchasing**********************/
+	/********************IResourceVendorInterface**********************/
 	public:
-		virtual bool PurchaseUnit(TSubclassOf<UObject> PurchaseClass, ARTSPlayerController* Purchaser);
-		virtual FReplicationResourceMap RefundUnit(TSubclassOf<UObject> RefundClass, ARTSPlayerController* Purchaser = nullptr);
-		virtual bool IsUnitPurchaseable(TSubclassOf<UObject> PurchaseClass, AController * Purchaser = nullptr) const;
-		virtual FReplicationResourceMap GetUnitPrice(TSubclassOf<UObject> PurchaseClass) const;
-		virtual bool PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface * Purchaser, IUpgradableInterface * ToApply) const;
+		virtual bool PurchaseUnit(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController = nullptr) override;
+		virtual FReplicationResourceMap RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer* ToRefund, AController* InstigatingController = nullptr) override;
+		virtual bool IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController = nullptr) const override;
+		virtual FReplicationResourceMap GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const override;
+	/***************************************************************/
 
-	protected:
-		virtual void UnpackUnitPriceMap(TMap<TSubclassOf<UObject>, FReplicationResourceMap> GameModePrices);
-	/*************************************************/
-
+		bool PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface* Purchaser, IUpgradableInterface* ToApply) const;
 
 
     public:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;
-		virtual void PlayerGameDataInit(APlayerState * Player) override;
+		virtual void PlayerGameDataInit(ADefaultPlayerState * Player) override;
 
 	protected:
 		virtual void InitializeResources(ARTFPSMode * GM);
-		virtual bool AddTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
-		virtual bool RemoveTeamResource(int TeamID, TSubclassOf<AResource> ResourceClass, int amount);
-		virtual bool RemoveTeamResource(int TeamID, TMap<TSubclassOf<AResource>, int> ResourceCosts);
 
 	public:
 		virtual void AddRTSObjectToTeam(IRTSObjectInterface * const InObject);
@@ -92,11 +74,9 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 		virtual const TArray<IRTSObjectInterface*>& GetRegisteredRTSObjects() const;
 
     protected:
-		virtual bool InitializeMapResourceInfo(TArray<TSubclassOf<AResource>> ResourceClasses);
-
-    protected:
 		virtual void PostInitializeComponents() override;
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+		virtual void ReceivedGameModeClass() override;
 	
 	/********************Upgrades**********************/
 	AUpgradeManager * UpgradeManager = nullptr;
@@ -105,22 +85,13 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState
 	/*************************************************/
 	protected:
 		UPROPERTY(Replicated)
-		TArray<FReplicationResourceMap> TeamResources;
-
-		UPROPERTY(Replicated)
-		TArray<TSubclassOf<UObject>> PurchasableUnits;
-
-		UPROPERTY(Replicated)
-		TArray<FReplicationResourceMap> UnitCosts;
-
-		UPROPERTY(Replicated)
 		TArray<FResourceUIData> MapResourceInfo;
-
-	private:
-		TArray<RTSTeamUnits> AllUnits;
+	
 
 		RTSTeamUnits InvalidUnits;
 
 	protected:
 		TArray<IRTSObjectInterface*> RTSObjects;
+
+		TMap<TSubclassOf<UObject>, FReplicationResourceMap> UnitBaseCosts;
 };

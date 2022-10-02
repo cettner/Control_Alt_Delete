@@ -6,7 +6,7 @@
 #include "RTS_Project/TeamMultiplayerGame/Game/GameArchitecture/DefaultMode.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSCamera.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
 #include "RTFPSMode.generated.h"
 
 
@@ -44,7 +44,7 @@ protected:
 	/********************RTS Initialization*********************/
 public:
 	TSubclassOf<ARTSCamera> GetDefaultRTSClass() const;
-	int GetStartingResources(TSubclassOf<AResource> ResourceClass) const;
+	FReplicationResourceMap GetStartingResources() const;
 	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetDefaultUnitCosts() const;
 	/***********************************************************/
@@ -59,7 +59,7 @@ protected:
 	
 	/********************RTS Initialization*********************/
 	UPROPERTY(EditDefaultsOnly, Category = "RTS Initialization")
-	int StartingResource = 100;
+	FReplicationResourceMap StartingResource;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "RTS Initialization")
 	TArray<TSubclassOf<AResource>> ResourceTypes;

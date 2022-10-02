@@ -14,6 +14,7 @@ ADefaultMode::ADefaultMode(const FObjectInitializer& ObjectInitializer)
 	GameStateClass = ADefaultGameState::StaticClass();
 	PlayerStateClass = ADefaultPlayerState::StaticClass();
 	HUDClass = ADefaultHUD::StaticClass();
+	TeamStateClass = ATeamState::StaticClass();
 	
 	TeamStartingPoints = TArray<TeamSpawnSelector>();
 	PlayerRegistry = TMap<TSharedPtr<const FUniqueNetId>, bool>();
@@ -33,33 +34,36 @@ void ADefaultMode::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	UWorld* World = GetWorld();
 
-	/*Load Lobby Data from GameInstance*/
+	/*Load Lobby Data from GameInstance, This will fail on opening of BP in the editor*/
 	if (!LoadServerData())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PreInitializeComponents] Failed to Load Server Data from Game Instance"));
+		UE_LOG(LogTemp, Warning, TEXT("[DEFAULTGAMEMODE::PostInitializeComponents] Failed to Load Server Data from Game Instance"));
 	}
-
-	ADefaultGameState* GS = GetGameState<ADefaultGameState>();
-	if (GS == nullptr) return;
-
-	/*Create a Set of spawn points for each team*/
-	for (int i = 0; i < NumTeams; i++)
+	else
 	{
-		TeamSpawnSelector newteam;
-		TeamStartingPoints.Emplace(newteam);
-	}
+		ADefaultGameState* GS = GetGameState<ADefaultGameState>();
+		if (GS == nullptr) return;
 
-	GS->TeamInitialize(this);
-
-	/*Find PlayerStarts For each team and add them*/
-	for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
-	{
-		ATeamPlayerStart* Start = *It;
-		if (GS->IsTeamValid(Start->teamid))
+		/*Create a Set of spawn points for each team*/
+		for (int i = 0; i < NumTeams; i++)
 		{
-			TeamStartingPoints[Start->teamid].Add(Start);
+			TeamSpawnSelector newteam;
+			TeamStartingPoints.Emplace(newteam);
+		}
+
+		GS->TeamInitialize(this);
+
+		/*Find PlayerStarts For each team and add them*/
+		for (TActorIterator<ATeamPlayerStart> It(World); It; ++It)
+		{
+			ATeamPlayerStart* Start = *It;
+			if (GS->IsTeamValid(Start->teamid))
+			{
+				TeamStartingPoints[Start->teamid].Add(Start);
+			}
 		}
 	}
+
 }
 
 AActor * ADefaultMode::FindPlayerStart_Implementation(AController * Player, const FString & IncomingName)
@@ -117,7 +121,7 @@ void ADefaultMode::PostLogin(APlayerController* NewPlayer)
 	}
 
 	ADefaultGameState * gs = GetGameState<ADefaultGameState>();
-	gs->PlayerGameDataInit(NewPlayer->PlayerState);
+	gs->PlayerGameDataInit(NewPlayer->GetPlayerState<ADefaultPlayerState>());
 }
 
 void ADefaultMode::StartMatch()
@@ -265,9 +269,6 @@ bool ADefaultMode::CheckPlayerRegistry()
 
 	return(ballplayersregistered);
 }
-
-
-
 
 void ADefaultMode::InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController)
 {

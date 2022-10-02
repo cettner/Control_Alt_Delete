@@ -5,7 +5,7 @@
 #include "DrawDebugHelpers.h"
 #include "Components/ShapeComponent.h"
 
-#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
+#include "Interfaces/ResourceGatherer.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
@@ -40,7 +40,7 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 				}
 
 				ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-				gs->ScoreResource(resources[i].Key,resources[i].Value, rtsobject);
+				//gs->ScoreResource(resources[i].Key,resources[i].Value, rtsobject);
 				gatherer->RemoveResource(resources[i].Key, resources[i].Value);
 			}
 		}

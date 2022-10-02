@@ -94,7 +94,7 @@ TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAllIssuedOrders() const
 	return TArray<TSubclassOf<URTSOrder>>();
 }
 
-TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetRTSProperties() const
+TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetRTSProperties(bool bIncludeNestedProperties) const
 {
 	return TArray<TSubclassOf<URTSProperty>>();
 }
@@ -102,6 +102,21 @@ TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetRTSProperties() const
 bool IRTSObjectInterface::ContainsProperty(TSubclassOf<URTSProperty> InPropCheck) const
 {
 	return false;
+}
+
+TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetNestedPropertiesFor(TSubclassOf<URTSPropertyContainer> InPropertyContainer) const
+{
+	return TArray<TSubclassOf<URTSProperty>>();
+}
+
+UTexture* IRTSObjectInterface::GetThumbnail(const UUserWidget* InDisplayContext) const
+{
+	return nullptr;
+}
+
+FName IRTSObjectInterface::GetUnitName() const
+{
+	return FName();
 }
 
 void IRTSObjectInterface::IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass, const bool InbIsQueuedOrder)

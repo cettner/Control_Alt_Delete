@@ -6,6 +6,7 @@
 #include "GameFramework/GameState.h"
 #include "DefaultPlayerState.h"
 #include "DefaultMode.h"
+#include "TeamState.h"
 #include "DefaultGameState.generated.h"
 
 /**
@@ -16,18 +17,19 @@ class RTS_PROJECT_API ADefaultGameState : public AGameState
 {
 	GENERATED_BODY()
 	
-
+friend class ATeamState;
 
 public:
 	virtual bool TeamInitialize(ADefaultMode * GameMode);
-	virtual void PlayerGameDataInit(APlayerState * Player);
-	int AssignAvailableTeam(APlayerState * New_Player);
-	int AssignBalancedTeam(APlayerState * New_Player);
-	bool SwapTeam(APlayerState * Player, int New_Team);
-	int HasTeam(APlayerState * Player) const;
+	virtual void PlayerGameDataInit(ADefaultPlayerState * Player);
+	ATeamState* AssignTeam(ADefaultPlayerState* Player, const int teamid);
+	ATeamState* AssignAvailableTeam(ADefaultPlayerState * New_Player);
+	ATeamState* AssignBalancedTeam(ADefaultPlayerState* New_Player);
+	bool SwapTeam(ADefaultPlayerState* Player, int New_Team);
+	ATeamState * GetTeamForPlayer(ADefaultPlayerState* Player) const;
 	bool IsTeamValid(int team_id) const;
 	bool IsTeamFull(int Team_Index) const;
-	bool LeaveTeam(APlayerState * Player);
+	bool LeaveTeam(ADefaultPlayerState* Player);
 
 
 protected:
@@ -35,18 +37,44 @@ protected:
 	void SetNumTeams(int8 InNumTeams);
 
 protected:
+	virtual void OnLocalTeamStateRecieved(ATeamState* InState);
+
+public:
+	virtual ATeamState* GetTeamState(const int InTeamId) const;
+	
+	template<class T>
+	T* GetTeamState(const int InTeamID) const
+	{
+		return Cast<T>(GetTeamState(InTeamID));
+	}
+	
+	virtual ATeamState* GetDefaultTeamState() const;
+	
+	template<class T>
+	T* GetDefaultTeamState() const
+	{
+		return Cast<T>(GetDefaultTeamState());
+	}
+
+
+protected:
 	virtual void OnRep_ReplicatedHasBegunPlay() override;
 	virtual void ReceivedGameModeClass() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
+
+
+protected:
 	bool initialized = false;
-	TArray<TArray<APlayerState *>> Teams;
+
+	TArray<ATeamState*> TeamStates;
+
+protected:
+	UPROPERTY(Replicated)
+	int8 MaxTeamSize = 0xFFU;
 
 	UPROPERTY(Replicated)
-	int8 MaxTeamSize = -1;
-
-	UPROPERTY(Replicated)
-	int8 NumTeams = -1;
+	int8 NumTeams = 0U;
 
 };

@@ -33,18 +33,19 @@ bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
 	/*If the bound structures Queue is already full or the item isnt unlocked yet*/
 	if (Structure->IsQueueFull() || !BoundQueueData.bIsEnabled) return(false);
 
-	bool CanTeamAfford = true;
+	bool CanTeamAfford = false;
 
 	UWorld* World = GetWorld();
 	if (World == nullptr) return(false);
 	
 	ARTFPSGameState * GS = World->GetGameState<ARTFPSGameState>();
-	ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
-	if (GS == nullptr || PC == nullptr) return(false);
+	if (GS == nullptr) return(false);
+
+	const ATeamResourceState * ts = GS->GetDefaultTeamState<ATeamResourceState>();
 
 	/*For Each Resource Type needed determine if the team has enough*/
-	FReplicationResourceMap cost = GS->GetUnitPrice(BoundQueueData.SpawnClass);
-	CanTeamAfford &= GS->IsTeamResourceAvailable(PC->GetTeamID(), cost);
+	const FReplicationResourceMap cost = GS->GetDefaultUnitPrice(BoundQueueData.SpawnClass);
+	CanTeamAfford = ts->HasResource(cost);
 
 	return CanTeamAfford;
 }

@@ -144,15 +144,7 @@ bool ARTSPlayerController::ServerPurchaseRTSObject_Validate(ARTSStructure * Spaw
 
 void ARTSPlayerController::ServerPurchaseRTSObject_Implementation(ARTSStructure * SpawningStructure, TSubclassOf<UObject> RequestedClass)
 {
-	UWorld* world = GetWorld();
-	check(world);
-
-	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
-
-	if (gs && gs->PurchaseUnit(RequestedClass, this))
-	{
-		SpawningStructure->QueueActor(RequestedClass, this);
-	}
+	//SpawningStructure->PurchaseUnit()
 }
 
 bool ARTSPlayerController::ServerPurchaseStructure_Validate(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation)
@@ -167,8 +159,8 @@ void ARTSPlayerController::ServerPurchaseStructure_Implementation(TSubclassOf<AA
 
 	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
 
-	if (gs && gs->PurchaseUnit(RequestedClass,this))
-	{
-		gs->HandleStructureSpawn(RequestedClass, BuildLocation, this);
-	}
+	//if (gs && gs->PurchaseUnit(RequestedClass,this))
+	//{
+	//	gs->HandleStructureSpawn(RequestedClass, BuildLocation, this);
+	//}
 }

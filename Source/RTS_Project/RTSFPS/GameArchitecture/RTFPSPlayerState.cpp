@@ -17,19 +17,8 @@ void ARTFPSPlayerState::SetIsRTSPlayer(bool isrts)
 	isRtsPlayer = isrts;
 }
 
-void ARTFPSPlayerState::SetTeamStructures(TArray<ARTSStructure*>& InStructures)
-{
-	TeamStructures = InStructures;
-}
-
-TArray<ARTSStructure *> ARTFPSPlayerState::GetTeamStructures() const
-{
-	return TeamStructures;
-}
-
 void ARTFPSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(ARTFPSPlayerState, isRtsPlayer, COND_InitialOrOwner);
-	DOREPLIFETIME(ARTFPSPlayerState,TeamStructures)
 }

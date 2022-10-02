@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../AbilityWeapon.h"
-#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
 #include "MageHands.generated.h"
 
 /**

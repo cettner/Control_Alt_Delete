@@ -99,7 +99,7 @@ bool ARTSGridPlacementCamera::CanPlaceActor(TSubclassOf<AActor> RealActorClass) 
 	ADefaultPlayerController * pc = GetController<ADefaultPlayerController>();
 	check(pc)
 
-	retval = gs->IsTeamResourceAvailable(pc->GetTeamID(), gs->GetUnitPrice(RealActorClass));
+	retval = true;
 
 
 	return retval;

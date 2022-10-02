@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "RTSBUILDER.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSMode.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/Builder/AI/BuilderAIController.h"

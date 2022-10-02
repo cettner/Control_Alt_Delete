@@ -12,51 +12,84 @@ bool ADefaultGameState::TeamInitialize(ADefaultMode * GameMode)
 		check(GameMode);
 		SetMaxTeamSize(GameMode->GetTeamSize());
 		SetNumTeams(GameMode->GetNumTeams());
+		const TSubclassOf<ATeamState> teamstateclass = GameMode->GetTeamStateClass();
+		UWorld * world = GetWorld();
 
 		for (int i = 0; i < GameMode->GetNumTeams(); i++)
 		{
-			TArray<APlayerState *> newteam;
-			Teams.Emplace(newteam);
+			ATeamState* newteam = world->SpawnActor<ATeamState>(teamstateclass);
+			newteam->SetTeam(i);
+			newteam->LoadServerDefaults(GameMode);
+			TeamStates.Emplace(newteam);
 		}
-		initialized = GameMode->GetNumTeams() == Teams.Num();
+		initialized = GameMode->GetNumTeams() == TeamStates.Num();
 	}
 
 	return(initialized);
 }
 
-int ADefaultGameState::HasTeam(APlayerState * Player) const
+ATeamState * ADefaultGameState::GetTeamForPlayer(ADefaultPlayerState* Player) const
 {
-	bool found = false;
-	int retval = -1;
+	ATeamState* retval = nullptr;
 
-	if (initialized)
+	if (!HasAuthority())
 	{
-		for (int i = 0; i < Teams.Num(); i++)
+		ATeamState* defaultteam = GetDefaultTeamState();
+		if (IsValid(defaultteam) && defaultteam->IsPlayerOnTeam(Player))
 		{
-			found = Teams[i].Find(Player, retval);
+			retval = defaultteam;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < TeamStates.Num(); i++)
+		{
+			const bool found = TeamStates[i]->IsPlayerOnTeam(Player);
 
-			if (found)
+			if (found == true)
 			{
+				retval = TeamStates[i];
 				break;
 			}
 		}
 	}
 
-	if (!found)
-	{
-		retval = -1;
-	}
-
 	return (retval);
+}
+
+ATeamState* ADefaultGameState::GetDefaultTeamState() const
+{
+	ATeamState* retval = nullptr;
+
+	const UWorld* world = GetWorld();
+	const ADefaultPlayerController* pc = world->GetFirstPlayerController<ADefaultPlayerController>();
+
+	if (pc == nullptr) return retval;
+	const int teamid = pc->GetTeamID();
+
+	return GetTeamState(teamid);
+}
+
+ATeamState* ADefaultGameState::GetTeamState(const int teamid) const
+{
+	ATeamState* retval = nullptr;
+	for (int i = 0; i < TeamStates.Num(); i++)
+	{
+		if (TeamStates[i]->GetTeam() == teamid)
+		{
+			retval = TeamStates[i];
+		}
+	}
+	return retval;
 }
 
 bool ADefaultGameState::IsTeamFull(int Team_Index) const
 {
 	bool retval = true;
 
-	if (IsTeamValid(Team_Index) && initialized)
+	if (IsTeamValid(Team_Index))
 	{
-		retval = Teams[Team_Index].Num() >= MaxTeamSize;
+		retval = TeamStates[Team_Index]->GetCurrentPlayerNum() >= MaxTeamSize;
 	}
 
 	return (retval);
@@ -70,6 +103,10 @@ void ADefaultGameState::SetMaxTeamSize(int8 InTeamSize)
 void ADefaultGameState::SetNumTeams(int8 InNumTeams)
 {
 	NumTeams = InNumTeams;
+}
+
+void ADefaultGameState::OnLocalTeamStateRecieved(ATeamState* InState)
+{
 }
 
 void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
@@ -101,61 +138,68 @@ bool ADefaultGameState::IsTeamValid(int Team_Index) const
 	return((Team_Index > -1) && (Team_Index < MaxTeamSize));
 }
 
-void ADefaultGameState::PlayerGameDataInit(APlayerState * Player)
+void ADefaultGameState::PlayerGameDataInit(ADefaultPlayerState* Player)
 {
 	/*Pure Virtual Function, Map related data to populate the playerstate on login goes here*/
 }
 
-int ADefaultGameState::AssignAvailableTeam(APlayerState * New_Player)
+ATeamState* ADefaultGameState::AssignTeam(ADefaultPlayerState* Player, const int InRequestedTeamId)
 {
-	int retval = HasTeam(New_Player);
-
-	if (retval > -1)
+	ATeamState* retval = nullptr;
+	if (IsTeamValid(InRequestedTeamId)  && HasAuthority())
 	{
-
+		const bool success = TeamStates[InRequestedTeamId]->AddPlayer(Player);
+		if (success == true)
+		{
+			retval = TeamStates[InRequestedTeamId];
+		}
 	}
-	else
+	return retval;
+}
+
+ATeamState* ADefaultGameState::AssignAvailableTeam(ADefaultPlayerState* New_Player)
+{
+	ATeamState * foundteam = GetTeamForPlayer(New_Player);
+
+	if( foundteam == nullptr)
 	{
 		for (int i = 0; i < NumTeams; i++)
 		{
-			if (Teams[i].Num() < MaxTeamSize)
+			if (TeamStates[i]->GetCurrentPlayerNum() < MaxTeamSize)
 			{
-				Teams[i].AddUnique(New_Player);
-				retval = i;
+				TeamStates[i]->AddPlayer(New_Player);
+				foundteam = TeamStates[i];
 				break;
 			}
 		}
 	}
 
-	return(retval);
+	return(foundteam);
 }
 
-int ADefaultGameState::AssignBalancedTeam(APlayerState * New_Player)
+ATeamState* ADefaultGameState::AssignBalancedTeam(ADefaultPlayerState * InNewPlayer)
 {
-	int retval = HasTeam(New_Player);
+	ATeamState* retval = GetTeamForPlayer(InNewPlayer);
 
-	if(retval > -1)
+	if(retval == nullptr)
 	{
-
-	}
-	else
-	{
-		int smallest_team_index = -1;
-		int smallest_team_size = MaxTeamSize;
-
+		int smallestteamindex = -1;
+		int smallestteamsize = MaxTeamSize + 1;
+		/*Find the smallest tean size*/
 		for (int i = 0; i < NumTeams; i++)
 		{
-			if (Teams[i].Num() < smallest_team_size)
+			const int32 currentteamsize = TeamStates[i]->GetCurrentPlayerNum();
+			if (currentteamsize < smallestteamsize)
 			{
-				smallest_team_index = i;
-				smallest_team_size = Teams[i].Num();
+				smallestteamindex = i;
+				smallestteamsize = currentteamsize;
 			}
 		}
 
-		if (smallest_team_size < MaxTeamSize)
+		if (smallestteamsize <= MaxTeamSize)
 		{
-			Teams[smallest_team_index].AddUnique(New_Player);
-			retval = smallest_team_index;
+			TeamStates[smallestteamindex]->AddPlayer(InNewPlayer);
+			retval = TeamStates[smallestteamindex];
 		}
 	}
 	

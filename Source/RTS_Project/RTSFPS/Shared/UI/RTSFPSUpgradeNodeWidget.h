@@ -5,8 +5,7 @@
 #include "CoreMinimal.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UI/UpgradeNodeWidget.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
-#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
 #include "RTSFPSUpgradeNodeWidget.generated.h"
 
 /**

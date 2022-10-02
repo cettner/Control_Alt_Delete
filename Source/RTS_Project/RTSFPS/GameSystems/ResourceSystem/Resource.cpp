@@ -24,9 +24,6 @@ AResource::AResource() : Super()
 	SelectionComp->SetDetection(MeshComp);
 	SelectionComp->SetupAttachment(MeshComp);
 	SetDeselected();
-
-	UIData.ResourceName = "Default Resource";
-	UIData.Key = GetClass();
 }
 
 uint32 AResource::Mine(uint32 AmountToMine)
@@ -48,11 +45,6 @@ uint32 AResource::Mine(uint32 AmountToMine)
 
 		return(retval);
 	}
-}
-
-FResourceUIData AResource::GetUIData() const
-{
-	return UIData;
 }
 
 uint32 AResource::GetResourceWeight() const
@@ -111,6 +103,16 @@ void AResource::UnRegisterRTSObject()
 	const UWorld* world = GetWorld();
 	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
 	gs->UnRegisterRTSObject(this);
+}
+
+UTexture* AResource::GetThumbnail(const UUserWidget* InDisplayContext) const
+{
+	return Thumbnail;
+}
+
+FName AResource::GetUnitName() const
+{
+	return ResourceName;
 }
 
 void AResource::OnResourcesDepleted()

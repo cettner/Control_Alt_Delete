@@ -3,7 +3,7 @@
 #include "BT_Can_Builder_Carry_More.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
 
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"

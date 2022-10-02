@@ -144,6 +144,18 @@ void ARTSStructure::OnConstructionComplete()
 	bISConstructed = true;
 }
 
+TArray<TSubclassOf<UObject>> ARTSStructure::GetPurchasableUnits() const
+{
+	return TArray<TSubclassOf<UObject>>();
+}
+
+TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTSStructure::GetAllDefaultUnitPrices() const
+{
+	UWorld* world = GetWorld();
+	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+	return gs->GetAllDefaultUnitPrices();
+}
+
 void ARTSStructure::OnDeath()
 {
 	if (HasAuthority())
@@ -296,7 +308,7 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 
 	check(gs);
 
-	return 	gs->ScoreResource(ResourceType, Amount,this);
+	return  true;	//gs->AddTeamResource(ResourceType, Amount,this);
 }
 
 FTransform ARTSStructure::FindActorSpawnLocation(FVector InBoxExtent) const
@@ -509,12 +521,11 @@ void ARTSStructure::SpawnUnit(FStructureQueueData QueueData)
 	#else
 	const UWorld * world = GetWorld();
 	#endif // WITH_EDITOR
-	if (world == nullptr) return;
 
-	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
-	if (gs == nullptr) return;
+	const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	ATeamResourceState * ts = gs->GetTeamState<ATeamResourceState>(GetTeam());
 
-	gs->SpawnObjectFromStructure(this, QueueData);
+	ts->SpawnUnitFromStructure(this, QueueData);
 }
 
 void ARTSStructure::CancelSpawn()

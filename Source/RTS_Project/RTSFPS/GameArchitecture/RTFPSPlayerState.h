@@ -18,17 +18,11 @@ class RTS_PROJECT_API ARTFPSPlayerState : public ADefaultPlayerState
 public:
 	bool IsRTSPlayer() const;
 	void SetIsRTSPlayer(bool isrts);
-	void SetTeamStructures(TArray<ARTSStructure *>& InStructures);
-	TArray<ARTSStructure *> GetTeamStructures() const;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 protected:
 	UPROPERTY(Replicated)
-	bool isRtsPlayer = false;
-
-	UPROPERTY(Replicated)
-	TArray<ARTSStructure*> TeamStructures;
-	
+	bool isRtsPlayer = false;	
 };

@@ -22,8 +22,7 @@ struct FResourceUIData
 	UPROPERTY(EditDefaultsOnly)
 	UTexture* ResourceImage = nullptr;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AResource> Key = nullptr;
+
 };
 
 USTRUCT()
@@ -120,7 +119,7 @@ public:
 	}
 
 	/*Allows Pair Iteration*/
-	TPair<TSubclassOf<AResource>, int > operator[](int Index)
+	TPair<TSubclassOf<AResource>, int > operator[](int Index) const
 	{
 		return TPair<TSubclassOf<AResource>, int >(Keys[Index], Values[Index]);
 	}
@@ -142,7 +141,6 @@ public:
 	// Sets default values for this actor's properties
 	AResource();
 	uint32 Mine(uint32 amount_to_mine);
-	FResourceUIData GetUIData() const;
 	uint32 GetResourceWeight() const;
 
 	/*Helper Static Function for purchasing Things With Resources*/
@@ -154,11 +152,12 @@ public:
 	virtual void SetDeselected() override;
 	virtual void RegisterRTSObject() override;
 	virtual void UnRegisterRTSObject() override;
+	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
+	virtual FName GetUnitName() const override;
+	/*******************************/
 
 protected:
 	virtual void OnResourcesDepleted();
-
-
 protected:
 	/*AActor Override*/
 	virtual void BeginPlay() override;
@@ -182,5 +181,8 @@ protected:
 	uint32 ResourceWeight = 1U;
 
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	FResourceUIData UIData;
+	UTexture* Thumbnail = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	FName ResourceName = "Default Resource";
 };

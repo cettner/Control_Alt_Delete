@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BT_IsResource.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
 
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"

@@ -50,10 +50,10 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	int32 NumRows = 3;
+	int32 NumRows = 4;
 
 	UPROPERTY(EditDefaultsOnly)
-	int32 NumColumns = 8;
+	int32 NumColumns = 4;
 
 	const int32 MaxSlots = NumRows * NumColumns;
 	

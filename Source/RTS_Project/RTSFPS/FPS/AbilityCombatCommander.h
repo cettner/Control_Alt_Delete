@@ -6,7 +6,7 @@
 #include "CombatCommander.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
-#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
 #include "AbilityCombatCommander.generated.h"
 
 /**

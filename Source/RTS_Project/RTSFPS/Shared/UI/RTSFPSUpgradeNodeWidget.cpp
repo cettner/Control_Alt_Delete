@@ -30,7 +30,7 @@ FReplicationResourceMap URTSFPSUpgradeNodeWidget::GetUpgradeResourceCost() const
 	FReplicationResourceMap retval = FReplicationResourceMap();
 	const UWorld * world = GetWorld();
 	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-	retval = gs->GetUnitPrice(UpgradeToApply);
+	retval = gs->GetDefaultUnitPrice(UpgradeToApply);
 
 	return retval;
 }

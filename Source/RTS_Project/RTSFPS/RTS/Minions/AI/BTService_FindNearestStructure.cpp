@@ -10,15 +10,14 @@
 
 void UBTService_FindNearestStructure::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	AAIController* Controller = OwnerComp.GetAIOwner();
-	UWorld* World = GetWorld();
-	if (Controller == nullptr || World == nullptr) return;
+	const AAIController* Controller = OwnerComp.GetAIOwner();
+	const UWorld* World = GetWorld();
 
 	ARTSMinion * Minion = Controller->GetPawn<ARTSMinion>();
 	ARTFPSGameState* GS = World->GetGameState<ARTFPSGameState>();
-	if (Minion == nullptr || GS == nullptr) return;
+	ATeamResourceState* ts = GS->GetTeamState<ATeamResourceState>(Minion->GetTeam());
 
-	TArray<ARTSStructure *> teamstructures =  GS->GetAllStructuresOfTeam(Minion->GetTeam());
+	TArray<ARTSStructure *> teamstructures =  ts->GetStructures();
 
 	ARTSStructure* closeststructure = GetBestStructure(Minion,teamstructures);
 

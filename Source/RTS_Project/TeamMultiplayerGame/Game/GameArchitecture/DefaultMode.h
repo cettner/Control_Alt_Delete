@@ -9,9 +9,10 @@
 #include "../../LobbyGameInstance.h"
 #include "DefaultMode.generated.h"
 
-/*
- * 
- */
+
+
+/*Forward Declaration*/
+class ATeamState;
 
 /*Helper Struct*/
 struct TeamSpawnSelector
@@ -60,8 +61,9 @@ class RTS_PROJECT_API ADefaultMode : public AGameMode
 public:
 	ADefaultMode(const FObjectInitializer& ObjectInitializer);
 	virtual bool RegisterPlayerData(ADefaultPlayerController * RegisteringPlayer, FPlayerSettings settings);
-	int GetNumTeams() { return (NumTeams); }
-	int GetTeamSize() { return (TeamSize); }
+	int GetNumTeams() const { return (NumTeams); }
+	int GetTeamSize() const { return (TeamSize); }
+	TSubclassOf<ATeamState> GetTeamStateClass() const { return TeamStateClass; }
 
 public:
 	virtual void EndMatch() override;
@@ -91,6 +93,9 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	float TimeToReturnToLobby = 10.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ATeamState>  TeamStateClass;
 /************************************/
 
 /*****Loaded from Game Instance******/

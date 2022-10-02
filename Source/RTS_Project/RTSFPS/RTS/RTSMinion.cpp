@@ -116,6 +116,16 @@ bool ARTSMinion::IsBoxSelectable() const
 	return bIsBoxSelectable;
 }
 
+UTexture* ARTSMinion::GetThumbnail(const UUserWidget* InDisplayContext) const
+{
+	return Thumbnail;
+}
+
+FName ARTSMinion::GetUnitName() const
+{
+	return MinionName;
+}
+
 void ARTSMinion::RegisterRTSObject()
 {
 	const UWorld * world = GetWorld();

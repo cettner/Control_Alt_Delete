@@ -6,20 +6,19 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
-#include "TeamResourceWidget.generated.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
+#include "TeamResourceSlotWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API UTeamResourceWidget : public UUserWidget
+class RTS_PROJECT_API UTeamResourceSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void Setup(FResourceUIData UIData);
-
+	virtual void Setup(TSubclassOf<AResource> InResourceClass);
 
 protected:
 	UFUNCTION()
@@ -33,6 +32,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ResourceValueText;
 
-
-	FResourceUIData SetupData;
+protected:
+	TSubclassOf<AResource> DisplayResourceClass = nullptr;
 };

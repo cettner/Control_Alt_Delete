@@ -9,7 +9,7 @@
 #include "RTS_Project/RTSFPS/Shared/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
-#include "RTS_Project/RTSFPS/GameObjects/Resources/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
 #include "Interfaces/BuildableInterface.h"
 
@@ -58,7 +58,7 @@ struct FStructureSpawnData
 class UStructureSpawnQueueWidget;
 
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public AGridClaimingActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface
+class RTS_PROJECT_API ARTSStructure : public AGridClaimingActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface, public IResourceVendorInterface
 {
 	GENERATED_BODY()
 	
@@ -97,6 +97,12 @@ public:
 
 protected:
 	virtual void OnConstructionComplete() override;
+	/************************************************************/
+
+	/***********IResourceVendor Interface Overrides**************/
+	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnits() const override;
+	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+
 	/************************************************************/
 protected:
 	UFUNCTION()

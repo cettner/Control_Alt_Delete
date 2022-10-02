@@ -11,7 +11,8 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/PreGame/RTSFPSLobbyGameState.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
-#include "RTS_Project/RTSFPS/Shared/Interfaces/ResourceGatherer.h"
+#include "TeamResourceState.h"
+#include "RTS_Project/RTSFPS/Gamesystems/ResourceSystem/Interfaces/ResourceGatherer.h"
 
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
@@ -24,8 +25,10 @@ ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	PlayerControllerClass = AFPSServerController::StaticClass();
 	HUDClass = ARTSHUD::StaticClass();
 	PlayerStateClass = AFPSPlayerState::StaticClass();
+	TeamStateClass = ATeamResourceState::StaticClass();
 	DefaultPawnClass = nullptr;
 	ResourceTypes = TArray<TSubclassOf<AResource>>();
+	StartingResource = FReplicationResourceMap();
 
 }
 
@@ -184,7 +187,7 @@ TSubclassOf<ARTSCamera> ARTFPSMode::GetDefaultRTSClass() const
 	return DefaultRTSClass;
 }
 
-int ARTFPSMode::GetStartingResources(TSubclassOf<AResource> ResourceClass) const
+FReplicationResourceMap ARTFPSMode::GetStartingResources() const
 {
 	return StartingResource;
 }

@@ -80,6 +80,10 @@ public:
 
 	virtual bool IsBoxSelectable() const override;
 
+	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
+	
+	virtual FName GetUnitName() const override;
+
 protected:
 	virtual void RegisterRTSObject() override;
 	virtual void UnRegisterRTSObject() override;
@@ -103,12 +107,6 @@ protected:
 /**************************************************/
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UHealthComponent * Health;
-
-	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	int TeamID = -1;
-
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	UBehaviorTree * RTSBehavior;
 
@@ -118,8 +116,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Selection)
 	UDecalSelectionComponent * Selection = nullptr;
 
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GamePlay)
+	UHealthComponent* Health;
+
+	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, Category = Gameplay)
+	int TeamID = -1;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	UTexture* Thumbnail = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	FName MinionName = "Default Minion Name";
+
+protected:
 	UPROPERTY(Replicated)
-	ACommander * Cmdr;
+	ACommander * Cmdr = nullptr;
 
 protected:
 	bool bAreComponentsReadyforUpgrades = false;

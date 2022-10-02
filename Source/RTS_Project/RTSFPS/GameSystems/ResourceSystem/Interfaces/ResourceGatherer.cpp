@@ -15,6 +15,40 @@ bool IResourceGatherer::RemoveResource(TSubclassOf<AResource> ResourceClass, int
 	return false;
 }
 
+void IResourceGatherer::AddResource(const FReplicationResourceMap InResourceMap)
+{
+	for (int i = 0; i < InResourceMap.Num(); i++)
+	{
+		
+		AddResource(InResourceMap[i].Key, InResourceMap[i].Value);
+	}
+}
+
+bool IResourceGatherer::RemoveResource(const FReplicationResourceMap InResourceMap)
+{
+	bool retval = true;
+	for (int i = 0; i < InResourceMap.Num(); i++)
+	{
+		retval &= RemoveResource(InResourceMap[i].Key, InResourceMap[i].Value);
+	}
+	return retval;
+}
+
+bool IResourceGatherer::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
+{
+	return false;
+}
+
+bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap) const
+{
+	bool retval = InResourceMap.Num() > 0;
+	for (int i = 0; i < InResourceMap.Num(); i++)
+	{
+		retval &= HasResource(InResourceMap[i].Key, static_cast<uint32>(InResourceMap[i].Value));
+	}
+
+	return retval;
+}
 
 uint32 IResourceGatherer::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
 {
