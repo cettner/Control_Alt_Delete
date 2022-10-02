@@ -7,6 +7,7 @@
 
 void UJoinSessionInfoWidget::Setup(const FOnlineSessionSearchResult InSearchResult, int32 InIndex)
 {
+	Index = InIndex;
 	const FName ServerNameKey = "ServerName";
 	/*Required Binding*/
 	FString outstring = "NULL";
@@ -45,6 +46,11 @@ void UJoinSessionInfoWidget::Setup(const FOnlineSessionSearchResult InSearchResu
 	{
 		const FText pingtext = FText::FromString(FString::FromInt(InSearchResult.PingInMs));
 		PingTextBlock->SetText(pingtext);
+	}
+
+	if (IsValid(SelectServerButton))
+	{
+		SelectServerButton->OnClicked.AddDynamic(this, &UJoinSessionInfoWidget::OnSelectServerButtonPressed);
 	}
 }
 

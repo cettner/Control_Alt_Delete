@@ -23,18 +23,6 @@ void ATeamResourceState::OnRep_TeamResources()
 {
 }
 
-bool ATeamResourceState::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
-{
-	bool retval = false;
-	const ADefaultPlayerController* pc = Cast<ADefaultPlayerController>(RealViewer);
-	
-	if (pc != nullptr)
-	{
-		retval = (TeamID == pc->GetTeamID()) && (TeamID != -1);
-	}
-	return retval;
-}
-
 void ATeamResourceState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

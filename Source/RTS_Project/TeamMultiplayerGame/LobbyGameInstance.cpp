@@ -394,7 +394,7 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 	}
 
 	SearchResultsReadyDelegate.ExecuteIfBound(broadcast);
-	SessionSearch.Reset();
+	//SessionSearch.Reset();
 }
 
 void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)

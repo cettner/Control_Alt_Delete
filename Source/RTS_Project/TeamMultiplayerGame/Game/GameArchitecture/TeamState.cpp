@@ -28,7 +28,7 @@ void ATeamState::OnRep_TeamID()
 
 bool ATeamState::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
 {
-	bool retval = false;
+	bool retval = Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 	const ADefaultPlayerController* pc = Cast<ADefaultPlayerController>(RealViewer);
 	
 	if (pc != nullptr)
