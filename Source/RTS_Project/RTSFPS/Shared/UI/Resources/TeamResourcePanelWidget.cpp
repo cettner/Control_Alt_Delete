@@ -10,9 +10,10 @@ bool UTeamResourcePanelWidget::Initialize()
 
 	if (ResourcePanel != nullptr)
 	{
-		UWorld* World = GetWorld();
+		const UWorld* world = GetWorld();
+		if (world == nullptr) return false;
 
-		ARTFPSGameState* gs = World->GetGameState<ARTFPSGameState>();
+		ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
 		if (gs != nullptr)
 		{
 			ATeamResourceState* tr = gs->GetDefaultTeamState<ATeamResourceState>();

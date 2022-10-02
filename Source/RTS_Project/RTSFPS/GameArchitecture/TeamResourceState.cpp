@@ -345,6 +345,10 @@ void ATeamResourceState::AddResource(TSubclassOf<AResource> ResourceClass, int a
 		TeamResources.Emplace(ResourceClass, newval);
 		OnRep_TeamResources();
 	}
+	else
+	{
+		TeamResources.Emplace(ResourceClass, amount);
+	}
 }
 
 bool ATeamResourceState::RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount)

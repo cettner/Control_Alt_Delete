@@ -13,31 +13,39 @@ void UTeamResourceSlotWidget::Setup(TSubclassOf<AResource> InResourceClass)
 		ResourceValueText->TextDelegate.BindUFunction(this, "UpdateCurrentResourceValueText");
 	}
 
-	if (IsValid(ResourceNameText) && (DisplayResourceClass != nullptr))
+	if (DisplayResourceClass != nullptr)
 	{
 		const AResource* resourcecdo = DisplayResourceClass->GetDefaultObject<AResource>();
-		const FName resourcename = resourcecdo->GetUnitName();
-		ResourceNameText->Text = FText::FromName(resourcename);
+		ResourceName = resourcecdo->GetUnitName();
 	}
 
 }
 
 FText UTeamResourceSlotWidget::UpdateCurrentResourceValueText()
 {
-	FText Text = FText::FromString(FString("Error"));
+	FText retval = FText::FromString(FString("Error"));
 	UWorld* World = GetWorld();
 
-	if (World == nullptr) return(Text);
+	if (World == nullptr) return(retval);
 
 	ARTFPSGameState * gs = World->GetGameState<ARTFPSGameState>();
-	if (gs == nullptr) return(Text);
+	if (gs == nullptr) return(retval);
 
 	ATeamResourceState* tr = gs->GetDefaultTeamState<ATeamResourceState>();
-	if (tr == nullptr) return(Text);
+	if (tr == nullptr) return(retval);
 
-	int retval = tr->GetHeldResource(DisplayResourceClass);
+	const int resourceval = tr->GetHeldResource(DisplayResourceClass);
 
-	Text = FText::FromString(FString::FromInt(retval));
 
-	return Text;
+	
+	if (bIncludeResourceName == true)
+	{
+		retval = FText::FromString(ResourceName.ToString() + " : " + FString::FromInt(resourceval));
+	}
+	else
+	{
+		retval = FText::FromString(FString::FromInt(resourceval));
+	}
+
+	return retval;
 }

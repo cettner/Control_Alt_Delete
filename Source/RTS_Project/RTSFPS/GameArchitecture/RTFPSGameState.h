@@ -62,7 +62,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResour
 		virtual void PlayerGameDataInit(ADefaultPlayerState * Player) override;
 
 	protected:
-		virtual void InitializeResources(ARTFPSMode * GM);
+		virtual void InitializeUnitPriceMap(ARTFPSMode * GM);
 
 	public:
 		virtual void AddRTSObjectToTeam(IRTSObjectInterface * const InObject);

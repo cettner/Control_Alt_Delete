@@ -86,19 +86,10 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 
 }
 
-void ARTFPSGameState::InitializeResources(ARTFPSMode * GameMode)
+void ARTFPSGameState::InitializeUnitPriceMap(ARTFPSMode * GameMode)
 {
-	/*Set for listen Server Rest is loaded from the GameMode CDO on replication*/
+	/*Set for Server, Cleints load from the GameMode CDO on GM class replication*/
 	UnitBaseCosts = GameMode->GetDefaultUnitCosts();
-
-	/*Load the starting Resources for the game from the GameMode and which will replicate down to each team*/
-	const FReplicationResourceMap startingresources = startingresources;
-
-	for (int i = 0; i < NumTeams; i++)
-	{
-		ATeamResourceState* ts = GetTeamState<ATeamResourceState>(i);
-		ts->AddResource(startingresources);
-	}
 }
 
 void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
@@ -208,7 +199,7 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	ARTFPSMode * Game = Cast<ARTFPSMode>(GameMode);
 	
 	/*Give Each Player their Starting Resources and Unit Pricing*/
-	InitializeResources(Game);
+	InitializeUnitPriceMap(Game);
 
 	/*Find the Units in the gameWorld and add them to thier respective teams*/
 	RefreshAllUnits();

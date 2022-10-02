@@ -25,13 +25,15 @@ protected:
 	virtual FText UpdateCurrentResourceValueText();
 
 protected:
-	UPROPERTY(meta = (BindWidgetOptional))
-	UTextBlock* ResourceNameText;
+	UPROPERTY(EditDefaultsOnly)
+	bool bIncludeResourceName = true;
 
-
+protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ResourceValueText;
 
 protected:
 	TSubclassOf<AResource> DisplayResourceClass = nullptr;
+
+	FName ResourceName = FName("Error");
 };
