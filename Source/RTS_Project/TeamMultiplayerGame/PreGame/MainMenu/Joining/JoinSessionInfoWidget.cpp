@@ -2,7 +2,7 @@
 
 
 #include "JoinSessionInfoWidget.h"
-
+#include "JoinSessionWidget.h"
 
 
 void UJoinSessionInfoWidget::Setup(const FOnlineSessionSearchResult InSearchResult, int32 InIndex)
@@ -50,6 +50,7 @@ void UJoinSessionInfoWidget::Setup(const FOnlineSessionSearchResult InSearchResu
 
 void UJoinSessionInfoWidget::SetSelected(bool bIsSelected)
 {
+	
 }
 
 int32 UJoinSessionInfoWidget::GetIndex() const
@@ -84,5 +85,6 @@ bool UJoinSessionInfoWidget::Initialize()
 
 void UJoinSessionInfoWidget::OnSelectServerButtonPressed()
 {
-
+	ULobbyGameInstance * gi = GetGameInstance<ULobbyGameInstance>();
+	gi->JoinSession(Index);
 }
