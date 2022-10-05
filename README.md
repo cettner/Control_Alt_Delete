@@ -1,4 +1,4 @@
-# Control_Alt_Delete
+# Aether Forge
 
 Hello and Welcome to the source code repository for my game, Aether Forge! ..Which currently operates under the repository Control_Alt_Delete.  I've worked on for a little over 4 years now, is solo developed, and my first attempt at utilizing the Unreal Engine.  The Project is coded almost entirely in c++, utilizing UE's visual scripting language blueprints as modular data-only graphs for default data manipulation and asset managment.  It's from this framework I've been able to build a scalable, modular codebase that allows easy tuning and addition to the project. 
 
