@@ -49,6 +49,7 @@ Unit selections are captured in the unit selection pane, which provides quick ac
 ### Shared Systems
 #### Skill System
 Both playtype utilizes skill trees as means of progressing either themselves individually or the team globally.  The primary goal of the codebase is to make adding upgrades to the game as simple as possible while being able to effect a variety of object. In order to achieve this, an upgradable interface was contructed, allowing modification of gameplay objects in an easy and controllable manner.  One need only create a single class, implement what the upgrade does, and specify a target class or classes for the upgrade to effect.  Even the UI and associated tooltip are generalized to make additions to the game as simple as possible.   
+<img src ="./Docs/Gifs/FPSSkillTree.gif" alt="Skillif" height="420">
 
 #### Resource System
 <img src ="./Docs/Gifs/FPSMining.gif" alt="MiningGif" height="420">
