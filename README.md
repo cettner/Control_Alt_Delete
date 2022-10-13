@@ -49,7 +49,7 @@ Unit selections are captured in the unit selection pane, which provides quick ac
 ### FPS Systems
 
 #### Combat System
-<img src ="./Docs/Gifs/FPSFireBall.gif" alt="FireballGif" height="420">
+<img src ="./Docs/Gifs/FPSFireball.gif" alt="FireballGif" height="420">
 
 ### Shared Systems
 #### Skill System
