@@ -20,7 +20,5 @@ class RTS_PROJECT_API URTSFPSUpgradeNodeWidget : public UUpgradeNodeWidget
 		virtual bool CanPurchaseUpgrade() const override;
 	
 	protected:
-		virtual FReplicationResourceMap GetUpgradeResourceCost() const;
-		virtual IResourceGatherer * GetResourceSource() const;
 		virtual IExpAccumulatorInterface * GetExpSource() const;
 };

@@ -13,4 +13,5 @@ class RTS_PROJECT_API URTSActiveProperty : public URTSProperty
 {
 	GENERATED_BODY()
 
+	
 };

@@ -44,13 +44,14 @@ public:
 	virtual bool CanCompleteOrder(const TSubclassOf<URTSOrder> InOrderClass) const;
 	virtual const TArray<TSubclassOf<URTSOrder>> GetAvailableOrders() const;
 	virtual TSubclassOf<URTSOrder> GetDefaultOrder(const FHitResult& InHitContext) const;
-	virtual void IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
+	
+	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
+
 	virtual TSubclassOf<URTSOrder> GetCurrentOrder() const;
 	virtual TArray<TSubclassOf<URTSOrder>> GetAllIssuedOrders() const;
 
-	virtual TArray<TSubclassOf<URTSProperty>> GetRTSProperties(bool bIncludeNestedProperties = false) const;
-	virtual bool ContainsProperty(TSubclassOf<URTSProperty> InPropCheck) const;
-	virtual TArray<TSubclassOf<URTSProperty>> GetNestedPropertiesFor(TSubclassOf<URTSPropertyContainer> InPropertyContainer) const;
+	virtual TArray<const URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const;
+	virtual bool ContainsProperty(const URTSProperty * InPropCheck) const;
 
 	virtual IRTSObjectInterface* GetLeadRTSObject();
 

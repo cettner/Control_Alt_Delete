@@ -107,6 +107,9 @@ void ADefaultGameState::SetNumTeams(int8 InNumTeams)
 
 void ADefaultGameState::OnLocalTeamStateRecieved(ATeamState* InState)
 {
+	/*Todo:Add protection / sync if GameState is replicated after Teamstate for some reason*/
+	/*Todo: Currently not called on listen server, but not sure if that's a use case that would ever be needed since server has all teamstates already*/
+	TeamStates.AddUnique(InState);
 }
 
 void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()

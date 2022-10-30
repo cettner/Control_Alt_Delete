@@ -80,8 +80,9 @@ const TArray<TScriptInterface<IRTSObjectInterface>> URTSSelectionPanelWidget::Ge
 TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelection(const TArray<TScriptInterface<IRTSObjectInterface>>& InSelectedUnits)
 {
 	TArray<FSelectionPropertyMap> retval = TArray<FSelectionPropertyMap>();
-	TArray<IRTSObjectInterface*> allclassess = TArray<IRTSObjectInterface*>();
-	TArray<TSubclassOf<URTSProperty>> allproperties = TArray<TSubclassOf<URTSProperty>>();
+	TArray<IRTSObjectInterface*> classcdos = TArray<IRTSObjectInterface*>();
+	TArray<IRTSObjectInterface*> classinstances = TArray<IRTSObjectInterface*>();
+	TArray<const URTSProperty*> allproperties = TArray<const URTSProperty*>();
 	/*Anthony Will fix this*/
 
 	/*Get All Unique CDO's for the selection, this saves time as the number of units in*/
@@ -90,13 +91,18 @@ TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelec
 		const UObject* rtsobj = InSelectedUnits[i].GetObject();
 		checkf(rtsobj, TEXT("URTSSelectionPanelWidget::BuildPropertiesFromSelection Interface Object was Null"));
 		IRTSObjectInterface* objCDO = CastChecked<IRTSObjectInterface>(rtsobj->GetClass()->GetDefaultObject());
-		allclassess.AddUnique(objCDO);
+		int32 uniqueindex = classcdos.AddUnique(objCDO);
+
+		if (uniqueindex != INDEX_NONE)
+		{
+			classinstances.Emplace(CastChecked<IRTSObjectInterface>(InSelectedUnits[i].GetObject()));
+		}
 	}
 
-	for (int i = 0; i < allclassess.Num(); i++)
+	for (int i = 0; i < classinstances.Num(); i++)
 	{
 		/*Get all properties for one instance of the class*/
-		TArray<TSubclassOf<URTSProperty>> classproperties = allclassess[i]->GetRTSProperties();
+		TArray<const URTSProperty*> classproperties = classinstances[i]->GetRTSProperties();
 			
 		/*map each of those properties to all instances that contain it*/
 		for (int k = 0; k < classproperties.Num(); k++)
@@ -110,7 +116,7 @@ TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelec
 				{
 					if (InSelectedUnits[h]->ContainsProperty(propinsert.Property))
 					{
-						propinsert.PropertyOwners.Emplace(InSelectedUnits[h]);
+						propinsert.PropertyOwners.AddUnique(InSelectedUnits[h]);
 					}
 				}
 				retval.Emplace(propinsert);

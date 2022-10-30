@@ -5,6 +5,7 @@
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/Shared/Upgrades/RTSUpgrade.h"
 
+#include "Engine/ActorChannel.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -66,6 +67,7 @@ void ARTFPSGameState::OnUnitDeath(IRTSObjectInterface * Unit)
 
 void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 {
+	/*todo, respawnstate should be placed in the playerstate, not the controller*/
 	Controller->OnPawnDeath();
 	Controller->UnPossess();
 	UWorld* World = GetWorld();
@@ -86,10 +88,39 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 
 }
 
-void ARTFPSGameState::InitializeUnitPriceMap(ARTFPSMode * GameMode)
+TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSGameState::GetAllDefaultUnitPrices() const
 {
-	/*Set for Server, Cleints load from the GameMode CDO on GM class replication*/
-	UnitBaseCosts = GameMode->GetDefaultUnitCosts();
+	TMap<TSubclassOf<UObject>, FReplicationResourceMap> retval = TMap<TSubclassOf<UObject>, FReplicationResourceMap>();
+	for (int i = 0; i < PurchaseOrdersRep.Num(); i++)
+	{
+		if (IsValid(PurchaseOrdersRep[i]))
+		{
+			retval.Emplace(PurchaseOrdersRep[i]->GetPurchaseClass(), PurchaseOrdersRep[i]->GetPurchasePrice());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ARTFPSGameState::GetAllDefaultUnitPrices PurchaseOrder from replication was null at time of request"));
+		}
+	}
+
+
+	return retval;
+}
+
+void ARTFPSGameState::SetUnitPriceMap(const TMap<TSubclassOf<UObject>, FReplicationResourceMap> InMap)
+{
+	if (HasAuthority())
+	{
+		for (TPair<TSubclassOf<UObject>, FReplicationResourceMap> elem : InMap)
+		{
+			URTSResourcePurchaseOrder* purchaseorder = NewObject<URTSResourcePurchaseOrder>(this, URTSResourcePurchaseOrder::StaticClass());
+			purchaseorder->SetPurchaseClass(elem.Key);
+			purchaseorder->SetPrice(elem.Value);
+
+			PurchaseOrdersRep.Emplace(purchaseorder);
+		}
+		OnRep_PurchaseOrdersRep();
+	}
 }
 
 void ARTFPSGameState::AddRTSObjectToTeam(IRTSObjectInterface * const InObject)
@@ -130,38 +161,24 @@ const TArray<IRTSObjectInterface*>& ARTFPSGameState::GetRegisteredRTSObjects() c
 	return RTSObjects;
 }
 
-bool ARTFPSGameState::PurchaseUnit(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController)
+TArray<const URTSResourcePurchaseOrder*> ARTFPSGameState::GetPurchaseOrders(const TArray<TSubclassOf<UObject>> InPurchaseObjects) const
 {
-	bool retval = false;
-	if (IsUnitPurchaseable(PurchaseClass, Purchaser))
+	TArray<const URTSResourcePurchaseOrder*> retval = TArray<const URTSResourcePurchaseOrder*>();
+	
+	for (int i = 0; i < InPurchaseObjects.Num(); i++)
 	{
-		const FReplicationResourceMap costs = GetUnitPriceForSource(PurchaseClass, Purchaser, InstigatingController);
-		retval = Purchaser->RemoveResource(costs);
-	}
+		checkf(InPurchaseObjects[i], TEXT("ARTFPSGameState::GetPurchaseOrders : ARequestedPurchaseClass was Null!"))
+		const TSubclassOf<UObject> requestedobject = InPurchaseObjects[i];
 
-	return(retval);
-
-}
-
-FReplicationResourceMap ARTFPSGameState::RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer* ToRefund, AController* InstigatingController)
-{
-	return FReplicationResourceMap();
-}
-
-bool ARTFPSGameState::IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController) const
-{
-	const bool ispurchasable = UnitBaseCosts.Contains(PurchaseClass);
-	return (ispurchasable);
-}
-
-FReplicationResourceMap ARTFPSGameState::GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const
-{
-	const FReplicationResourceMap * findmap = UnitBaseCosts.Find(PurchaseClass);
-	FReplicationResourceMap retval = FReplicationResourceMap();
-
-	if (findmap != nullptr)
-	{
-		retval = *findmap;
+		URTSResourcePurchaseOrder* const* purchaseorderptr = PurchaseOrders.Find(requestedobject);
+		if (purchaseorderptr != nullptr)
+		{
+			retval.Emplace(*purchaseorderptr);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ARTFPSGameState::GetPurchaseOrders %s Not Found In Available PurchaseList"), *InPurchaseObjects[i].Get()->GetName());
+		}
 	}
 
 	return retval;
@@ -196,10 +213,12 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 {
 	bool result = Super::TeamInitialize(GameMode);
 
-	ARTFPSMode * Game = Cast<ARTFPSMode>(GameMode);
+	const ARTFPSMode * gm = Cast<ARTFPSMode>(GameMode);
 	
 	/*Give Each Player their Starting Resources and Unit Pricing*/
-	InitializeUnitPriceMap(Game);
+	/*Set for Server, Clients load from the GameMode CDO on GM class replication*/
+	const TMap<TSubclassOf<UObject>, FReplicationResourceMap> costs = gm->GetDefaultUnitCosts();
+	SetUnitPriceMap(costs);
 
 	/*Find the Units in the gameWorld and add them to thier respective teams*/
 	RefreshAllUnits();
@@ -212,14 +231,19 @@ void ARTFPSGameState::PlayerGameDataInit(ADefaultPlayerState * Player)
 	
 }
 
+bool ARTFPSGameState::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
+{
+	bool retval = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
+
+	retval |= Channel->ReplicateSubobjectList(PurchaseOrdersRep, *Bunch, *RepFlags);
+
+	return retval;
+}
+
 void ARTFPSGameState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	if (HasAuthority())
-	{
-		UpgradeManager = SpawnUpgradeManager();
-	}
-	else
+	if (!HasAuthority())
 	{
 		RefreshAllUnits();
 	}
@@ -228,31 +252,27 @@ void ARTFPSGameState::PostInitializeComponents()
 void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME_CONDITION(ARTFPSGameState, MapResourceInfo, COND_InitialOnly);
+
+	DOREPLIFETIME(ARTFPSGameState, PurchaseOrdersRep);
+}
+
+
+void ARTFPSGameState::OnRep_PurchaseOrdersRep()
+{
+	PurchaseOrders.Reset();
+	for (int i = 0; i < PurchaseOrdersRep.Num(); i++)
+	{
+		if (IsValid(PurchaseOrdersRep[i]))
+		{
+			PurchaseOrders.Emplace(PurchaseOrdersRep[i]->GetPurchaseClass(), PurchaseOrdersRep[i]);
+		}
+	}
 }
 
 void ARTFPSGameState::ReceivedGameModeClass()
 {
-	const ARTFPSMode* gmcdo = Cast<ARTFPSMode>(GameModeClass.GetDefaultObject());
-	UnitBaseCosts = gmcdo->GetDefaultUnitCosts();
-
-	Super::ReceivedGameModeClass();
 }
 
-AUpgradeManager * ARTFPSGameState::SpawnUpgradeManager()
-{
-	UWorld * world = GetWorld();
-	check(world);
-
-	AUpgradeManager * retval = world->SpawnActor<AUpgradeManager>(AUpgradeManager::StaticClass());
-
-	return retval;
-}
-
-AUpgradeManager * ARTFPSGameState::GetUpgradeManager() const
-{
-	return UpgradeManager;
-}
 
 
 

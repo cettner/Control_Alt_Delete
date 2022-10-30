@@ -18,14 +18,9 @@ void UStructureQueueSelectionWidget::SynchronizeProperties()
 void UStructureQueueSelectionWidget::OnSelectionClicked()
 {
 	if (Structure == nullptr || BoundQueueData.SpawnClass == nullptr)  return;
-	
-	UWorld* World = GetWorld();
-	if (World == nullptr) return;
 
-	ARTSPlayerController * PC = World->GetFirstPlayerController<ARTSPlayerController>();
-	if (PC == nullptr) return;
-
-	PC->ServerPurchaseRTSObject(Structure, BoundQueueData.SpawnClass);
+	ARTSPlayerController* pc = GetOwningPlayer<ARTSPlayerController>();
+	pc->ServerPurchaseRTSObject(Structure, BoundQueueData.SpawnClass);
 }
 
 bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
@@ -44,7 +39,7 @@ bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
 	const ATeamResourceState * ts = GS->GetDefaultTeamState<ATeamResourceState>();
 
 	/*For Each Resource Type needed determine if the team has enough*/
-	const FReplicationResourceMap cost = GS->GetDefaultUnitPrice(BoundQueueData.SpawnClass);
+	const FReplicationResourceMap cost = GS->GetUnitPriceForSource(BoundQueueData.SpawnClass, ts, GetOwningPlayer());
 	CanTeamAfford = ts->HasResource(cost);
 
 	return CanTeamAfford;

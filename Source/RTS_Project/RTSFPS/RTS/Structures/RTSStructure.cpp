@@ -49,7 +49,6 @@ void ARTSStructure::PostInitializeComponents()
 			PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
 		}
 
-
 		if (!bSkipsConstruction)
 		{
 			Health->SetCurrentHealth(UnConstructedHealth);
@@ -62,7 +61,6 @@ void ARTSStructure::PostInitializeComponents()
 		}
 
 	}
-
 
 	/*Pick a Random Destruction Animation to Play on Death*/
 	if (DestroyAnimations.Num())
@@ -144,15 +142,46 @@ void ARTSStructure::OnConstructionComplete()
 	bISConstructed = true;
 }
 
-TArray<TSubclassOf<UObject>> ARTSStructure::GetPurchasableUnits() const
+TArray<TSubclassOf<UObject>> ARTSStructure::GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser, const AController* InstigatingController) const
 {
-	return TArray<TSubclassOf<UObject>>();
+	const APlayerController * pc = Cast<APlayerController>(InstigatingController);
+	TArray<TSubclassOf<UObject>> retval = TArray<TSubclassOf<UObject>>();
+
+	if (pc != nullptr)
+	{
+		const ARTFPSPlayerState * ps = pc->GetPlayerState<ARTFPSPlayerState>();
+		const bool bisofteam = ps->GetTeamID() == GetTeam() && GetTeam() != -1;
+		if (bisofteam == true  && ps->IsRTSPlayer())
+		{
+			for (int i = 0; i < SpawnableUnits.Num(); i++)
+			{
+				/*Dont include Commander Units as purchaseable for the RTS player*/
+				if (Cast<ACommander>(SpawnableUnits[i].SpawnClass.GetDefaultObject()) == nullptr)
+				{
+					retval.Emplace(SpawnableUnits[i].SpawnClass);
+				}
+			}
+		}
+		else if(bisofteam == true)
+		{
+			for (int i = 0; i < SpawnableUnits.Num(); i++)
+			{
+				/*Only Include Commander Subclasses for FPSPlayers*/
+				if (Cast<ACommander>(SpawnableUnits[i].SpawnClass.GetDefaultObject()) != nullptr)
+				{
+					retval.Emplace(SpawnableUnits[i].SpawnClass);
+				}
+			}
+		}
+	}
+
+	return retval;
 }
 
 TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTSStructure::GetAllDefaultUnitPrices() const
 {
-	UWorld* world = GetWorld();
-	ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+	const UWorld* world = GetWorld();
+	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
 	return gs->GetAllDefaultUnitPrices();
 }
 
@@ -213,6 +242,38 @@ int ARTSStructure::GetTeam() const
 void ARTSStructure::SetTeam(int newteamindex)
 {
 	TeamIndex = newteamindex;
+}
+
+TArray<const URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedProperties) const
+{
+	TArray<const URTSProperty*> retval = TArray<const URTSProperty*>();
+
+	const UWorld* world = GetWorld();
+	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
+	const ATeamResourceState * ts = gs->GetDefaultTeamState<ATeamResourceState>();
+	const APlayerController * pc = world->GetFirstPlayerController();
+
+	const TArray<TSubclassOf<UObject>> purchaseobjects = GetPurchasableUnitsForSource(ts, pc);
+	const TArray<const URTSResourcePurchaseOrder*> purchaseorders = gs->GetPurchaseOrders(purchaseobjects);
+	retval.Append(purchaseorders);
+
+	return retval;
+}
+
+void ARTSStructure::IssueOrder(AController* InIssuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
+{
+	if (const URTSResourcePurchaseOrder* purchaseorder = Cast<URTSResourcePurchaseOrder>(InOrderClass))
+	{
+		const TSubclassOf<UObject> purchaseclass = purchaseorder->GetPurchaseClass();
+		const UWorld* world = GetWorld();
+		const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+		ATeamResourceState* ts = gs->GetDefaultTeamState<ATeamResourceState>();
+
+		if (PurchaseUnit(purchaseclass, ts, InIssuer))
+		{
+			QueueActor(purchaseclass);
+		}
+	}
 }
 
 void ARTSStructure::SetTeamColors(FLinearColor TeamColor)

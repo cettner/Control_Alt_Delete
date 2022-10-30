@@ -37,6 +37,7 @@ public:
 
 	/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
 	virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
+	virtual bool CanCarryAllResources(const FReplicationResourceMap InResourcestoCarry) const;
 	virtual bool DropsResourceOnDeath() const;
 
 	/*Returns a Map of All resources Carried by the instance*/

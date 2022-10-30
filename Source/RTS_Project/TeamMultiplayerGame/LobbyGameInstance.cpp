@@ -263,7 +263,7 @@ void ULobbyGameInstance::JoinSession(uint32 Index)
 
 void ULobbyGameInstance::BeginSearchQuery()
 {
-
+	SessionSearch.Reset();
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 
 	if (SessionSearch.IsValid())
@@ -394,7 +394,6 @@ void ULobbyGameInstance::OnFindSessionsComplete(bool Success)
 	}
 
 	SearchResultsReadyDelegate.ExecuteIfBound(broadcast);
-	//SessionSearch.Reset();
 }
 
 void ULobbyGameInstance::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)

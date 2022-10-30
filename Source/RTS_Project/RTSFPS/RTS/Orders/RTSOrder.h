@@ -3,26 +3,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "../UI/Properties/RTSActiveProperty.h"
 
 #include "RTSOrder.generated.h"
 
-
+constexpr int ORDER_APPLY_ALL = -1;
 
 UCLASS(Blueprintable)
-class RTS_PROJECT_API URTSOrder : public UObject
+class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 {
 	GENERATED_BODY()
 
 	public:
-		inline bool RequiresTarget() const;
-		inline UTexture* GetThumbnail() const;
+		bool RequiresTarget() const;
+
+		int GetApplicationCount() const;
 
 	protected:
-		UPROPERTY(EditDefaultsOnly)
-		UTexture* OrderThumbnail = nullptr;
 
 		UPROPERTY(EditDefaultsOnly)
 		bool bRequiresTarget = false;
+
+		UPROPERTY(EditDefaultsOnly)
+		int PropertyApplicationCount = 1;
 
 };

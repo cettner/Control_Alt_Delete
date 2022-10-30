@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSSelectionCamera.h"
+#include "RTSOrderCamera.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/PlacementActor.h"
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 
@@ -14,7 +14,7 @@
  * 
  */
 UCLASS()
-class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSSelectionCamera
+class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSOrderCamera
 {
 	GENERATED_BODY()
 

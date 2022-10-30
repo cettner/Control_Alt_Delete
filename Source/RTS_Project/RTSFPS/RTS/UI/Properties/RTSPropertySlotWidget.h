@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
 
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
@@ -20,13 +21,28 @@ class RTS_PROJECT_API URTSPropertySlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void Setup(const TSubclassOf<URTSProperty> InPropertyClass, TArray<TScriptInterface<IRTSObjectInterface>> InPropertyHolders);
+	virtual void Setup(const URTSProperty * InProperty, TArray<TScriptInterface<IRTSObjectInterface>> InPropertyHolders);
 
+protected:
+	UFUNCTION()
+	virtual void OnActivatePropertyClicked();
+
+	virtual TArray<TScriptInterface<IRTSObjectInterface>> GetBestUsersForProperty();
+
+	virtual bool IsQueuedOrder() const;
 
 protected:
 	UPROPERTY(meta = (BindWidgetOptional))
 	UImage* PropertyImage = nullptr;
 
+	UPROPERTY(meta = (BindWidgetOptional))
+	UButton* ActivatePropertyButton = nullptr;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<URTSPropertyToolTipWidget> ToolTipClass = URTSPropertyToolTipWidget::StaticClass();
+
+protected:
+	const URTSProperty * BoundProperty = nullptr;
+
+	TArray<TScriptInterface<IRTSObjectInterface>> PropertyHolders = TArray<TScriptInterface<IRTSObjectInterface>>();
 };

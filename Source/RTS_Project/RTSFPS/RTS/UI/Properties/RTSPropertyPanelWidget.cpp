@@ -14,7 +14,7 @@ void URTSPropertyPanelWidget::OnSelectedPropertiesUpdated(const TArray<FSelectio
 	for (int i = 0; i < InSelectionProperties.Num(); i++)
 	{
 		URTSPropertySlotWidget* widgetslot = CreateWidget<URTSPropertySlotWidget>(this, PropertySlotClass);
-		const TSubclassOf<URTSProperty> prop = InSelectionProperties[i].Property;
+		const URTSProperty * prop = InSelectionProperties[i].Property;
 		TArray<TScriptInterface<IRTSObjectInterface>> propowners = InSelectionProperties[i].PropertyOwners;
 		widgetslot->Setup(prop, propowners);
 

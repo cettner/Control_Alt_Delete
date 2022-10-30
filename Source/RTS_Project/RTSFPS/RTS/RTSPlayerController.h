@@ -23,6 +23,9 @@ class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
 	GENERATED_BODY()
 	
 public:
+	virtual void IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
+
+public:
 	ARTSPlayerController();
 
 	UFUNCTION(Server, reliable, WithValidation)
@@ -33,6 +36,9 @@ public:
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void ServerPurchaseStructure(TSubclassOf<AActor> RequestedClass, FTransform BuildLocation);
+
+	UFUNCTION(Server, reliable, WithValidation)
+	void ServerIssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 	virtual void SetupInputComponent() override;
 

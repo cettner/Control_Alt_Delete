@@ -98,6 +98,34 @@ bool ARTSPlayerController::IsUnitOrderable(const IRTSObjectInterface* InObj) con
 }
 
 
+void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+{
+	if (!HasAuthority())
+	{
+		ServerIssueOrder(InUnits, InOrder);
+	}
+	else
+	{
+		for (int i = 0; i < InUnits.Num(); i++)
+		{
+			if (IsValid(InUnits[i].GetObject()))
+			{
+				InUnits[i]->IssueOrder(this, InHitContext, InOrder, InbIsQueuedOrder);
+			}
+		}
+	}
+}
+
+
+void ARTSPlayerController::ServerIssueOrder_Implementation(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+{
+	IssueOrder(InUnitsToOrder, InOrder, InHitContext, InbIsQueuedOrder);
+}
+
+bool ARTSPlayerController::ServerIssueOrder_Validate(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+{
+	return (true);
+}
 
 bool ARTSPlayerController::MoveMinions_Validate(ARTSPlayerController * PC, const TArray<ARTSMinion *> &Units, FHitResult Hit)
 {

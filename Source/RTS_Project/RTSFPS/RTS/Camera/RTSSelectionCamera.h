@@ -30,6 +30,9 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 {
 	GENERATED_BODY()
 	
+	public:
+		//virtual void LoadNewOrder(const URTSOrder * )
+
 	protected:
 	// Called to bind functionality to input
 		virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -53,6 +56,9 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 		virtual void HandleDoubleSelect();
 		virtual void HandleSingleSelect();
 
+	public:
+		RTSSelectionUpdateDelegate SelectionUpdateDelegate = RTSSelectionUpdateDelegate();
+
 	/*Config*/
 	protected:
 		/*Time in Seconds The mouse must be pressed to enable box selection*/
@@ -67,6 +73,5 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 		ESelectionType CurrentSelectionType = NotSelecting;
 		TArray <TScriptInterface<IRTSObjectInterface>> SelectedUnits = TArray< TScriptInterface<IRTSObjectInterface>>();
 
-	public:
-		RTSSelectionUpdateDelegate SelectionUpdateDelegate = RTSSelectionUpdateDelegate();
+
 };

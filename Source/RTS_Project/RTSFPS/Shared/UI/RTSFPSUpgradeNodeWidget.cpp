@@ -25,21 +25,6 @@ bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
 	return retval;
 }
 
-FReplicationResourceMap URTSFPSUpgradeNodeWidget::GetUpgradeResourceCost() const
-{
-	FReplicationResourceMap retval = FReplicationResourceMap();
-	const UWorld * world = GetWorld();
-	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-	retval = gs->GetDefaultUnitPrice(UpgradeToApply);
-
-	return retval;
-}
-
-IResourceGatherer * URTSFPSUpgradeNodeWidget::GetResourceSource() const
-{
-	return GetOwningPlayerPawn<IResourceGatherer>();
-}
-
 IExpAccumulatorInterface * URTSFPSUpgradeNodeWidget::GetExpSource() const
 {
 	const APlayerController * pc = GetOwningPlayer();

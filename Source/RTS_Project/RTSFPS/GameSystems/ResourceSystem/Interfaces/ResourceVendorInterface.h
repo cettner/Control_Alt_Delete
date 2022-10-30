@@ -26,14 +26,14 @@ class RTS_PROJECT_API IResourceVendorInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual bool PurchaseUnit(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer * Purchaser, AController * InstigatingController = nullptr);
-	virtual FReplicationResourceMap RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer * ToRefund, AController* InstigatingController = nullptr);
-	virtual bool IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer * Purchaser, AController* InstigatingController = nullptr) const;
+	virtual bool RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer * ToRefund, AController* InstigatingController = nullptr);
+	virtual bool IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer * Purchaser, const AController* InstigatingController = nullptr) const;
+	virtual FReplicationResourceMap GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController = nullptr) const;
+	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser = nullptr, const AController* InstigatingController = nullptr) const;
+	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllUnitPricesForSource(const IResourceGatherer* Purchaser, const AController* InstigatingController = nullptr) const;
+	
+protected:
 	virtual FReplicationResourceMap GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const;
-	virtual FReplicationResourceMap GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController = nullptr) const;
-	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnits() const;
-	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const;
-	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllUnitPricesForSource(IResourceGatherer* Purchaser, AController* InstigatingController = nullptr) const;
-
-	//virtual void ScoreResource(const TSubclassOf<AResource> InResourceClass, const int InAmount, IResourceGatherer* InDonar = nullptr);
-	//virtual void ScoreResource(const FReplicationResourceMap InResourceMap, IResourceGatherer* InDonar = nullptr);
+	virtual TArray<TSubclassOf<UObject>> GetAllPurchaseableUnits() const;
+	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const = 0U;
 };

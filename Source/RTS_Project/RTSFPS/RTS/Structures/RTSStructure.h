@@ -72,11 +72,13 @@ public:
 	virtual void SetDeselected() override;
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
-	virtual void SetTeamColors(FLinearColor TeamColor) override;
+	virtual TArray<const URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
+	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 
 protected:
 	virtual void RegisterRTSObject() override;
 	virtual void UnRegisterRTSObject() override;
+	virtual void SetTeamColors(FLinearColor TeamColor) override;
 	/************************************************************/
 
 	/***********IMenuInteractable Interface overrides************/
@@ -100,9 +102,11 @@ protected:
 	/************************************************************/
 
 	/***********IResourceVendor Interface Overrides**************/
-	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnits() const override;
-	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+public:
+	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser = nullptr, const AController* InstigatingController = nullptr) const override;
 
+protected:
+	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
 	/************************************************************/
 protected:
 	UFUNCTION()
@@ -112,7 +116,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
 	virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
 
 protected:
 	UFUNCTION()
@@ -152,6 +155,7 @@ protected:
 
 
 protected:
+	/*True if the Structure does not need to be constructed upon entering the world, by default objects placed in the level before game start do not need construction*/
 	UPROPERTY(EditAnywhere, Category = Construction)
 	bool bSkipsConstruction = HasAnyFlags(RF_WasLoaded);
 
@@ -191,7 +195,7 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Spawning)
-	TArray< FStructureSpawnData> SpawnableUnits;
+	TArray<FStructureSpawnData> SpawnableUnits;
 
 	UPROPERTY(EditDefaultsOnly, Category = Spawning)
 	TEnumAsByte<ECollisionChannel> SpawnTraceChannel;

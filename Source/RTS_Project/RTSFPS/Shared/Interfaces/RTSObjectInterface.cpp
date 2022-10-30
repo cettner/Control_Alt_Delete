@@ -94,19 +94,29 @@ TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAllIssuedOrders() const
 	return TArray<TSubclassOf<URTSOrder>>();
 }
 
-TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetRTSProperties(bool bIncludeNestedProperties) const
+TArray<const URTSProperty*> IRTSObjectInterface::GetRTSProperties(bool bIncludeNestedProperties) const
 {
-	return TArray<TSubclassOf<URTSProperty>>();
+	return TArray<const URTSProperty *>();
 }
 
-bool IRTSObjectInterface::ContainsProperty(TSubclassOf<URTSProperty> InPropCheck) const
+bool IRTSObjectInterface::ContainsProperty(const URTSProperty* InPropCheck) const
 {
-	return false;
-}
+	checkf(InPropCheck, TEXT("IRTSObjectInterface::ContainsProperty InProp was null"));
+	const TArray<const URTSProperty*> props = GetRTSProperties(true);
 
-TArray<TSubclassOf<URTSProperty>> IRTSObjectInterface::GetNestedPropertiesFor(TSubclassOf<URTSPropertyContainer> InPropertyContainer) const
-{
-	return TArray<TSubclassOf<URTSProperty>>();
+	bool retval = false;
+
+	for (int i = 0; i <  props.Num(); i ++)
+	{
+		retval =  props[i]->GetClass() == InPropCheck->GetClass();
+
+		if (retval == true)
+		{
+			break;
+		}
+	}
+	
+	return retval;
 }
 
 UTexture* IRTSObjectInterface::GetThumbnail(const UUserWidget* InDisplayContext) const
@@ -119,7 +129,7 @@ FName IRTSObjectInterface::GetUnitName() const
 	return FName();
 }
 
-void IRTSObjectInterface::IssueOrder(const FHitResult& InHitContext, const TSubclassOf<URTSOrder> InOrderClass, const bool InbIsQueuedOrder)
+void IRTSObjectInterface::IssueOrder(AController * InIssuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
 {
 
 }

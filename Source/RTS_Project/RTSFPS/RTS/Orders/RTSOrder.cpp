@@ -3,13 +3,12 @@
 
 #include "RTSOrder.h"
 
-inline bool URTSOrder::RequiresTarget() const
+bool URTSOrder::RequiresTarget() const
 {
 	return bRequiresTarget;
 }
 
-
-inline UTexture* URTSOrder::GetThumbnail() const
+int URTSOrder::GetApplicationCount() const
 {
-	return OrderThumbnail;
+	return PropertyApplicationCount;
 }

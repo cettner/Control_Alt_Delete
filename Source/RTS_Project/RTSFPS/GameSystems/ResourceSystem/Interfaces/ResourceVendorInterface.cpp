@@ -8,40 +8,79 @@
 
 bool IResourceVendorInterface::PurchaseUnit(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController)
 {
-	return false;
+	bool retval = false;
+	
+	if (IsUnitPurchaseable(PurchaseClass, Purchaser, InstigatingController))
+	{
+		const FReplicationResourceMap costs = GetUnitPriceForSource(PurchaseClass, Purchaser, InstigatingController);
+		retval = Purchaser->RemoveResource(costs);
+	}
+	
+	return retval;
 }
 
 FReplicationResourceMap IResourceVendorInterface::GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const
 {
-	return FReplicationResourceMap();
+	FReplicationResourceMap retval = FReplicationResourceMap();
+	const TMap<TSubclassOf<UObject>, FReplicationResourceMap> catalogue = GetAllDefaultUnitPrices();
+	const FReplicationResourceMap * priceptr = catalogue.Find(PurchaseClass);
+	
+	if (priceptr != nullptr)
+	{
+		retval = *priceptr;
+	}
+
+	return retval;
 }
 
-FReplicationResourceMap IResourceVendorInterface::RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer* ToRefund, AController* InstigatingController)
+TArray<TSubclassOf<UObject>> IResourceVendorInterface::GetAllPurchaseableUnits() const
 {
-	return FReplicationResourceMap();
+	const TMap<TSubclassOf<UObject>, FReplicationResourceMap> catalogue = GetAllDefaultUnitPrices();
+	TArray<TSubclassOf<UObject>> retval = TArray<TSubclassOf<UObject>>();
+	catalogue.GetKeys(retval);
+	return retval;
 }
 
-bool IResourceVendorInterface::IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController) const
+bool IResourceVendorInterface::RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer* ToRefund, AController* InstigatingController)
 {
-	return false;
+	const FReplicationResourceMap resourcetoreturn = GetUnitPriceForSource(RefundClass, ToRefund, InstigatingController);
+	const bool retval = ToRefund->CanCarryAllResources(resourcetoreturn);
+
+	if (retval == true)
+	{
+		ToRefund->AddResource(resourcetoreturn);
+	}
+
+	return retval;
 }
 
-FReplicationResourceMap IResourceVendorInterface::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController) const
+bool IResourceVendorInterface::IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController) const
 {
-	return FReplicationResourceMap();
+	const TMap<TSubclassOf<UObject>, FReplicationResourceMap> catalogue = GetAllUnitPricesForSource(Purchaser, InstigatingController);
+	const FReplicationResourceMap * resourcecost = catalogue.Find(PurchaseClass);
+	bool retval = false;
+
+	if (resourcecost != nullptr)
+	{
+		const FReplicationResourceMap availableresource = Purchaser->GetAllHeldResources();
+		retval = AResource::CanAfford(availableresource, *resourcecost);
+	}
+
+	
+	return retval;
 }
 
-TArray<TSubclassOf<UObject>> IResourceVendorInterface::GetPurchasableUnits() const
+FReplicationResourceMap IResourceVendorInterface::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController) const
 {
-	return TArray<TSubclassOf<UObject>>();
+	return GetDefaultUnitPrice(PurchaseClass);
 }
 
-TMap<TSubclassOf<UObject>, FReplicationResourceMap> IResourceVendorInterface::GetAllDefaultUnitPrices() const
+TArray<TSubclassOf<UObject>> IResourceVendorInterface::GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser , const AController* InstigatingController) const
 {
-	return TMap<TSubclassOf<UObject>, FReplicationResourceMap>();
+	return GetAllPurchaseableUnits();
 }
 
-TMap<TSubclassOf<UObject>, FReplicationResourceMap> IResourceVendorInterface::GetAllUnitPricesForSource(IResourceGatherer* Purchaser, AController* InstigatingController) const
+TMap<TSubclassOf<UObject>, FReplicationResourceMap> IResourceVendorInterface::GetAllUnitPricesForSource(const IResourceGatherer* Purchaser, const AController* InstigatingController) const
 {
 	return GetAllDefaultUnitPrices();
 }

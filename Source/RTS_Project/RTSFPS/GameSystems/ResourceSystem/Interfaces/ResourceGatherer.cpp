@@ -96,6 +96,28 @@ uint32 IResourceGatherer::CanCarryMore(TSubclassOf<AResource> ResourceClass) con
 	return 0U;
 }
 
+bool IResourceGatherer::CanCarryAllResources(const FReplicationResourceMap InResourcestoCarry) const
+{
+	bool retval = true;
+	uint32 estimatedweight = GetCurrentWeight();
+	
+	for (int i = 0; i < InResourcestoCarry.Num(); i++)
+	{
+		const AResource * resourcecdo = InResourcestoCarry[i].Key.GetDefaultObject();
+		const uint32 resourceweight = resourcecdo->GetResourceWeight();
+		const uint32 resourcecount = StaticCast<uint32,int32>(InResourcestoCarry[i].Value);
+		estimatedweight += (resourceweight * resourcecount);
+	}
+
+
+	if (estimatedweight >= GetMaxWeight())
+	{
+		retval = false;
+	}
+
+	return retval;
+}
+
 uint32 IResourceGatherer::GetHeldResource(TSubclassOf<AResource> ResourceClass) const
 {
 	return 0U;
