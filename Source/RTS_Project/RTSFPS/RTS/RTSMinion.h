@@ -130,6 +130,10 @@ protected:
 	FName MinionName = "Default Minion Name";
 
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	const TSubclassOf<URTSOrder> MoveOrderClass;
+
+protected:
 	UPROPERTY(Replicated)
 	ACommander * Cmdr = nullptr;
 

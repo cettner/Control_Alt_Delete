@@ -26,6 +26,13 @@ FReplicationResourceMap URTSResourcePurchaseOrder::GetPurchasePrice() const
 	return PurchasePrice;
 }
 
+URTSResourcePurchaseOrder::URTSResourcePurchaseOrder()
+{
+	bUseDefaultOnFail = false;
+	PropertyApplicationCount = 1;
+	bUseExactApplicationCountOnly = true;
+}
+
 void URTSResourcePurchaseOrder::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

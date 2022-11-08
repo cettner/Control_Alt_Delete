@@ -67,31 +67,31 @@ bool IRTSObjectInterface::IsOrderablebyController(const AController* InControlle
 	return false;
 }
 
-bool IRTSObjectInterface::CanCompleteOrder(const TSubclassOf<URTSOrder> InOrderClass) const
+bool IRTSObjectInterface::CanCompleteOrder(const URTSOrder* InOrder) const
 {
-	const TArray<TSubclassOf<URTSOrder>> availableorders = GetAvailableOrders();
-	const bool retval = availableorders.Find(InOrderClass) > INDEX_NONE;
+	const TArray<const URTSOrder*> availableorders = GetAvailableOrders();
+	const bool retval = availableorders.Find(InOrder) > INDEX_NONE;
 	return retval;
 }
 
-const TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAvailableOrders() const
+const TArray<const URTSOrder*> IRTSObjectInterface::GetAvailableOrders() const
 {
-	return TArray<TSubclassOf<URTSOrder>>();
+	return TArray<const URTSOrder*>();
 }
 
-TSubclassOf<URTSOrder> IRTSObjectInterface::GetDefaultOrder(const FHitResult& InHitContext) const
+const URTSOrder * IRTSObjectInterface::GetDefaultOrder(const FHitResult& InHitContext) const
 {
 	return nullptr;
 }
 
-TSubclassOf<URTSOrder> IRTSObjectInterface::GetCurrentOrder() const
+const URTSOrder* IRTSObjectInterface::GetCurrentOrder() const
 {
-	return TSubclassOf<URTSOrder>();
+	return nullptr;
 }
 
-TArray<TSubclassOf<URTSOrder>> IRTSObjectInterface::GetAllIssuedOrders() const
+TArray<const URTSOrder*> IRTSObjectInterface::GetAllIssuedOrders() const
 {
-	return TArray<TSubclassOf<URTSOrder>>();
+	return TArray<const URTSOrder*>();
 }
 
 TArray<const URTSProperty*> IRTSObjectInterface::GetRTSProperties(bool bIncludeNestedProperties) const

@@ -27,9 +27,11 @@ protected:
 	UFUNCTION()
 	virtual void OnActivatePropertyClicked();
 
-	virtual TArray<TScriptInterface<IRTSObjectInterface>> GetBestUsersForProperty();
+	virtual TArray<TScriptInterface<IRTSObjectInterface>> GetBestUsersForProperty() const;
 
 	virtual bool IsQueuedOrder() const;
+	
+	virtual const TArray<TScriptInterface<IRTSObjectInterface>>& GetTotalSelection() const;
 
 protected:
 	UPROPERTY(meta = (BindWidgetOptional))

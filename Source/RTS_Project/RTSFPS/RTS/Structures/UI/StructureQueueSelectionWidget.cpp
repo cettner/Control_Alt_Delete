@@ -20,7 +20,7 @@ void UStructureQueueSelectionWidget::OnSelectionClicked()
 	if (Structure == nullptr || BoundQueueData.SpawnClass == nullptr)  return;
 
 	ARTSPlayerController* pc = GetOwningPlayer<ARTSPlayerController>();
-	pc->ServerPurchaseRTSObject(Structure, BoundQueueData.SpawnClass);
+//	pc->ServerPurchaseRTSObject(Structure, BoundQueueData.SpawnClass);
 }
 
 bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()

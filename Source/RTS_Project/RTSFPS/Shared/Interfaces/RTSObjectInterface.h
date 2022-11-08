@@ -41,14 +41,14 @@ public:
 	virtual void ClearTarget();
 
 	virtual bool IsOrderablebyController(const AController * InController) const;
-	virtual bool CanCompleteOrder(const TSubclassOf<URTSOrder> InOrderClass) const;
-	virtual const TArray<TSubclassOf<URTSOrder>> GetAvailableOrders() const;
-	virtual TSubclassOf<URTSOrder> GetDefaultOrder(const FHitResult& InHitContext) const;
+	virtual bool CanCompleteOrder(const URTSOrder* InOrder) const;
+	virtual const TArray<const URTSOrder*> GetAvailableOrders() const;
+	virtual const URTSOrder* GetDefaultOrder(const FHitResult& InHitContext) const;
 	
 	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
 
-	virtual TSubclassOf<URTSOrder> GetCurrentOrder() const;
-	virtual TArray<TSubclassOf<URTSOrder>> GetAllIssuedOrders() const;
+	virtual const URTSOrder* GetCurrentOrder() const;
+	virtual TArray<const URTSOrder*> GetAllIssuedOrders() const;
 
 	virtual TArray<const URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const;
 	virtual bool ContainsProperty(const URTSProperty * InPropCheck) const;

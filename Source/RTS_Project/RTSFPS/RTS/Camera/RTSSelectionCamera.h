@@ -32,16 +32,17 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 	
 	public:
 		//virtual void LoadNewOrder(const URTSOrder * )
+		const TArray <TScriptInterface<IRTSObjectInterface>>& GetSelectedUnits() const;
+
 
 	protected:
 	// Called to bind functionality to input
 		virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	protected:
-		void SelectPressed();
-		void SelectReleased();
-		void SelectDoublePressed();
-		void MoveSelected();
+		virtual void SelectPressed();
+		virtual void SelectReleased();
+		virtual void SelectDoublePressed();
 
 		void ProcessSelection();
 
@@ -63,7 +64,7 @@ class RTS_PROJECT_API ARTSSelectionCamera : public ARTSCamera
 	protected:
 		/*Time in Seconds The mouse must be pressed to enable box selection*/
 		UPROPERTY(EditDefaultsOnly)
-		float BoxSelectDelayBuffer = .3f;
+		float BoxSelectDelayBuffer = .2f;
 
 	/*Runtime*/
 	protected:

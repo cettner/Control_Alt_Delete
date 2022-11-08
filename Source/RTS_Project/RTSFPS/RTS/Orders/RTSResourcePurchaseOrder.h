@@ -23,6 +23,9 @@ class RTS_PROJECT_API URTSResourcePurchaseOrder : public URTSOrder
 		FReplicationResourceMap GetPurchasePrice() const;
 
 	protected:
+		URTSResourcePurchaseOrder();
+
+	protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:

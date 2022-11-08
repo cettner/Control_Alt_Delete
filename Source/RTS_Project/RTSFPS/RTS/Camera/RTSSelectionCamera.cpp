@@ -6,13 +6,17 @@
 
 
 
+const TArray <TScriptInterface<IRTSObjectInterface>>& ARTSSelectionCamera::GetSelectedUnits() const
+{
+	return SelectedUnits;
+}
+
 // Called to bind functionality to input
 void ARTSSelectionCamera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
     InputComponent->BindAction("LeftMouse", IE_Pressed, this, &ARTSSelectionCamera::SelectPressed);
 	InputComponent->BindAction("LeftMouse", IE_Released, this, &ARTSSelectionCamera::SelectReleased);
-	InputComponent->BindAction("RightMouse", IE_Pressed, this, &ARTSSelectionCamera::MoveSelected);
 	InputComponent->BindAction("LeftMouse", IE_DoubleClick, this, &ARTSSelectionCamera::SelectDoublePressed);
 }
 
@@ -49,17 +53,6 @@ void ARTSSelectionCamera::SelectDoublePressed()
 	ProcessSelection();
 }
 	
-void ARTSSelectionCamera::MoveSelected()
-{
-	ARTSPlayerController * PC = Cast<ARTSPlayerController>(GetController());
-	if (SelectedUnits.Num() > 0  && PC)
-	{
-		FHitResult Hit;
-		PC->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
-		//PC->MoveMinions(PC, SelectedUnits, Hit);
-	}
-}
-
 void ARTSSelectionCamera::ProcessSelection()
 {
 	/*Stop the timer if we're running*/

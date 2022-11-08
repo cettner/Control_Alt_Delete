@@ -135,7 +135,7 @@ void ARTSGridPlacementCamera::PlaceActor()
 		ARTSPlayerController * pc = GetController<ARTSPlayerController>();
 		
 		check(pc);
-		pc->ServerPurchaseStructure(spawnclass, SpawnTransform);
+//		pc->ServerPurchaseStructure(spawnclass, SpawnTransform);
 
 		ToggleBuildGrid();
 		PlacementActor->Destroy();
