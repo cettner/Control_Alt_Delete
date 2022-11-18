@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../UI/Properties/RTSActiveProperty.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 #include "RTSOrder.generated.h"
 
@@ -24,6 +25,8 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 
 		/*Whether the order triggers the Default Command for Remaining Selection*/
 		FORCEINLINE bool UseDefaultOnFail() const { return bUseDefaultOnFail; }
+
+		virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const;
 
 		virtual TArray<TScriptInterface<IRTSObjectInterface>> GetBestMinionsForOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InMinionSet, const FHitResult& InTarget = FHitResult()) const;
 

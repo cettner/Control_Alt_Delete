@@ -8,6 +8,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "BrainComponent.h"
 
+#include "../../Orders/RTSOrder.h"
 #include "Navigation/FlockPathFollowingComponent.h"
 #include "RTSAIPerceptionComponent.h"
 #include "RTSAIController.generated.h"
@@ -30,6 +31,12 @@ public:
 	FAISenseAffiliationFilter SightAffiliation = FAISenseAffiliationFilter();
 };
 
+enum ERTSOrderFinishReason
+{
+	ORDERCOMPLETE,
+	ORDERFAIL,
+	ORDERINTERRUPTED
+};
 
 
 UCLASS()
@@ -56,10 +63,14 @@ public:
 	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status);
 
 public:
-	virtual void ReleaseAssets();
-	void SetTarget(AActor* newtarget);
-	AActor* GetTarget();
-	void ClearTarget();
+	virtual const URTSOrder* GetCurrentOrder() const;
+	virtual void EnqueueOrder(const URTSOrder* InOrder, bool InbIsEnquedOrder = false);
+	virtual bool IsOrderAvailable()  const;
+
+protected:
+	virtual void ClearOrders();
+	virtual void SetCurrentOrder(const URTSOrder* InOrder);
+	virtual void OnOrderFinished(const URTSOrder* InOrder, const ERTSOrderFinishReason InFinishReason);
 
 protected:
 	virtual void ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
@@ -69,10 +80,6 @@ protected:
 	virtual void OnTargetPerceptionUpdated(AActor * Actor, FAIStimulus Stimulus);
 
 	virtual bool ConfigureRTSPerception(class ARTSMinion * Minion);
-
-
-
-
 
 
 public:
@@ -93,7 +100,7 @@ protected:
 	UAISenseConfig_Sight* SightConfig;
 
 	UPROPERTY(EditDefaultsOnly)
-	FName Target = "Target";
+	FName PrimaryOrder = "PrimaryOrder";
 
 protected:
 	UFlockPathFollowingComponent* FlockPathingComp;
@@ -106,4 +113,11 @@ private:
 	FAIRequestID AIRequestId;
 	FORCEINLINE void StoreAIRequestId() { AIRequestId = AIRequestId + 1; }
 
+
+protected:
+	const URTSOrder* CurrentOrder = nullptr;
+
+	TQueue<const URTSOrder*> EnquedOrders;
+
+	int NumOrders = 0;
 };

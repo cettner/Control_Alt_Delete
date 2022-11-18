@@ -2,3 +2,13 @@
 
 
 #include "RTSMoveOrder.h"
+
+void URTSMoveOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
+{
+	MoveToLocation = InContext.Location;
+}
+
+void URTSMoveOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
+{
+	InBlackBoard->SetValueAsVector("MoveLocation", MoveToLocation);
+}

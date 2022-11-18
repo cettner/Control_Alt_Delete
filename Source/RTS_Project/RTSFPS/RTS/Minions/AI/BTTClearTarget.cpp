@@ -19,10 +19,10 @@ EBTNodeResult::Type UBTTClearTarget::ExecuteTask(UBehaviorTreeComponent& OwnerCo
 
         if(Controller && minion)
         {
-            if(minion->HasAssets() && bShouldReleaseAssets)
-            {   
-                minion->ReleaseAssets();
-            }
+            //if(minion->HasAssets() && bShouldReleaseAssets)
+            //{   
+             //   minion->ReleaseAssets();
+            //}
             
             OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
             return (EBTNodeResult::Succeeded);

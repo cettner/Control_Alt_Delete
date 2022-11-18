@@ -30,7 +30,7 @@ public:
 	static const FName AIMessage_Mine_Finished;
 
 public:
-	virtual void ReleaseAssets() override;
+//	virtual void ReleaseAssets() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

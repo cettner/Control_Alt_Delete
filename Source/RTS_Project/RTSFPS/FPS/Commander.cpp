@@ -135,11 +135,6 @@ bool ACommander::IsFirstPerson() const
 	return retval;
 }
 
-void ACommander::SetTarget(AActor * newtarget)
-{
-
-}
-
 bool ACommander::CanInteract(AActor * Interactable)
 {
 	bool retval = false;
@@ -301,7 +296,7 @@ void ACommander::MinionInteractionHandler_Implementation(ARTSMinion * Interacted
 	{
 		for (int i = 0; i < Squad.Num(); i++)
 		{
-			Squad[i]->SetTarget(Interacted);
+			//Squad[i]->SetTarget(Interacted);
 		}
 	}
 }
@@ -310,7 +305,7 @@ void ACommander::SelectableInterationHandler_Implementation(AActor * Interacted)
 {
 	for(int i = 0; i < Squad.Num();  i++)
 	{
-		Squad[i]->SetTarget(Interacted);
+		//Squad[i]->SetTarget(Interacted);
 	}
 }
 

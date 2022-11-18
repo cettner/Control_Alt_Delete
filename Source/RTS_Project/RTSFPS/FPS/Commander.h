@@ -49,8 +49,6 @@ public:
 	virtual void ClearCommander() override;
 
 	virtual void SetCommander(ACommander * Commander) override;
-    
-    virtual void SetTarget(AActor * newtarget) override;
 
 	virtual bool CanInteract(AActor * Interactable) override;
 

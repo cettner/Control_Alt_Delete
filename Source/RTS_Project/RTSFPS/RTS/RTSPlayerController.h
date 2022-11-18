@@ -8,6 +8,7 @@
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSCamera.h"
 #include "RTS_Project/RTSFPS/RTS/FOW/FogOfWarManager.h"
 #include "RTS_Project/TeamMultiplayerGame/Game/GameArchitecture/DefaultPlayerController.h"
+#include "Orders/RTSTargetedOrder.h"
 #include "RTSPlayerController.generated.h"
 
 
@@ -28,13 +29,16 @@ public:
 	virtual void IssueDefaultOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 protected:
+	virtual const URTSTargetedOrder* CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext = FHitResult());
+
+protected:
 	ARTSPlayerController();
 
 	UFUNCTION(Server, reliable, WithValidation)
-	void ServerIssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
+	void ServerIssueOrder(const TArray<UObject*>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 	UFUNCTION(Server, reliable, WithValidation)
-	void ServerIssueDefaultOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
+	void ServerIssueDefaultOrder(const TArray<UObject*>& InUnits, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 	virtual void SetupInputComponent() override;
 

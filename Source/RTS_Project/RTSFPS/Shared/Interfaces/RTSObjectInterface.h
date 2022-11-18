@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "../../RTS/Orders/RTSOrder.h"
+#include "../../RTS/Orders/RTSTargetedOrder.h"
 #include "../../RTS/UI/Properties/RTSPropertyContainer.h"
 #include "RTSObjectInterface.generated.h"
 
@@ -35,15 +35,10 @@ public:
 	virtual bool IsAlive() const;
 	static bool IsRTSObjectValid(const IRTSObjectInterface * InRTSObject);
 
-	virtual void SetTarget(AActor* InNewTarget);
-	virtual void SetTargetLocation(FVector InTargetLocation);
-	virtual AActor* GetTarget();
-	virtual void ClearTarget();
-
 	virtual bool IsOrderablebyController(const AController * InController) const;
 	virtual bool CanCompleteOrder(const URTSOrder* InOrder) const;
 	virtual const TArray<const URTSOrder*> GetAvailableOrders() const;
-	virtual const URTSOrder* GetDefaultOrder(const FHitResult& InHitContext) const;
+	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const;
 	
 	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
 

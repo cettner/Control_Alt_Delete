@@ -12,6 +12,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
+#include "./Orders/RTSMoveOrder.h"
 #include "RTSMinion.generated.h"
 
 
@@ -38,10 +39,6 @@ public:
 	virtual void OnDeath();
 
 	virtual bool IsEnemy(AActor *  InMinion);
-
-	virtual void ReleaseAssets();
-
-	virtual bool HasAssets();
 
 	virtual void ClearCommander();
 
@@ -70,12 +67,6 @@ public:
 
 	virtual void SetTeamColors(FLinearColor TeamColor) override; 
 
-	virtual AActor* GetTarget() override;
-
-	virtual void SetTarget(AActor* NewTarget) override;
-
-	virtual void ClearTarget() override;
-
 	virtual bool IsAlive() const override;
 
 	virtual bool IsBoxSelectable() const override;
@@ -83,6 +74,10 @@ public:
 	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
 	
 	virtual FName GetUnitName() const override;
+
+	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
+
+	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 
 protected:
 	virtual void RegisterRTSObject() override;
@@ -131,7 +126,7 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	const TSubclassOf<URTSOrder> MoveOrderClass;
+	const TSubclassOf<URTSMoveOrder> MoveOrderClass = URTSMoveOrder::StaticClass();
 
 protected:
 	UPROPERTY(Replicated)

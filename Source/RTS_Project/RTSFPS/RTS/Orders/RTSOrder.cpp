@@ -27,3 +27,8 @@ TArray<TScriptInterface<IRTSObjectInterface>> URTSOrder::GetBestMinionsForOrder(
 
 	return retval;
 }
+
+void URTSOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
+{
+
+}

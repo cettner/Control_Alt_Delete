@@ -126,6 +126,19 @@ FName ARTSMinion::GetUnitName() const
 	return MinionName;
 }
 
+const TSubclassOf<URTSTargetedOrder> ARTSMinion::GetDefaultOrderClass(const FHitResult& InHitContext) const
+{
+	return MoveOrderClass;
+}
+
+void ARTSMinion::IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrder, const bool InbIsQueuedOrder)
+{
+	if (Cast<URTSMoveOrder>(InOrder))
+	{
+		
+	}
+}
+
 void ARTSMinion::RegisterRTSObject()
 {
 	const UWorld * world = GetWorld();
@@ -183,7 +196,7 @@ bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
 
 	return(Enemy);
 }
-
+/*
 AActor * ARTSMinion::GetTarget()
 {
 	ARTSAIController * rtscontrol = GetController<ARTSAIController>();
@@ -216,7 +229,7 @@ void ARTSMinion::ClearTarget()
 		rtscontrol->ClearTarget();
 	}
 }
-
+*/
 void ARTSMinion::SetSelected()
 {
 	if (Selection)
@@ -321,22 +334,6 @@ UBehaviorTree* ARTSMinion::GetBehavior()
 FRTSAIPerceptionConfig ARTSMinion::GetAIConfig() const
 {
 	return AIConfig;
-}
-
-//interface function for override;
-void ARTSMinion::ReleaseAssets()
-{
-	ARTSAIController* AIC = GetController<ARTSAIController>();
-	AIC->ReleaseAssets();
-}
-
-bool ARTSMinion::HasAssets()
-{
-	if(GetTarget())
-	{
-		return(true);
-	}
-	return (false);
 }
 
 void ARTSMinion::PostInstallUpgrades()

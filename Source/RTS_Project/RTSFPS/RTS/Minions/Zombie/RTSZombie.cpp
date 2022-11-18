@@ -68,11 +68,11 @@ bool ARTSZombie::CanDoDamage(AActor* AttackMe)
 	return(IsEnemy(AttackMe) && (AttackVarients.Num() > 0));
 }
 
+/*
 void ARTSZombie::ReleaseAssets()
 {
 	Super::ReleaseAssets();
 	
-	/*Have to notify the controller that the attack failed otherwise it will continue to wait for the message*/
 	if (GetWorldTimerManager().IsTimerActive(AttackEndHandler) || GetWorldTimerManager().IsTimerActive(DamageEventHandler))
 	{
 		ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
@@ -85,7 +85,7 @@ void ARTSZombie::ReleaseAssets()
 	GetWorldTimerManager().ClearTimer(DamageEventHandler);
 	bAttackAnimPlaying = false;
 }
-
+*/
 void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)
 {
 	if (!this->IsValidLowLevel() || !this->IsAlive()) return;
@@ -173,7 +173,7 @@ void ARTSZombie::OnAttackFinish()
 	bAttackAnimPlaying = false;
 	if (CurrentAttack.PlayDamageOnEnd)
 	{
-		DoDamage(GetTarget());
+		//DoDamage(GetTarget());
 	}
 	CurrentAttack = FAttackAnim();
 

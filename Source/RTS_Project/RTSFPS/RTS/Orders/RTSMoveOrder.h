@@ -13,6 +13,11 @@ class RTS_PROJECT_API URTSMoveOrder : public URTSTargetedOrder
 {
 	GENERATED_BODY()
 
+public:
+	FORCEINLINE FVector GetMoveLocation() const { return MoveToLocation; }
+	virtual void SetTargetContext(AController* Issuer, const FHitResult& InContext) override;
+	virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const override;
+
 	protected:
 		FVector MoveToLocation = FVector();
 };

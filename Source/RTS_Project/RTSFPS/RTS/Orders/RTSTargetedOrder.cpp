@@ -2,3 +2,9 @@
 
 
 #include "RTSTargetedOrder.h"
+
+
+void URTSTargetedOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
+{
+
+}

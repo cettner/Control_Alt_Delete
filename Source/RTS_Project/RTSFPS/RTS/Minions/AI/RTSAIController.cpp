@@ -94,28 +94,6 @@ void ARTSAIController::PostInitializeComponents()
 	FlockPathingComp->OnRequestFinished.AddUObject(this, &AAIController::OnMoveCompleted);
 }
 
-void ARTSAIController::SetTarget(AActor * newtarget)
-{
-	if (BlackboardComp)
-	{
-		BlackboardComp->SetValueAsObject(Target, newtarget);
-	}
-}
-
-AActor * ARTSAIController::GetTarget()
-{
-	return(Cast<AActor>(BlackboardComp->GetValueAsObject(Target)));
-}
-
-void ARTSAIController::ClearTarget()
-{
-	BlackboardComp->ClearValue(Target);
-}
-
-void ARTSAIController::ReleaseAssets()
-{
-}
-
 void ARTSAIController::SetCommander(ACommander * Commander)
 {
 	BlackboardComp->SetValueAsObject("OwningCommander", Commander);
@@ -126,6 +104,76 @@ void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus 
 	FAIMessage Msg(AIMessage, this, AIRequestId, Status);
 	FAIMessage::Send(this, Msg);
 	StoreAIRequestId();
+}
+
+const URTSOrder* ARTSAIController::GetCurrentOrder() const
+{
+	return CurrentOrder;
+}
+
+void ARTSAIController::EnqueueOrder(const URTSOrder* InOrder, bool InbIsEnquedOrder)
+{
+	if (!InbIsEnquedOrder)
+	{
+		ClearOrders();
+		SetCurrentOrder(InOrder);
+	}
+	else if(IsValid(CurrentOrder))
+	{
+		EnquedOrders.Enqueue(InOrder);
+		NumOrders += 1;
+	}
+	else
+	{
+		SetCurrentOrder(InOrder);
+	}
+}
+
+void ARTSAIController::ClearOrders()
+{
+	EnquedOrders.Empty();
+	if (IsValid(CurrentOrder))
+	{
+		OnOrderFinished(CurrentOrder, ERTSOrderFinishReason::ORDERINTERRUPTED);
+	}
+}
+
+bool ARTSAIController::IsOrderAvailable() const
+{
+	return IsValid(CurrentOrder);
+}
+
+void ARTSAIController::SetCurrentOrder(const URTSOrder* InOrder)
+{
+	if (InOrder != CurrentOrder)
+	{
+		const URTSOrder* nextorder = nullptr;
+
+		if (InOrder != nullptr)
+		{
+			/*Make Sure the blackboard is properly loaded before we set the current order*/
+			InOrder->LoadAIBlackBoard(BlackboardComp);
+			CurrentOrder = InOrder;
+		}
+		/*NullOrder, possibly due to completion of a previous order, check queue if we have one available and load it*/
+		else if (InOrder == nullptr && EnquedOrders.Dequeue(nextorder))
+		{
+			NumOrders -= 1;
+			/*Make Sure the blackboard is properly loaded before we set the current order*/
+			nextorder->LoadAIBlackBoard(BlackboardComp);
+			CurrentOrder = nextorder;
+		}
+		/*Clear the Order*/
+		else
+		{
+			CurrentOrder = nullptr;
+		}
+	}
+}
+
+void ARTSAIController::OnOrderFinished(const URTSOrder* InOrder, const ERTSOrderFinishReason InFinishReason)
+{
+	SetCurrentOrder(nullptr);
 }
 
 void ARTSAIController::ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors)

@@ -12,7 +12,64 @@ void ARTSPlayerController::IssueDefaultOrder(const TArray<TScriptInterface<IRTSO
 {
 	if (!HasAuthority())
 	{
-		ServerIssueDefaultOrder(InUnits, InHitContext, InbIsQueuedOrder);
+		/*Currently only Uobjects can be passed via RPC, so have to obtain the object portion on the client then rebuild interface structs on the server*/
+		TArray<UObject*> replicationobjects = TArray<UObject*>();
+		for (int i = 0; i < InUnits.Num(); i++)
+		{
+			replicationobjects.Emplace(InUnits[i].GetObject());
+		}
+		ServerIssueDefaultOrder(replicationobjects, InHitContext, InbIsQueuedOrder);
+	}
+	else
+	{
+		/*Units may have different default orders, but we should only issue one order per type, so we map each order type to its associated units*/
+		TMultiMap<TSubclassOf<URTSTargetedOrder>, TScriptInterface<IRTSObjectInterface>> ordermap = TMultiMap<TSubclassOf<URTSTargetedOrder>, TScriptInterface<IRTSObjectInterface>>();
+		for (int i = 0; i < InUnits.Num(); i++)
+		{
+			if (IsValid(InUnits[i].GetObject()))
+			{
+				const TSubclassOf<URTSTargetedOrder> defaultorder = InUnits[i]->GetDefaultOrderClass(InHitContext);
+				/*This can return null if the unit has nothing to do for the given context*/
+				if (defaultorder != nullptr)
+				{
+					ordermap.Add(defaultorder, InUnits[i]);
+				}
+			}
+		}
+		
+		/*For each class, create a new order and assign it to the units that implement it*/
+		TArray<TSubclassOf<URTSTargetedOrder>> keys = TArray<TSubclassOf<URTSTargetedOrder>>();
+		TArray<TScriptInterface<IRTSObjectInterface>> outunits = TArray<TScriptInterface<IRTSObjectInterface>>();
+		ordermap.GetKeys(keys);
+		for (int i = 0; i < keys.Num(); i++)
+		{
+			outunits.Reset();
+			const URTSTargetedOrder* ordertoissue = CreateTargetOrder(keys[i], InHitContext);
+			ordermap.MultiFind(keys[i], outunits);
+			IssueOrder(outunits, ordertoissue, InHitContext, InbIsQueuedOrder);
+		}
+
+	}
+}
+
+const URTSTargetedOrder* ARTSPlayerController::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext)
+{
+	URTSTargetedOrder*  retval = NewObject<URTSTargetedOrder>(this, OrderClass);
+	retval->SetTargetContext(this, InHitContext);
+	return retval;
+}
+
+void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+{
+	if (!HasAuthority())
+	{
+		/*Currently only Uobjects can be passed via RPC, so have to obtain the object portion on the client then rebuild on the server*/
+		TArray<UObject*> replicationobjects = TArray<UObject*>();
+		for (int i = 0; i < InUnits.Num(); i++)
+		{
+			replicationobjects.Emplace(InUnits[i].GetObject());
+		}
+		ServerIssueOrder(replicationobjects, InOrder);
 	}
 	else
 	{
@@ -20,9 +77,9 @@ void ARTSPlayerController::IssueDefaultOrder(const TArray<TScriptInterface<IRTSO
 		{
 			if (IsValid(InUnits[i].GetObject()))
 			{
-				const URTSOrder* defaultorder = InUnits[i]->GetDefaultOrder(InHitContext);
-				InUnits[i]->IssueOrder(this, InHitContext, defaultorder, InbIsQueuedOrder);
+				InUnits[i]->IssueOrder(this, InHitContext, InOrder, InbIsQueuedOrder);
 			}
+
 		}
 	}
 }
@@ -95,41 +152,32 @@ bool ARTSPlayerController::IsUnitOrderable(const IRTSObjectInterface* InObj) con
 	return retval;
 }
 
-void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+void ARTSPlayerController::ServerIssueOrder_Implementation(const TArray<UObject*>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
-	if (!HasAuthority())
+	TArray<TScriptInterface<IRTSObjectInterface>> interfaceobjects = TArray<TScriptInterface<IRTSObjectInterface>>();
+	for (int i = 0; i < InUnitsToOrder.Num(); i++)
 	{
-		ServerIssueOrder(InUnits, InOrder);
+		interfaceobjects.Emplace(TScriptInterface<IRTSObjectInterface>(InUnitsToOrder[i]));
 	}
-	else
-	{
-		for (int i = 0; i < InUnits.Num(); i++)
-		{
-			if (IsValid(InUnits[i].GetObject()))
-			{
-				InUnits[i]->IssueOrder(this, InHitContext, InOrder, InbIsQueuedOrder);	
-			}
-
-		}
-	}
+	IssueOrder(interfaceobjects, InOrder, InHitContext, InbIsQueuedOrder);
 }
 
-void ARTSPlayerController::ServerIssueOrder_Implementation(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
-{
-	IssueOrder(InUnitsToOrder, InOrder, InHitContext, InbIsQueuedOrder);
-}
-
-bool ARTSPlayerController::ServerIssueOrder_Validate(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+bool ARTSPlayerController::ServerIssueOrder_Validate(const TArray<UObject*>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
 	return (true);
 }
 
-void ARTSPlayerController::ServerIssueDefaultOrder_Implementation(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+void ARTSPlayerController::ServerIssueDefaultOrder_Implementation(const TArray<UObject*>& InUnits, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
-	IssueDefaultOrder(InUnits, InHitContext, InbIsQueuedOrder);
+	TArray<TScriptInterface<IRTSObjectInterface>> interfaceobjects = TArray<TScriptInterface<IRTSObjectInterface>>();
+	for (int i = 0; i < InUnits.Num(); i++)
+	{
+		interfaceobjects.Emplace(TScriptInterface<IRTSObjectInterface>(InUnits[i]));
+	}
+	IssueDefaultOrder(interfaceobjects, InHitContext, InbIsQueuedOrder);
 }
 
-bool ARTSPlayerController::ServerIssueDefaultOrder_Validate(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+bool ARTSPlayerController::ServerIssueDefaultOrder_Validate(const TArray<UObject*>& InUnits, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
 	return true;
 }

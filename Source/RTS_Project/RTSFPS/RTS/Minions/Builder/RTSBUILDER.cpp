@@ -36,7 +36,7 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 
 	return(retval);
 }
-
+/*
 bool ARTSBUILDER::HasAssets()
 {
 	return(Super::HasAssets());
@@ -58,6 +58,7 @@ void ARTSBUILDER::ReleaseAssets()
 
 	bIsMining = false;
 }
+*/
 
 bool ARTSBUILDER::CanInteract(AActor * Interactable)
 {
@@ -112,6 +113,7 @@ bool ARTSBUILDER::IsMining()
 
 void ARTSBUILDER::MineResource()
 {
+	/*
 	AResource * Node = Cast<AResource>(GetTarget());
 	if(IsValid(Node) && Node == target_node) //verify that the current target and the target specified at start of mine operation are the same
 	{
@@ -130,6 +132,7 @@ void ARTSBUILDER::MineResource()
 
 	bIsMining = false;
 	target_node =nullptr;
+	*/
 }
 
 void ARTSBUILDER::AddResource(TSubclassOf<AResource> type, int amount)

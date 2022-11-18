@@ -12,5 +12,7 @@ UCLASS(Blueprintable)
 class RTS_PROJECT_API URTSTargetedOrder : public URTSOrder
 {
 	GENERATED_BODY()
+	public:
+		virtual void SetTargetContext(AController* Issuer, const FHitResult& InContext);
 
 };

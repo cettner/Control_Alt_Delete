@@ -19,8 +19,10 @@ void ABuilderAIController::SendMineUpdateMessage()
 	StoreMineRequestId();
 }
 
+/*
 void ABuilderAIController::ReleaseAssets()
 {
 	Super::ReleaseAssets();
 	BlackboardComp->ClearValue(LastMinedLocation);
 }
+*/

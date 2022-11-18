@@ -20,8 +20,8 @@ class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion
 
 public:
 	ARTSBUILDER();
-	virtual bool HasAssets() override;
-	virtual void ReleaseAssets() override;
+//	virtual bool HasAssets() override;
+//	virtual void ReleaseAssets() override;
 	virtual bool CanInteract(AActor * Interactable) override;
 
 public:

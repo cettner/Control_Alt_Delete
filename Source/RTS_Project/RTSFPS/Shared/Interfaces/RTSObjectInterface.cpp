@@ -45,23 +45,6 @@ bool IRTSObjectInterface::IsRTSObjectValid(const IRTSObjectInterface* InRTSObjec
 	return IsValid(Cast<UObject>(InRTSObject));
 }
 
-void IRTSObjectInterface::SetTarget(AActor* InNewTarget)
-{
-}
-
-void IRTSObjectInterface::SetTargetLocation(FVector InTargetLocation)
-{
-}
-
-AActor* IRTSObjectInterface::GetTarget()
-{
-	return nullptr;
-}
-
-void IRTSObjectInterface::ClearTarget()
-{
-}
-
 bool IRTSObjectInterface::IsOrderablebyController(const AController* InController) const
 {
 	return false;
@@ -79,7 +62,7 @@ const TArray<const URTSOrder*> IRTSObjectInterface::GetAvailableOrders() const
 	return TArray<const URTSOrder*>();
 }
 
-const URTSOrder * IRTSObjectInterface::GetDefaultOrder(const FHitResult& InHitContext) const
+const TSubclassOf<URTSTargetedOrder> IRTSObjectInterface::GetDefaultOrderClass(const FHitResult& InHitContext) const
 {
 	return nullptr;
 }
