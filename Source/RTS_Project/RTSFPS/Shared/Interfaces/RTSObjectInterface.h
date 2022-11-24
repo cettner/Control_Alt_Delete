@@ -40,12 +40,12 @@ public:
 	virtual const TArray<const URTSOrder*> GetAvailableOrders() const;
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const;
 	
-	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
+	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
 
 	virtual const URTSOrder* GetCurrentOrder() const;
 	virtual TArray<const URTSOrder*> GetAllIssuedOrders() const;
 
-	virtual TArray<const URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const;
+	virtual TArray<URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const;
 	virtual bool ContainsProperty(const URTSProperty * InPropCheck) const;
 
 	virtual IRTSObjectInterface* GetLeadRTSObject();

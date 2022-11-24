@@ -27,7 +27,7 @@ bool ARTSZombie::CanAttack(AActor* AttackMe)
 
 	return(attack);
 }
-
+/*
 void ARTSZombie::StartAttack(AActor* AttackMe)
 {
 	if (AttackVarients.Num() && !bAttackAnimPlaying && GetWorld())
@@ -62,7 +62,7 @@ void ARTSZombie::StartAttack(AActor* AttackMe)
 		}
 	}
 }
-
+*/
 bool ARTSZombie::CanDoDamage(AActor* AttackMe)
 {	
 	return(IsEnemy(AttackMe) && (AttackVarients.Num() > 0));

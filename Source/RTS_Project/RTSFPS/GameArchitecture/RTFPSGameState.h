@@ -57,7 +57,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResour
 		virtual void SetUnitPriceMap(const TMap<TSubclassOf<UObject>, FReplicationResourceMap> InPriceMap);
 
 	public:
-		virtual TArray<const URTSResourcePurchaseOrder*> GetPurchaseOrders(const TArray<TSubclassOf<UObject>> InPurchaseObjects) const;
+		virtual TArray<URTSResourcePurchaseOrder*> GetPurchaseOrders(const TArray<TSubclassOf<UObject>> InPurchaseObjects) const;
 	/********************************************************************/
 
 	public:

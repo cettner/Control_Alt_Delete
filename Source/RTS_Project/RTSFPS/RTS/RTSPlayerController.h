@@ -24,18 +24,18 @@ class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
 	GENERATED_BODY()
 	
 public:
-	virtual void IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
+	virtual void IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 	virtual void IssueDefaultOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 protected:
-	virtual const URTSTargetedOrder* CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext = FHitResult());
+	virtual URTSTargetedOrder* CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext = FHitResult());
 
 protected:
 	ARTSPlayerController();
 
 	UFUNCTION(Server, reliable, WithValidation)
-	void ServerIssueOrder(const TArray<UObject*>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
+	void ServerIssueOrder(const TArray<UObject*>& InUnits, URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 	UFUNCTION(Server, reliable, WithValidation)
 	void ServerIssueDefaultOrder(const TArray<UObject*>& InUnits, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);

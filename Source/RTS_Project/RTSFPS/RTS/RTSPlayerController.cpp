@@ -44,7 +44,7 @@ void ARTSPlayerController::IssueDefaultOrder(const TArray<TScriptInterface<IRTSO
 		for (int i = 0; i < keys.Num(); i++)
 		{
 			outunits.Reset();
-			const URTSTargetedOrder* ordertoissue = CreateTargetOrder(keys[i], InHitContext);
+			URTSTargetedOrder* ordertoissue = CreateTargetOrder(keys[i], InHitContext);
 			ordermap.MultiFind(keys[i], outunits);
 			IssueOrder(outunits, ordertoissue, InHitContext, InbIsQueuedOrder);
 		}
@@ -52,14 +52,14 @@ void ARTSPlayerController::IssueDefaultOrder(const TArray<TScriptInterface<IRTSO
 	}
 }
 
-const URTSTargetedOrder* ARTSPlayerController::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext)
+URTSTargetedOrder* ARTSPlayerController::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext)
 {
 	URTSTargetedOrder*  retval = NewObject<URTSTargetedOrder>(this, OrderClass);
 	retval->SetTargetContext(this, InHitContext);
 	return retval;
 }
 
-void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
 	if (!HasAuthority())
 	{
@@ -152,7 +152,7 @@ bool ARTSPlayerController::IsUnitOrderable(const IRTSObjectInterface* InObj) con
 	return retval;
 }
 
-void ARTSPlayerController::ServerIssueOrder_Implementation(const TArray<UObject*>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+void ARTSPlayerController::ServerIssueOrder_Implementation(const TArray<UObject*>& InUnitsToOrder, URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
 	TArray<TScriptInterface<IRTSObjectInterface>> interfaceobjects = TArray<TScriptInterface<IRTSObjectInterface>>();
 	for (int i = 0; i < InUnitsToOrder.Num(); i++)
@@ -162,7 +162,7 @@ void ARTSPlayerController::ServerIssueOrder_Implementation(const TArray<UObject*
 	IssueOrder(interfaceobjects, InOrder, InHitContext, InbIsQueuedOrder);
 }
 
-bool ARTSPlayerController::ServerIssueOrder_Validate(const TArray<UObject*>& InUnitsToOrder, const URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
+bool ARTSPlayerController::ServerIssueOrder_Validate(const TArray<UObject*>& InUnitsToOrder, URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)
 {
 	return (true);
 }

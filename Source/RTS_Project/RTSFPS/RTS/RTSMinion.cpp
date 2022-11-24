@@ -31,6 +31,7 @@ ARTSMinion::ARTSMinion()
 
 	//AI recives Access on Spawn
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AIControllerClass = ARTSAIController::StaticClass();
 
 	// No Ticking on Minions
 	PrimaryActorTick.bCanEverTick = false;
@@ -101,8 +102,14 @@ bool ARTSMinion::CanDoDamage(AActor * AttackMe)
 	return (false);
 }
 
-void ARTSMinion::StartAttack(AActor * AttackMe)
+bool ARTSMinion::StartAttack(const int32 InAttackID)
 {
+	return false;
+}
+
+int32 ARTSMinion::GetAttackIndexForTarget(const AActor* InToAttack) const
+{
+	return CANT_ATTACK_INDEX;
 }
 
 bool ARTSMinion::IsAlive() const
@@ -131,12 +138,10 @@ const TSubclassOf<URTSTargetedOrder> ARTSMinion::GetDefaultOrderClass(const FHit
 	return MoveOrderClass;
 }
 
-void ARTSMinion::IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrder, const bool InbIsQueuedOrder)
+void ARTSMinion::IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
 {
-	if (Cast<URTSMoveOrder>(InOrder))
-	{
-		
-	}
+	ARTSAIController* rtscontrol = GetController<ARTSAIController>();
+	rtscontrol->EnqueueOrder(InOrder, InbIsQueuedOrder);
 }
 
 void ARTSMinion::RegisterRTSObject()
@@ -182,7 +187,7 @@ void ARTSMinion::OnDeath()
 
 }
 
-bool ARTSMinion::IsEnemy(AActor* FriendOrFoe)
+bool ARTSMinion::IsEnemy(AActor* FriendOrFoe) const
 {
 	bool Enemy = false;
 	if (!IsValid(FriendOrFoe)) return false;

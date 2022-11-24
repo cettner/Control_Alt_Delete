@@ -72,8 +72,8 @@ public:
 	virtual void SetDeselected() override;
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
-	virtual TArray<const URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
-	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
+	virtual TArray<URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
+	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 
 protected:
 	virtual void RegisterRTSObject() override;

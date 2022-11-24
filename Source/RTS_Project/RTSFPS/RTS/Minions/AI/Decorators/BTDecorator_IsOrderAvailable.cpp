@@ -15,7 +15,7 @@ UBTDecorator_IsOrderAvailable::UBTDecorator_IsOrderAvailable()
 
 bool UBTDecorator_IsOrderAvailable::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	const ARTSAIController * controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-	const bool retval = controller->IsOrderAvailable();
-	return(retval);
+	//const ARTSAIController * controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+	//const bool retval = controller->IsOrderAvailable();
+	return(false);
 }

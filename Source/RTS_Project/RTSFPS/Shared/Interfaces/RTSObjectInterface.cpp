@@ -77,15 +77,15 @@ TArray<const URTSOrder*> IRTSObjectInterface::GetAllIssuedOrders() const
 	return TArray<const URTSOrder*>();
 }
 
-TArray<const URTSProperty*> IRTSObjectInterface::GetRTSProperties(bool bIncludeNestedProperties) const
+TArray<URTSProperty*> IRTSObjectInterface::GetRTSProperties(bool bIncludeNestedProperties) const
 {
-	return TArray<const URTSProperty *>();
+	return TArray<URTSProperty *>();
 }
 
 bool IRTSObjectInterface::ContainsProperty(const URTSProperty* InPropCheck) const
 {
 	checkf(InPropCheck, TEXT("IRTSObjectInterface::ContainsProperty InProp was null"));
-	const TArray<const URTSProperty*> props = GetRTSProperties(true);
+	const TArray<URTSProperty*> props = GetRTSProperties(true);
 
 	bool retval = false;
 
@@ -112,7 +112,7 @@ FName IRTSObjectInterface::GetUnitName() const
 	return FName();
 }
 
-void IRTSObjectInterface::IssueOrder(AController * InIssuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
+void IRTSObjectInterface::IssueOrder(AController * InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
 {
 
 }

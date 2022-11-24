@@ -55,6 +55,8 @@ public:
 	virtual int GetTeam() const override;
 
 	virtual void OnDeath() override;
+
+	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder) override;
 	/********************************************/
 
 

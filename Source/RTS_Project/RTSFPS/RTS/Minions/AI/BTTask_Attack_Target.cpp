@@ -20,15 +20,16 @@ EBTNodeResult::Type UBTTask_Attack_Target::ExecuteTask(UBehaviorTreeComponent& O
 {
 	EBTNodeResult::Type Result = EBTNodeResult::Failed;
 
-	AActor* target = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
+	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
+	AActor* target = Cast<AActor>(blackboard->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 	ARTSAIController* Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
 
-	if (Controller && target && !MessageRecieved)
+	if (target && !MessageRecieved)
 	{
 		ARTSMinion* Minion = Cast<ARTSMinion>(Controller->GetPawn());
-		if (Minion)
+		const int32 attackid = blackboard->GetValueAsInt(GetSelectedBlackboardKey());
+		if (Minion->StartAttack(attackid))
 		{
-			Minion->StartAttack(target);
 			WaitForMessage(OwnerComp, ARTSAIController::AIMessage_Finished, Controller->GetAIRequestId());
 			Result = EBTNodeResult::InProgress;
 		}

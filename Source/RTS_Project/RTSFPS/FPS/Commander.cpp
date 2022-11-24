@@ -181,6 +181,11 @@ void ACommander::OnDeath()
 	Super::OnDeath();
 }
 
+void ACommander::IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
+{
+	/*TODO:: Add waypoint highlighting for incoming order*/
+}
+
 bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
 {
 	int index = Squad.IndexOfByKey(needs_orders);

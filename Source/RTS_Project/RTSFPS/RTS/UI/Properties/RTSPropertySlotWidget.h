@@ -21,7 +21,7 @@ class RTS_PROJECT_API URTSPropertySlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void Setup(const URTSProperty * InProperty, TArray<TScriptInterface<IRTSObjectInterface>> InPropertyHolders);
+	virtual void Setup(URTSProperty * InProperty, TArray<TScriptInterface<IRTSObjectInterface>> InPropertyHolders);
 
 protected:
 	UFUNCTION()
@@ -44,7 +44,7 @@ protected:
 	TSubclassOf<URTSPropertyToolTipWidget> ToolTipClass = URTSPropertyToolTipWidget::StaticClass();
 
 protected:
-	const URTSProperty * BoundProperty = nullptr;
+	URTSProperty * BoundProperty = nullptr;
 
 	TArray<TScriptInterface<IRTSObjectInterface>> PropertyHolders = TArray<TScriptInterface<IRTSObjectInterface>>();
 };

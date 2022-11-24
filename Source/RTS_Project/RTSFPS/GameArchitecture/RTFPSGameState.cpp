@@ -161,16 +161,16 @@ const TArray<IRTSObjectInterface*>& ARTFPSGameState::GetRegisteredRTSObjects() c
 	return RTSObjects;
 }
 
-TArray<const URTSResourcePurchaseOrder*> ARTFPSGameState::GetPurchaseOrders(const TArray<TSubclassOf<UObject>> InPurchaseObjects) const
+TArray<URTSResourcePurchaseOrder*> ARTFPSGameState::GetPurchaseOrders(const TArray<TSubclassOf<UObject>> InPurchaseObjects) const
 {
-	TArray<const URTSResourcePurchaseOrder*> retval = TArray<const URTSResourcePurchaseOrder*>();
+	TArray<URTSResourcePurchaseOrder*> retval = TArray<URTSResourcePurchaseOrder*>();
 	
 	for (int i = 0; i < InPurchaseObjects.Num(); i++)
 	{
 		checkf(InPurchaseObjects[i], TEXT("ARTFPSGameState::GetPurchaseOrders : ARequestedPurchaseClass was Null!"))
 		const TSubclassOf<UObject> requestedobject = InPurchaseObjects[i];
 
-		URTSResourcePurchaseOrder* const* purchaseorderptr = PurchaseOrders.Find(requestedobject);
+		URTSResourcePurchaseOrder*const * purchaseorderptr = PurchaseOrders.Find(requestedobject);
 		if (purchaseorderptr != nullptr)
 		{
 			retval.Emplace(*purchaseorderptr);

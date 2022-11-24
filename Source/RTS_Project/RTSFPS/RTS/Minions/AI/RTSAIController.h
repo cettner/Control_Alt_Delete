@@ -7,6 +7,7 @@
 #include "GenericTeamAgentInterface.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "BrainComponent.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 
 #include "../../Orders/RTSOrder.h"
 #include "Navigation/FlockPathFollowingComponent.h"
@@ -63,14 +64,13 @@ public:
 	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status);
 
 public:
-	virtual const URTSOrder* GetCurrentOrder() const;
-	virtual void EnqueueOrder(const URTSOrder* InOrder, bool InbIsEnquedOrder = false);
-	virtual bool IsOrderAvailable()  const;
+	virtual void EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder = false);
+	virtual void OnOrderFinished(UBTTask_BlackboardBase * InTaskNode, const EBTNodeResult::Type InFinishReason);
+	virtual URTSOrder* GetCurrentOrder() const;
 
 protected:
 	virtual void ClearOrders();
-	virtual void SetCurrentOrder(const URTSOrder* InOrder);
-	virtual void OnOrderFinished(const URTSOrder* InOrder, const ERTSOrderFinishReason InFinishReason);
+	virtual void SetCurrentOrder(URTSOrder* InOrder);
 
 protected:
 	virtual void ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
@@ -115,9 +115,10 @@ private:
 
 
 protected:
-	const URTSOrder* CurrentOrder = nullptr;
-
-	TQueue<const URTSOrder*> EnquedOrders;
+	TQueue<URTSOrder*> EnquedOrders;
 
 	int NumOrders = 0;
+
+	UPROPERTY(Transient)
+	URTSOrder* CurrentOrder = nullptr;
 };

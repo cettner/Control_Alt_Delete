@@ -9,6 +9,7 @@
 
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/CombatInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
@@ -20,7 +21,7 @@
 class ACommander;
 
 UCLASS(Blueprintable)
-class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgradableInterface
+class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgradableInterface, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -33,12 +34,14 @@ public:
 
 	virtual bool CanDoDamage(AActor * AttackMe);
 
-	virtual void StartAttack(AActor * AttackMe);
+	virtual bool StartAttack(const int32 InAttackID = -1) override;
+
+	virtual int32 GetAttackIndexForTarget(const AActor * InToAttack) const override;
 
 	UFUNCTION()
 	virtual void OnDeath();
 
-	virtual bool IsEnemy(AActor *  InMinion);
+	virtual bool IsEnemy(AActor *  InMinion) const;
 
 	virtual void ClearCommander();
 
@@ -77,7 +80,7 @@ public:
 
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
 
-	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
+	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder = nullptr, const bool InbIsQueuedOrder = false) override;
 
 protected:
 	virtual void RegisterRTSObject() override;

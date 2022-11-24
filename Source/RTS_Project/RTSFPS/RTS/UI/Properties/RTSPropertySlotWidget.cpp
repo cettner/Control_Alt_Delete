@@ -6,7 +6,7 @@
 #include "..\..\RTSPlayerController.h"
 #include "..\..\Camera\RTSSelectionCamera.h"
 
-void URTSPropertySlotWidget::Setup(const URTSProperty * InPropertyClass,  TArray<TScriptInterface<IRTSObjectInterface>> InPropertyHolders)
+void URTSPropertySlotWidget::Setup(URTSProperty * InPropertyClass,  TArray<TScriptInterface<IRTSObjectInterface>> InPropertyHolders)
 {
 	BoundProperty = InPropertyClass;
 	PropertyHolders = InPropertyHolders;
@@ -24,7 +24,7 @@ void URTSPropertySlotWidget::Setup(const URTSProperty * InPropertyClass,  TArray
 
 void URTSPropertySlotWidget::OnActivatePropertyClicked()
 {
-	 const URTSOrder * activeprop = Cast<URTSOrder>(BoundProperty);
+	 URTSOrder * activeprop = Cast<URTSOrder>(BoundProperty);
 	if (IsValid(activeprop))
 	{
 		if (const URTSTargetedOrder * targetorder = Cast<URTSTargetedOrder>(activeprop))

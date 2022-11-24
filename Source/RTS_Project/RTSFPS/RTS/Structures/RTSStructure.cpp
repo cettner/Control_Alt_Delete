@@ -244,9 +244,9 @@ void ARTSStructure::SetTeam(int newteamindex)
 	TeamIndex = newteamindex;
 }
 
-TArray<const URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedProperties) const
+TArray<URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedProperties) const
 {
-	TArray<const URTSProperty*> retval = TArray<const URTSProperty*>();
+	TArray<URTSProperty*> retval = TArray<URTSProperty*>();
 
 	const UWorld* world = GetWorld();
 	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
@@ -254,13 +254,13 @@ TArray<const URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedP
 	const APlayerController * pc = world->GetFirstPlayerController();
 
 	const TArray<TSubclassOf<UObject>> purchaseobjects = GetPurchasableUnitsForSource(ts, pc);
-	const TArray<const URTSResourcePurchaseOrder*> purchaseorders = gs->GetPurchaseOrders(purchaseobjects);
+	const TArray<URTSResourcePurchaseOrder*> purchaseorders = gs->GetPurchaseOrders(purchaseobjects);
 	retval.Append(purchaseorders);
 
 	return retval;
 }
 
-void ARTSStructure::IssueOrder(AController* InIssuer, const FHitResult& InHitContext, const URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
+void ARTSStructure::IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
 {
 	if (const URTSResourcePurchaseOrder* purchaseorder = Cast<URTSResourcePurchaseOrder>(InOrderClass))
 	{

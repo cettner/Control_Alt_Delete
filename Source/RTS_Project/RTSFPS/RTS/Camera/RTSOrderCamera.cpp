@@ -4,7 +4,7 @@
 #include "RTSOrderCamera.h"
 #include "../RTSPlayerController.h"
 
-void ARTSOrderCamera::LoadOrder(const URTSTargetedOrder* InOrder)
+void ARTSOrderCamera::LoadOrder(URTSTargetedOrder* InOrder)
 {
     if (IsValid(EnqueuedOrder))
     {
@@ -14,7 +14,7 @@ void ARTSOrderCamera::LoadOrder(const URTSTargetedOrder* InOrder)
     EnqueuedOrder = InOrder;
 }
 
-const URTSTargetedOrder* ARTSOrderCamera::GetOrder() const
+URTSTargetedOrder* ARTSOrderCamera::GetOrder() const
 {
     return EnqueuedOrder;
 }
@@ -37,7 +37,7 @@ void ARTSOrderCamera::OrderSelected()
 
 void ARTSOrderCamera::SelectPressed()
 {
-    if (const URTSTargetedOrder * enquedorder = GetOrder())
+    if (URTSTargetedOrder * enquedorder = GetOrder())
     {
         ARTSPlayerController* pc = GetController<ARTSPlayerController>();
         FHitResult hitresult = FHitResult();

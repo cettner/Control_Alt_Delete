@@ -17,7 +17,7 @@ struct FSelectionPropertyMap
 {
 	GENERATED_USTRUCT_BODY()
 
-	const URTSProperty * Property = nullptr;
+	URTSProperty * Property = nullptr;
 
 	TArray<TScriptInterface<IRTSObjectInterface>> PropertyOwners = TArray<TScriptInterface<IRTSObjectInterface>>();
 };

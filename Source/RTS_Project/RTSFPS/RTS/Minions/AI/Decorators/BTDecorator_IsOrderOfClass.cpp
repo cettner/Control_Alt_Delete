@@ -14,10 +14,10 @@ UBTDecorator_IsOrderOfClass::UBTDecorator_IsOrderOfClass()
 bool UBTDecorator_IsOrderOfClass::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	bool retval = false;
-	const ARTSAIController * controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-	const URTSOrder * currentorder = controller->GetCurrentOrder();
+	const UBlackboardComponent * blackboard = OwnerComp.GetBlackboardComponent();
+	const URTSOrder* currentorder = Cast<URTSOrder>(blackboard->GetValueAsObject("Order"));
 
-	if (currentorder != nullptr)
+	if (IsValid(currentorder))
 	{
 		retval = currentorder->IsA(OrderCheckClass);
 	}

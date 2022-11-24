@@ -17,8 +17,8 @@ class RTS_PROJECT_API ARTSOrderCamera : public ARTSSelectionCamera
 	GENERATED_BODY()
 
 	public:
-		virtual void LoadOrder(const URTSTargetedOrder * InOrder);
-		virtual const URTSTargetedOrder * GetOrder() const;
+		virtual void LoadOrder(URTSTargetedOrder * InOrder);
+		virtual URTSTargetedOrder * GetOrder() const;
 		virtual void ClearOrder();
 	
 	protected:
@@ -32,5 +32,5 @@ class RTS_PROJECT_API ARTSOrderCamera : public ARTSSelectionCamera
 		virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	protected:
-		const URTSTargetedOrder* EnqueuedOrder = nullptr;
+		URTSTargetedOrder* EnqueuedOrder = nullptr;
 };

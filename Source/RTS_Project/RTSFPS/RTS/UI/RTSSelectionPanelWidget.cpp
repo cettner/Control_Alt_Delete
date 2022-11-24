@@ -102,7 +102,7 @@ TArray<FSelectionPropertyMap> URTSSelectionPanelWidget::BuildPropertiesFromSelec
 	for (int i = 0; i < classinstances.Num(); i++)
 	{
 		/*Get all properties for one instance of the class*/
-		TArray<const URTSProperty*> classproperties = classinstances[i]->GetRTSProperties();
+		TArray<URTSProperty*> classproperties = classinstances[i]->GetRTSProperties();
 			
 		/*map each of those properties to all instances that contain it*/
 		for (int k = 0; k < classproperties.Num(); k++)

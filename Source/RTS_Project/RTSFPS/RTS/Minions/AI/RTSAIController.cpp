@@ -106,19 +106,19 @@ void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus 
 	StoreAIRequestId();
 }
 
-const URTSOrder* ARTSAIController::GetCurrentOrder() const
+URTSOrder* ARTSAIController::GetCurrentOrder() const
 {
-	return CurrentOrder;
+	return Cast<URTSOrder>(BlackboardComp->GetValueAsObject("Order"));
 }
 
-void ARTSAIController::EnqueueOrder(const URTSOrder* InOrder, bool InbIsEnquedOrder)
+void ARTSAIController::EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder)
 {
 	if (!InbIsEnquedOrder)
 	{
 		ClearOrders();
 		SetCurrentOrder(InOrder);
 	}
-	else if(IsValid(CurrentOrder))
+	else if(IsValid(GetCurrentOrder()))
 	{
 		EnquedOrders.Enqueue(InOrder);
 		NumOrders += 1;
@@ -132,27 +132,23 @@ void ARTSAIController::EnqueueOrder(const URTSOrder* InOrder, bool InbIsEnquedOr
 void ARTSAIController::ClearOrders()
 {
 	EnquedOrders.Empty();
-	if (IsValid(CurrentOrder))
+	if (IsValid(GetCurrentOrder()))
 	{
-		OnOrderFinished(CurrentOrder, ERTSOrderFinishReason::ORDERINTERRUPTED);
+		OnOrderFinished(nullptr, EBTNodeResult::Aborted);
 	}
 }
 
-bool ARTSAIController::IsOrderAvailable() const
+void ARTSAIController::SetCurrentOrder(URTSOrder* InOrder)
 {
-	return IsValid(CurrentOrder);
-}
-
-void ARTSAIController::SetCurrentOrder(const URTSOrder* InOrder)
-{
-	if (InOrder != CurrentOrder)
+	if (InOrder != GetCurrentOrder())
 	{
-		const URTSOrder* nextorder = nullptr;
+		URTSOrder* nextorder = nullptr;
 
 		if (InOrder != nullptr)
 		{
 			/*Make Sure the blackboard is properly loaded before we set the current order*/
 			InOrder->LoadAIBlackBoard(BlackboardComp);
+			BlackboardComp->SetValueAsObject("Order", InOrder);
 			CurrentOrder = InOrder;
 		}
 		/*NullOrder, possibly due to completion of a previous order, check queue if we have one available and load it*/
@@ -161,17 +157,19 @@ void ARTSAIController::SetCurrentOrder(const URTSOrder* InOrder)
 			NumOrders -= 1;
 			/*Make Sure the blackboard is properly loaded before we set the current order*/
 			nextorder->LoadAIBlackBoard(BlackboardComp);
+			BlackboardComp->SetValueAsObject("Order", nextorder);
 			CurrentOrder = nextorder;
 		}
 		/*Clear the Order*/
 		else
 		{
+			BlackboardComp->ClearValue("Order");
 			CurrentOrder = nullptr;
 		}
 	}
 }
 
-void ARTSAIController::OnOrderFinished(const URTSOrder* InOrder, const ERTSOrderFinishReason InFinishReason)
+void ARTSAIController::OnOrderFinished(UBTTask_BlackboardBase* InTaskNode, const EBTNodeResult::Type InFinishReason)
 {
 	SetCurrentOrder(nullptr);
 }
