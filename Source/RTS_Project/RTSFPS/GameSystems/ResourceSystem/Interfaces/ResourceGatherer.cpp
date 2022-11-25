@@ -19,7 +19,6 @@ void IResourceGatherer::AddResource(const FReplicationResourceMap InResourceMap)
 {
 	for (int i = 0; i < InResourceMap.Num(); i++)
 	{
-		
 		AddResource(InResourceMap[i].Key, InResourceMap[i].Value);
 	}
 }
@@ -91,9 +90,42 @@ bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap)
 	return retval;
 }
 
-uint32 IResourceGatherer::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
+bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> InResourceClass) const
 {
-	return 0U;
+	const AResource* resourcecdo = InResourceClass.GetDefaultObject();
+	const uint32 resourceweight = resourcecdo->GetResourceWeight();
+	const uint32 currentweight = GetCurrentWeight();
+
+	const uint32 maxweight = GetMaxWeight();
+
+	const uint32 estimatedweight = currentweight + resourceweight;
+
+	const bool retval = estimatedweight <= maxweight;
+	return retval;
+}
+
+uint32 IResourceGatherer::GetResourceTillFull(TSubclassOf<AResource> InResourceClass) const
+{
+	uint32 retval = 0U;
+	const AResource* defaultresource = InResourceClass.GetDefaultObject();
+	const uint32 singleresourceweight = defaultresource->GetResourceWeight();
+
+	if (singleresourceweight == 0U)
+	{
+		retval = 0xFFFFFFFFU;
+	}
+	else
+	{
+		const uint32 currentweight = GetCurrentWeight();
+		const uint32 maxweight = GetMaxWeight();
+		if (currentweight < maxweight)
+		{
+			const uint32 availableweight = maxweight - currentweight;
+			retval = availableweight / singleresourceweight;
+		}
+	}
+
+	return retval;
 }
 
 bool IResourceGatherer::CanCarryAllResources(const FReplicationResourceMap InResourcestoCarry) const

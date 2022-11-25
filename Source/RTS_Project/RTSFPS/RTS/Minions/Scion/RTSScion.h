@@ -93,7 +93,7 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Trace)
-	TEnumAsByte<ECollisionChannel> WeaponTraceChannel;
+	TEnumAsByte<ECollisionChannel> WeaponTraceChannel = COLLISION_WEAPON;
 
 protected:
 	UAnimMontage* CurrentAttackAnim = nullptr;

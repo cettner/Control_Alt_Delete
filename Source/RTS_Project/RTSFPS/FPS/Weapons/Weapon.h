@@ -14,7 +14,7 @@
 /*Forward Declarations*/
 class ACombatCommander;
 
-#define COLLISION_WEAPON ECC_GameTraceChannel2
+
 
 /*Specifies Attatchment Location on Mesh*/
 UENUM(BlueprintType)

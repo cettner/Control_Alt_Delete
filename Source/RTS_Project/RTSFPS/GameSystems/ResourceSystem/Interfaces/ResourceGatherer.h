@@ -35,8 +35,10 @@ public:
 	virtual bool HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount = 0U) const;
 	virtual bool HasResource(const FReplicationResourceMap InResourceMap) const;
 
-	/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
-	virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
+	/*Returns whether the gatherer can carry at least one more instance of the specified Resource.*/
+	virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
+	/*Returns the number of resources of the specified class that can be carried until full*/
+	virtual uint32 GetResourceTillFull(TSubclassOf<AResource> ResourceClass) const;
 	virtual bool CanCarryAllResources(const FReplicationResourceMap InResourcestoCarry) const;
 	virtual bool DropsResourceOnDeath() const;
 

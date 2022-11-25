@@ -7,6 +7,9 @@
 #include "../Notifies/MeleeTraceNotifyState.h"
 #include "CombatInterface.generated.h"
 
+
+#define COLLISION_WEAPON ECC_GameTraceChannel2
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCombatInterface : public UInterface

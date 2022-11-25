@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
         ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
         if(minion)
         {
-            bool can_carry = minion->CanCarryMore();
+            bool can_carry = minion->CanCarryMore(target->GetClass());
             if(can_carry && !minion->IsMining())  //if we have room to carry and builder is not already mining
             {   
                 minion->StartMining(target);

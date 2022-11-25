@@ -2,7 +2,10 @@
 
 
 #include "AbilityCombatCommander.h"
+
 #include "Net/UnrealNetwork.h"
+#include "GameFramework/PlayerState.h"
+#include "GameFramework/PlayerController.h"
 
 void AAbilityCombatCommander::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
@@ -62,62 +65,30 @@ void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, A
 	abilityweapon->AddAbility(InAbilityClass, InSource);
 }
 
-void AAbilityCombatCommander::CalculateCurrentWeight()
+void AAbilityCombatCommander::AddResource(TSubclassOf<AResource> InResourceClass, int InAmount)
 {
-	uint32 calcweight = 0U;
-	for (int i = 0; i < HeldResources.Num(); i++)
+	HeldResources.Increment(InResourceClass, InAmount);
+	const AResource* resourcecdo = InResourceClass.GetDefaultObject();
+	const int resourceweight = resourcecdo->GetResourceWeight();
+	CurrentWeight += (resourceweight * InAmount);
+}
+
+bool AAbilityCombatCommander::RemoveResource(TSubclassOf<AResource> InResourceClass, int InAmount)
+{
+	const bool retval = HeldResources.Decrement(InResourceClass, InAmount);
+	if (retval == true)
 	{
-		const TPair<TSubclassOf<AResource>, int> pair = HeldResources[i];
-		const AResource * defaultclass = pair.Key->GetDefaultObject<AResource>();
-		const int resourcecount = pair.Value;
-		const uint32 resourceweight = defaultclass->GetResourceWeight();
-		
-		calcweight += (resourceweight * resourcecount);
+		const AResource* resourcecdo = InResourceClass.GetDefaultObject();
+		const int resourceweight = resourcecdo->GetResourceWeight();
+		CurrentWeight -= (resourceweight * InAmount);
 	}
 
-	CurrentWeight = calcweight;
-}
-
-void AAbilityCombatCommander::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
-{
-	HeldResources.Increment(ResourceClass, amount);
-	CalculateCurrentWeight();
-}
-
-bool AAbilityCombatCommander::RemoveResource(TSubclassOf<AResource> ResourceClass, int amount)
-{
-	const bool retval = HeldResources.Decrement(ResourceClass, amount);
-	CalculateCurrentWeight();
 	return retval;
 }
 
 FReplicationResourceMap AAbilityCombatCommander::GetAllHeldResources() const
 {
 	return HeldResources;
-}
-
-uint32 AAbilityCombatCommander::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
-{
-	uint32 retval = 0U;
-	const AResource * defaultresource = ResourceClass->GetDefaultObject<AResource>();
-	const uint32 singleresourceweight = defaultresource->GetResourceWeight();
-	
-	if (singleresourceweight == 0U)
-	{
-		retval = 0xFFFFFFFFU;
-	}
-	else
-	{
-		const uint32 currentweight = GetCurrentWeight();
-
-		if (currentweight < MaxWeight)
-		{
-			const uint32 availableweight = MaxWeight - currentweight;
-			retval = availableweight / singleresourceweight;
-		}
-	}
-
-	return retval;
 }
 
 uint32 AAbilityCombatCommander::GetCurrentWeight() const
@@ -133,7 +104,8 @@ uint32 AAbilityCombatCommander::GetMaxWeight() const
 void AAbilityCombatCommander::GrantExp(uint32 inexp)
 {
 	const APlayerController * pc =  GetController<APlayerController>();
-	IExpAccumulatorInterface* expstate = pc->GetPlayerState<IExpAccumulatorInterface>();
+	APlayerState* ps = pc->GetPlayerState<APlayerState>();
+	IExpAccumulatorInterface* expstate = Cast<IExpAccumulatorInterface>(ps);
 	expstate->GrantExp(inexp);
 
 }

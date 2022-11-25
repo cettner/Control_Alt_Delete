@@ -41,7 +41,6 @@ protected:
 	virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
 	virtual uint32 GetCurrentWeight() const override;
 	virtual uint32 GetMaxWeight() const override;
-	virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const override;
 	/****************************************************************************/
 
 protected:

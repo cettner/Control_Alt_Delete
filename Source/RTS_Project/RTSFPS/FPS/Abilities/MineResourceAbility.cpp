@@ -40,7 +40,7 @@ void UMineResourceAbility::MineResource()
 	if (IsValid(nodetomine))
 	{
 		const TSubclassOf<AResource> resourceclass = nodetomine->GetClass();
-		const uint32 maxpull = resourcegatherer->CanCarryMore(resourceclass);
+		const uint32 maxpull = resourcegatherer->GetResourceTillFull(resourceclass);
 		
 		if (maxpull > 0U)
 		{

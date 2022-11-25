@@ -21,9 +21,9 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 	if (Structure == nullptr) return false;
 
 	bool retval = false;
-	for (TPair<TSubclassOf<AResource>, int>& Elem : CarriedResources)
+	for (TPair<TSubclassOf<AResource>, uint32>& Elem : CarriedResources)
 	{
-		if (Elem.Value > 0)
+		if (Elem.Value > 0U)
 		{
 			if (Structure->ScoreResource(Elem.Key, Elem.Value, this))
 			{
@@ -32,33 +32,9 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 			}
 		}
 	}
-	CalculateCurrentWeight();
 
 	return(retval);
 }
-/*
-bool ARTSBUILDER::HasAssets()
-{
-	return(Super::HasAssets());
-}
-
-void ARTSBUILDER::ReleaseAssets()
-{
-	Super::ReleaseAssets();
-
-	if (GetWorldTimerManager().IsTimerActive(MineHandler))
-	{
-		GetWorldTimerManager().ClearTimer(MineHandler);
-		ABuilderAIController* AIC = Cast<ABuilderAIController>(GetController());
-		if (AIC)
-		{
-			AIC->SendMineUpdateMessage();
-		}
-	}
-
-	bIsMining = false;
-}
-*/
 
 bool ARTSBUILDER::CanInteract(AActor * Interactable)
 {
@@ -72,11 +48,6 @@ bool ARTSBUILDER::CanInteract(AActor * Interactable)
 	}
 }
 
-bool ARTSBUILDER::CanCarryMore()
-{
-	return(MaxCarryWeight > CurrentWeight);
-}
-
 void ARTSBUILDER::StartMining(AResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/
@@ -85,19 +56,14 @@ void ARTSBUILDER::StartMining(AResource * Node)
 	bIsMining = true;
 }
 
-int ARTSBUILDER::GetCurrentWeight() const
+uint32 ARTSBUILDER::GetCurrentWeight() const
 {
 	return CurrentWeight;
 }
 
-int ARTSBUILDER::GetMaxWeight() const
+uint32 ARTSBUILDER::GetMaxWeight() const
 {
 	return MaxCarryWeight;
-}
-
-int ARTSBUILDER::GetWeightof(TSubclassOf<AResource> ResourceType) const
-{
-	return 1;
 }
 
 void ARTSBUILDER::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -106,7 +72,7 @@ void ARTSBUILDER::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(ARTSBUILDER, bIsMining);
 }
 
-bool ARTSBUILDER::IsMining()
+bool ARTSBUILDER::IsMining() const
 {
 	return(bIsMining && IsAlive());
 }
@@ -135,38 +101,62 @@ void ARTSBUILDER::MineResource()
 	*/
 }
 
-void ARTSBUILDER::AddResource(TSubclassOf<AResource> type, int amount)
+void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmount)
 {
-	int* currentcount = CarriedResources.Find(type);
+	uint32* currentcount = CarriedResources.Find(InResourceType);
 	if (currentcount != nullptr)
 	{
-		*currentcount += amount;
+		*currentcount += InAmount;
 	}
 	else
 	{
-		CarriedResources.Emplace(type, amount);
+		CarriedResources.Emplace(InResourceType, InAmount);
 	}
-	CalculateCurrentWeight();
+
+	const AResource* resourcecdo = InResourceType.GetDefaultObject();
+	const int resourceweight = resourcecdo->GetResourceWeight();
+	CurrentWeight += (resourceweight * InAmount);
 }
 
-void ARTSBUILDER::CalculateCurrentWeight()
+bool ARTSBUILDER::RemoveResource(const TSubclassOf<AResource> InResourceClass, int InAmount)
 {
-	int weight = 0;
-	for (TPair<TSubclassOf<AResource>, int>& Elem : CarriedResources)
+	bool retval = false;
+	uint32* currentcount = CarriedResources.Find(InResourceClass);
+	if (currentcount != nullptr)
 	{
-		weight += Elem.Value * GetWeightof(Elem.Key);
+		*currentcount -= InAmount;
+		retval = true;
 	}
-	CurrentWeight = weight;
+	if (retval == true)
+	{
+		const AResource* resourcecdo = InResourceClass.GetDefaultObject();
+		const int resourceweight = resourcecdo->GetResourceWeight();
+		CurrentWeight -= (resourceweight * InAmount);
+	}
+
+	return retval;
 }
 
-int ARTSBUILDER::CalculateGatherAmount(TSubclassOf<AResource> type) const
+uint32 ARTSBUILDER::GetHeldResource(TSubclassOf<AResource> InResourceType) const
+{
+	uint32 retval = 0U;
+	const uint32* currentcount = CarriedResources.Find(InResourceType);
+	if (currentcount != nullptr)
+	{
+		retval = *currentcount;
+	}
+	return retval;
+}
+
+int ARTSBUILDER::CalculateGatherAmount(TSubclassOf<AResource> InResourceType) const
 {
 	int gatheramount = 0;
-	int typeweight = GetWeightof(type);
+	const AResource* resourcecdo = InResourceType.GetDefaultObject();
+	const int resourceweight = resourcecdo->GetResourceWeight();
 
 	for (int i = 1; i < (MineAmount + 1); i++)
 	{
-		int nextwieght = CurrentWeight + (typeweight * i);
+		const int nextwieght = CurrentWeight + (resourceweight * i);
 		if (nextwieght > MaxCarryWeight)
 		{
 			break;
@@ -178,6 +168,3 @@ int ARTSBUILDER::CalculateGatherAmount(TSubclassOf<AResource> type) const
 	}
 	return(gatheramount);
 }
-
-
-

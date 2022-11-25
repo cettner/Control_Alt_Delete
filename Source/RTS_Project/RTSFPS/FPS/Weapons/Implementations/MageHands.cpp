@@ -159,11 +159,6 @@ uint32 AMageHands::GetMaxWeight() const
 	return Cast<IResourceGatherer>(GetPawnOwner())->GetMaxWeight();
 }
 
-uint32 AMageHands::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
-{
-	return Cast<IResourceGatherer>(GetPawnOwner())->CanCarryMore(ResourceClass);
-}
-
 void AMageHands::StartSecondaryFire()
 {
 	if (RightHandAbilityIndex > NO_ABILITY_INDEX)

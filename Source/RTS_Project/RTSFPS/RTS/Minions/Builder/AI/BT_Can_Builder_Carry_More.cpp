@@ -21,7 +21,7 @@ bool UBT_Can_Builder_Carry_More::CalculateRawConditionValue(UBehaviorTreeCompone
         ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
         if(minion)
         {
-			result = minion->CanCarryMore();
+			result = minion->CanCarryMore(target->GetClass());
         }
     }
 

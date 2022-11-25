@@ -16,12 +16,6 @@ UCLASS()
 class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceGatherer, public IExpAccumulatorInterface
 {
 	GENERATED_BODY()
-
-	protected:
-		/*Used to Optimize Retrieval of Resources*/
-		void CalculateCurrentWeight();
-
-
 	/************************************IAbilityUserInterface****************************/
 	public:
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
@@ -36,16 +30,11 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 
 	/*********************************Resource Gatherer***********************************/
 	public:
-		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount);
-		virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount);
-
-	/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
-		virtual uint32 CanCarryMore(TSubclassOf<AResource> ResourceClass) const;
-		//virtual bool DropsResourceOnDeath() const;
-		virtual FReplicationResourceMap GetAllHeldResources() const;
-		//virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const;
-		virtual uint32 GetCurrentWeight() const;
-		virtual uint32 GetMaxWeight() const;
+		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
+		virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount) override;
+		virtual FReplicationResourceMap GetAllHeldResources() const override;
+		virtual uint32 GetCurrentWeight() const override;
+		virtual uint32 GetMaxWeight() const override;
 	/*************************************************************************************/
 	
 

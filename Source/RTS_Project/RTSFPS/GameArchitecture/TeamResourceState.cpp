@@ -378,7 +378,7 @@ bool ATeamResourceState::HasResource(const FReplicationResourceMap InResourceMap
 	return IResourceGatherer::HasResource(InResourceMap);
 }
 
-uint32 ATeamResourceState::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
+bool ATeamResourceState::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
 {
 	return true;
 }
