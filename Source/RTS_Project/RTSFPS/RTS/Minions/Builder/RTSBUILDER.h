@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "../../RTSMinion.h"
 #include "../../../GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
+#include "../../Orders/RTSMineResourceOrder.h"
 #include "RTSBUILDER.generated.h"
 
 /**
@@ -20,16 +21,14 @@ class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion, public IResourceGatherer
 	GENERATED_BODY()
 
 public:
-	ARTSBUILDER();
-	virtual bool CanInteract(AActor * Interactable) override;
-
-public:
 	virtual bool DeliverResources(ARTSStructure* Structure);
 	
 	UFUNCTION(BlueprintCallable)
 	bool IsMining() const;
 	void StartMining(AResource* Node);
-	void MineResource();
+	void MineResource(); 
+	bool ExtractResource(AResource* Node);
+
 
 	virtual void AddResource(TSubclassOf<AResource> type, int amount) override;
 	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
@@ -38,28 +37,39 @@ public:
 	virtual uint32 GetMaxWeight() const override;
 
 protected:
+	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
+
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	static const FName AIMessageMineRequest;
+	static const FName AIMessageMineAborted;
+	static const FName AIMessageMineProgress;
+	static const FName AIMessageMineComplete;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Orders)
+	const TSubclassOf<URTSMineResourceOrder> MineOrderClass = URTSMineResourceOrder::StaticClass();
+
+	UPROPERTY(EditDefaultsOnly, Category = Resources)
+	uint32 MaxCarryWeight = 50;
+
+	UPROPERTY(EditDefaultsOnly, Category = Resources)
+	uint32 MineAmount = 5;
+
+	UPROPERTY(EditDefaultsOnly, Category = Resources)
+	float MineInterval = 1.0;
 
 protected:
 	TMap<TSubclassOf<AResource>, uint32> CarriedResources;
 
-	UPROPERTY(EditDefaultsOnly)
-	int MaxCarryWeight = 50;
-
 	int CurrentWeight = 0;
 
 protected:
-	int MineAmount = 5;
-	float MineInterval = 1.0;
-
 private:
-	UPROPERTY(Transient)
-	AResource * target_node;
-
 	FTimerHandle MineHandler;
 
 	UPROPERTY(Replicated)
 	bool bIsMining = false;
-
-	int CalculateGatherAmount(TSubclassOf<AResource> type) const;
 };

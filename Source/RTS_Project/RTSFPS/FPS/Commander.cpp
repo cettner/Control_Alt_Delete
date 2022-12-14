@@ -135,21 +135,6 @@ bool ACommander::IsFirstPerson() const
 	return retval;
 }
 
-bool ACommander::CanInteract(AActor * Interactable)
-{
-	bool retval = false;
-	if (Cast<ARTSMinion>(Interactable))
-	{
-		retval = true;
-	}
-	else if (Cast<IRTSObjectInterface>(Interactable))
-	{
-		retval = true;
-	}
-
-	return(retval);
-}
-
 int ACommander::GetTeam() const
 {
 
@@ -268,11 +253,12 @@ void ACommander::Interact()
 
 	IMenuInteractableInterface* menusource = Cast<IMenuInteractableInterface>(hittarget);
 
+	/*
 	if (menusource && menusource->CanOpenMenu(this) && PC)
 	{
 			PC->OpenExternalMenu(menusource->GetMenu());
 	}
-	else if(CanInteract(hittarget) && PC)
+	else if(GetDefaultOrderClass(hittarget) && PC)
 	{
 		AFPSServerController * Server = GetController<AFPSServerController>();
 		if (Server)
@@ -280,7 +266,7 @@ void ACommander::Interact()
 			Server->Server_Request_Interact(this, hittarget);
 		}
 	} 
-
+	*/
 }
 
 bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)

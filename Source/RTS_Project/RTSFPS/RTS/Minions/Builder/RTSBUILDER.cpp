@@ -10,11 +10,10 @@
 #include "GameFramework/Actor.h"
 #include "Net/UnrealNetwork.h"
 
-
-ARTSBUILDER::ARTSBUILDER()
-{
-
-}
+const FName ARTSBUILDER::AIMessageMineRequest = TEXT("MineRequest");
+const FName ARTSBUILDER::AIMessageMineAborted = TEXT("MineAborted");
+const FName ARTSBUILDER::AIMessageMineProgress = TEXT("MineProgress");
+const FName ARTSBUILDER::AIMessageMineComplete = TEXT("MineComplete");
 
 bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
@@ -36,22 +35,9 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 	return(retval);
 }
 
-bool ARTSBUILDER::CanInteract(AActor * Interactable)
-{
-	if(Cast<AResource>(Interactable) || Cast<ARTSStructure>(Interactable))
-	{
-		return(true);
-	}
-	else
-	{
-		return(false);
-	}
-}
-
 void ARTSBUILDER::StartMining(AResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/
-	target_node = Node;
 	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, false, MineInterval);
 	bIsMining = true;
 }
@@ -64,6 +50,22 @@ uint32 ARTSBUILDER::GetCurrentWeight() const
 uint32 ARTSBUILDER::GetMaxWeight() const
 {
 	return MaxCarryWeight;
+}
+
+const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FHitResult& InHitContext) const
+{
+	TSubclassOf<URTSTargetedOrder> retval = nullptr;
+	const AResource* resource = Cast<AResource>(InHitContext.GetActor());
+	if (IsValid(resource))
+	{
+		retval = MineOrderClass;
+	}
+	else
+	{
+		retval = Super::GetDefaultOrderClass(InHitContext);
+	}
+
+	return retval;
 }
 
 void ARTSBUILDER::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -79,26 +81,29 @@ bool ARTSBUILDER::IsMining() const
 
 void ARTSBUILDER::MineResource()
 {
-	/*
-	AResource * Node = Cast<AResource>(GetTarget());
-	if(IsValid(Node) && Node == target_node) //verify that the current target and the target specified at start of mine operation are the same
+	ARTSAIController* controller = GetController<ARTSAIController>();
+	controller->SendAIMessage(AIMessageMineProgress, FAIMessage::EStatus::Success);
+}
+
+bool ARTSBUILDER::ExtractResource(AResource* Node)
+{
+	bool retval = false;
+	const TSubclassOf<AResource> resourceclass = Node->GetClass();
+	const uint32 maxpull = GetResourceTillFull(resourceclass);
+
+	if (maxpull > 0U)
 	{
-		TSubclassOf<AResource> ResourceType = Node->GetClass();
-		int gatherAmount = CalculateGatherAmount(ResourceType);  // determine how much room we have to add.
-		int addedResource = 0;
-		addedResource = Node->Mine(gatherAmount);
-		AddResource(ResourceType,addedResource);
+		uint32 actualpull = maxpull;
+		if (maxpull > MineAmount)
+		{
+			actualpull = MineAmount;
+		}
+		const uint32 minedresource = Node->Mine(actualpull);
+		AddResource(resourceclass, actualpull);
+		retval = (actualpull > 0U);
 	}
 
-	ABuilderAIController * AIC = Cast<ABuilderAIController>(GetController());
-	if (AIC)
-	{
-		AIC->SendMineUpdateMessage();
-	}
-
-	bIsMining = false;
-	target_node =nullptr;
-	*/
+	return retval;
 }
 
 void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmount)
@@ -146,25 +151,4 @@ uint32 ARTSBUILDER::GetHeldResource(TSubclassOf<AResource> InResourceType) const
 		retval = *currentcount;
 	}
 	return retval;
-}
-
-int ARTSBUILDER::CalculateGatherAmount(TSubclassOf<AResource> InResourceType) const
-{
-	int gatheramount = 0;
-	const AResource* resourcecdo = InResourceType.GetDefaultObject();
-	const int resourceweight = resourcecdo->GetResourceWeight();
-
-	for (int i = 1; i < (MineAmount + 1); i++)
-	{
-		const int nextwieght = CurrentWeight + (resourceweight * i);
-		if (nextwieght > MaxCarryWeight)
-		{
-			break;
-		}
-		else
-		{
-			gatheramount = i;
-		}
-	}
-	return(gatheramount);
 }

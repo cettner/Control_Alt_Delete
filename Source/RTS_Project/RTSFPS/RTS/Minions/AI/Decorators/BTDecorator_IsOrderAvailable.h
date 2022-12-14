@@ -18,4 +18,5 @@ class RTS_PROJECT_API UBTDecorator_IsOrderAvailable : public UBTDecorator_Blackb
 
     protected:
 		virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
+        virtual EBlackboardNotificationResult OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID) override;
 };

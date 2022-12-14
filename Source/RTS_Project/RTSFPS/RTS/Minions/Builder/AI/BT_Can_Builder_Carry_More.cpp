@@ -14,7 +14,7 @@ bool UBT_Can_Builder_Carry_More::CalculateRawConditionValue(UBehaviorTreeCompone
 {
 	bool result = false;
     ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-    AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+    AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ResourceNodeKey.SelectedKeyName));
 
     if(Controller && target)
     {

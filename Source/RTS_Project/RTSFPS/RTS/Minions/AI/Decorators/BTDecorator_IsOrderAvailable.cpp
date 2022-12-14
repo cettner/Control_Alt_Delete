@@ -15,7 +15,12 @@ UBTDecorator_IsOrderAvailable::UBTDecorator_IsOrderAvailable()
 
 bool UBTDecorator_IsOrderAvailable::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
-	//const ARTSAIController * controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-	//const bool retval = controller->IsOrderAvailable();
-	return(false);
+	const ARTSAIController * controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+	const bool retval = controller->GetCurrentOrder() != nullptr;
+	return(retval);
+}
+
+EBlackboardNotificationResult UBTDecorator_IsOrderAvailable::OnBlackboardKeyValueChange(const UBlackboardComponent& Blackboard, FBlackboard::FKey ChangedKeyID)
+{
+	return Super::OnBlackboardKeyValueChange(Blackboard,ChangedKeyID);
 }

@@ -55,11 +55,11 @@ struct FWeaponAnim
 
 	/** animation played on pawn (1st person view) */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	UAnimMontage* AnimFirstPerson;
+	UAnimMontage* AnimFirstPerson = nullptr;
 
 	/** animation played on pawn (3rd person view) */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
-	UAnimMontage* AnimThirdPerson;
+	UAnimMontage* AnimThirdPerson = nullptr;
 };
 
 UCLASS(Abstract, Blueprintable)

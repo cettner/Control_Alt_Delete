@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BTTask_Builder_Mine_Node.h"
-#include "BuilderAIController.h"
+#include "..\..\AI\RTSAIController.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
 
@@ -13,19 +13,18 @@
 
 EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    ABuilderAIController * Controller = Cast<ABuilderAIController>(OwnerComp.GetAIOwner());
-    AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>("Target"));
+    const ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+    AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ResourceNodeKey.SelectedKeyName));
 
-    if(Controller && target)
+    if(target)
     {
         ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
         if(minion)
         {
-            bool can_carry = minion->CanCarryMore(target->GetClass());
-            if(can_carry && !minion->IsMining())  //if we have room to carry and builder is not already mining
+            if(!minion->IsMining())
             {   
                 minion->StartMining(target);
-                WaitForMessage(OwnerComp, ABuilderAIController::AIMessage_Mine_Finished, Controller->GetMineRequestId());
+                WaitForMessage(OwnerComp, ARTSBUILDER::AIMessageMineRequest, Controller->GetAIRequestId());
                 return(EBTNodeResult::InProgress);
             }
             else // we have aquired all we can, 

@@ -14,7 +14,9 @@ class RTS_PROJECT_API UBT_Can_Builder_Carry_More : public UBTDecorator
 {
 	GENERATED_BODY()
 	
-		virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
+	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 	
-	
+	protected:
+		UPROPERTY(EditAnywhere, Category = Blackboard)
+		FBlackboardKeySelector ResourceNodeKey;
 };

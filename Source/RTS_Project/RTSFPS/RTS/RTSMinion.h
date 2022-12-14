@@ -28,8 +28,6 @@ class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgrad
 public:
 	ARTSMinion();
 
-	virtual bool CanInteract(AActor * Interactable);
-
 	virtual bool CanAttack(AActor * AttackMe);
 
 	virtual bool CanDoDamage(AActor * AttackMe);
@@ -128,7 +126,7 @@ protected:
 	FName MinionName = "Default Minion Name";
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	UPROPERTY(EditDefaultsOnly, Category = Orders)
 	const TSubclassOf<URTSMoveOrder> MoveOrderClass = URTSMoveOrder::StaticClass();
 
 protected:

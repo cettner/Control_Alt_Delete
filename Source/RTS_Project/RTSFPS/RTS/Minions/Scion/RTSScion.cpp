@@ -12,15 +12,7 @@ ARTSScion::ARTSScion()
 	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeleeScanWeapon"));
 	WeaponMesh->SetReceivesDecals(false);
-}
-
-void ARTSScion::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-	if (IsValid(WeaponMesh))
-	{
-		WeaponMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "WeaponSocket");
-	}
+	WeaponMesh->SetupAttachment(GetMesh(), "WeaponSocket");
 
 }
 
@@ -51,6 +43,7 @@ bool ARTSScion::StartAttack(const int32 InAttackID)
 FHitResult ARTSScion::PerformTrace()
 {
 	UWorld* world = GetWorld();
+	FHitResult outhit = FHitResult();
 	if (IsValid(world)) //Editor Failure Check
 	{
 		const FVector starttrace = WeaponMesh->GetSocketLocation(WeaponTraceStart);
@@ -65,10 +58,10 @@ FHitResult ARTSScion::PerformTrace()
 		queryparams.bReturnPhysicalMaterial = false;
 		queryparams.bFindInitialOverlaps = false;
 		const FQuat tracerotation = FRotator(0.0f, 0.0f, 0.0f).Quaternion();
-		FHitResult outhit;
+
 		world->SweepSingleByChannel(outhit, starttrace, endtrace, tracerotation, WeaponTraceChannel, traceshape, queryparams);
 	}
-	return FHitResult();
+	return outhit;
 }
 
 int32 ARTSScion::GetAttackIndexForTarget(const AActor* InToAttack) const
@@ -89,7 +82,7 @@ void ARTSScion::OnAttackFinished()
 {
 	CurrentAttackAnim = nullptr;
 	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
-	if (AIC)
+	if (AIC != nullptr)
 	{
 		AIC->SendAIMessage(ARTSAIController::AIMessage_Finished, FAIMessage::EStatus::Success);
 	}
@@ -103,7 +96,6 @@ bool ARTSScion::IsAttacking() const
 const TSubclassOf<URTSTargetedOrder> ARTSScion::GetDefaultOrderClass(const FHitResult& InHitContext) const
 {
 	TSubclassOf<URTSTargetedOrder> retval = nullptr;
-	const IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(InHitContext.GetActor());
 	if (IsEnemy(InHitContext.GetActor()))
 	{
 		retval = AttackOrderClass;

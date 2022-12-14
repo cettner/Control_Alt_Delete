@@ -17,7 +17,7 @@ struct FAttackAnim
 
 		/**Attack Animaiton*/
 		UPROPERTY(EditDefaultsOnly, Category = Animation)
-		UAnimMontage* AttackAnim;
+		UAnimMontage* AttackAnim = nullptr;
 
 		/*Time(s) During Attack Animation When Damage Checks Occur*/
 		UPROPERTY(EditDefaultsOnly, Category = Animation)

@@ -19,7 +19,7 @@ struct FMeleeAttackAnim
 
 		/**Attack Animaiton*/
 		UPROPERTY(EditDefaultsOnly, Category = Animation)
-		UAnimMontage* AttackAnim;
+		UAnimMontage* AttackAnim = nullptr;
 
 		UPROPERTY(EditDefaultsOnly)
 		FVector RootMotionShift = FVector();
@@ -56,8 +56,6 @@ class RTS_PROJECT_API ARTSScion : public ARTSMinion
 	GENERATED_BODY()
 	
 	ARTSScion();
-	protected:
-		virtual void PostInitializeComponents() override;
 
 	protected:
 		virtual bool StartAttack(const int32 InAttackID = -1) override;
@@ -82,7 +80,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FName WeaponTraceEnd = "TraceEnd";
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = Orders)
 	TSubclassOf<URTSAttackOrder> AttackOrderClass = URTSAttackOrder::StaticClass();
 
 	UPROPERTY(EditDefaultsOnly)

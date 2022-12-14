@@ -50,8 +50,6 @@ public:
 
 	virtual void SetCommander(ACommander * Commander) override;
 
-	virtual bool CanInteract(AActor * Interactable) override;
-
 	virtual int GetTeam() const override;
 
 	virtual void OnDeath() override;

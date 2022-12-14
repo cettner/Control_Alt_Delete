@@ -86,12 +86,6 @@ void ARTSMinion::BeginPlay()
 	RegisterRTSObject();
 }
 
-bool ARTSMinion::CanInteract(AActor * Interactable)
-{
-	bool retval = Cast<IRTSObjectInterface>(Interactable) != nullptr;
-	return(retval);
-}
-
 bool ARTSMinion::CanAttack(AActor * AttackMe)
 {
 	return (false);
