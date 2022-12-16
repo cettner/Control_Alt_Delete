@@ -10,7 +10,9 @@
 #include "Navigation/CrowdFollowingComponent.h"
 
 
-const FName ARTSAIController::AIMessage_Finished = TEXT("Task Complete");
+const FName ARTSAIController::AIMessageOrderRequest = TEXT("Task Request");
+const FName ARTSAIController::AIMessageAbortRequest = TEXT("Abort Request");
+
 
 ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -19,7 +21,6 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 	FlockPathingComp = CreateDefaultSubobject<UFlockPathFollowingComponent>(TEXT("FlockPathFollowing Component"));
-	
 
 	SetPerceptionComponent(*PerceptionComp);
 
@@ -34,6 +35,7 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnTargetPerceptionUpdated);
 
 	AIRequestId = 1U;
+	AIAbortID = 1U;
 }
 
 void ARTSAIController::OnPossess(APawn * InPawn)
@@ -99,16 +101,37 @@ void ARTSAIController::SetCommander(ACommander * Commander)
 	BlackboardComp->SetValueAsObject("OwningCommander", Commander);
 }
 
-void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status)
+void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status, EAIMessageType MessageType)
 {
-	FAIMessage Msg(AIMessage, this, AIRequestId, Status);
-	FAIMessage::Send(this, Msg);
-	StoreAIRequestId();
+	if (MessageType == EAIMessageType::Task || MessageType == EAIMessageType::Progress)
+	{
+		FAIMessage Msg(AIMessage, this, AIRequestId, Status);
+		FAIMessage::Send(this, Msg);
+		StoreAIRequestId(AIRequestId);
+	}
+	else
+	{
+		FAIMessage Msg(AIMessage, this, AIAbortID, Status);
+		FAIMessage::Send(this, Msg);
+		StoreAIRequestId(AIAbortID);
+	}
+	
+
+}
+
+bool ARTSAIController::IsAbortingTask() const
+{
+	return BehaviorComp->IsAbortPending();
 }
 
 URTSOrder* ARTSAIController::GetCurrentOrder() const
 {
 	return Cast<URTSOrder>(BlackboardComp->GetValueAsObject("Order"));
+}
+
+URTSOrder* ARTSAIController::GetAbortingOrder() const
+{
+	return AbortingOrder;
 }
 
 void ARTSAIController::EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder)
@@ -171,6 +194,10 @@ void ARTSAIController::SetCurrentOrder(URTSOrder* InOrder)
 
 void ARTSAIController::OnOrderFinished(UBTTask_BlackboardBase* InTaskNode, const EBTNodeResult::Type InFinishReason)
 {
+	if (InFinishReason == EBTNodeResult::Aborted)
+	{
+		AbortingOrder = CurrentOrder;
+	}
 	SetCurrentOrder(nullptr);
 }
 

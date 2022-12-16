@@ -27,11 +27,17 @@ struct FMeleeAttackAnim
 		UPROPERTY(EditDefaultsOnly)
 		FRotator RootMotionRotation = FRotator();
 
-		int32 AnimUID = -1;
+		UPROPERTY(EditDefaultsOnly)
+		bool bCanAnimAbortImmediately = true;
 
 		bool operator==(const FMeleeAttackAnim& Other) const
 		{
-			return AnimUID == Other.AnimUID;
+			return AttackAnim == Other.AttackAnim;
+		}
+
+		bool operator==(const UAnimMontage*& OtherAnim) const
+		{
+			return AttackAnim == OtherAnim;
 		}
 };
 
@@ -57,14 +63,18 @@ class RTS_PROJECT_API ARTSScion : public ARTSMinion
 	
 	ARTSScion();
 
+	/**********************************************************************************/
 	protected:
 		virtual bool StartAttack(const int32 InAttackID = -1) override;
+		virtual bool StopAttack(const bool InForceStop = false) override;
 		virtual FHitResult PerformTrace() override;
-	
+		virtual int32 GetAttackIndexForTarget(const AActor* InToAttack) const override;
+
 	protected:
-		virtual int32 GetAttackIndexForTarget(const AActor* InToAttack) const;
 		virtual void OnAttackFinished();
-		bool IsAttacking() const;
+		virtual bool CanAttackStopImmediately();
+		virtual bool IsAttacking() const override;
+	/********************************************************************************/
 
 protected:
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
@@ -94,6 +104,7 @@ protected:
 	TEnumAsByte<ECollisionChannel> WeaponTraceChannel = COLLISION_WEAPON;
 
 protected:
-	UAnimMontage* CurrentAttackAnim = nullptr;
-	FTimerHandle AttackEndHandler;
+	int32 CurrentAttackIndex = -1;
+
+	FTimerHandle AttackEndHandler = FTimerHandle();
 };

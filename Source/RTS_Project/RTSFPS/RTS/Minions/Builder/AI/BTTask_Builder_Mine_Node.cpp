@@ -51,4 +51,12 @@ void UBTTask_Builder_Mine_Node::OnMessage(UBehaviorTreeComponent & OwnerComp, ui
 	ExecuteTask(OwnerComp, NodeMemory);
 }
 
+EBTNodeResult::Type UBTTask_Builder_Mine_Node::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+    const ARTSAIController* controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+    ARTSBUILDER* minion = Cast<ARTSBUILDER>(controller->GetPawn());
+
+    return Super::AbortTask(OwnerComp, NodeMemory);
+}
+
 

@@ -86,19 +86,14 @@ void ARTSMinion::BeginPlay()
 	RegisterRTSObject();
 }
 
-bool ARTSMinion::CanAttack(AActor * AttackMe)
-{
-	return (false);
-}
-
-bool ARTSMinion::CanDoDamage(AActor * AttackMe)
-{
-	return (false);
-}
-
 bool ARTSMinion::StartAttack(const int32 InAttackID)
 {
 	return false;
+}
+
+bool ARTSMinion::StopAttack(const bool InForceStop)
+{
+	return true;
 }
 
 int32 ARTSMinion::GetAttackIndexForTarget(const AActor* InToAttack) const
@@ -195,40 +190,7 @@ bool ARTSMinion::IsEnemy(AActor* FriendOrFoe) const
 
 	return(Enemy);
 }
-/*
-AActor * ARTSMinion::GetTarget()
-{
-	ARTSAIController * rtscontrol = GetController<ARTSAIController>();
-	if (rtscontrol)
-	{
-		return(rtscontrol->GetTarget());
-	}
-	else
-	{
-		return(nullptr);
-	}
-}
 
-void ARTSMinion::SetTarget(AActor * NewTarget)
-{
-	ClearTarget();
-
-	ARTSAIController * rtscontrol = GetController<ARTSAIController>();
-	if (rtscontrol)
-	{
-		rtscontrol->SetTarget(NewTarget);
-	}
-}
-
-void ARTSMinion::ClearTarget()
-{
-	ARTSAIController * rtscontrol = Cast<ARTSAIController>(GetController());
-	if (rtscontrol)
-	{
-		rtscontrol->ClearTarget();
-	}
-}
-*/
 void ARTSMinion::SetSelected()
 {
 	if (Selection)

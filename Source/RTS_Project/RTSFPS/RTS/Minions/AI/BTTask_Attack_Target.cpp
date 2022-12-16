@@ -24,28 +24,31 @@ EBTNodeResult::Type UBTTask_Attack_Target::ExecuteTask(UBehaviorTreeComponent& O
 	AActor* target = Cast<AActor>(blackboard->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 	ARTSAIController* Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
 
-	if (target && !MessageRecieved)
+	if (target)
 	{
 		ARTSMinion* Minion = Cast<ARTSMinion>(Controller->GetPawn());
 		const int32 attackid = blackboard->GetValueAsInt(GetSelectedBlackboardKey());
 		if (Minion->StartAttack(attackid))
 		{
-			WaitForMessage(OwnerComp, ARTSAIController::AIMessage_Finished, Controller->GetAIRequestId());
+			WaitForMessage(OwnerComp, ARTSAIController::AIMessageOrderRequest, Controller->GetAIRequestId());
 			Result = EBTNodeResult::InProgress;
 		}
-	}
-	else if(MessageRecieved)
-	{
-		Result = EBTNodeResult::Succeeded;
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		MessageRecieved = false;
 	}
 
 	return(Result);
 }
 
-void UBTTask_Attack_Target::OnMessage(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, FName Message, int32 RequestID, bool bSuccess)
+EBTNodeResult::Type UBTTask_Attack_Target::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	MessageRecieved = true;
-	ExecuteTask(OwnerComp, NodeMemory);
+	const ARTSAIController* controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
+	ARTSMinion* Minion = Cast<ARTSMinion>(controller->GetPawn());
+	EBTNodeResult::Type retval = EBTNodeResult::Succeeded;
+
+	if (!Minion->StopAttack())
+	{
+		WaitForMessage(OwnerComp, ARTSAIController::AIMessageAbortRequest, controller->GetAIAbortId());
+		retval = EBTNodeResult::InProgress;
+	}
+
+	return retval;
 }

@@ -28,6 +28,7 @@ class RTS_PROJECT_API ICombatInterface
 public:
 	virtual bool IsAttacking() const;
 	virtual bool StartAttack(const int32 InAttackID = CANT_ATTACK_INDEX);
+	virtual bool StopAttack(const bool InForceStop = false);
 
 protected:
 	virtual FHitResult PerformTrace();

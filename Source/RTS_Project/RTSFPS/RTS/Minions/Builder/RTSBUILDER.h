@@ -26,6 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsMining() const;
 	void StartMining(AResource* Node);
+
 	void MineResource(); 
 	bool ExtractResource(AResource* Node);
 

@@ -13,8 +13,11 @@ UCLASS()
 class RTS_PROJECT_API UBTTask_Builder_Mine_Node : public UBTTaskNode
 {
 	GENERATED_BODY()
+
+protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;	
 	virtual void OnMessage(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, FName Message, int32 RequestID, bool bSuccess) override;
+	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	protected:
 		UPROPERTY(EditAnywhere, Category = Blackboard)

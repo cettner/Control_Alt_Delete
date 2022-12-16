@@ -32,13 +32,12 @@ public:
 	FAISenseAffiliationFilter SightAffiliation = FAISenseAffiliationFilter();
 };
 
-enum ERTSOrderFinishReason
+enum EAIMessageType
 {
-	ORDERCOMPLETE,
-	ORDERFAIL,
-	ORDERINTERRUPTED
+	Task,
+	Abort,
+	Progress
 };
-
 
 UCLASS()
 class RTS_PROJECT_API ARTSAIController : public AAIController
@@ -60,13 +59,23 @@ public:
 	void ClearCommander();
 	void SetCommander(ACommander * Commander);
 
+public:
 	FORCEINLINE FAIRequestID GetAIRequestId() const { return AIRequestId; }
-	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status);
+	FORCEINLINE FAIRequestID GetAIAbortId() const { return AIAbortID; }
+	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status, EAIMessageType MessageType);
+
+	bool IsAbortingTask() const;
 
 public:
 	virtual void EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder = false);
-	virtual void OnOrderFinished(UBTTask_BlackboardBase * InTaskNode, const EBTNodeResult::Type InFinishReason);
+
 	virtual URTSOrder* GetCurrentOrder() const;
+
+	virtual URTSOrder* GetAbortingOrder() const;
+
+	/*Called from the Tree*/
+	virtual void OnOrderFinished(UBTTask_BlackboardBase* InTaskNode, const EBTNodeResult::Type InFinishReason);
+
 
 protected:
 	virtual void ClearOrders();
@@ -83,7 +92,9 @@ protected:
 
 
 public:
-	static const FName AIMessage_Finished;
+	static const FName AIMessageOrderRequest;
+	static const FName AIMessageAbortRequest;
+
 
 
 protected:
@@ -111,8 +122,9 @@ private:
 	FRTSAIPerceptionConfig DefaultPerceptionConfig;
 
 	FAIRequestID AIRequestId;
-	FORCEINLINE void StoreAIRequestId() { AIRequestId = AIRequestId + 1; }
+	FORCEINLINE void StoreAIRequestId(FAIRequestID& InID ) { InID = InID + 1; }
 
+	FAIRequestID AIAbortID;
 
 protected:
 	TQueue<URTSOrder*> EnquedOrders;
@@ -121,4 +133,8 @@ protected:
 
 	UPROPERTY(Transient)
 	URTSOrder* CurrentOrder = nullptr;
+
+
+	UPROPERTY(Transient)
+	URTSOrder* AbortingOrder = nullptr;
 };

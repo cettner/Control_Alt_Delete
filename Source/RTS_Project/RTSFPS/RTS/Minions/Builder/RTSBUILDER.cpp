@@ -82,7 +82,7 @@ bool ARTSBUILDER::IsMining() const
 void ARTSBUILDER::MineResource()
 {
 	ARTSAIController* controller = GetController<ARTSAIController>();
-	controller->SendAIMessage(AIMessageMineProgress, FAIMessage::EStatus::Success);
+	controller->SendAIMessage(AIMessageMineProgress, FAIMessage::EStatus::Success, EAIMessageType::Progress);
 }
 
 bool ARTSBUILDER::ExtractResource(AResource* Node)

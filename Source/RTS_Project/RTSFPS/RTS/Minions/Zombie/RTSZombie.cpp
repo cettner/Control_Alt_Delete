@@ -10,6 +10,7 @@ ARTSZombie::ARTSZombie() : Super()
 	bReplicates = true;
 }
 
+/*
 bool ARTSZombie::CanAttack(AActor* AttackMe)
 {
 	bool attack = false;
@@ -27,7 +28,7 @@ bool ARTSZombie::CanAttack(AActor* AttackMe)
 
 	return(attack);
 }
-/*
+
 void ARTSZombie::StartAttack(AActor* AttackMe)
 {
 	if (AttackVarients.Num() && !bAttackAnimPlaying && GetWorld())
@@ -62,11 +63,12 @@ void ARTSZombie::StartAttack(AActor* AttackMe)
 		}
 	}
 }
-*/
+
 bool ARTSZombie::CanDoDamage(AActor* AttackMe)
 {	
 	return(IsEnemy(AttackMe) && (AttackVarients.Num() > 0));
 }
+*/
 
 /*
 void ARTSZombie::ReleaseAssets()
@@ -89,13 +91,13 @@ void ARTSZombie::ReleaseAssets()
 void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)
 {
 	if (!this->IsValidLowLevel() || !this->IsAlive()) return;
-
+	/*
 	if (CanAttack(AttackMe))
 	{	
 		FDamageEvent DE;
 		AttackMe->TakeDamage(GetDamage(), DE, GetController(), this);
 	}
-
+	*/
 	if (ComboCount < Attack.DamageEventTimes.Num() && AttackMe && !AttackMe->IsPendingKillOrUnreachable())
 	{
 		ActorDelegate.BindUFunction(this, FName("DoDamage"), AttackMe, ComboCount++, Attack);
@@ -180,7 +182,7 @@ void ARTSZombie::OnAttackFinish()
 	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
 	if (AIC)
 	{
-		AIC->SendAIMessage(ARTSAIController::AIMessage_Finished, FAIMessage::EStatus::Success);
+		AIC->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Success, EAIMessageType::Task);
 	}
 }
 

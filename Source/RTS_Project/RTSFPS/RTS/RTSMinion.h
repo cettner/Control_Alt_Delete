@@ -28,14 +28,15 @@ class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgrad
 public:
 	ARTSMinion();
 
-	virtual bool CanAttack(AActor * AttackMe);
-
-	virtual bool CanDoDamage(AActor * AttackMe);
-
+	/********************************CombatInterface************************************/
 	virtual bool StartAttack(const int32 InAttackID = -1) override;
+
+	virtual bool StopAttack(const bool InForceStop = false) override;
 
 	virtual int32 GetAttackIndexForTarget(const AActor * InToAttack) const override;
 
+
+	/************************************************************************************/
 	UFUNCTION()
 	virtual void OnDeath();
 

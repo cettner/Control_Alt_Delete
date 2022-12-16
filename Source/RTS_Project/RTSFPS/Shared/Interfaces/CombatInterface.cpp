@@ -15,6 +15,11 @@ bool ICombatInterface::StartAttack(const int32 InAttackID)
 	return false;
 }
 
+bool ICombatInterface::StopAttack(const bool InForceStop)
+{
+	return true;
+}
+
 FHitResult ICombatInterface::PerformTrace()
 {
 	FHitResult retval = FHitResult();

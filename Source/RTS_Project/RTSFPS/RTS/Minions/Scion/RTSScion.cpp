@@ -20,21 +20,40 @@ bool ARTSScion::StartAttack(const int32 InAttackID)
 {
 	UAnimMontage* montagetoplay = nullptr;
 	bool retval = false;
+	int32 usedattackindex = -1;
+
 	if (InAttackID > CANT_ATTACK_INDEX)
 	{
-		montagetoplay = MeleeAttacks[InAttackID].AttackAnim;
+		usedattackindex = InAttackID;
+		montagetoplay = MeleeAttacks[usedattackindex].AttackAnim;
 	}
 	else if (MeleeAttacks.Num() > 0)
 	{
-		montagetoplay = MeleeAttacks[0].AttackAnim;
+		usedattackindex = 0;
+		montagetoplay = MeleeAttacks[usedattackindex].AttackAnim;
 	}
 
 	if (montagetoplay != nullptr)
 	{
+		CurrentAttackIndex = usedattackindex;
 		const float endanimtime = PlayAnimMontage(montagetoplay);
-		CurrentAttackAnim = montagetoplay;
 		GetWorldTimerManager().SetTimer(AttackEndHandler, this, &ARTSScion::OnAttackFinished, endanimtime, false);
 		retval = endanimtime > 0.0f;
+	}
+
+	return retval;
+}
+
+bool ARTSScion::StopAttack(const bool InForceStop)
+{
+	bool retval = false;
+	if (CanAttackStopImmediately())
+	{
+		retval = true;
+		UAnimMontage* currentattackanim = MeleeAttacks[CurrentAttackIndex].AttackAnim;
+		StopAnimMontage(currentattackanim);
+		GetWorldTimerManager().ClearTimer(AttackEndHandler);
+		CurrentAttackIndex = -1;
 	}
 
 	return retval;
@@ -80,17 +99,38 @@ int32 ARTSScion::GetAttackIndexForTarget(const AActor* InToAttack) const
 
 void ARTSScion::OnAttackFinished()
 {
-	CurrentAttackAnim = nullptr;
+	CurrentAttackIndex = -1;
 	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
+	/*Editor Protection for Anim-Notifies*/
 	if (AIC != nullptr)
 	{
-		AIC->SendAIMessage(ARTSAIController::AIMessage_Finished, FAIMessage::EStatus::Success);
+		if (AIC->IsAbortingTask())
+		{
+			AIC->SendAIMessage(ARTSAIController::AIMessageAbortRequest, FAIMessage::EStatus::Success, EAIMessageType::Abort);
+		}
+		else
+		{
+			AIC->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Success, EAIMessageType::Task);
+		}
 	}
+}
+
+bool ARTSScion::CanAttackStopImmediately()
+{
+	bool retval = CurrentAttackIndex == CANT_ATTACK_INDEX;
+
+	if (!retval)
+	{
+		FMeleeAttackAnim currentattack = MeleeAttacks[CurrentAttackIndex];
+		retval = currentattack.bCanAnimAbortImmediately;
+	}
+
+	return retval;
 }
 
 bool ARTSScion::IsAttacking() const
 {
-	return CurrentAttackAnim != nullptr;
+	return CurrentAttackIndex != CANT_ATTACK_INDEX;
 }
 
 const TSubclassOf<URTSTargetedOrder> ARTSScion::GetDefaultOrderClass(const FHitResult& InHitContext) const
