@@ -12,8 +12,6 @@
 
 const FName ARTSBUILDER::AIMessageMineRequest = TEXT("MineRequest");
 const FName ARTSBUILDER::AIMessageMineAborted = TEXT("MineAborted");
-const FName ARTSBUILDER::AIMessageMineProgress = TEXT("MineProgress");
-const FName ARTSBUILDER::AIMessageMineComplete = TEXT("MineComplete");
 
 bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
@@ -42,6 +40,13 @@ void ARTSBUILDER::StartMining(AResource * Node)
 	bIsMining = true;
 }
 
+bool ARTSBUILDER::StopMining()
+{
+	GetWorldTimerManager().ClearTimer(MineHandler);
+	SetIsMining(false);
+	return true;
+}
+
 uint32 ARTSBUILDER::GetCurrentWeight() const
 {
 	return CurrentWeight;
@@ -50,6 +55,11 @@ uint32 ARTSBUILDER::GetCurrentWeight() const
 uint32 ARTSBUILDER::GetMaxWeight() const
 {
 	return MaxCarryWeight;
+}
+
+void ARTSBUILDER::SetIsMining(const bool InMiningState)
+{
+	bIsMining = InMiningState;
 }
 
 const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FHitResult& InHitContext) const
@@ -82,7 +92,7 @@ bool ARTSBUILDER::IsMining() const
 void ARTSBUILDER::MineResource()
 {
 	ARTSAIController* controller = GetController<ARTSAIController>();
-	controller->SendAIMessage(AIMessageMineProgress, FAIMessage::EStatus::Success, EAIMessageType::Progress);
+	controller->SendAIMessage(AIMessageMineRequest, FAIMessage::EStatus::Success, EAIMessageType::Progress);
 }
 
 bool ARTSBUILDER::ExtractResource(AResource* Node)

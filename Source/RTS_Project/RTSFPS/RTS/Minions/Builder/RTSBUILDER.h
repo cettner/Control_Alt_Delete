@@ -26,6 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsMining() const;
 	void StartMining(AResource* Node);
+	bool StopMining();
 
 	void MineResource(); 
 	bool ExtractResource(AResource* Node);
@@ -38,6 +39,9 @@ public:
 	virtual uint32 GetMaxWeight() const override;
 
 protected:
+	void SetIsMining(const bool InMiningState);
+
+protected:
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
 
 protected:
@@ -46,8 +50,6 @@ protected:
 public:
 	static const FName AIMessageMineRequest;
 	static const FName AIMessageMineAborted;
-	static const FName AIMessageMineProgress;
-	static const FName AIMessageMineComplete;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Orders)
