@@ -101,6 +101,11 @@ void ARTSAIController::SetCommander(ACommander * Commander)
 	BlackboardComp->SetValueAsObject("OwningCommander", Commander);
 }
 
+UObject* ARTSAIController::GetBlackBoardKeyAsObject(const FName InKeyName) const
+{
+	return BlackboardComp->GetValueAsObject(InKeyName);
+}
+
 void ARTSAIController::SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status, EAIMessageType MessageType)
 {
 	if (MessageType == EAIMessageType::Task || MessageType == EAIMessageType::Progress)

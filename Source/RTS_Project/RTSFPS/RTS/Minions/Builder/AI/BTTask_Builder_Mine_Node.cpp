@@ -13,50 +13,37 @@
 
 EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+    EBTNodeResult::Type retval = EBTNodeResult::Failed;
     const ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
     AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ResourceNodeKey.SelectedKeyName));
 
     if(target)
     {
         ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
-        if(minion)
-        {
-            if(!minion->IsMining())
-            {   
-                minion->StartMining(target);
-                WaitForMessage(OwnerComp, ARTSBUILDER::AIMessageMineRequest, Controller->GetAIRequestId());
-                return(EBTNodeResult::InProgress);
-            }
-            else // we have aquired all we can, 
-            {
-                FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-                return(EBTNodeResult::Succeeded);
-            }               
-        }
-        else
-        {
-            FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-            return (EBTNodeResult::Failed);
+        if(!minion->IsMining())
+        {   
+            minion->StartMining(target);
+            WaitForMessage(OwnerComp, ARTSAIController::AIMessageOrderRequest, Controller->GetAIRequestId());
+            retval = EBTNodeResult::InProgress;
         }
     }
-    else
-    {
-        FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-        return (EBTNodeResult::Failed);
-    }
-}
 
-void UBTTask_Builder_Mine_Node::OnMessage(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, FName Message, int32 RequestID, bool bSuccess)
-{
-	ExecuteTask(OwnerComp, NodeMemory);
+    return retval;
 }
 
 EBTNodeResult::Type UBTTask_Builder_Mine_Node::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+    EBTNodeResult::Type retval = EBTNodeResult::Succeeded;
     const ARTSAIController* controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-    ARTSBUILDER* minion = Cast<ARTSBUILDER>(controller->GetPawn());
+    ARTSBUILDER* builder = Cast<ARTSBUILDER>(controller->GetPawn());
 
-    return Super::AbortTask(OwnerComp, NodeMemory);
+    if (!builder->StopMining())
+    {
+        WaitForMessage(OwnerComp, ARTSAIController::AIMessageAbortRequest, controller->GetAIAbortId());
+        retval = EBTNodeResult::InProgress;
+    }
+
+    return retval;
 }
 
 

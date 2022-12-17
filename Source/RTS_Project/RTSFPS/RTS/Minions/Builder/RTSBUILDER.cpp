@@ -10,9 +10,6 @@
 #include "GameFramework/Actor.h"
 #include "Net/UnrealNetwork.h"
 
-const FName ARTSBUILDER::AIMessageMineRequest = TEXT("MineRequest");
-const FName ARTSBUILDER::AIMessageMineAborted = TEXT("MineAborted");
-
 bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
 	if (Structure == nullptr) return false;
@@ -36,7 +33,7 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 void ARTSBUILDER::StartMining(AResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/
-	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, false, MineInterval);
+	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, true, MineInterval);
 	bIsMining = true;
 }
 
@@ -60,6 +57,21 @@ uint32 ARTSBUILDER::GetMaxWeight() const
 void ARTSBUILDER::SetIsMining(const bool InMiningState)
 {
 	bIsMining = InMiningState;
+}
+
+AResource* ARTSBUILDER::GetTargetResource() const
+{
+	AResource* retval = nullptr;
+	const ARTSAIController* controller = GetController<ARTSAIController>();
+	URTSMineResourceOrder * mineorder = controller->GetCurrentOrder<URTSMineResourceOrder>();
+
+	if (IsValid(mineorder))
+	{
+		const FName& resourcenodekey = mineorder->GetResourceNodeKey();
+		retval = Cast<AResource>(controller->GetBlackBoardKeyAsObject(resourcenodekey));
+	}
+
+	return retval;
 }
 
 const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FHitResult& InHitContext) const
@@ -92,7 +104,23 @@ bool ARTSBUILDER::IsMining() const
 void ARTSBUILDER::MineResource()
 {
 	ARTSAIController* controller = GetController<ARTSAIController>();
-	controller->SendAIMessage(AIMessageMineRequest, FAIMessage::EStatus::Success, EAIMessageType::Progress);
+	AResource* targetnode = GetTargetResource();
+	if (IsValid(targetnode))
+	{
+		/*Copy class before as resrouce might not be valid after mining*/
+		const TSubclassOf<AResource> resourceclass = targetnode->GetClass();
+		ExtractResource(targetnode);
+		if (!CanCarryMore(resourceclass))
+		{
+			StopMining();
+			controller->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Success, EAIMessageType::Task);
+		}
+	}
+	else
+	{
+		controller->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Failure, EAIMessageType::Task);
+	}
+
 }
 
 bool ARTSBUILDER::ExtractResource(AResource* Node)

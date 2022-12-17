@@ -31,7 +31,6 @@ public:
 	void MineResource(); 
 	bool ExtractResource(AResource* Node);
 
-
 	virtual void AddResource(TSubclassOf<AResource> type, int amount) override;
 	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
 	virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const override;
@@ -40,16 +39,13 @@ public:
 
 protected:
 	void SetIsMining(const bool InMiningState);
+	virtual AResource* GetTargetResource() const;
 
 protected:
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-public:
-	static const FName AIMessageMineRequest;
-	static const FName AIMessageMineAborted;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Orders)

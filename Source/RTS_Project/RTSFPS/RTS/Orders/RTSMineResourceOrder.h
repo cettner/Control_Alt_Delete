@@ -19,6 +19,11 @@ class RTS_PROJECT_API URTSMineResourceOrder : public URTSTargetedOrder
 		virtual void SetTargetContext(AController* Issuer, const FHitResult& InContext) override;
 		virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const override;
 
+	public:
+		const FName& GetResourceNodeKey()const {return ResourceNodeKey; }
+		const FName& GetResourceClassKey() const { return ResourceClassKey; }
+		const FName& GetLastMinedLocationKey() const { return LastMinedLocationKey; }
+
 	protected:
 		/*The inital Resource that was selected for harvesting, this can change over the course of the order in the Behavior tree*/
 		TWeakObjectPtr<AResource> StartNode = nullptr;
@@ -28,5 +33,10 @@ class RTS_PROJECT_API URTSMineResourceOrder : public URTSTargetedOrder
 		
 		/*The Class of Resource to Mine*/
 		TSubclassOf<AResource> ResourceClassToMine = nullptr;
+
+	protected:
+		FName ResourceNodeKey = "TargetNode";
+		FName ResourceClassKey = "ResourceClass";
+		FName LastMinedLocationKey = "LastMinedLocation";
 
 };

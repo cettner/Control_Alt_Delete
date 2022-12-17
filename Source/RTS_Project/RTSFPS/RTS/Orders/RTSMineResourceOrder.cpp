@@ -13,7 +13,7 @@ void URTSMineResourceOrder::SetTargetContext(AController* Issuer, const FHitResu
 
 void URTSMineResourceOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
 {
-	InBlackBoard->SetValueAsObject("TargetNode", StartNode.Get()); 
-	InBlackBoard->SetValueAsObject("ResourceClass", ResourceClassToMine);
-	InBlackBoard->SetValueAsVector("LastMinedLocation", StartNodeLocation);
+	InBlackBoard->SetValueAsObject(ResourceNodeKey, StartNode.Get()); 
+	InBlackBoard->SetValueAsObject(ResourceClassKey, ResourceClassToMine);
+	InBlackBoard->SetValueAsVector(LastMinedLocationKey, StartNodeLocation);
 }

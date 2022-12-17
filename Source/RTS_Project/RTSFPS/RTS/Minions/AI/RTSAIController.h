@@ -44,20 +44,20 @@ class RTS_PROJECT_API ARTSAIController : public AAIController
 {
 	GENERATED_BODY()
 	
-public:
-
+protected:
 	ARTSAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
-	virtual void OnPossess(APawn *InPawn) override;
-	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
 
 public:
 	class ACommander * GetLeadRTSObject();
 	void ClearCommander();
 	void SetCommander(ACommander * Commander);
+
+	UObject* GetBlackBoardKeyAsObject(const FName InKeyName) const;
 
 public:
 	FORCEINLINE FAIRequestID GetAIRequestId() const { return AIRequestId; }
@@ -70,6 +70,9 @@ public:
 	virtual void EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder = false);
 
 	virtual URTSOrder* GetCurrentOrder() const;
+
+	template<class T>
+	T* GetCurrentOrder() const { return Cast<T>(GetCurrentOrder()); }
 
 	virtual URTSOrder* GetAbortingOrder() const;
 
