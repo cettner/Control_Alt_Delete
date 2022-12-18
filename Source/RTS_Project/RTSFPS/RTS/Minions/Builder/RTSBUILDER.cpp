@@ -14,18 +14,7 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
 	if (Structure == nullptr) return false;
 
-	bool retval = false;
-	for (TPair<TSubclassOf<AResource>, uint32>& Elem : CarriedResources)
-	{
-		if (Elem.Value > 0U)
-		{
-			if (Structure->ScoreResource(Elem.Key, Elem.Value, this))
-			{
-				CarriedResources[Elem.Key] = 0;
-				retval = true;
-			}
-		}
-	}
+	bool retval = Structure->ScoreResource(this);
 
 	return(retval);
 }
@@ -146,36 +135,20 @@ bool ARTSBUILDER::ExtractResource(AResource* Node)
 
 void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmount)
 {
-	uint32* currentcount = CarriedResources.Find(InResourceType);
-	if (currentcount != nullptr)
-	{
-		*currentcount += InAmount;
-	}
-	else
-	{
-		CarriedResources.Emplace(InResourceType, InAmount);
-	}
+	CarriedResources.Increment(InResourceType,InAmount);
 
 	const AResource* resourcecdo = InResourceType.GetDefaultObject();
 	const int resourceweight = resourcecdo->GetResourceWeight();
 	CurrentWeight += (resourceweight * InAmount);
 }
 
-bool ARTSBUILDER::RemoveResource(const TSubclassOf<AResource> InResourceClass, int InAmount)
+bool ARTSBUILDER::RemoveResource(const TSubclassOf<AResource> InResourceType, int InAmount)
 {
-	bool retval = false;
-	uint32* currentcount = CarriedResources.Find(InResourceClass);
-	if (currentcount != nullptr)
-	{
-		*currentcount -= InAmount;
-		retval = true;
-	}
-	if (retval == true)
-	{
-		const AResource* resourcecdo = InResourceClass.GetDefaultObject();
-		const int resourceweight = resourcecdo->GetResourceWeight();
-		CurrentWeight -= (resourceweight * InAmount);
-	}
+	bool retval = CarriedResources.Decrement(InResourceType, InAmount);
+	const AResource* resourcecdo = InResourceType.GetDefaultObject();
+	const int resourceweight = resourcecdo->GetResourceWeight();
+	CurrentWeight -= (resourceweight * InAmount);
+
 
 	return retval;
 }
@@ -183,10 +156,14 @@ bool ARTSBUILDER::RemoveResource(const TSubclassOf<AResource> InResourceClass, i
 uint32 ARTSBUILDER::GetHeldResource(TSubclassOf<AResource> InResourceType) const
 {
 	uint32 retval = 0U;
-	const uint32* currentcount = CarriedResources.Find(InResourceType);
-	if (currentcount != nullptr)
-	{
-		retval = *currentcount;
-	}
+	const int* currentcount = CarriedResources.Find(InResourceType);
+
+
+
 	return retval;
+}
+
+FReplicationResourceMap ARTSBUILDER::GetAllHeldResources() const
+{
+	return CarriedResources;
 }

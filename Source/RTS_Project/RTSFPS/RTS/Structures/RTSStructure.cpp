@@ -354,10 +354,8 @@ uint32 ARTSStructure::GetMaxQueueSize() const
 	return MaxQueueSize;
 }
 
-bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar)
+bool ARTSStructure::ScoreResource(IResourceGatherer* Donar)
 {
-	if (!IsDropPointFor(ResourceType)) return(false);
-
 	#if WITH_EDITOR
 	const UWorld * world = GetWorldPIE();
 	#else
@@ -366,10 +364,11 @@ bool ARTSStructure::ScoreResource(TSubclassOf<AResource> ResourceType, int Amoun
 
 	ARTFPSGameState* gs = nullptr;
 	gs = world->GetGameState<ARTFPSGameState>();
+	ATeamResourceState* ts = gs->GetTeamState<ATeamResourceState>(GetTeam());
+	
+	const bool retval = ts->TransferResourceFromSource(Donar);
 
-	check(gs);
-
-	return  true;	//gs->AddTeamResource(ResourceType, Amount,this);
+	return  retval;
 }
 
 FTransform ARTSStructure::FindActorSpawnLocation(FVector InBoxExtent) const

@@ -14,14 +14,14 @@ bool UBT_Can_Builder_Carry_More::CalculateRawConditionValue(UBehaviorTreeCompone
 {
 	bool result = false;
     ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-    AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ResourceNodeKey.SelectedKeyName));
+    TSubclassOf<AResource> resourceclass = Cast<UClass>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(ResourceNodeKey.SelectedKeyName));
 
-    if(Controller && target)
+    if(resourceclass)
     {
-        ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
+        const ARTSBUILDER * minion = Cast<ARTSBUILDER>(Controller->GetPawn());
         if(minion)
         {
-			result = minion->CanCarryMore(target->GetClass());
+			result = minion->CanCarryMore(resourceclass);
         }
     }
 

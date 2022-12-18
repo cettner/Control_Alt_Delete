@@ -34,6 +34,7 @@ public:
 	virtual void AddResource(TSubclassOf<AResource> type, int amount) override;
 	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
 	virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const override;
+	virtual FReplicationResourceMap GetAllHeldResources() const override;
 	virtual uint32 GetCurrentWeight() const override;
 	virtual uint32 GetMaxWeight() const override;
 
@@ -61,7 +62,7 @@ protected:
 	float MineInterval = 1.0;
 
 protected:
-	TMap<TSubclassOf<AResource>, uint32> CarriedResources;
+	FReplicationResourceMap CarriedResources;
 
 	int CurrentWeight = 0;
 

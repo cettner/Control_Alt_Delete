@@ -143,7 +143,7 @@ public:
 
 	uint32 GetMaxQueueSize() const;
 
-	bool ScoreResource(TSubclassOf<AResource> ResourceType, int Amount, AActor* Donar = nullptr);
+	bool ScoreResource(IResourceGatherer * Donar);
 
 	FTransform FindActorSpawnLocation(FVector BoxExtent) const;
 
