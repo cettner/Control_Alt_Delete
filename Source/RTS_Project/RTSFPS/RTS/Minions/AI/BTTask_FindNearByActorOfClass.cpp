@@ -24,7 +24,7 @@ EBTNodeResult::Type UBTTask_FindNearByActorOfClass::ExecuteTask(UBehaviorTreeCom
 			for (TActorIterator<AActor> It(GetWorld(), SearchClass); It; ++It)
 			{
 				AActor* currentactor = *It;
-				float distanceto = currentactor->GetDistanceTo(mypawn);
+				float distanceto = currentactor->GetSquaredDistanceTo(mypawn);
 				if (distanceto <= SearchDistance && distanceto < mindistance)
 				{
 					FoundActor = currentactor;

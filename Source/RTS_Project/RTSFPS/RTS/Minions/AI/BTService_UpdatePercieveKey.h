@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
+#include "GenericTeamAgentInterface.h"
+
 #include "BTService_UpdatePercieveKey.generated.h"
 
 /**
@@ -21,4 +23,15 @@ class RTS_PROJECT_API UBTService_UpdatePercieveKey : public UBTService_Blackboar
 
     protected:
 		virtual AActor * GetClosestTarget(AActor * ControlledPawn, TArray<AActor*> PercievedActors);
+
+	protected:
+		UPROPERTY(EditAnywhere, Category = Perception)
+		TSubclassOf<AActor> FilterClass = nullptr;
+
+		UPROPERTY(EditAnywhere, Category = Perception)
+		TEnumAsByte<ETeamAttitude::Type> TeamPerceptionFilter = ETeamAttitude::Hostile;
+
+		UPROPERTY(EditAnywhere, Category = Perception)
+		bool bUseClosest = true;
+
 };

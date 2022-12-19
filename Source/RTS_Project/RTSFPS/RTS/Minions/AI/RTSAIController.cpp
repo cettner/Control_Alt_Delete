@@ -80,13 +80,28 @@ ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other
 {
 	const IRTSObjectInterface* threat = Cast<IRTSObjectInterface>(&Other);
 	const IRTSObjectInterface* myminion = GetPawn<IRTSObjectInterface>();
+	ETeamAttitude::Type retval = ETeamAttitude::Neutral;
 
-	if (threat && myminion && myminion->GetTeam() != threat->GetTeam())
+	if (threat && myminion)
 	{
-		return(ETeamAttitude::Hostile);
+		const int thierteam = threat->GetTeam();
+		const int myteam = myminion->GetTeam();
+
+		if (thierteam == NEUTRAL_TEAM_INDEX)
+		{
+
+		}
+		else if (thierteam != myteam)
+		{
+			retval = ETeamAttitude::Hostile;
+		}
+		else
+		{
+			retval = ETeamAttitude::Friendly;
+		}
 	}
 
-	return ETeamAttitude::Neutral;
+	return(retval);
 }
 
 void ARTSAIController::PostInitializeComponents()

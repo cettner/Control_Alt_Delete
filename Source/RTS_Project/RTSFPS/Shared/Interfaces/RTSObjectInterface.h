@@ -15,6 +15,7 @@ class URTSObjectInterface : public UInterface
 	GENERATED_BODY()
 };
 
+constexpr int NEUTRAL_TEAM_INDEX = -1;
 
 class RTS_PROJECT_API IRTSObjectInterface
 {

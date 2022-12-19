@@ -7,6 +7,7 @@
 #include "Perception/AISense_Sight.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
+#include "Perception/AIPerceptionComponent.h"
 
 UBTService_UpdatePercieveKey::UBTService_UpdatePercieveKey()
 {
@@ -23,7 +24,22 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	TArray<AActor*> PercievedActors;
 	//Controller->GetPerceptionComponent()->GetPerceivedActors(UAISense_Sight::StaticClass(), PercievedActors);
-	Controller->GetPerceptionComponent()->GetHostileActors(PercievedActors);
+
+	switch (TeamPerceptionFilter)
+	{
+	case ETeamAttitude::Friendly :
+		Controller->GetPerceptionComponent()->
+		break;
+	case ETeamAttitude::Hostile :
+		Controller->GetPerceptionComponent()->GetHostileActors(PercievedActors);
+		break;
+	case ETeamAttitude::Neutral :
+		break;
+	default:
+		break;
+	}
+
+
 
 	AActor* ClosestTarget = GetClosestTarget(Minion, PercievedActors);
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), ClosestTarget);
