@@ -32,12 +32,14 @@ void ARTSBUILDER::StartMining(AResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/
 	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, true, MineInterval);
+	NodeDestroyedHandle = Node->OnResourceDestroyedDelegate.AddUFunction(this, "OnResourceNodeDepleted"); 
 	bIsMining = true;
 }
 
 bool ARTSBUILDER::StopMining()
 {
 	GetWorldTimerManager().ClearTimer(MineHandler);
+	NodeDestroyedHandle.Reset();
 	SetIsMining(false);
 	return true;
 }
@@ -141,6 +143,13 @@ bool ARTSBUILDER::ExtractResource(AResource* Node)
 	}
 
 	return retval;
+}
+
+void ARTSBUILDER::OnResourceNodeDepleted()
+{
+	ARTSAIController* controller = GetController<ARTSAIController>();
+	StopMining();
+	controller->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Failure, EAIMessageType::Task);
 }
 
 void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmount)

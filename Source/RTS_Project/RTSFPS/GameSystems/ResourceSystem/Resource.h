@@ -7,23 +7,10 @@
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
 
-
 #include "Components/StaticMeshComponent.h"
 #include "Resource.generated.h"
 
-USTRUCT()
-struct FResourceUIData
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	FName ResourceName = "";
-
-	UPROPERTY(EditDefaultsOnly)
-	UTexture* ResourceImage = nullptr;
-
-
-};
+DECLARE_MULTICAST_DELEGATE(FOnResourceNodeDestroyedDelegate)
 
 USTRUCT()
 struct FReplicationResourceMap
@@ -162,7 +149,11 @@ protected:
 protected:
 	/*AActor Override*/
 	virtual void BeginPlay() override;
+	virtual void BeginDestroy() override;
 	virtual void PostInitializeComponents() override;
+
+public:
+	FOnResourceNodeDestroyedDelegate OnResourceDestroyedDelegate = FOnResourceNodeDestroyedDelegate();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)

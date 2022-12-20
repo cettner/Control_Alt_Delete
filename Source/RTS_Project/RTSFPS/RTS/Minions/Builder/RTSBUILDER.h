@@ -32,6 +32,8 @@ public:
 
 	void MineResource(); 
 	bool ExtractResource(AResource* Node);
+	UFUNCTION()
+	virtual void OnResourceNodeDepleted();
 
 	virtual void AddResource(TSubclassOf<AResource> type, int amount) override;
 	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
@@ -69,8 +71,10 @@ protected:
 	int CurrentWeight = 0;
 
 protected:
-private:
+
 	FTimerHandle MineHandler;
+
+	FDelegateHandle NodeDestroyedHandle;
 
 	UPROPERTY(Replicated)
 	bool bIsMining = false;

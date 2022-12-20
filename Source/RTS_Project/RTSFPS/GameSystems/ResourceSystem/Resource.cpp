@@ -24,6 +24,7 @@ AResource::AResource() : Super()
 	SelectionComp->SetDetection(MeshComp);
 	SelectionComp->SetupAttachment(MeshComp);
 	SetDeselected();
+
 }
 
 uint32 AResource::Mine(uint32 AmountToMine)
@@ -122,7 +123,12 @@ int AResource::GetTeam() const
 
 void AResource::OnResourcesDepleted()
 {
-	UnRegisterRTSObject();
+
+	if (OnResourceDestroyedDelegate.IsBound())
+	{
+		OnResourceDestroyedDelegate.Broadcast();
+	}
+
 	Destroy();
 }
 
@@ -130,6 +136,12 @@ void AResource::BeginPlay()
 {
 	Super::BeginPlay();
 	RegisterRTSObject();
+}
+
+void AResource::BeginDestroy()
+{
+	Super::BeginDestroy();
+	UnRegisterRTSObject();
 }
 
 void AResource::PostInitializeComponents()
