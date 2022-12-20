@@ -4,6 +4,7 @@
 #include "..\..\AI\RTSAIController.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/Builder/RTSBUILDER.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
+#include "RTS_Project/RTSFPS/RTS/Orders/RTSMineResourceOrder.h"
 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -23,6 +24,7 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
         if(!minion->IsMining())
         {   
             minion->StartMining(target);
+            OwnerComp.GetBlackboardComponent()->SetValueAsVector(URTSMineResourceOrder::LastMinedLocationKey, target->GetActorLocation());
             WaitForMessage(OwnerComp, ARTSAIController::AIMessageOrderRequest, Controller->GetAIRequestId());
             retval = EBTNodeResult::InProgress;
         }

@@ -154,6 +154,7 @@ public:
 	virtual void UnRegisterRTSObject() override;
 	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
 	virtual FName GetUnitName() const override;
+	virtual int GetTeam() const override;
 	/*******************************/
 
 protected:
@@ -161,6 +162,7 @@ protected:
 protected:
 	/*AActor Override*/
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)

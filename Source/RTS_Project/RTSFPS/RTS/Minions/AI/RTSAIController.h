@@ -91,7 +91,8 @@ protected:
 	UFUNCTION()
 	virtual void OnTargetPerceptionUpdated(AActor * Actor, FAIStimulus Stimulus);
 
-	virtual bool ConfigureRTSPerception(class ARTSMinion * Minion);
+	virtual bool ConfigureRTSPerception(class ARTSMinion* Minion);
+	virtual bool ConfigureAISense(class ARTSMinion* InMinion, UAISenseConfig* InSenseConfig);
 
 
 public:

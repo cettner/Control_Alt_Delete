@@ -16,4 +16,8 @@ void UBTTask_RTSBlackboardBase::OnMessage(UBehaviorTreeComponent& OwnerComp, uin
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
+	else if (Message == ARTSAIController::AIMessageOrderRequest && bSuccess == false)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
+	}
 }

@@ -20,6 +20,8 @@ class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion, public IResourceGatherer
 {
 	GENERATED_BODY()
 
+	ARTSBUILDER();
+
 public:
 	virtual bool DeliverResources(ARTSStructure* Structure);
 	

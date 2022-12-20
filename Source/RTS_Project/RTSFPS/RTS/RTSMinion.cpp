@@ -46,13 +46,13 @@ ARTSMinion::ARTSMinion()
 	Health->OnDeathStart.BindUFunction(this,"OnDeath");
 	Health->SetIsReplicated(true);
 
-	AIConfig.LoseSightRadius = 2000.0;
 	/*Radial from forward vector ie: 180 == abs(0 +- 90)*/
 	AIConfig.PeripheralVision = 180.0;
 	AIConfig.SightRadius = 1500;
+	AIConfig.LoseSightRadius = 2000.0;
 
 	FAISenseAffiliationFilter Affiliations = FAISenseAffiliationFilter();
-	Affiliations.bDetectEnemies = true;
+	Affiliations.bDetectEnemies = false;
 	Affiliations.bDetectFriendlies = false;
 	Affiliations.bDetectNeutrals = false;
 
@@ -295,6 +295,16 @@ UBehaviorTree* ARTSMinion::GetBehavior()
 FRTSAIPerceptionConfig ARTSMinion::GetAIConfig() const
 {
 	return AIConfig;
+}
+
+bool ARTSMinion::UsesAISenses() const
+{
+	return AISenseClasses.Num() > 0;
+}
+
+TArray<TSubclassOf<UAISense>> ARTSMinion::GetAISenses() const
+{
+	return AISenseClasses;
 }
 
 void ARTSMinion::PostInstallUpgrades()

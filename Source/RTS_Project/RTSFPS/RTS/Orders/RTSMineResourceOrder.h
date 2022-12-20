@@ -34,9 +34,9 @@ class RTS_PROJECT_API URTSMineResourceOrder : public URTSTargetedOrder
 		/*The Class of Resource to Mine*/
 		TSubclassOf<AResource> ResourceClassToMine = nullptr;
 
-	protected:
-		FName ResourceNodeKey = "TargetNode";
-		FName ResourceClassKey = "ResourceClass";
-		FName LastMinedLocationKey = "LastMinedLocation";
+	public:
+		static const FName ResourceNodeKey;
+		static const FName ResourceClassKey;
+		static const FName LastMinedLocationKey;
 
 };

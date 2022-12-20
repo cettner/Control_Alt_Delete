@@ -3,6 +3,10 @@
 
 #include "RTSMineResourceOrder.h"
 
+const FName URTSMineResourceOrder::ResourceNodeKey = "TargetNode";
+const FName URTSMineResourceOrder::ResourceClassKey = "ResourceClass";
+const FName URTSMineResourceOrder::LastMinedLocationKey = "LastMinedLocation";
+
 void URTSMineResourceOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
 {
 	AResource* node = CastChecked<AResource>(InContext.GetActor());

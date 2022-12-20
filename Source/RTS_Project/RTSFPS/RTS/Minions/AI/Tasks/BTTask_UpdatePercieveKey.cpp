@@ -1,39 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BTService_UpdatePercieveKey.h"
+#include "BTTask_UpdatePercieveKey.h"
 
 #include "AIController.h"
-#include "Perception/AISense_Sight.h"
-#include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include "Perception/AIPerceptionComponent.h"
 
-UBTService_UpdatePercieveKey::UBTService_UpdatePercieveKey()
-{
-	NodeName = "Update Key With Perception";
-	PerceptionSense = UAISense_Sight::StaticClass();
-}
 
-void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+EBTNodeResult::Type UBTTask_UpdatePercieveKey::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* Controller = OwnerComp.GetAIOwner();
-	if (Controller == nullptr) return;
-	
 	APawn* Minion = Controller->GetPawn();
-	if (Minion == nullptr) return;
-
 	TArray<AActor*> percievedactors = TArray<AActor*>();
+
+	EBTNodeResult::Type retval = EBTNodeResult::Failed;
 
 	switch (TeamPerceptionFilter)
 	{
-	case ETeamAttitude::Friendly :
+	case ETeamAttitude::Friendly:
 		GetFriendlyActors(Controller, percievedactors);
 		break;
-	case ETeamAttitude::Hostile :
+	case ETeamAttitude::Hostile:
 		Controller->GetPerceptionComponent()->GetHostileActors(percievedactors);
 		break;
-	case ETeamAttitude::Neutral :
+	case ETeamAttitude::Neutral:
 		GetNeutralActors(Controller, percievedactors);
 		break;
 	default:
@@ -42,10 +33,17 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	}
 
 	AActor* ClosestTarget = GetBestTarget(Minion, percievedactors);
+
+	if (ClosestTarget != nullptr)
+	{
+		retval = EBTNodeResult::Succeeded;
+	}
+
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), ClosestTarget);
+	return retval;
 }
-	
-AActor * UBTService_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors) const
+
+AActor* UBTTask_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors) const
 {
 	AActor* Bestactor = nullptr;
 	float shortestdistance = MAX_FLT;
@@ -69,16 +67,16 @@ AActor * UBTService_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArr
 	return Bestactor;
 }
 
-void UBTService_UpdatePercieveKey::GetFriendlyActors(const AAIController * InController, TArray<AActor*>& OutActors) const
+void UBTTask_UpdatePercieveKey::GetFriendlyActors(const AAIController* InController, TArray<AActor*>& OutActors) const
 {
 	const UAIPerceptionComponent* perceptioncomp = InController->GetAIPerceptionComponent();
-	
+
 	/*Stolen from GetHostileActors() returns true if any of the actors are invalid*/
 	const bool bDeadDataFound = perceptioncomp->GetFilteredActors([]
-	(const FActorPerceptionInfo& ActorPerceptionInfo) 
-	{
-		return (!ActorPerceptionInfo.bIsHostile && ActorPerceptionInfo.HasAnyKnownStimulus());
-	}, OutActors);
+	(const FActorPerceptionInfo& ActorPerceptionInfo)
+		{
+			return (!ActorPerceptionInfo.bIsHostile && ActorPerceptionInfo.HasAnyKnownStimulus());
+		}, OutActors);
 
 
 	int endindex = OutActors.Num();
@@ -86,7 +84,7 @@ void UBTService_UpdatePercieveKey::GetFriendlyActors(const AAIController * InCon
 	{
 		for (int32 i = 0; i < OutActors.Num(); i++)
 		{
-			if (!IsValid(OutActors[i]) || InController->GetTeamAttitudeTowards(*OutActors[i]) !=  ETeamAttitude::Friendly)
+			if (!IsValid(OutActors[i]) || InController->GetTeamAttitudeTowards(*OutActors[i]) != ETeamAttitude::Friendly)
 			{
 				OutActors.RemoveAt(i);
 				endindex--;
@@ -108,7 +106,7 @@ void UBTService_UpdatePercieveKey::GetFriendlyActors(const AAIController * InCon
 	}
 }
 
-void UBTService_UpdatePercieveKey::GetNeutralActors(const AAIController* InController, TArray<AActor*>& OutActors) const
+void UBTTask_UpdatePercieveKey::GetNeutralActors(const AAIController* InController, TArray<AActor*>& OutActors) const
 {
 	const UAIPerceptionComponent* perceptioncomp = InController->GetAIPerceptionComponent();
 

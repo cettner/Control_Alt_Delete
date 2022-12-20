@@ -115,6 +115,11 @@ FName AResource::GetUnitName() const
 	return ResourceName;
 }
 
+int AResource::GetTeam() const
+{
+	return NEUTRAL_TEAM_INDEX;
+}
+
 void AResource::OnResourcesDepleted()
 {
 	UnRegisterRTSObject();
@@ -125,6 +130,20 @@ void AResource::BeginPlay()
 {
 	Super::BeginPlay();
 	RegisterRTSObject();
+}
+
+void AResource::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (HasAuthority())
+	{
+		UWorld* World = GetWorld();
+		UAIPerceptionSystem* PerceptionSystem = UAIPerceptionSystem::GetCurrent(World);
+		if (PerceptionSystem)
+		{
+			PerceptionSystem->RegisterSourceForSenseClass(UAISense_Sight::StaticClass(), *this);
+		}
+	}
 }
 
 

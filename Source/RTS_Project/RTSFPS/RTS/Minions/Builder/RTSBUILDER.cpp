@@ -10,6 +10,15 @@
 #include "GameFramework/Actor.h"
 #include "Net/UnrealNetwork.h"
 
+ARTSBUILDER::ARTSBUILDER()
+{
+	AIConfig.SightAffiliation.bDetectNeutrals = true;
+	AIConfig.SightAffiliation.bDetectEnemies = false;
+	AIConfig.SightAffiliation.bDetectFriendlies = false;
+
+	AISenseClasses.Emplace(UAISense_Sight::StaticClass());
+}
+
 bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
 	if (Structure == nullptr) return false;
@@ -107,6 +116,7 @@ void ARTSBUILDER::MineResource()
 	}
 	else
 	{
+		StopMining();
 		controller->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Failure, EAIMessageType::Task);
 	}
 

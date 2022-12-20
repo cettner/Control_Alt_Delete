@@ -49,9 +49,15 @@ public:
 	UFUNCTION()
 	virtual void OnRep_TeamID();
 
-	virtual UBehaviorTree* GetBehavior();
+/********************AI**************************/
+	UBehaviorTree* GetBehavior();
 
-	virtual FRTSAIPerceptionConfig GetAIConfig() const;
+	FRTSAIPerceptionConfig GetAIConfig() const;
+
+	bool UsesAISenses() const;
+
+	TArray<TSubclassOf<UAISense>> GetAISenses() const;
+/***********************************************/
 
 /**************IRTSObjectInterface****************/
 public:
@@ -104,11 +110,14 @@ protected:
 /**************************************************/
 
 protected:
-	UPROPERTY(EditAnywhere, Category = Behavior)
-	UBehaviorTree * RTSBehavior;
+	UPROPERTY(EditDefaultsOnly, Category = Behavior)
+	UBehaviorTree * RTSBehavior = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Behavior)
 	FRTSAIPerceptionConfig AIConfig;
+
+	UPROPERTY(EditDefaultsOnly, Category = Behavior)
+	TArray<TSubclassOf<UAISense>> AISenseClasses = TArray<TSubclassOf<UAISense>>();
 
 	UPROPERTY(EditDefaultsOnly, Category = Selection)
 	UDecalSelectionComponent * Selection = nullptr;

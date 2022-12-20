@@ -30,8 +30,6 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	SightConfig->PeripheralVisionAngleDegrees = DefaultPerceptionConfig.PeripheralVision;
 
 	PerceptionComponent->ConfigureSense(*SightConfig);
-	PerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
-
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnTargetPerceptionUpdated);
 
 	AIRequestId = 1U;
@@ -49,7 +47,7 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 		BlackboardComp->InitializeBlackboard(*Minion->GetBehavior()->BlackboardAsset);
 		BehaviorComp->StartTree(*Minion->GetBehavior());
 		
-		if (!ConfigureRTSPerception(Minion))
+		if (Minion->UsesAISenses() && !ConfigureRTSPerception(Minion))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[ARTSAIController::OnPossess] Failed to configure Perception"));
 		}
@@ -58,22 +56,38 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 
 bool ARTSAIController::ConfigureRTSPerception(ARTSMinion* Minion)
 {
-	if (PerceptionComponent == nullptr) return false;
-	FAISenseID Id = UAISense::GetSenseID(UAISense_Sight::StaticClass());  
+	bool retval = false;
+	TArray<TSubclassOf<UAISense>> senses = Minion->GetAISenses();
 
-	if (!Id.IsValid()) return false;
+	for (int i = 0; i < senses.Num(); i++)
+	{
+		FAISenseID Id = UAISense::GetSenseID(senses[i]);
+		UAISenseConfig* senseconfig = PerceptionComponent->GetSenseConfig(Id);
+		if (ConfigureAISense(Minion, senseconfig))
+		{
+			PerceptionComponent->SetSenseEnabled(senses[i], true);
+			PerceptionComponent->RequestStimuliListenerUpdate();
+		}
+	}
 
-	UAISenseConfig_Sight * sightperceptionconfig = Cast<UAISenseConfig_Sight>(PerceptionComponent->GetSenseConfig(Id));
-	if (sightperceptionconfig == nullptr) return false;
+	return retval;
+}
 
-	FRTSAIPerceptionConfig config = Minion->GetAIConfig();
-	sightperceptionconfig->SightRadius = config.SightRadius;
-	sightperceptionconfig->LoseSightRadius = config.LoseSightRadius;
-	sightperceptionconfig->DetectionByAffiliation = config.SightAffiliation;
-	sightperceptionconfig->PeripheralVisionAngleDegrees = config.PeripheralVision;
-	PerceptionComponent->RequestStimuliListenerUpdate();
+bool ARTSAIController::ConfigureAISense(ARTSMinion* InMinion, UAISenseConfig* InSenseConfig)
+{
+	bool retval = false;
+	if (UAISenseConfig_Sight* sightconfig = Cast<UAISenseConfig_Sight>(InSenseConfig))
+	{
+		FRTSAIPerceptionConfig config = InMinion->GetAIConfig();
+		sightconfig->SightRadius = config.SightRadius;
+		sightconfig->LoseSightRadius = config.LoseSightRadius;
+		sightconfig->DetectionByAffiliation = config.SightAffiliation;
+		sightconfig->PeripheralVisionAngleDegrees = config.PeripheralVision;
 
-	return true;
+		retval = true;
+	}
+
+	return retval;
 }
 
 ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other) const
