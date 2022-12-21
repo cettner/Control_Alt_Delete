@@ -24,7 +24,7 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
         if(!minion->IsMining())
         {   
             minion->StartMining(target);
-            OwnerComp.GetBlackboardComponent()->SetValueAsVector(URTSMineResourceOrder::LastMinedLocationKey, target->GetActorLocation());
+            OwnerComp.GetBlackboardComponent()->SetValueAsVector(URTSMineResourceOrder::LastMinedLocationKey, minion->GetActorLocation());
             WaitForMessage(OwnerComp, ARTSAIController::AIMessageOrderRequest, Controller->GetAIRequestId());
             retval = EBTNodeResult::InProgress;
         }
