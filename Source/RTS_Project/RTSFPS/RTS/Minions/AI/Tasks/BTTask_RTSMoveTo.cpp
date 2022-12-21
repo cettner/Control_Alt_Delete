@@ -24,7 +24,13 @@ EBTNodeResult::Type UBTTask_RTSMoveTo::ExecuteTask(UBehaviorTreeComponent& Owner
 	if (retval != EBTNodeResult::InProgress)
 	{
 		ARTSAIController* controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-		controller->OnOrderFinished(this, retval);
+		bool success = false;
+		if (retval == EBTNodeResult::Succeeded)
+		{
+			success = true;
+		}
+
+		controller->OnOrderFinished(this, success);
 	}
 
 	return retval;

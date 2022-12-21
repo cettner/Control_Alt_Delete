@@ -102,8 +102,13 @@ void AResource::RegisterRTSObject()
 void AResource::UnRegisterRTSObject()
 {
 	const UWorld* world = GetWorld();
+	/*During Game Shutdown this can occur*/
+	if (!IsValid(world)) return;
 	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
-	gs->UnRegisterRTSObject(this);
+	if (IsValid(gs))
+	{
+		gs->UnRegisterRTSObject(this);
+	}
 }
 
 UTexture* AResource::GetThumbnail(const UUserWidget* InDisplayContext) const

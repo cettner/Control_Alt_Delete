@@ -191,7 +191,7 @@ void ARTSAIController::ClearOrders()
 	EnquedOrders.Empty();
 	if (IsValid(GetCurrentOrder()))
 	{
-		OnOrderFinished(nullptr, EBTNodeResult::Aborted);
+		OnOrderFinished(nullptr, false);
 	}
 }
 
@@ -226,12 +226,8 @@ void ARTSAIController::SetCurrentOrder(URTSOrder* InOrder)
 	}
 }
 
-void ARTSAIController::OnOrderFinished(UBTTask_BlackboardBase* InTaskNode, const EBTNodeResult::Type InFinishReason)
+void ARTSAIController::OnOrderFinished(UBTTaskNode* InTaskNode, const bool InOrderSuccess)
 {
-	if (InFinishReason == EBTNodeResult::Aborted)
-	{
-		AbortingOrder = CurrentOrder;
-	}
 	SetCurrentOrder(nullptr);
 }
 

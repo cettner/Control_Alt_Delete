@@ -77,7 +77,7 @@ public:
 	virtual URTSOrder* GetAbortingOrder() const;
 
 	/*Called from the Tree*/
-	virtual void OnOrderFinished(UBTTask_BlackboardBase* InTaskNode, const EBTNodeResult::Type InFinishReason);
+	virtual void OnOrderFinished(UBTTaskNode * InTaskNode, const bool InOrderSuccess);
 
 
 protected:
