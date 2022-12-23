@@ -45,14 +45,29 @@ USTRUCT()
 struct FRepMeleeAnimInfo
 {
 	GENERATED_USTRUCT_BODY()
+
 public:
-	UPROPERTY()
-	int32 AnimID = -1;
-public:
-	void EnsureReplication() { RepCounter++; }
+	void Set(const int32 InID, bool EnsureRep = true) 
+	{
+		AnimID = InID;
+
+		if (EnsureRep == true)
+		{
+			RepCounter++;
+		}
+	}
+
+	int32 Get() const
+	{
+		return AnimID;
+	}
+
 private:
 	UPROPERTY()
-	int RepCounter = 0;
+	int32 AnimID = -1;
+
+	UPROPERTY()
+	uint8 RepCounter = 0;
 };
 
 
@@ -79,6 +94,13 @@ class RTS_PROJECT_API ARTSScion : public ARTSMinion
 protected:
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
 
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
+	/*Since Most of the calls for this class are called by the AIController for the server side only, this is a client only function,(listen server wont use this)*/
+	UFUNCTION()
+	virtual void OnRep_CurrentAttackIndex(FRepMeleeAnimInfo InPreviousIndex);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
@@ -104,7 +126,8 @@ protected:
 	TEnumAsByte<ECollisionChannel> WeaponTraceChannel = COLLISION_WEAPON;
 
 protected:
-	int32 CurrentAttackIndex = -1;
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentAttackIndex)
+	FRepMeleeAnimInfo CurrentAttackIndex = FRepMeleeAnimInfo();
 
 	FTimerHandle AttackEndHandler = FTimerHandle();
 };

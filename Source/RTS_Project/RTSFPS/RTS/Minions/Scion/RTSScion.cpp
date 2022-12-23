@@ -35,7 +35,7 @@ bool ARTSScion::StartAttack(const int32 InAttackID)
 
 	if (montagetoplay != nullptr)
 	{
-		CurrentAttackIndex = usedattackindex;
+		CurrentAttackIndex.Set(usedattackindex, true);
 		const float endanimtime = PlayAnimMontage(montagetoplay);
 		GetWorldTimerManager().SetTimer(AttackEndHandler, this, &ARTSScion::OnAttackFinished, endanimtime, false);
 		retval = endanimtime > 0.0f;
@@ -50,10 +50,10 @@ bool ARTSScion::StopAttack(const bool InForceStop)
 	if (CanAttackStopImmediately())
 	{
 		retval = true;
-		UAnimMontage* currentattackanim = MeleeAttacks[CurrentAttackIndex].AttackAnim;
+		UAnimMontage* currentattackanim = MeleeAttacks[CurrentAttackIndex.Get()].AttackAnim;
 		StopAnimMontage(currentattackanim);
 		GetWorldTimerManager().ClearTimer(AttackEndHandler);
-		CurrentAttackIndex = -1;
+		CurrentAttackIndex.Set(-1,true);
 	}
 
 	return retval;
@@ -99,7 +99,7 @@ int32 ARTSScion::GetAttackIndexForTarget(const AActor* InToAttack) const
 
 void ARTSScion::OnAttackFinished()
 {
-	CurrentAttackIndex = -1;
+	CurrentAttackIndex.Set(-1,false);
 	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
 	/*Editor Protection for Anim-Notifies*/
 	if (AIC != nullptr)
@@ -117,11 +117,11 @@ void ARTSScion::OnAttackFinished()
 
 bool ARTSScion::CanAttackStopImmediately()
 {
-	bool retval = CurrentAttackIndex == CANT_ATTACK_INDEX;
+	bool retval = CurrentAttackIndex.Get() == CANT_ATTACK_INDEX;
 
 	if (!retval)
 	{
-		FMeleeAttackAnim currentattack = MeleeAttacks[CurrentAttackIndex];
+		FMeleeAttackAnim currentattack = MeleeAttacks[CurrentAttackIndex.Get()];
 		retval = currentattack.bCanAnimAbortImmediately;
 	}
 
@@ -130,7 +130,7 @@ bool ARTSScion::CanAttackStopImmediately()
 
 bool ARTSScion::IsAttacking() const
 {
-	return CurrentAttackIndex != CANT_ATTACK_INDEX;
+	return CurrentAttackIndex.Get() != CANT_ATTACK_INDEX;
 }
 
 const TSubclassOf<URTSTargetedOrder> ARTSScion::GetDefaultOrderClass(const FHitResult& InHitContext) const
@@ -146,4 +146,24 @@ const TSubclassOf<URTSTargetedOrder> ARTSScion::GetDefaultOrderClass(const FHitR
 	}
 
 	return retval;
+}
+
+void ARTSScion::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ARTSScion, CurrentAttackIndex);
+}
+
+void ARTSScion::OnRep_CurrentAttackIndex(FRepMeleeAnimInfo PreviousIndex)
+{
+	if (CurrentAttackIndex.Get() != CANT_ATTACK_INDEX)
+	{
+		UAnimMontage* currentattackanim = MeleeAttacks[CurrentAttackIndex.Get()].AttackAnim;
+		const float endanimtime = PlayAnimMontage(currentattackanim);
+	}
+	else if (PreviousIndex.Get() != CANT_ATTACK_INDEX)
+	{
+		UAnimMontage* currentattackanim = MeleeAttacks[PreviousIndex.Get()].AttackAnim;
+		StopAnimMontage(currentattackanim);
+	}
 }
