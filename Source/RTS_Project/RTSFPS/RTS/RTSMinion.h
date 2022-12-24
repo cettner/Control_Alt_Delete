@@ -40,7 +40,7 @@ public:
 	UFUNCTION()
 	virtual void OnDeath();
 
-	virtual bool IsEnemy(AActor *  InMinion) const;
+	virtual bool IsEnemy(const AActor *  InMinion) const;
 
 	virtual void ClearCommander();
 

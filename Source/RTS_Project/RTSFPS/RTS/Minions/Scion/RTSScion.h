@@ -94,6 +94,11 @@ class RTS_PROJECT_API ARTSScion : public ARTSMinion
 		virtual void OnAttackSegmentStart(const UMeleeTraceNotifyState* InAttackNotify) override;
 
 	protected:
+		virtual void DamageActor(AActor* InActor);
+		virtual float GetDamage() const;
+
+	protected:
+		virtual bool CanDamageActor(const AActor * InTarget) const;
 		virtual void OnAttackFinished();
 		virtual bool CanAttackStopImmediately();
 		virtual bool IsAttacking() const override;
@@ -128,6 +133,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	float AttackRange = 200.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float Damage = 80.0f;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Trace)

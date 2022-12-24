@@ -82,10 +82,10 @@ FHitResult ARTSScion::PerformTrace()
 			world->SweepSingleByChannel(outhit, starttrace, endtrace, tracerotation, WeaponTraceChannel, traceshape, queryparams);
 	}
 
-	if (outhit.bBlockingHit)
+	if (outhit.bBlockingHit && CanDamageActor(outhit.GetActor()))
 	{
 		AttackSegmentData.CurrentHitCount++;
-		//outhit.GetActor()->TakeDamage(10.0f,FDamageEvent(),GetController(),this);
+		DamageActor(outhit.GetActor());
 	}
 
 
@@ -119,9 +119,28 @@ void ARTSScion::OnAttackSegmentStart(const UMeleeTraceNotifyState* InAttackNotif
 	AttackSegmentData.SegmentName = InAttackNotify->GetNotifyName();
 }
 
+void ARTSScion::DamageActor(AActor* InActor)
+{
+	const float damage = GetDamage();
+	InActor->TakeDamage(damage,FDamageEvent(),GetController(),this);
+}
+
+float ARTSScion::GetDamage() const
+{
+	return Damage;
+}
+
 void ARTSScion::OnAttackSegmentEnd(const UMeleeTraceNotifyState* InAttackNotify)
 {
 	AttackSegmentData = FMeleeAttackSegmentData();
+}
+
+bool ARTSScion::CanDamageActor(const AActor* InTarget) const
+{
+	bool retval = false;
+	retval = IsEnemy(InTarget);
+	
+	return retval;
 }
 
 void ARTSScion::OnAttackFinished()

@@ -176,12 +176,12 @@ void ARTSMinion::OnDeath()
 
 }
 
-bool ARTSMinion::IsEnemy(AActor* FriendOrFoe) const
+bool ARTSMinion::IsEnemy(const AActor* FriendOrFoe) const
 {
 	bool Enemy = false;
 	if (!IsValid(FriendOrFoe)) return false;
 
-	IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(FriendOrFoe);
+	const IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(FriendOrFoe);
 
 	if (rtsobj && rtsobj->GetTeam() != this->GetTeam() && rtsobj->GetTeam() >= 0)
 	{
