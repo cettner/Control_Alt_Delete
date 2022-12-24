@@ -8,9 +8,14 @@
 #include "../../Orders/RTSAttackOrder.h"
 #include "RTSScion.generated.h"
 
-/**
- * 
- */
+
+struct FMeleeAttackSegmentData
+{
+	FString SegmentName = "";
+	int32 CurrentHitCount = 0;
+	int32 MaxHitCount = MAX_int32;
+	bool HasReachedHitCount() const { return CurrentHitCount >= MaxHitCount; }
+};
 
 USTRUCT()
 struct FMeleeAttackAnim
@@ -84,6 +89,9 @@ class RTS_PROJECT_API ARTSScion : public ARTSMinion
 		virtual bool StopAttack(const bool InForceStop = false) override;
 		virtual FHitResult PerformTrace() override;
 		virtual int32 GetAttackIndexForTarget(const AActor* InToAttack) const override;
+		virtual bool ShouldPerformTrace() const override;
+		virtual void OnAttackSegmentEnd(const UMeleeTraceNotifyState* InAttackNotify) override;
+		virtual void OnAttackSegmentStart(const UMeleeTraceNotifyState* InAttackNotify) override;
 
 	protected:
 		virtual void OnAttackFinished();
@@ -125,9 +133,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Trace)
 	TEnumAsByte<ECollisionChannel> WeaponTraceChannel = COLLISION_WEAPON;
 
+	/*******************Runtime*********************/
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_CurrentAttackIndex)
 	FRepMeleeAnimInfo CurrentAttackIndex = FRepMeleeAnimInfo();
 
 	FTimerHandle AttackEndHandler = FTimerHandle();
+
+	FMeleeAttackSegmentData AttackSegmentData = FMeleeAttackSegmentData();
 };

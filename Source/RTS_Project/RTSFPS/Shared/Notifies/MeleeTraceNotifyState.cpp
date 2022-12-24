@@ -10,9 +10,28 @@ void UMeleeTraceNotifyState::NotifyTick(USkeletalMeshComponent* InMeshComp, UAni
 	Super::NotifyTick(InMeshComp, Animation, FrameDeltaTime);
 
 	ICombatInterface * combatent = Cast<ICombatInterface>(InMeshComp->GetOwner());
-	if (combatent != nullptr)
+	if (combatent != nullptr  && combatent->ShouldPerformTrace())
 	{
 		combatent->PerformTrace();
 	}
+}
 
+void UMeleeTraceNotifyState::NotifyEnd(USkeletalMeshComponent* InMeshComp, UAnimSequenceBase* Animation)
+{
+	Super::NotifyEnd(InMeshComp, Animation);
+	ICombatInterface* combatent = Cast<ICombatInterface>(InMeshComp->GetOwner());
+	if (combatent != nullptr)
+	{
+		combatent->OnAttackSegmentEnd(this);
+	}
+}
+
+void UMeleeTraceNotifyState::NotifyBegin(USkeletalMeshComponent* InMeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+{
+	Super::NotifyBegin(InMeshComp, Animation, TotalDuration);
+	ICombatInterface* combatent = Cast<ICombatInterface>(InMeshComp->GetOwner());
+	if (combatent != nullptr)
+	{
+		combatent->OnAttackSegmentStart(this);
+	}
 }

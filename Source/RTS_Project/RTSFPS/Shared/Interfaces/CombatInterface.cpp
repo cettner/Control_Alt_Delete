@@ -30,3 +30,17 @@ int32 ICombatInterface::GetAttackIndexForTarget(const AActor* InToAttack) const
 {
 	return CANT_ATTACK_INDEX;
 }
+
+bool ICombatInterface::ShouldPerformTrace() const
+{
+	return true;
+}
+
+void ICombatInterface::OnAttackSegmentStart(const UMeleeTraceNotifyState* InAttackNotify)
+{
+}
+
+void ICombatInterface::OnAttackSegmentEnd(const UMeleeTraceNotifyState* InAttackNotify)
+{
+
+}

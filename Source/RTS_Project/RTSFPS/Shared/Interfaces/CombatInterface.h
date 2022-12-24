@@ -33,4 +33,7 @@ public:
 protected:
 	virtual FHitResult PerformTrace();
 	virtual int32 GetAttackIndexForTarget(const AActor* InToAttack) const;
+	virtual bool ShouldPerformTrace() const;
+	virtual void OnAttackSegmentStart(const UMeleeTraceNotifyState *InAttackNotify);
+	virtual void OnAttackSegmentEnd(const UMeleeTraceNotifyState* InAttackNotify);
 };

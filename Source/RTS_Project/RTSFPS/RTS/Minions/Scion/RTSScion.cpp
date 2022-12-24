@@ -54,6 +54,7 @@ bool ARTSScion::StopAttack(const bool InForceStop)
 		StopAnimMontage(currentattackanim);
 		GetWorldTimerManager().ClearTimer(AttackEndHandler);
 		CurrentAttackIndex.Set(-1,true);
+		AttackSegmentData = FMeleeAttackSegmentData();
 	}
 
 	return retval;
@@ -61,25 +62,33 @@ bool ARTSScion::StopAttack(const bool InForceStop)
 
 FHitResult ARTSScion::PerformTrace()
 {
-	UWorld* world = GetWorld();
 	FHitResult outhit = FHitResult();
+	UWorld* world = GetWorld();
 	if (IsValid(world)) //Editor Failure Check
 	{
-		const FVector starttrace = WeaponMesh->GetSocketLocation(WeaponTraceStart);
-		const FVector endtrace = WeaponMesh->GetSocketLocation(WeaponTraceEnd);
-		const FCollisionShape traceshape = FCollisionShape::MakeSphere(15.0f);
-		FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
-		FName TraceTag("DebugMeleeTag");
-		world->DebugDrawTraceTag = TraceTag;
-		queryparams.TraceTag = TraceTag;
-		queryparams.bTraceComplex = false;
-		queryparams.bReturnFaceIndex = true;
-		queryparams.bReturnPhysicalMaterial = false;
-		queryparams.bFindInitialOverlaps = false;
-		const FQuat tracerotation = FRotator(0.0f, 0.0f, 0.0f).Quaternion();
+			const FVector starttrace = WeaponMesh->GetSocketLocation(WeaponTraceStart);
+			const FVector endtrace = WeaponMesh->GetSocketLocation(WeaponTraceEnd);
+			const FCollisionShape traceshape = FCollisionShape::MakeSphere(15.0f);
+			FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
+			FName TraceTag("DebugMeleeTag");
+			world->DebugDrawTraceTag = TraceTag;
+			queryparams.TraceTag = TraceTag;
+			queryparams.bTraceComplex = false;
+			queryparams.bReturnFaceIndex = true;
+			queryparams.bReturnPhysicalMaterial = false;
+			queryparams.bFindInitialOverlaps = false;
+			const FQuat tracerotation = FRotator(0.0f, 0.0f, 0.0f).Quaternion();
 
-		world->SweepSingleByChannel(outhit, starttrace, endtrace, tracerotation, WeaponTraceChannel, traceshape, queryparams);
+			world->SweepSingleByChannel(outhit, starttrace, endtrace, tracerotation, WeaponTraceChannel, traceshape, queryparams);
 	}
+
+	if (outhit.bBlockingHit)
+	{
+		AttackSegmentData.CurrentHitCount++;
+		//outhit.GetActor()->TakeDamage(10.0f,FDamageEvent(),GetController(),this);
+	}
+
+
 	return outhit;
 }
 
@@ -97,9 +106,28 @@ int32 ARTSScion::GetAttackIndexForTarget(const AActor* InToAttack) const
 	return retval;
 }
 
+bool ARTSScion::ShouldPerformTrace() const
+{
+	bool retval = HasAuthority() && !AttackSegmentData.HasReachedHitCount();
+	return retval;
+}
+
+void ARTSScion::OnAttackSegmentStart(const UMeleeTraceNotifyState* InAttackNotify)
+{
+	AttackSegmentData.CurrentHitCount = 0;
+	AttackSegmentData.MaxHitCount = InAttackNotify->GetMaxSegmentHitCount();
+	AttackSegmentData.SegmentName = InAttackNotify->GetNotifyName();
+}
+
+void ARTSScion::OnAttackSegmentEnd(const UMeleeTraceNotifyState* InAttackNotify)
+{
+	AttackSegmentData = FMeleeAttackSegmentData();
+}
+
 void ARTSScion::OnAttackFinished()
 {
 	CurrentAttackIndex.Set(-1,false);
+	AttackSegmentData = FMeleeAttackSegmentData();
 	ARTSAIController* AIC = Cast<ARTSAIController>(GetController());
 	/*Editor Protection for Anim-Notifies*/
 	if (AIC != nullptr)
