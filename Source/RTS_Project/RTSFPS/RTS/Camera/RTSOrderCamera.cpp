@@ -26,23 +26,43 @@ void ARTSOrderCamera::ClearOrder()
 
 void ARTSOrderCamera::OrderSelected()
 {
-    if (SelectedUnits.Num() > 0)
+    const TArray <TScriptInterface<IRTSObjectInterface>> orderableunits = GetOrderableUnitsFromSelection();
+    if (orderableunits.Num() > 0)
     {
         ARTSPlayerController* pc = GetController<ARTSPlayerController>();
         FHitResult hitresult = FHitResult();
         pc->GetHitResultUnderCursor(SELECTION_CHANNEL, false, hitresult);
-        pc->IssueDefaultOrder(GetSelectedUnits(), hitresult, false);
+        pc->IssueDefaultOrder(orderableunits, hitresult, false);
     }
+}
+
+TArray<TScriptInterface<IRTSObjectInterface>> ARTSOrderCamera::GetOrderableUnitsFromSelection() const
+{
+    const ARTSPlayerController* pc = GetController<ARTSPlayerController>();
+    TArray<TScriptInterface<IRTSObjectInterface>> retval = TArray<TScriptInterface<IRTSObjectInterface>>();
+    const TArray<TScriptInterface<IRTSObjectInterface>> currentselection = GetSelectedUnits();
+
+    for (int i = 0; i < currentselection.Num(); i++)
+    {
+        if (pc->IsUnitOrderable(CastChecked<IRTSObjectInterface>(currentselection[i].GetObject())))
+        {
+            retval.Emplace(currentselection[i]);
+        }
+    }
+
+    return retval;
 }
 
 void ARTSOrderCamera::SelectPressed()
 {
+    TArray <TScriptInterface<IRTSObjectInterface>> orderableunits = GetOrderableUnitsFromSelection();
+
     if (URTSTargetedOrder * enquedorder = GetOrder())
     {
         ARTSPlayerController* pc = GetController<ARTSPlayerController>();
         FHitResult hitresult = FHitResult();
         pc->GetHitResultUnderCursor(SELECTION_CHANNEL, false, hitresult);
-        TArray <TScriptInterface<IRTSObjectInterface>> unitstoissue = enquedorder->GetBestMinionsForOrder(GetSelectedUnits(), hitresult);
+        TArray <TScriptInterface<IRTSObjectInterface>> unitstoissue = enquedorder->GetBestMinionsForOrder(orderableunits, hitresult);
 
         pc->IssueOrder(unitstoissue, enquedorder, hitresult, false);
         ClearOrder();

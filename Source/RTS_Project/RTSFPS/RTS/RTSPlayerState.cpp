@@ -8,15 +8,11 @@
 #include "Kismet/GameplayStatics.h"
 
 
-void ARTSPlayerState::OnRep_TeamID()
+void ARTSPlayerState::InitEnemySelection()
 {
-	Super::OnRep_TeamID();
-
-	const UWorld* world = GetWorld();
-	const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
-
 	/*Gamestate can be missed due to replication syncing, so we use the "slow" method for getting interface actors*/
 	TArray<AActor*> rtsactors = TArray<AActor*>();
+	const UWorld* world = GetWorld();
 	UGameplayStatics::GetAllActorsWithInterface(world, URTSObjectInterface::StaticClass(), rtsactors);
 
 	for (int i = 0; i < rtsactors.Num(); i++)
@@ -26,5 +22,6 @@ void ARTSPlayerState::OnRep_TeamID()
 			Cast<IRTSObjectInterface>(rtsactors[i])->OnLocalPlayerTeamChange(TeamID);
 		}
 	}
-	
+
+
 }

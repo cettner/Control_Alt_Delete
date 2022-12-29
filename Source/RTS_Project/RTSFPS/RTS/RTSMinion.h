@@ -71,6 +71,8 @@ public:
 
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
 
+	virtual bool IsLocalEnemy() const override;
+
 	virtual IRTSObjectInterface * GetLeadRTSObject() override;
 
 	virtual void SetTeamColors(FLinearColor TeamColor) override; 
@@ -149,5 +151,7 @@ protected:
 
 protected:
 	bool bIsBoxSelectable = false;
+
+	bool bIsLocalEnemy = false;
 };
 

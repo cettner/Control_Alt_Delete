@@ -35,6 +35,11 @@ void IRTSObjectInterface::OnLocalPlayerTeamChange(int InLocalTeamID)
 {
 }
 
+bool IRTSObjectInterface::IsLocalEnemy() const
+{
+	return false;
+}
+
 bool IRTSObjectInterface::IsAlive() const
 {
 	return false;

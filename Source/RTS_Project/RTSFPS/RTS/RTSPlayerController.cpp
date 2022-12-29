@@ -112,6 +112,10 @@ void ARTSPlayerController::SetPawn(APawn * InPawn)
 
 void ARTSPlayerController::FinishLocalPlayerSetup()
 {
+	/*Init Enemy Selection, This is done here instead of the playerstate because the Minions need to call GetPlayerState(), 
+	which returns null on inital playerstate replication*/
+	ARTSPlayerState* ps = Cast<ARTSPlayerState>(PlayerState);
+	ps->InitEnemySelection();
 }
 
 TArray<IRTSObjectInterface*> ARTSPlayerController::GetOrderableUnits(TSubclassOf<AActor> InObjectClass) const
@@ -145,7 +149,7 @@ bool ARTSPlayerController::IsUnitOrderable(const IRTSObjectInterface* InObj) con
 {
 	bool retval = IRTSObjectInterface::IsRTSObjectValid(InObj);
 
-	if (retval == true && InObj->IsAlive())
+	if (retval == true)
 	{
 		retval &= (InObj->GetTeam() == GetTeamID());
 	}

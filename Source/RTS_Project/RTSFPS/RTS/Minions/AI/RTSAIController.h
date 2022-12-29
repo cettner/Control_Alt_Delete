@@ -117,9 +117,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	FName PrimaryOrder = "PrimaryOrder";
 
-protected:
-	UFlockPathFollowingComponent* FlockPathingComp;
-
 
 private:
 
@@ -131,6 +128,7 @@ private:
 	FAIRequestID AIAbortID;
 
 protected:
+	/*May have to convert this to TArray, due to Object cleanup, will do during queued order implementation*/
 	TQueue<URTSOrder*> EnquedOrders;
 
 	int NumOrders = 0;

@@ -20,7 +20,6 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	FlockPathingComp = CreateDefaultSubobject<UFlockPathFollowingComponent>(TEXT("FlockPathFollowing Component"));
 
 	SetPerceptionComponent(*PerceptionComp);
 
@@ -121,8 +120,6 @@ ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other
 void ARTSAIController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	SetPathFollowingComponent(FlockPathingComp);
-	FlockPathingComp->OnRequestFinished.AddUObject(this, &AAIController::OnMoveCompleted);
 }
 
 void ARTSAIController::SetCommander(ACommander * Commander)

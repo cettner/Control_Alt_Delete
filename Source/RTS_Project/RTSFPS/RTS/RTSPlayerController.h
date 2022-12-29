@@ -44,7 +44,6 @@ protected:
 
 	virtual void SetPawn(APawn* InPawn) override;
 
-
 public:
 	virtual void FinishLocalPlayerSetup() override;
 

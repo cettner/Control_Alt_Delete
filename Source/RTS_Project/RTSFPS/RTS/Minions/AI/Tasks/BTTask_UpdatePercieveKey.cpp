@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTTask_UpdatePercieveKey::ExecuteTask(UBehaviorTreeComponen
 		GetNeutralActors(Controller, percievedactors);
 		break;
 	default:
-		Controller->GetPerceptionComponent()->GetPerceivedActors(PerceptionSense, percievedactors);
+		Controller->GetPerceptionComponent()->GetCurrentlyPerceivedActors(PerceptionSense, percievedactors);
 		break;
 	}
 

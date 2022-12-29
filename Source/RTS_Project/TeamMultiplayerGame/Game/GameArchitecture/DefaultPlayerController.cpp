@@ -67,11 +67,6 @@ void ADefaultPlayerController::InitPlayerState()
 	{
 		GetPlayerState<ADefaultPlayerState>()->SetLocalPlayerState(true);
 	}
-	else
-	{
-		/*This Happens in EditMode of BP versions*/
-		UE_LOG(LogTemp, Warning, TEXT("[DefaultPlayerController::InitPlayerState] Failed to Obtain PlayerState"));
-	}
 }
 
 void ADefaultPlayerController::PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel)

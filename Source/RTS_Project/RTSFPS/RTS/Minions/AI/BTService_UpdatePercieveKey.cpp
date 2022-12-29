@@ -37,7 +37,7 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		GetNeutralActors(Controller, percievedactors);
 		break;
 	default:
-		Controller->GetPerceptionComponent()->GetPerceivedActors(PerceptionSense, percievedactors);
+		Controller->GetPerceptionComponent()->GetCurrentlyPerceivedActors(PerceptionSense, percievedactors);
 		break;
 	}
 

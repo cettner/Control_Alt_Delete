@@ -32,6 +32,7 @@ public:
 	virtual void SetTeamColors(FLinearColor TeamColor);
 	/*Called when the local players team has been set either from initializtion, replication, or runtime*/
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID);
+	virtual bool IsLocalEnemy() const;
 
 	virtual bool IsAlive() const;
 	static bool IsRTSObjectValid(const IRTSObjectInterface * InRTSObject);

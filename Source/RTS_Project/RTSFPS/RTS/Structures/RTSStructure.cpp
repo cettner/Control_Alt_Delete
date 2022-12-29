@@ -236,12 +236,16 @@ void ARTSStructure::SetDeselected()
 
 int ARTSStructure::GetTeam() const
 {
-	return TeamIndex;
+	return TeamID;
 }
 
 void ARTSStructure::SetTeam(int newteamindex)
 {
-	TeamIndex = newteamindex;
+	TeamID = newteamindex;
+	if (HasAuthority() && GetNetMode() != NM_DedicatedServer)
+	{
+		OnRep_TeamID();
+	}
 }
 
 TArray<URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedProperties) const
@@ -274,6 +278,11 @@ void ARTSStructure::IssueOrder(AController* InIssuer, const FHitResult& InHitCon
 			QueueActor(purchaseclass);
 		}
 	}
+}
+
+void ARTSStructure::OnLocalPlayerTeamChange(int InLocalTeamID)
+{
+	OnRep_TeamID();
 }
 
 void ARTSStructure::SetTeamColors(FLinearColor TeamColor)
@@ -593,14 +602,14 @@ void ARTSStructure::CancelSpawn()
 
 }
 
-void ARTSStructure::OnRep_TeamIndex()
+void ARTSStructure::OnRep_TeamID()
 {
 	const UWorld* world = GetWorld();
 
 	const APlayerController* pc = world->GetFirstPlayerController<APlayerController>();
 
 	ADefaultPlayerState* ps = pc->GetPlayerState<ADefaultPlayerState>();
-	if (ps && ps->GetTeamID() != TeamIndex)
+	if (ps && ps->GetTeamID() != TeamID)
 	{
 		SetTeamColors(FLinearColor::Red);
 		SetSelected();
@@ -617,7 +626,7 @@ void  ARTSStructure::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ARTSStructure, queuestatus);
-	DOREPLIFETIME(ARTSStructure, TeamIndex);
+	DOREPLIFETIME(ARTSStructure, TeamID);
 }
 
 #if WITH_EDITOR

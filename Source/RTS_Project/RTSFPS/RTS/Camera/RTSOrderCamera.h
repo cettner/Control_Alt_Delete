@@ -24,6 +24,10 @@ class RTS_PROJECT_API ARTSOrderCamera : public ARTSSelectionCamera
 	protected:
 		virtual void OrderSelected();
 
+		/*Client side Function that is evaluated again in the player controller server side, removes unordable units 
+		and prevents a server call if no units are orderable from the selection*/
+		virtual TArray<TScriptInterface<IRTSObjectInterface>> GetOrderableUnitsFromSelection() const;
+
 	protected:
 		virtual void SelectPressed() override;
 

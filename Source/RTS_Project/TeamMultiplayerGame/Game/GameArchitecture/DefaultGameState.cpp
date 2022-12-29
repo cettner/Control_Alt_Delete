@@ -112,11 +112,6 @@ void ADefaultGameState::OnLocalTeamStateRecieved(ATeamState* InState)
 	TeamStates.AddUnique(InState);
 }
 
-void ADefaultGameState::OnRep_ReplicatedHasBegunPlay()
-{
-	Super::OnRep_ReplicatedHasBegunPlay();
-}
-
 void ADefaultGameState::ReceivedGameModeClass()
 {
 	Super::ReceivedGameModeClass();

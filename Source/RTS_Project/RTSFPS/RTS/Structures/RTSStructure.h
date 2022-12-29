@@ -74,6 +74,7 @@ public:
 	virtual void SetTeam(int newteamindex) override;
 	virtual TArray<URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
 	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
+	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
 
 protected:
 	virtual void RegisterRTSObject() override;
@@ -119,7 +120,7 @@ protected:
 
 protected:
 	UFUNCTION()
-	virtual void OnRep_TeamIndex();
+	virtual void OnRep_TeamID();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -189,8 +190,8 @@ protected:
 	USkeletalMeshComponent* MeshComp;
 
 protected:
-	UPROPERTY(EditAnywhere, Replicated, Category = Gameplay)
-	int TeamIndex = -1;
+	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, Category = Gameplay)
+	int TeamID = -1;
 
 
 protected:

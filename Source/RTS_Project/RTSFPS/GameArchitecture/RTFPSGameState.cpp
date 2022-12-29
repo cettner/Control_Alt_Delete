@@ -269,10 +269,6 @@ void ARTFPSGameState::OnRep_PurchaseOrdersRep()
 	}
 }
 
-void ARTFPSGameState::ReceivedGameModeClass()
-{
-}
-
 
 
 

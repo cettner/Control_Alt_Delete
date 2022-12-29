@@ -161,7 +161,9 @@ void ARTSSelectionCamera::HandleDoubleSelect()
 	pc->GetHitResultUnderCursor(SELECTION_CHANNEL, false, Hit);
 
 	IRTSObjectInterface* hitobj = Cast<IRTSObjectInterface>(Hit.GetActor());
-	if (IRTSObjectInterface::IsRTSObjectValid(hitobj))
+	const bool bvalidobject = IRTSObjectInterface::IsRTSObjectValid(hitobj);
+
+	if (bvalidobject && pc->IsUnitOrderable(hitobj))
 	{
 		/*Get All Units of the same class*/
 		UClass* classtoselect = Hit.GetActor()->GetClass();
@@ -176,6 +178,10 @@ void ARTSSelectionCamera::HandleDoubleSelect()
 				AddObjectToSelection(orderableunits[i]);
 			}
 		}
+	}
+	else if (bvalidobject == true)
+	{
+		AddObjectToSelection(hitobj);
 	}
 }
 
