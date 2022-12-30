@@ -75,6 +75,7 @@ public:
 	virtual TArray<URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
 	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
+	virtual bool IsLocalEnemy() const override;
 
 protected:
 	virtual void RegisterRTSObject() override;
@@ -220,6 +221,9 @@ protected:
 	float queuestatus = 0.0f;
 
 	TQueue<FStructureQueueData> StructureQueue;
+
+protected:
+	bool bIsLocalEnemy = false;
 
 protected:
 	UStructureSpawnQueueWidget* Menu;

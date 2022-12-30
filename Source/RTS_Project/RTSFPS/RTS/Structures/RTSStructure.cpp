@@ -226,12 +226,31 @@ float ARTSStructure::TakeDamage(float Damage, FDamageEvent const& DamageEvent, A
 
 void ARTSStructure::SetSelected()
 {
-	Selection->SetHiddenInGame(false);
+	bool isenemyselection = IsLocalEnemy();
+	if (!isenemyselection)
+	{
+		Selection->SetHiddenInGame(false);
+	}
+	else
+	{
+		/*Bright Red Color to indicate selection*/
+		Selection->SetSelectionColor(FLinearColor::Red);
+	}
 }
 
 void ARTSStructure::SetDeselected()
 {
-	Selection->SetHiddenInGame(true);
+	bool isenemyselection = IsLocalEnemy();
+	if (!isenemyselection)
+	{
+		Selection->SetHiddenInGame(true);
+	}
+	else
+	{
+		FLinearColor enemycolor = FLinearColor::Red;
+		enemycolor.A = .25;
+		Selection->SetSelectionColor(enemycolor);
+	}
 }
 
 int ARTSStructure::GetTeam() const
@@ -283,6 +302,11 @@ void ARTSStructure::IssueOrder(AController* InIssuer, const FHitResult& InHitCon
 void ARTSStructure::OnLocalPlayerTeamChange(int InLocalTeamID)
 {
 	OnRep_TeamID();
+}
+
+bool ARTSStructure::IsLocalEnemy() const
+{
+	return bIsLocalEnemy;
 }
 
 void ARTSStructure::SetTeamColors(FLinearColor TeamColor)
@@ -604,18 +628,27 @@ void ARTSStructure::CancelSpawn()
 
 void ARTSStructure::OnRep_TeamID()
 {
-	const UWorld* world = GetWorld();
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
 
-	const APlayerController* pc = world->GetFirstPlayerController<APlayerController>();
+	const ADefaultPlayerController* PC = World->GetFirstPlayerController<ADefaultPlayerController>();
+	if (PC == nullptr) return;
 
-	ADefaultPlayerState* ps = pc->GetPlayerState<ADefaultPlayerState>();
-	if (ps && ps->GetTeamID() != TeamID)
+	/*We are an enemy to to the local player*/
+	const ADefaultPlayerState* PS = PC->GetPlayerState<ADefaultPlayerState>();
+	if (PS && PS->GetTeamID() != TeamID)
 	{
-		SetTeamColors(FLinearColor::Red);
-		SetSelected();
+		/*Local Enemy Setup*/
+		bIsLocalEnemy = true;
+		FLinearColor enemycolor = FLinearColor::Red;
+		enemycolor.A = .25;
+		SetTeamColors(enemycolor);
+		Selection->SetHiddenInGame(false);
 	}
-	else
+	else if (PS && PS->GetTeamID() == TeamID)
 	{
+		/*Enable box selection*/
+		bIsLocalEnemy = false;
 		SetDeselected();
 	}
 
