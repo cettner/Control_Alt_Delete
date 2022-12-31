@@ -14,6 +14,12 @@ ARTSScion::ARTSScion()
 	WeaponMesh->SetReceivesDecals(false);
 	WeaponMesh->SetupAttachment(GetMesh(), "WeaponSocket");
 
+	AIConfig.SightAffiliation.bDetectNeutrals = false;
+	AIConfig.SightAffiliation.bDetectEnemies = true;
+	AIConfig.SightAffiliation.bDetectFriendlies = false;
+
+	AISenseClasses.Emplace(UAISense_Sight::StaticClass());
+
 }
 
 bool ARTSScion::StartAttack(const int32 InAttackID)

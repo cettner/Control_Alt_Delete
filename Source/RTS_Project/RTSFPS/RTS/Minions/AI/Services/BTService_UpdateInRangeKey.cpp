@@ -14,7 +14,6 @@
 
 UBTService_UpdateInRangeKey::UBTService_UpdateInRangeKey()
 {
-	bCreateNodeInstance = true;
 }
 
 void UBTService_UpdateInRangeKey::TickNode(UBehaviorTreeComponent& OwnerComp, uint8 * NodeMemory, float DeltaSeconds)
@@ -22,7 +21,7 @@ void UBTService_UpdateInRangeKey::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 	const AAIController * aic = OwnerComp.GetAIOwner();
 	UBlackboardComponent* blackboard = OwnerComp.GetBlackboardComponent();
 	const ARTSMinion* minion = aic->GetPawn<ARTSMinion>();
-	const AActor* target = Cast<AActor>(blackboard->GetValue<UBlackboardKeyType_Object>("Target"));
+	const AActor* target = Cast<AActor>(blackboard->GetValue<UBlackboardKeyType_Object>(GetSelectedBlackboardKey()));
 	
 	const int32 attackindex = minion->GetAttackIndexForTarget(target);
 

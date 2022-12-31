@@ -17,4 +17,14 @@ class RTS_PROJECT_API UBTService_UpdateInRangeKey : public UBTService
 public:
 	UBTService_UpdateInRangeKey();
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	FName GetSelectedBlackboardKey() const;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	FBlackboardKeySelector BlackboardKey;
+
 };
+
+FORCEINLINE FName UBTService_UpdateInRangeKey::GetSelectedBlackboardKey() const
+{
+	return BlackboardKey.SelectedKeyName;
+}

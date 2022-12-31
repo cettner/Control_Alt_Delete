@@ -22,7 +22,7 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	
 	APawn* Minion = Controller->GetPawn();
 	if (Minion == nullptr) return;
-
+	UAIPerceptionComponent* perceptioncomp = Controller->GetPerceptionComponent();
 	TArray<AActor*> percievedactors = TArray<AActor*>();
 
 	switch (TeamPerceptionFilter)
@@ -31,7 +31,7 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		GetFriendlyActors(Controller, percievedactors);
 		break;
 	case ETeamAttitude::Hostile :
-		Controller->GetPerceptionComponent()->GetHostileActors(percievedactors);
+		Controller->GetPerceptionComponent()->GetPerceivedHostileActors(percievedactors);
 		break;
 	case ETeamAttitude::Neutral :
 		GetNeutralActors(Controller, percievedactors);
@@ -40,11 +40,11 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		Controller->GetPerceptionComponent()->GetCurrentlyPerceivedActors(PerceptionSense, percievedactors);
 		break;
 	}
-
 	AActor* ClosestTarget = GetBestTarget(Minion, percievedactors);
+
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), ClosestTarget);
 }
-	
+
 AActor * UBTService_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors) const
 {
 	AActor* Bestactor = nullptr;

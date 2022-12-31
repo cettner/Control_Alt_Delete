@@ -27,7 +27,7 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	SightConfig->LoseSightRadius = DefaultPerceptionConfig.LoseSightRadius;
 	SightConfig->DetectionByAffiliation = DefaultPerceptionConfig.SightAffiliation;
 	SightConfig->PeripheralVisionAngleDegrees = DefaultPerceptionConfig.PeripheralVision;
-
+	
 	PerceptionComponent->ConfigureSense(*SightConfig);
 	PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ARTSAIController::OnTargetPerceptionUpdated);
 
@@ -82,6 +82,7 @@ bool ARTSAIController::ConfigureAISense(ARTSMinion* InMinion, UAISenseConfig* In
 		sightconfig->LoseSightRadius = config.LoseSightRadius;
 		sightconfig->DetectionByAffiliation = config.SightAffiliation;
 		sightconfig->PeripheralVisionAngleDegrees = config.PeripheralVision;
+		sightconfig->SetMaxAge(.01f);
 
 		retval = true;
 	}
@@ -235,7 +236,10 @@ void ARTSAIController::ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedAct
 
 void ARTSAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-
+	if (!Stimulus.WasSuccessfullySensed())
+	{
+		PerceptionComp->ForgetActor(Actor);
+	}
 }
 
 ACommander * ARTSAIController::GetLeadRTSObject()
