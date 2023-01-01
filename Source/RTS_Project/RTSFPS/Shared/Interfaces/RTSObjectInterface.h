@@ -51,6 +51,7 @@ public:
 	virtual bool ContainsProperty(const URTSProperty * InPropCheck) const;
 
 	virtual IRTSObjectInterface* GetLeadRTSObject();
+	virtual float GetMinionStrayDistance() const;
 
 	template<class T>
 	T* GetLeadRTSObject() { return Cast<T>(GetLeadRTSObject()); }

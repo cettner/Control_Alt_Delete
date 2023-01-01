@@ -44,7 +44,7 @@ EBTNodeResult::Type UBTTask_Attack_Target::AbortTask(UBehaviorTreeComponent& Own
 	ARTSMinion* Minion = Cast<ARTSMinion>(controller->GetPawn());
 	EBTNodeResult::Type retval = EBTNodeResult::Succeeded;
 
-	if (!Minion->StopAttack())
+	if (Minion && !Minion->StopAttack())
 	{
 		WaitForMessage(OwnerComp, ARTSAIController::AIMessageAbortRequest, controller->GetAIAbortId());
 		retval = EBTNodeResult::InProgress;

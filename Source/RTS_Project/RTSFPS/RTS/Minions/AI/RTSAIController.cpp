@@ -12,6 +12,8 @@
 
 const FName ARTSAIController::AIMessageOrderRequest = TEXT("Task Request");
 const FName ARTSAIController::AIMessageAbortRequest = TEXT("Abort Request");
+const FName ARTSAIController::AIGuardLocationKey = TEXT("GuardLocation");
+const FName ARTSAIController::AICurrentOrderKey = TEXT("Order");
 
 
 ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -45,7 +47,10 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 	{
 		BlackboardComp->InitializeBlackboard(*Minion->GetBehavior()->BlackboardAsset);
 		BehaviorComp->StartTree(*Minion->GetBehavior());
-		
+
+		/*Set its initial location for guard / idle logic in the BT, it will be updated later as it performs orders*/
+		BlackboardComp->SetValueAsVector(AIGuardLocationKey, Minion->GetActorLocation());
+
 		if (Minion->UsesAISenses() && !ConfigureRTSPerception(Minion))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("[ARTSAIController::OnPossess] Failed to configure Perception"));
@@ -158,7 +163,7 @@ bool ARTSAIController::IsAbortingTask() const
 
 URTSOrder* ARTSAIController::GetCurrentOrder() const
 {
-	return Cast<URTSOrder>(BlackboardComp->GetValueAsObject("Order"));
+	return Cast<URTSOrder>(BlackboardComp->GetValueAsObject(AICurrentOrderKey));
 }
 
 URTSOrder* ARTSAIController::GetAbortingOrder() const
@@ -203,7 +208,7 @@ void ARTSAIController::SetCurrentOrder(URTSOrder* InOrder)
 		{
 			/*Make Sure the blackboard is properly loaded before we set the current order*/
 			InOrder->LoadAIBlackBoard(BlackboardComp);
-			BlackboardComp->SetValueAsObject("Order", InOrder);
+			BlackboardComp->SetValueAsObject(AICurrentOrderKey, InOrder);
 			CurrentOrder = InOrder;
 		}
 		/*NullOrder, possibly due to completion of a previous order, check queue if we have one available and load it*/
@@ -212,13 +217,13 @@ void ARTSAIController::SetCurrentOrder(URTSOrder* InOrder)
 			NumOrders -= 1;
 			/*Make Sure the blackboard is properly loaded before we set the current order*/
 			nextorder->LoadAIBlackBoard(BlackboardComp);
-			BlackboardComp->SetValueAsObject("Order", nextorder);
+			BlackboardComp->SetValueAsObject(AICurrentOrderKey, nextorder);
 			CurrentOrder = nextorder;
 		}
 		/*Clear the Order*/
 		else
 		{
-			BlackboardComp->ClearValue("Order");
+			BlackboardComp->ClearValue(AICurrentOrderKey);
 			CurrentOrder = nullptr;
 		}
 	}

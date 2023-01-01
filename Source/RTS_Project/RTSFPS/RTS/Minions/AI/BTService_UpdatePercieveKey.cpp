@@ -40,12 +40,12 @@ void UBTService_UpdatePercieveKey::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		Controller->GetPerceptionComponent()->GetCurrentlyPerceivedActors(PerceptionSense, percievedactors);
 		break;
 	}
-	AActor* ClosestTarget = GetBestTarget(Minion, percievedactors);
+	AActor* ClosestTarget = GetBestTarget(Minion, percievedactors, OwnerComp);
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), ClosestTarget);
 }
 
-AActor * UBTService_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors) const
+AActor * UBTService_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors, UBehaviorTreeComponent& OwnerComp) const
 {
 	AActor* Bestactor = nullptr;
 	float shortestdistance = MAX_FLT;

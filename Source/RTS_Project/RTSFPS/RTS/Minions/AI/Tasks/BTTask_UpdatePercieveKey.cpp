@@ -32,7 +32,7 @@ EBTNodeResult::Type UBTTask_UpdatePercieveKey::ExecuteTask(UBehaviorTreeComponen
 		break;
 	}
 
-	AActor* ClosestTarget = GetBestTarget(Minion, percievedactors);
+	AActor* ClosestTarget = GetBestTarget(Minion, percievedactors, OwnerComp);
 
 	if (ClosestTarget != nullptr)
 	{
@@ -43,7 +43,7 @@ EBTNodeResult::Type UBTTask_UpdatePercieveKey::ExecuteTask(UBehaviorTreeComponen
 	return retval;
 }
 
-AActor* UBTTask_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors) const
+AActor* UBTTask_UpdatePercieveKey::GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors, UBehaviorTreeComponent& OwnerComp) const
 {
 	AActor* Bestactor = nullptr;
 	float shortestdistance = MAX_FLT;

@@ -74,7 +74,7 @@ FHitResult ARTSScion::PerformTrace()
 	{
 			const FVector starttrace = WeaponMesh->GetSocketLocation(WeaponTraceStart);
 			const FVector endtrace = WeaponMesh->GetSocketLocation(WeaponTraceEnd);
-			const FCollisionShape traceshape = FCollisionShape::MakeSphere(15.0f);
+			const FCollisionShape traceshape = FCollisionShape::MakeSphere(30.0f);
 			FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
 			FName TraceTag("DebugMeleeTag");
 			world->DebugDrawTraceTag = TraceTag;

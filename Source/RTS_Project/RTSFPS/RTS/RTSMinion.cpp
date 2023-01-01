@@ -133,6 +133,11 @@ void ARTSMinion::IssueOrder(AController* Issuer, const FHitResult& InHitContext,
 	rtscontrol->EnqueueOrder(InOrder, InbIsQueuedOrder);
 }
 
+float ARTSMinion::GetMinionStrayDistance() const
+{
+	return StrayDistance;
+}
+
 void ARTSMinion::RegisterRTSObject()
 {
 	const UWorld * world = GetWorld();

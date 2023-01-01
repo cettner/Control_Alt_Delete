@@ -98,8 +98,8 @@ protected:
 public:
 	static const FName AIMessageOrderRequest;
 	static const FName AIMessageAbortRequest;
-
-
+	static const FName AIGuardLocationKey;
+	static const FName AICurrentOrderKey;
 
 protected:
 	UPROPERTY(transient)
@@ -116,7 +116,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FName PrimaryOrder = "PrimaryOrder";
-
 
 private:
 

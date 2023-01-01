@@ -89,6 +89,8 @@ public:
 
 	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder = nullptr, const bool InbIsQueuedOrder = false) override;
 
+	virtual float GetMinionStrayDistance() const override;
+
 protected:
 	virtual void RegisterRTSObject() override;
 	virtual void UnRegisterRTSObject() override;
@@ -136,6 +138,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 	FName MinionName = "Default Minion Name";
+
+	/*Distance the minions will stray from their guard / standpoint*/
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	float StrayDistance = 4000.0f;
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Orders)

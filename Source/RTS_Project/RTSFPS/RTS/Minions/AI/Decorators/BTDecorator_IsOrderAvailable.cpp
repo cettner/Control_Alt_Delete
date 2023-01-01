@@ -2,7 +2,6 @@
 
 
 #include "BTDecorator_IsOrderAvailable.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "../RTSAIController.h"
 
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"

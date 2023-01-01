@@ -22,7 +22,7 @@ protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 protected:
-	virtual AActor* GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors) const;
+	virtual AActor* GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors, UBehaviorTreeComponent& OwnerComp) const;
 	virtual void GetFriendlyActors(const AAIController* InController, TArray<AActor*>& OutActors) const;
 	virtual void GetNeutralActors(const AAIController* InComp, TArray<AActor*>& OutActors) const;
 

@@ -107,6 +107,11 @@ bool IRTSObjectInterface::ContainsProperty(const URTSProperty* InPropCheck) cons
 	return retval;
 }
 
+float IRTSObjectInterface::GetMinionStrayDistance() const
+{
+	return -1.0f;
+}
+
 UTexture* IRTSObjectInterface::GetThumbnail(const UUserWidget* InDisplayContext) const
 {
 	return nullptr;

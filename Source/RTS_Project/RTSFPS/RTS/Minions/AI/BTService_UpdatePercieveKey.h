@@ -17,13 +17,14 @@ class RTS_PROJECT_API UBTService_UpdatePercieveKey : public UBTService_Blackboar
 {
 	GENERATED_BODY()
 
-	UBTService_UpdatePercieveKey();
+	protected:
+		UBTService_UpdatePercieveKey();
 	
 	protected:
 	    virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
     protected:
-		virtual AActor * GetBestTarget(APawn * ControlledPawn, TArray<AActor*> PercievedActors) const;
+		virtual AActor* GetBestTarget(APawn* ControlledPawn, TArray<AActor*> PercievedActors, UBehaviorTreeComponent& OwnerComp) const;
 		virtual void GetFriendlyActors(const AAIController * InController,  TArray<AActor*>& OutActors) const;
 		virtual void GetNeutralActors(const AAIController * InComp, TArray<AActor*>& OutActors) const;
 
