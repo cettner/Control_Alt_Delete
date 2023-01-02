@@ -353,7 +353,7 @@ AActor * UAbilityComponent::GetAbilityTarget() const
 bool UAbilityComponent::GetHitInfoFor(AActor * HitTarget, FHitResult & Hit)
 {
 	bool retval = false;
-	if (LastAbilityHit.Actor == HitTarget)
+	if (LastAbilityHit.GetActor() == HitTarget)
 	{
 		Hit = LastAbilityHit;
 		retval = true;

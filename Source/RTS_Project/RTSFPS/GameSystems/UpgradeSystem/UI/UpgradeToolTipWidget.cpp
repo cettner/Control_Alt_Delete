@@ -32,8 +32,8 @@ void UUpgradeToolTipWidget::FormatDependencyText(const FUpgradeDependencyInfo In
 		color = FSlateColor(FLinearColor::Red);
 	}
 
-	DependencyBlock->ColorAndOpacity = color; 
-	DependencyBlock->Font = DependencyFont;
+	DependencyBlock->SetColorAndOpacity(color);
+	DependencyBlock->SetFont(DependencyFont);
 	DependencyBlock->SetAutoWrapText(true);
 }
 

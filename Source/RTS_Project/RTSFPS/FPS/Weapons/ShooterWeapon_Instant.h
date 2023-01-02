@@ -18,13 +18,13 @@ struct FInstantHitInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	FVector Origin;
+	FVector Origin = FVector(0.0f,0.0f,0.0f);
 
 	UPROPERTY()
-	float ReticleSpread;
+	float ReticleSpread = 0.0f;
 
 	UPROPERTY()
-	int32 RandomSeed;
+	int32 RandomSeed = 0;
 };
 
 USTRUCT()

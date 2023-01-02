@@ -25,7 +25,7 @@ struct FAttackAnim
 
 		/*Play Damage on Animation Completion*/
 		UPROPERTY(EditDefaultsOnly, Category = Animation)
-		bool PlayDamageOnEnd;
+		bool PlayDamageOnEnd = false;
 
 		bool operator==(const FAttackAnim& Other) const
 		{

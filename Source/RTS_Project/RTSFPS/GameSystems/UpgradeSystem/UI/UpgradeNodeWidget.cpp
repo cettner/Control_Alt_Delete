@@ -37,7 +37,8 @@ void UUpgradeNodeWidget::SetNodeEnabled(bool isenabled)
 bool UUpgradeNodeWidget::CanPurchaseUpgrade() const
 {
 	const uint32 maxrank = GetUpgradeMaxRank();
-	return bIsEnabled && (CurrentRank < maxrank);
+	const bool isenabled = GetIsEnabled();
+	return isenabled && (CurrentRank < maxrank);
 }
 
 void UUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const
@@ -96,7 +97,7 @@ void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 	TArray<FUpgradeDependencyInfo> tooltipdependencies;
 	const bool isnodeenabled = defaultupgrade->CanUpgrade(UpgradeUser, tooltipdependencies);
 
-	UUpgradeToolTipWidget* tooltip = Cast<UUpgradeToolTipWidget>(ToolTipWidget);
+	UUpgradeToolTipWidget* tooltip = Cast<UUpgradeToolTipWidget>(GetToolTip());
 	tooltip->FormatDependencies(tooltipdependencies);
 
 

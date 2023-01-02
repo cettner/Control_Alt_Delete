@@ -98,7 +98,7 @@ void ARTSZombie::DoDamage(AActor* AttackMe, int ComboCount, FAttackAnim Attack)
 		AttackMe->TakeDamage(GetDamage(), DE, GetController(), this);
 	}
 	*/
-	if (ComboCount < Attack.DamageEventTimes.Num() && AttackMe && !AttackMe->IsPendingKillOrUnreachable())
+	if (ComboCount < Attack.DamageEventTimes.Num() && IsValid(AttackMe))
 	{
 		ActorDelegate.BindUFunction(this, FName("DoDamage"), AttackMe, ComboCount++, Attack);
 		float NextEvent = Attack.DamageEventTimes[ComboCount++];

@@ -105,7 +105,7 @@ bool AFogOfWarManager::GetIsBlurEnabled() {
 
 void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions, FUpdateTextureRegion2D* Regions, uint32 SrcPitch, uint32 SrcBpp, uint8* SrcData, bool bFreeData)
 {
-	if (Texture && Texture->Resource)
+	if (Texture && Texture->GetResource())
 	{
 		struct FUpdateTextureRegionsData
 		{
@@ -121,7 +121,7 @@ void AFogOfWarManager::UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex,
 
 		FUpdateTextureRegionsData* RegionData = new FUpdateTextureRegionsData;
 
-		RegionData->Texture2DResource = (FTexture2DResource*)Texture->Resource;
+		RegionData->Texture2DResource = (FTexture2DResource*)Texture->GetResource();
 		RegionData->MipIndex = MipIndex;
 		RegionData->NumRegions = NumRegions;
 		RegionData->Regions = Regions;

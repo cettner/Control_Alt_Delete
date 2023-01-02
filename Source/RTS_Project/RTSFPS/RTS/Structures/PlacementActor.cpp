@@ -32,7 +32,7 @@ void APlacementActor::PreInitializePlacementActor(const TSubclassOf<AActor> InAc
 		USkeletalMeshComponent * skeleton = Cast<USkeletalMeshComponent>(defaultprimitive);
 		if (skeleton != nullptr)
 		{
-			Cast<USkeletalMeshComponent>(MeshComp)->SetSkeletalMesh(skeleton->SkeletalMesh);
+			Cast<USkeletalMeshComponent>(MeshComp)->SetSkeletalMeshAsset(skeleton->SkeletalMesh);
 		}
 		else
 		{

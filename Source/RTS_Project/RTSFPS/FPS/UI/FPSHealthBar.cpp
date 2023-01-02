@@ -30,15 +30,14 @@ UHealthComponent* UFPSHealthBar::GetOwnerHealthComp() const
 	TArray<UHealthComponent*> Healthcomps;
 	APawn* MyPawn = GetOwningPlayerPawn();
 
-	if (!MyPawn || MyPawn->IsPendingKill())
+	if (IsValid(MyPawn))
 	{
-		return(health);
+		MyPawn->GetComponents<UHealthComponent>(Healthcomps);
+		if (Healthcomps.Num() > 0)
+		{
+			health = Healthcomps[0];
+		}
 	}
 
-	MyPawn->GetComponents<UHealthComponent>(Healthcomps);
-	if (Healthcomps.Num() > 0)
-	{
-		health = Healthcomps[0];
-	}
 	return health;
 }

@@ -3,7 +3,3 @@
 
 #include "LobbyGameSession.h"
 
-void ALobbyGameSession::RegisterPlayer(APlayerController* NewPlayer, const TSharedPtr<const FUniqueNetId>& UniqueId, bool bWasFromInvite)
-{
-	Super::RegisterPlayer(NewPlayer, UniqueId, bWasFromInvite);
-}

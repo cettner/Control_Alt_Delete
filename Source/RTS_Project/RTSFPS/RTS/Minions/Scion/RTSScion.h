@@ -27,10 +27,10 @@ struct FMeleeAttackAnim
 		UAnimMontage* AttackAnim = nullptr;
 
 		UPROPERTY(EditDefaultsOnly)
-		FVector RootMotionShift = FVector();
+		FVector RootMotionShift = FVector(0.0f,0.0f,0.0f);
 
 		UPROPERTY(EditDefaultsOnly)
-		FRotator RootMotionRotation = FRotator();
+		FRotator RootMotionRotation = FRotator(0.0f,0.0f,0.0f);
 
 		UPROPERTY(EditDefaultsOnly)
 		bool bCanAnimAbortImmediately = true;

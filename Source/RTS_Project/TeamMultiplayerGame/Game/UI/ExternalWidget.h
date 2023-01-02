@@ -19,7 +19,7 @@ class RTS_PROJECT_API UExternalWidget : public UUserWidget, public IExternalWidg
 	public:
 		virtual FStackWidgetInfo GetWidgetInputSettings() const override;
 		virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
-		virtual void AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder) override;
+		//virtual void AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder) override;
 
 	protected:
 		virtual void OnEscapeAction();

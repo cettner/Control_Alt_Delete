@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_UpdateKeyPerception::ExecuteTask(UBehaviorTreeCompon
 	{
 		for (int i = 0; i < PercievedActors.Num(); i++)
 		{
-			if (!PercievedActors[i]->IsPendingKill())
+			if (IsValid(PercievedActors[i]))
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(GetSelectedBlackboardKey(), PercievedActors[0]);
 			}

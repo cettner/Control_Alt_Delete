@@ -2,7 +2,7 @@
 
 
 #include "MinionAnimInstance.h"
-
+#include "KismetAnimationLibrary.h"
 
 void UMinionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
@@ -15,7 +15,7 @@ void UMinionAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		const FVector velocity = Pawn->GetVelocity();
 		
 		Speed = velocity.Size();
-		Direction = CalculateDirection(velocity, Pawn->GetActorRotation());
+		Direction = UKismetAnimationLibrary::CalculateDirection(velocity, Pawn->GetActorRotation());// CalculateDirection();
 	}
 
 }

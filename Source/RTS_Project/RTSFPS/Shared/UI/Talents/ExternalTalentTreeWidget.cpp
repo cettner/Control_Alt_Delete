@@ -31,6 +31,7 @@ FReply UExternalTalentTreeWidget::NativeOnKeyDown(const FGeometry& InGeometry, c
     return retval;
 }
 
+/*
 void UExternalTalentTreeWidget::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder)
 {
     Super::AddToScreen(LocalPlayer, ZOrder);
@@ -38,6 +39,7 @@ void UExternalTalentTreeWidget::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOr
     bIsFocusable = true;
     SetFocus();
 }
+*/
 
 void UExternalTalentTreeWidget::OnEscapeAction()
 {

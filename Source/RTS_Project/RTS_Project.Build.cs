@@ -18,11 +18,12 @@ public class RTS_Project : ModuleRules
             "Slate",
             "SlateCore",
             "AIModule",
+            "AnimGraphRuntime",
             "GameplayTasks",
             "RHI",
             "RenderCore",
             "OnlineSubsystem",
-            "OnlineSubSystemSteam",
+            "OnlineSubsystemSteam",
             "ProceduralMeshComponent",
             "Niagara"
         });

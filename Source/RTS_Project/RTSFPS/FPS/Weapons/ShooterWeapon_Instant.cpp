@@ -2,6 +2,9 @@
 
 
 #include "ShooterWeapon_Instant.h"
+#include "../CombatCommander.h"
+
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 #include "Runtime\Engine\Classes\Kismet\GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -185,7 +188,7 @@ bool AShooterWeapon_Instant::ShouldDealDamage(AActor* TestActor) const
 
 void AShooterWeapon_Instant::DealDamage(const FHitResult& Impact, const FVector& ShootDir)
 {
-	FPointDamageEvent PointDmg;
+	FPointDamageEvent PointDmg = FPointDamageEvent();
 	PointDmg.DamageTypeClass = InstantConfig.DamageType;
 	PointDmg.HitInfo = Impact;
 	PointDmg.ShotDirection = ShootDir;

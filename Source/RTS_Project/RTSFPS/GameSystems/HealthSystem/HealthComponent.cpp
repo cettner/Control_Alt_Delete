@@ -111,7 +111,7 @@ bool UHealthComponent::CanDie(float KillingDamage, FDamageEvent const& DamageEve
 {
 	bool InevitabilityOfDeath;
 
-	if (bIsDying || (CompOwner && CompOwner->IsPendingKill()) || (CompOwner && CompOwner->GetLocalRole() != ROLE_Authority))
+	if (bIsDying || !IsValid(CompOwner) || (CompOwner->GetLocalRole() != ROLE_Authority))
 	{
 		InevitabilityOfDeath = false;
 	}
@@ -306,7 +306,7 @@ UMovementComponent* UHealthComponent::GetOwnerMovement()
 
 void UHealthComponent::OnRep_LastTakeHitInfo()
 {
-	FDamageEvent Classtype;
+	FDamageEvent Classtype = FDamageEvent();
 	Classtype.DamageTypeClass = LastTakeHitInfo.DamageTypeClass;
 	if (LastTakeHitInfo.bKilled)
 	{

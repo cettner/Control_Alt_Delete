@@ -22,6 +22,7 @@ FReply UExternalWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyE
     return retval;
 }
 
+/*
 void UExternalWidget::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder)
 {
     Super::AddToScreen(LocalPlayer, ZOrder);
@@ -29,6 +30,7 @@ void UExternalWidget::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder)
     bIsFocusable = true;
     SetFocus();
 }
+*/
 
 void UExternalWidget::OnEscapeAction()
 {

@@ -3,6 +3,7 @@
 
 #include "FPSAnimInstance.h"
 #include "../CombatCommander.h"
+#include "KismetAnimationLibrary.h"
 
 #include "GameFramework/PawnMovementComponent.h"
 
@@ -17,7 +18,7 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		const FVector velocity = Pawn->GetVelocity();
 		
 		Speed = velocity.Size();
-		Direction = CalculateDirection(velocity, Pawn->GetActorRotation());
+		Direction = UKismetAnimationLibrary::CalculateDirection(velocity, Pawn->GetActorRotation());
 		bIsMoving = Speed > 0.0F;
 
 		UpdateAimOffset(Pawn);

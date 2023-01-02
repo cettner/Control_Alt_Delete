@@ -11,9 +11,9 @@ FName UAbilityAnimNotify::GetAssetSlotName() const
 	return(AnimTrackSlotName);
 }
 
-void UAbilityAnimNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation)
+void UAbilityAnimNotify::Notify(USkeletalMeshComponent * MeshComp, UAnimSequenceBase * Animation, const FAnimNotifyEventReference& EventReference)
 {
-	Super::Notify(MeshComp, Animation);
+	Super::Notify(MeshComp, Animation, EventReference);
 
 	if (AnimTrackSlotName == "")
 	{
