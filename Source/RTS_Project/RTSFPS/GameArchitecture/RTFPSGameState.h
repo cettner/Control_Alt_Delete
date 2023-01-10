@@ -72,7 +72,6 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResour
     protected:
 		virtual void PostInitializeComponents() override;
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
-		virtual bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 
 	protected:
 		UFUNCTION()

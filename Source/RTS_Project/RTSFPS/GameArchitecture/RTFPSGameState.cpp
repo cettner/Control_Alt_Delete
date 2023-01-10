@@ -5,6 +5,7 @@
 #include "RTS_Project/RTSFPS/RTS/Structures/RTSStructure.h"
 #include "RTS_Project/RTSFPS/Shared/Upgrades/RTSUpgrade.h"
 
+#include "UObject/CoreNetTypes.h"
 #include "Engine/ActorChannel.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
@@ -13,6 +14,8 @@
 ARTFPSGameState::ARTFPSGameState(const FObjectInitializer &FOI) : Super(FOI)
 {
 	RTSObjects = TArray<IRTSObjectInterface*>();
+	/*Required for Replication of PurchaseOrders*/
+	bReplicateUsingRegisteredSubObjectList = true;
 }
 
 void ARTFPSGameState::RefreshAllUnits()
@@ -116,7 +119,7 @@ void ARTFPSGameState::SetUnitPriceMap(const TMap<TSubclassOf<UObject>, FReplicat
 			URTSResourcePurchaseOrder* purchaseorder = NewObject<URTSResourcePurchaseOrder>(this, URTSResourcePurchaseOrder::StaticClass());
 			purchaseorder->SetPurchaseClass(elem.Key);
 			purchaseorder->SetPrice(elem.Value);
-
+			AddReplicatedSubObject(purchaseorder, ELifetimeCondition::COND_InitialOnly);
 			PurchaseOrdersRep.Emplace(purchaseorder);
 		}
 		OnRep_PurchaseOrdersRep();
@@ -229,15 +232,6 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 void ARTFPSGameState::PlayerGameDataInit(ADefaultPlayerState * Player)
 {
 	
-}
-
-bool ARTFPSGameState::ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags)
-{
-	bool retval = Super::ReplicateSubobjects(Channel, Bunch, RepFlags);
-
-	retval |= Channel->ReplicateSubobjectList(PurchaseOrdersRep, *Bunch, *RepFlags);
-
-	return retval;
 }
 
 void ARTFPSGameState::PostInitializeComponents()

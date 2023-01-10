@@ -19,9 +19,9 @@ class RTS_PROJECT_API UMeleeTraceNotifyState : public UAnimNotifyState
 		int32 GetMaxSegmentHitCount() const { return MaxSegmentHitCount; }
 
 	protected:
-		virtual void NotifyTick(USkeletalMeshComponent* InMeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime) override;
-		virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
-		virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration) override;
+		virtual void NotifyBegin(USkeletalMeshComponent* InMeshComp, UAnimSequenceBase* InAnimation, float InTotalDuration, const FAnimNotifyEventReference& InEventReference) override;
+		virtual void NotifyTick(USkeletalMeshComponent* InMeshComp, UAnimSequenceBase* InAnimation, float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference) override;
+		virtual void NotifyEnd(USkeletalMeshComponent* InMeshComp, UAnimSequenceBase* InAnimation, const FAnimNotifyEventReference& InEventReference) override;
 
 	protected:
 		/*Configurable Max times the User Should trace for this segment*/

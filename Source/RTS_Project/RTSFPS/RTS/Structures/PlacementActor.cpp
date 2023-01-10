@@ -29,16 +29,17 @@ void APlacementActor::PreInitializePlacementActor(const TSubclassOf<AActor> InAc
 	{
 		MeshComp = Cast<UMeshComponent>(this->AddComponentByClass(defaultprimitive->GetClass(), false, defaultprimitive->GetRelativeTransform(), false));
 
-		USkeletalMeshComponent * skeleton = Cast<USkeletalMeshComponent>(defaultprimitive);
+		USkinnedMeshComponent * skeleton = Cast<USkinnedMeshComponent>(defaultprimitive);
 		if (skeleton != nullptr)
 		{
-			Cast<USkeletalMeshComponent>(MeshComp)->SetSkeletalMeshAsset(skeleton->SkeletalMesh);
+			Cast<USkinnedMeshComponent>(MeshComp)->SetSkinnedAsset(skeleton->GetSkinnedAsset());
 		}
 		else
 		{
 			UStaticMeshComponent* staticcomp = Cast<UStaticMeshComponent>(defaultprimitive);
 			if (staticcomp != nullptr)
 			{
+
 				Cast<UStaticMeshComponent>(MeshComp)->SetStaticMesh(staticcomp->GetStaticMesh());
 			}
 		}
