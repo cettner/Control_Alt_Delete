@@ -3,3 +3,7 @@
 
 #include "RTSFlock.h"
 
+void URTSFlock::UpdateFlock()
+{
+
+}
