@@ -4,6 +4,7 @@
 #include "RTSScion.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
 
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
