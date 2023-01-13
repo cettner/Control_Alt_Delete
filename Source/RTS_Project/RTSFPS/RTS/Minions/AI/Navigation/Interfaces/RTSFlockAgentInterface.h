@@ -33,19 +33,14 @@ public:
 	inline URTSFlock* GetFlock() const { return CurrentFlock; }
 
 public:
-	virtual void ApplySeparation();
-	virtual void ApplyAlignment();
-	virtual void ApplyCohesion();
+	virtual FVector CalcSeparation();
+	virtual FVector CalcAlignment();
+	virtual FVector CalcCohesion();
 
-	virtual void ApplyObstacleAvoidance();
 
 /*Runtime*/
 protected:
 	UPROPERTY()
 	URTSFlock* CurrentFlock = nullptr;
-
-	FVector SeparationForce = FVector::ZeroVector;
-	FVector AlignmentForce = FVector::ZeroVector;
-	FVector CohesionForce = FVector::ZeroVector;
 
 };

@@ -16,8 +16,6 @@ class RTS_PROJECT_API URTSFlock : public UObject
 {
 	GENERATED_BODY()
 
-
-
 	public:
 		virtual void UpdateFlock();
 		
@@ -25,7 +23,6 @@ class RTS_PROJECT_API URTSFlock : public UObject
 		{
 			return FlockAgents;
 		}
-
 
 	protected:
 		TArray<IRTSFlockAgentInterface*> FlockAgents;

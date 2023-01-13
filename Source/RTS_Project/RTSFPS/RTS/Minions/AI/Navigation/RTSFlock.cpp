@@ -9,12 +9,12 @@ void URTSFlock::UpdateFlock()
 	{
 		IRTSFlockAgentInterface* agent = FlockAgents[i];
 
-		agent->ApplySeparation();
-		agent->ApplyAlignment();
-		agent->ApplyCohesion();
+		agent->CalcSeparation();
+		agent->CalcAlignment();
+		agent->CalcCohesion();
 
 		// Apply obstacle avoidance
-		agent->ApplyObstacleAvoidance();
+		//agent->ApplyObstacleAvoidance();
 
 	}
 }

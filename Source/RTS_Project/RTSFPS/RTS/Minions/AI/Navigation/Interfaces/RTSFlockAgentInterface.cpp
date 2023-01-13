@@ -20,10 +20,10 @@ FVector IRTSFlockAgentInterface::GetFlockAgentDirection() const
 	return FVector();
 }
 
-void IRTSFlockAgentInterface::ApplySeparation()
+FVector IRTSFlockAgentInterface::CalcSeparation()
 {
 	URTSFlock* flock = GetFlock();
-	SeparationForce = FVector::ZeroVector;
+	FVector retval = FVector::ZeroVector;
 
 	if (flock != nullptr)
 	{
@@ -39,16 +39,17 @@ void IRTSFlockAgentInterface::ApplySeparation()
 				const FVector direction = (otherposition - myposition).GetSafeNormal();
 				const float distance = FVector::Distance(otherposition, myposition);
 
-				SeparationForce += direction / distance;
+				retval += direction / distance;
 			}
 		}
 	}
+	return retval;
 }
 
-void IRTSFlockAgentInterface::ApplyAlignment()
+FVector IRTSFlockAgentInterface::CalcAlignment()
 {
 	URTSFlock* flock = GetFlock();
-	AlignmentForce = FVector::ZeroVector;
+	FVector retval = FVector::ZeroVector;
 
 	if (flock != nullptr)
 	{
@@ -59,18 +60,20 @@ void IRTSFlockAgentInterface::ApplyAlignment()
 			const IRTSFlockAgentInterface* otheragent = flockmembers[i];
 			if (flockmembers[i] != this)
 			{
-				AlignmentForce += otheragent->GetFlockAgentDirection();
+				retval += otheragent->GetFlockAgentDirection();
 			}
 		}
 
-		AlignmentForce /= flockmembers.Num();
-		AlignmentForce.Normalize();
+		retval /= flockmembers.Num();
+		retval.Normalize();
 	}
+
+	return retval;
 }
 
-void IRTSFlockAgentInterface::ApplyCohesion()
+FVector IRTSFlockAgentInterface::CalcCohesion()
 {
-	CohesionForce = FVector::ZeroVector;
+	FVector retval = FVector::ZeroVector;
 	URTSFlock* flock = GetFlock();
 
 	if (flock != nullptr)
@@ -82,17 +85,16 @@ void IRTSFlockAgentInterface::ApplyCohesion()
 			const IRTSFlockAgentInterface* otheragent = flockmembers[i];
 			if (flockmembers[i] != this)
 			{
-				CohesionForce += otheragent->GetFlockAgentLocation();
+				retval += otheragent->GetFlockAgentLocation();
 			}
 		}
 
-		CohesionForce /= flockmembers.Num();
+		retval /= flockmembers.Num();
 
 		/*Calculate the direction towards the "center of mass" of the flock*/
-		CohesionForce = (CohesionForce - GetFlockAgentDirection()).GetSafeNormal();
+		retval = (retval - GetFlockAgentDirection()).GetSafeNormal();
 	}
+
+	return retval;
 }
 
-void IRTSFlockAgentInterface::ApplyObstacleAvoidance()
-{
-}

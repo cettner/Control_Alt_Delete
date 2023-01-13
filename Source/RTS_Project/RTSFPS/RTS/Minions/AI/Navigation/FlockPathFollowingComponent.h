@@ -16,5 +16,11 @@ class RTS_PROJECT_API UFlockPathFollowingComponent : public UPathFollowingCompon
 {
 	GENERATED_BODY()
 
+	protected:
+		FVector GetFlockAgentLocation() const override;
+		FVector GetFlockAgentDirection() const override;
+
+	protected:
+		virtual void UpdatePathSegment() override;
 	
 };
