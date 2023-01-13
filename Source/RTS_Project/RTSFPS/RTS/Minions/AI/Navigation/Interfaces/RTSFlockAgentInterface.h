@@ -22,16 +22,18 @@ class RTS_PROJECT_API IRTSFlockAgentInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	FVector GetFlockAgentLocation() const;
+	void SetFlock(URTSFlock* InFlock) { CurrentFlock = InFlock; };
 
-	FVector GetFlockAgentVelocity() const;
+	virtual FVector GetFlockAgentLocation() const;
 
-	FVector GetFlockAgentDirection() const;
+	virtual FVector GetFlockAgentVelocity() const;
+
+	virtual FVector GetFlockAgentDirection() const;
 
 	inline URTSFlock* GetFlock() const { return CurrentFlock; }
 
 public:
-	virtual void ApplySeperation();
+	virtual void ApplySeparation();
 	virtual void ApplyAlignment();
 	virtual void ApplyCohesion();
 
@@ -42,7 +44,7 @@ protected:
 	UPROPERTY()
 	URTSFlock* CurrentFlock = nullptr;
 
-	FVector SeperationForce = FVector::ZeroVector;
+	FVector SeparationForce = FVector::ZeroVector;
 	FVector AlignmentForce = FVector::ZeroVector;
 	FVector CohesionForce = FVector::ZeroVector;
 

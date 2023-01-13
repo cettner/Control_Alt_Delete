@@ -20,10 +20,10 @@ FVector IRTSFlockAgentInterface::GetFlockAgentDirection() const
 	return FVector();
 }
 
-void IRTSFlockAgentInterface::ApplySeperation()
+void IRTSFlockAgentInterface::ApplySeparation()
 {
 	URTSFlock* flock = GetFlock();
-	SeperationForce = FVector::ZeroVector;
+	SeparationForce = FVector::ZeroVector;
 
 	if (flock != nullptr)
 	{
@@ -39,7 +39,7 @@ void IRTSFlockAgentInterface::ApplySeperation()
 				const FVector direction = (otherposition - myposition).GetSafeNormal();
 				const float distance = FVector::Distance(otherposition, myposition);
 
-				SeperationForce += direction / distance;
+				SeparationForce += direction / distance;
 			}
 		}
 	}
@@ -48,7 +48,7 @@ void IRTSFlockAgentInterface::ApplySeperation()
 void IRTSFlockAgentInterface::ApplyAlignment()
 {
 	URTSFlock* flock = GetFlock();
-	SeperationForce = FVector::ZeroVector;
+	AlignmentForce = FVector::ZeroVector;
 
 	if (flock != nullptr)
 	{
