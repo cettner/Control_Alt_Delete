@@ -40,7 +40,6 @@ public:
 
 /*Runtime*/
 protected:
-	UPROPERTY()
 	URTSFlock* CurrentFlock = nullptr;
 
 };
