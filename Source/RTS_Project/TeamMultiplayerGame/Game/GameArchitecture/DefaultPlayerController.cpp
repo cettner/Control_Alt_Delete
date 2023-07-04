@@ -79,7 +79,7 @@ void ADefaultPlayerController::PreClientTravel(const FString& PendingURL, ETrave
 void ADefaultPlayerController::PostRegisterInit()
 {
 	/*Client Will inititialize its UI After Gamestate's initial Replication, Server can Start Here*/
-	if ((GetWorld()->GetNetMode() == NM_ListenServer) && (GetWorld()->GetFirstPlayerController() == this) && HasAuthority())
+	if (IsLocalPlayerController() && HasAuthority())
 	{
 		ClientInitUI();
 	}

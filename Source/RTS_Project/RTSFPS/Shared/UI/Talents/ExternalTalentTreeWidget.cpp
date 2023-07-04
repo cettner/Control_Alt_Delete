@@ -6,6 +6,7 @@
 
 UExternalTalentTreeWidget::UExternalTalentTreeWidget() : Super()
 {
+    bIsFocusable = true;
     DefaultInputSettings.bIsCursorVisible = true;
     DefaultInputSettings.CursorType = EMouseCursor::Hand;
     DefaultInputSettings.InputType = EWisgetStackInputType::GAMEANDUI;
