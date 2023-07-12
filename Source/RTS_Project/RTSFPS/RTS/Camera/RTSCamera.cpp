@@ -10,14 +10,14 @@ ARTSCamera::ARTSCamera()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = !(GetNetMode() == NM_DedicatedServer && GetLocalRole() == ROLE_Authority) ;
 
-	MainCameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	MainCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	
-	MainCameraSpringArm->TargetArmLength = 350.0;
-	MainCameraSpringArm->SetWorldRotation(FRotator(0.0, 0.0, 0.0));
-	MainCameraSpringArm->bDoCollisionTest = false;
+	USpringArmComponent * springarm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	springarm->TargetArmLength = 350.0;
+	springarm->SetWorldRotation(FRotator(0.0, 0.0, 0.0));
+	springarm->bDoCollisionTest = false;
+	RootComponent = springarm;
 
-	MainCamera->SetupAttachment(MainCameraSpringArm, USpringArmComponent::SocketName);
+	MainCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	MainCamera->SetupAttachment(springarm, USpringArmComponent::SocketName);
 	MainCamera->SetRelativeRotation(FRotator(-45.0, 0.0, 0.0));
 
 	// Controls Camera Movement Speed

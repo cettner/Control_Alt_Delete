@@ -16,7 +16,7 @@ class RTS_PROJECT_API ARTSGridClaimCamera : public ARTSGridPlacementCamera
 	
 
 	protected:
-		virtual void PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const override;
+		virtual void PreInitializeGridActor(AGridAttachmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const override;
 		virtual void Tick(float Deltatime) override;
 
 	protected:

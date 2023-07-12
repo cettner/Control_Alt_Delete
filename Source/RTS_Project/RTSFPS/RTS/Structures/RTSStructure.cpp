@@ -2,7 +2,6 @@
 #include "RTSStructure.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "UI/StructureSpawnQueueWidget.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimableSquareGameGrid.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -12,20 +11,20 @@ ARTSStructure::ARTSStructure() : Super()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
-	Selection = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
+
 	bReplicates = true;
 
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
-	if (MeshComp)
-	{
-		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		MeshComp->SetCanEverAffectNavigation(true);
-		MeshComp->bFillCollisionUnderneathForNavmesh = true;
-		MeshComp->bReceivesDecals = false;
-		Selection->SetDetection(MeshComp);
-		Selection->SetupAttachment(RootComponent);
-		SetDeselected();
-	}
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	MeshComp->SetCanEverAffectNavigation(true);
+	MeshComp->bFillCollisionUnderneathForNavmesh = true;
+	MeshComp->bReceivesDecals = false;
+	MeshComp->SetupAttachment(RootComponent);
+
+	Selection = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
+	Selection->SetDetection(MeshComp);
+	Selection->SetupAttachment(MeshComp);
+	SetDeselected();
 
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 	Health->OnDeathStart.BindUFunction(this, "OnDeath");
@@ -204,7 +203,7 @@ void ARTSStructure::OnDeath()
 	}
 
 	UnRegisterRTSObject();
-
+	/*
 	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (pgrid != nullptr)
 	{
@@ -213,6 +212,7 @@ void ARTSStructure::OnDeath()
 			pgrid->RemoveModifier(Modifiers[i], GridClaimSpace, this);
 		}
 	}
+	*/
 }
 
 float ARTSStructure::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

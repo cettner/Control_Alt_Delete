@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 
 #include "Components/StaticMeshComponent.h"
 #include "Resource.generated.h"
@@ -120,7 +120,7 @@ protected:
 
 
 UCLASS(Blueprintable)
-class RTS_PROJECT_API AResource : public AGridClaimingActor, public IRTSObjectInterface
+class RTS_PROJECT_API AResource : public AGridAttachmentActor, public IRTSObjectInterface
 {
 	GENERATED_BODY()
 	

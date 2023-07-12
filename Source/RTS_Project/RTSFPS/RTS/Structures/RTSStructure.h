@@ -10,7 +10,7 @@
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 #include "Interfaces/BuildableInterface.h"
 
 #include "Components/SkeletalMeshComponent.h"
@@ -58,7 +58,7 @@ struct FStructureSpawnData
 class UStructureSpawnQueueWidget;
 
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public AGridClaimingActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface, public IResourceVendorInterface
+class RTS_PROJECT_API ARTSStructure : public AGridAttachmentActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface, public IResourceVendorInterface
 {
 	GENERATED_BODY()
 	

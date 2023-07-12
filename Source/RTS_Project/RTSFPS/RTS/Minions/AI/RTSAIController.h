@@ -9,8 +9,8 @@
 #include "BrainComponent.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/Navigation/VectorFieldNavigationSystem.h"
 #include "../../Orders/RTSOrder.h"
-#include "Navigation/FlockPathFollowingComponent.h"
 #include "RTSAIPerceptionComponent.h"
 #include "RTSAIController.generated.h"
 
@@ -48,9 +48,13 @@ protected:
 	ARTSAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& Other) const override;
+	virtual FPathFollowingRequestResult MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath = nullptr) override;
+
+protected:
+	virtual void FindFieldForMoveRequest(const FAIMoveRequest& MoveRequest, FVectorFieldQuery& Query, FNavPathSharedPtr& OutPath) const;
+	virtual bool BuildPathfindingQuery(const FAIMoveRequest& MoveRequest, FVectorFieldQuery& OutQuery) const;
 
 public:
 	class ACommander * GetLeadRTSObject();

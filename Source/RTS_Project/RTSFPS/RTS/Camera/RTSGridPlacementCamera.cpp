@@ -45,11 +45,11 @@ bool ARTSGridPlacementCamera::IsPlacingActor() const
 	return (PlacementActor != nullptr);
 }
 
-ASquareGameGrid * ARTSGridPlacementCamera::GetCurrentGrid() const
+AGameGrid * ARTSGridPlacementCamera::GetCurrentGrid() const
 {
 	if (PlacementActor == nullptr) return nullptr;
 
-	return(PlacementActor->GetParentGrid());
+	return(PlacementActor->GetGameGrid());
 
 }
 
@@ -59,13 +59,17 @@ void ARTSGridPlacementCamera::ToggleBuildGrid()
 
 	if (bIsBuildGridVisible)
 	{
-		PlacementActor->GetParentGrid()->HideGrid();
+		/*
+		PlacementActor->GetGameGrid()->HideGrid();
 		bIsBuildGridVisible = false;
+		*/
 	}
 	else
 	{
+		/*
 		PlacementActor->GetParentGrid()->ShowGrid();
 		bIsBuildGridVisible = true;
+		*/
 	}
 
 }
@@ -144,7 +148,7 @@ void ARTSGridPlacementCamera::PlaceActor()
 	}
 }
 
-void ARTSGridPlacementCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
+void ARTSGridPlacementCamera::PreInitializeGridActor(AGridAttachmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
 {
 }
 
@@ -161,8 +165,8 @@ void ARTSGridPlacementCamera::Tick(float DeltaTime)
 	pc->GetHitResultUnderCursor(GRID_CHANNEL, false, hit);
 
 	
-	ASquareGameGrid * currentgrid = GetCurrentGrid();
-
+	AGameGrid * currentgrid = GetCurrentGrid();
+	/*
 	FGridTile hittile = currentgrid->GetTileFromLocation(hit.Location);
 
 	FGridTile actortile = PlacementActor->GetRootGridTile();
@@ -182,4 +186,5 @@ void ARTSGridPlacementCamera::Tick(float DeltaTime)
 			PlacementActor->SetMeshColor(FLinearColor::Red);
 		}
 	}
+	*/
 }

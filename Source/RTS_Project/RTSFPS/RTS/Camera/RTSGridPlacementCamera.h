@@ -29,7 +29,7 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSOrderCamera
 		}
 
 		bool IsPlacingActor() const;
-		ASquareGameGrid * GetCurrentGrid() const;
+		AGameGrid * GetCurrentGrid() const;
 		
 		virtual void ToggleBuildGrid();
 		virtual bool CanPlaceActor(TSubclassOf<AActor> RealActorClass) const;
@@ -37,7 +37,7 @@ class RTS_PROJECT_API ARTSGridPlacementCamera : public ARTSOrderCamera
 		void TEMP_FUNC();
 
 	protected:
-		virtual void PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const;
+		virtual void PreInitializeGridActor(AGridAttachmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform = FTransform()) const;
 		virtual void PlaceActor();
 		virtual void EnableBuildControls();
 		virtual void DisableBuildControls();

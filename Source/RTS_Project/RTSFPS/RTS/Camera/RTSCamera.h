@@ -33,8 +33,8 @@ public:
 	void ZoomIn();
 	void ZoomOut();
 
-	UPROPERTY(EditAnywhere)
-	USpringArmComponent* MainCameraSpringArm;
+
+
 	UCameraComponent* MainCamera;
 
 	float CameraSpeed;

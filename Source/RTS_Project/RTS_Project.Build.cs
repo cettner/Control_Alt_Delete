@@ -22,6 +22,7 @@ public class RTS_Project : ModuleRules
             "GameplayTasks",
             "RHI",
             "RenderCore",
+            "NavigationSystem",
             "OnlineSubsystem",
             "OnlineSubsystemSteam",
             "ProceduralMeshComponent",

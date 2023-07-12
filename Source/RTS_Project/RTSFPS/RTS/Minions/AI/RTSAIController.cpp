@@ -4,10 +4,10 @@
 #include "RTS_Project/RTSFPS/RTS/RTSMinion.h"
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/Navigation/FlowFieldFollowingComponent.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
-#include "Navigation/CrowdFollowingComponent.h"
 
 
 const FName ARTSAIController::AIMessageOrderRequest = TEXT("Task Request");
@@ -22,8 +22,10 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
+	UFlowFieldFollowingComponent* pathfollowingcomp = CreateDefaultSubobject<UFlowFieldFollowingComponent>(TEXT("FlowFieldFollowingComp"));
 
 	SetPerceptionComponent(*PerceptionComp);
+	SetPathFollowingComponent(pathfollowingcomp);
 
 	SightConfig->SightRadius = DefaultPerceptionConfig.SightRadius;
 	SightConfig->LoseSightRadius = DefaultPerceptionConfig.LoseSightRadius;
@@ -60,7 +62,7 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 
 bool ARTSAIController::ConfigureRTSPerception(ARTSMinion* Minion)
 {
-	bool retval = false;
+	bool retval = true;
 	TArray<TSubclassOf<UAISense>> senses = Minion->GetAISenses();
 
 	for (int i = 0; i < senses.Num(); i++)
@@ -71,6 +73,10 @@ bool ARTSAIController::ConfigureRTSPerception(ARTSMinion* Minion)
 		{
 			PerceptionComponent->SetSenseEnabled(senses[i], true);
 			PerceptionComponent->RequestStimuliListenerUpdate();
+		}
+		else
+		{
+			retval = false;
 		}
 	}
 
@@ -123,9 +129,98 @@ ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other
 	return(retval);
 }
 
-void ARTSAIController::PostInitializeComponents()
+FPathFollowingRequestResult ARTSAIController::MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath)
 {
-	Super::PostInitializeComponents();
+	FPathFollowingRequestResult ResultData;
+	ResultData.Code = EPathFollowingRequestResult::Failed;
+
+	const bool bAlreadyAtGoal = GetPathFollowingComponent()->HasReached(MoveRequest);
+
+	if (bAlreadyAtGoal)
+	{
+		ResultData.MoveId = GetPathFollowingComponent()->RequestMoveWithImmediateFinish(EPathFollowingResult::Success);
+		ResultData.Code = EPathFollowingRequestResult::AlreadyAtGoal;
+	}
+	else
+	{
+		FVectorFieldQuery VFQuery;
+		const bool bValidQuery = BuildPathfindingQuery(MoveRequest, VFQuery);
+
+		if (bValidQuery)
+		{
+			FNavPathSharedPtr Path;
+			FindFieldForMoveRequest(MoveRequest, VFQuery, Path);
+
+			const FAIRequestID RequestID = Path.IsValid() ? RequestMove(MoveRequest, Path) : FAIRequestID::InvalidRequest;
+			if (RequestID.IsValid())
+			{
+				if (OutPath)
+				{
+					*OutPath = Path;
+					bAllowStrafe = MoveRequest.CanStrafe();
+					ResultData.MoveId = RequestID;
+					ResultData.Code = EPathFollowingRequestResult::RequestSuccessful;
+					GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Starting Task %d"),RequestID));
+				}
+			}
+		}
+
+	}
+
+	return ResultData;
+}
+
+void ARTSAIController::FindFieldForMoveRequest(const FAIMoveRequest& MoveRequest, FVectorFieldQuery& Query, FNavPathSharedPtr& OutPath) const
+{
+	UVectorFieldNavigationSystem* NavSys = FNavigationSystem::GetCurrent<UVectorFieldNavigationSystem>(GetWorld());
+
+	if (NavSys)
+	{
+		FPathFindingResult PathResult = NavSys->FindVectorFieldPathSync(Query);
+		if (PathResult.Result != ENavigationQueryResult::Error)
+		{
+			if (PathResult.IsSuccessful() && PathResult.Path.IsValid())
+			{
+				PathResult.Path->EnableRecalculationOnInvalidation(true);
+				OutPath = PathResult.Path;
+			}
+		}
+	}
+}
+
+bool ARTSAIController::BuildPathfindingQuery(const FAIMoveRequest& MoveRequest, FVectorFieldQuery& OutQuery) const
+{
+	bool bResult = false;
+
+	const UVectorFieldNavigationSystem* NavSys = FNavigationSystem::GetCurrent<UVectorFieldNavigationSystem>(GetWorld());
+	const AGameGrid* NavData = (NavSys == nullptr) ? nullptr : Cast<AGameGrid>(NavSys->GetNavDataForProps(GetNavAgentPropertiesRef(), GetNavAgentLocation()));
+
+	if (NavData)
+	{
+		FVector GoalLocation = MoveRequest.GetGoalLocation();
+		if (MoveRequest.IsMoveToActorRequest())
+		{
+			const INavAgentInterface* NavGoal = Cast<const INavAgentInterface>(MoveRequest.GetGoalActor());
+			if (NavGoal)
+			{
+				const FVector Offset = NavGoal->GetMoveGoalOffset(this);
+				GoalLocation = FQuatRotationTranslationMatrix(MoveRequest.GetGoalActor()->GetActorQuat(), NavGoal->GetNavAgentLocation()).TransformPosition(Offset);
+			}
+			else
+			{
+				GoalLocation = MoveRequest.GetGoalActor()->GetActorLocation();
+			}
+		}
+
+		OutQuery = FVectorFieldQuery(*this, *NavData, GetNavAgentLocation(), GoalLocation);
+		OutQuery.IsDynamicGoal = MoveRequest.GetGoalActor() != nullptr;
+		OutQuery.SetGoalActor(MoveRequest.GetGoalActor());
+
+		bResult = true;
+	}
+
+
+	return bResult;
 }
 
 void ARTSAIController::SetCommander(ACommander * Commander)

@@ -3,13 +3,13 @@
 #pragma once
 
 
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
+#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 
 
 #include "PlacementActor.generated.h"
 
 UCLASS()
-class RTS_PROJECT_API APlacementActor : public AGridClaimingActor
+class RTS_PROJECT_API APlacementActor : public AGridAttachmentActor
 {
 	GENERATED_BODY()
 	

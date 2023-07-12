@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlacementActor.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimModifierType.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/ClaimableSquareGameGrid.h"
 
 #include "Engine/SCS_Node.h"
 
@@ -49,13 +47,15 @@ void APlacementActor::PreInitializePlacementActor(const TSubclassOf<AActor> InAc
 	if (defaultbox != nullptr)
 	{
 		FVector defaultextent = defaultbox->GetScaledBoxExtent();
-		SetBoxExtent(defaultextent);
+		//SetBoxExtent(defaultextent);
 	}
 }
 
 bool APlacementActor::IsPlaceable() const
 {
+	
 	bool retval = false;
+	/*
 	UClaimModifierType * claimmod = GetActiveModifierOfClass<UClaimModifierType>();
 
 	if (claimmod == nullptr) return retval;
@@ -64,7 +64,7 @@ bool APlacementActor::IsPlaceable() const
 	{
 		retval = true;
 	}
-
+	*/
 	return retval;
 }
 
@@ -140,6 +140,7 @@ UActorComponent * APlacementActor::FindDefaultComponentByClass(const TSubclassOf
 void APlacementActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+	/*
 	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
 	if (pgrid != nullptr)
 	{
@@ -148,6 +149,7 @@ void APlacementActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 			pgrid->RemoveModifier(Modifiers[i], GridClaimSpace, this);
 		}
 	}
+	*/
 }
 
 UMeshComponent * APlacementActor::GetMesh() const

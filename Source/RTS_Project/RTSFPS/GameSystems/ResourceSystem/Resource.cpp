@@ -19,6 +19,7 @@ AResource::AResource() : Super()
 	MeshComp->SetCanEverAffectNavigation(true);
 	MeshComp->bFillCollisionUnderneathForNavmesh = true;
 	MeshComp->bReceivesDecals = false;
+	MeshComp->SetupAttachment(RootComponent);
 
 	SelectionComp = CreateDefaultSubobject<UDecalSelectionComponent>(TEXT("SelectionComp"));
 	SelectionComp->SetDetection(MeshComp);

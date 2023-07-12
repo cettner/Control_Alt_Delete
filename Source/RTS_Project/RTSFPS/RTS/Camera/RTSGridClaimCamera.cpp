@@ -2,12 +2,11 @@
 
 
 #include "RTSGridClaimCamera.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridClaimingActor.h"
 
 #include "Components/BoxComponent.h"
 
 
-void ARTSGridClaimCamera::PreInitializeGridActor(AGridAttatchmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
+void ARTSGridClaimCamera::PreInitializeGridActor(AGridAttachmentActor* GridActor, const TSubclassOf<AActor> InActorClass, FTransform SpawnTransform) const
 {
 }
 
