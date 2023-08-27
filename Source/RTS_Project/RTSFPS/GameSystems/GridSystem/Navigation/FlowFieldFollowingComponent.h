@@ -18,7 +18,7 @@ struct FObstacleScan
 	GENERATED_USTRUCT_BODY()
 public:
 	FVector collisionscore = FVector::ZeroVector;
-	//if a dynamic obstacle is blocking the anvigation path
+	//if a dynamic obstacle is blocking the navigation path
 	bool bisBlocked = false;
 	//if true, the actor scanned is the goal or is on top of on the goal tile,
 	bool bblockedgoal = false;
@@ -76,6 +76,8 @@ class UFlowFieldFollowingComponent : public UPathFollowingComponent, public IFlo
 		virtual FAIRequestID RequestMove(const FAIMoveRequest& RequestData, FNavPathSharedPtr InPath) override;
 		virtual void Reset() override;
 		virtual void OnActorBump(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit) override;
+		virtual FVector GetMoveFocus(bool bAllowStrafe) const override;
+		virtual void UpdateMoveFocus() override;
 	
 
 

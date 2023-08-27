@@ -471,10 +471,6 @@ void UFlowFieldFollowingComponent::OnPathFinished(const FPathFollowingResult& Re
 
 void UFlowFieldFollowingComponent::UpdatePathSegment()
 {
-#if !UE_BUILD_SHIPPING
-	DEBUG_bMovingDirectlyToGoal = false;
-#endif // !UE_BUILD_SHIPPING
-
 	if ((Path.IsValid() == false) || (MovementComp == nullptr))
 	{
 		//UE_CVLOG(Path.IsValid() == false, this, LogPathFollowing, Log, TEXT("Aborting move due to not having a valid path object"));
@@ -519,12 +515,6 @@ void UFlowFieldFollowingComponent::UpdatePathSegment()
 			OnSegmentFinished();
 			UPathFollowingComponent::OnPathFinished(EPathFollowingResult::Success, FPathFollowingResultFlags::None);
 		}
-
-			UpdateMoveFocus();
-
-#if !UE_BUILD_SHIPPING
-			DEBUG_bMovingDirectlyToGoal = true;
-#endif // !UE_BUILD_SHIPPING
 	}
 		// check if current move segment is finished
 	else if (HasReachedCurrentTarget(CurrentLocation))
@@ -549,6 +539,36 @@ void UFlowFieldFollowingComponent::OnActorBump(AActor* SelfActor, AActor* OtherA
 	if (IsActorAtGoal(OtherActor))
 	{
 		bCollidedWithGoal = true;
+	}
+}
+
+FVector UFlowFieldFollowingComponent::GetMoveFocus(bool bAllowStrafe) const
+{
+	if (PreviousMovement != FVector::ZeroVector)
+	{
+		return PreviousMovement;
+	}
+	else 
+	{
+		return FAISystem::InvalidLocation;
+	}
+
+}
+
+void UFlowFieldFollowingComponent::UpdateMoveFocus()
+{
+	AAIController* AIOwner = Cast<AAIController>(GetOwner());
+	if (AIOwner != NULL)
+	{
+		if (Status == EPathFollowingStatus::Moving)
+		{
+			const FVector MoveFocus = GetMoveFocus(AIOwner->bAllowStrafe);
+			AIOwner->SetFocalPoint(MoveFocus, EAIFocusPriority::Move);
+		}
+		else if (Status == EPathFollowingStatus::Idle)
+		{
+			AIOwner->ClearFocus(EAIFocusPriority::Move);
+		}
 	}
 }
 
