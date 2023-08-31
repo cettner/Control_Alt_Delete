@@ -32,24 +32,40 @@ public:
 		}
 	}
 
-	void Increment(TSubclassOf<AResource> Key, int Value)
+	bool Remove(TSubclassOf<AResource> Key)
 	{
-		const int * curval = Find(Key);
-		if (curval != nullptr)
+		bool retval = false;
+		int index = Keys.IndexOfByKey(Key);
+
+		if (index != INDEX_NONE)
+		{
+			Keys.RemoveAt(index);
+			Values.RemoveAt(index);
+			retval = true;
+		}
+
+		return retval;
+	}
+
+	bool Increment(TSubclassOf<AResource> Key, int Value)
+	{
+		bool retval = false;
+
+		if (const int* curval = Find(Key))
 		{
 			const int newval = *curval + Value;
 			Emplace(Key, newval);
+			retval = true;
 		}
-		else
-		{
-			Emplace(Key, Value);
-		}
+
+		return retval;
 	}
 
 	bool Decrement(TSubclassOf<AResource> Key, int Value)
 	{
-		const int * curval = Find(Key);
-		if (curval != nullptr)
+		bool retval = false;
+
+		if (const int* curval = Find(Key))
 		{
 			int newval = *curval - Value;
 			if (newval < 0)
@@ -57,14 +73,10 @@ public:
 				newval = 0;
 			}
 			Emplace(Key, newval);
-			
-			return(true);
+			retval = true;
 		}
-		else
-		{
-			Emplace(Key, 0);
-			return(false);
-		}
+
+		return retval;
 	}
 
 	const int* Find(TSubclassOf<AResource> Key) const
@@ -112,10 +124,10 @@ public:
 	}
 protected:
 	UPROPERTY(EditDefaultsOnly)
-		TArray<int> Values;
+	TArray<int> Values;
 
 	UPROPERTY(EditDefaultsOnly)
-		TArray<TSubclassOf<AResource>> Keys;
+	TArray<TSubclassOf<AResource>> Keys;
 };
 
 

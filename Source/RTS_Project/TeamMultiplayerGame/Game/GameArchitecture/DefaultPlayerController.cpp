@@ -24,7 +24,7 @@ void ADefaultPlayerController::SetIsRegistered(bool bregistered)
 {
 	bisregistered = bregistered;
 
-	if ((GetWorld()->GetFirstPlayerController() == this) && HasAuthority())
+	if (IsLocalPlayerController() && HasAuthority())
 	{
 		OnRep_bisregistered();
 	}
@@ -40,6 +40,26 @@ void ADefaultPlayerController::OnRep_bisregistered()
 	{
 		PostRegisterInit();
 	}
+}
+
+bool ADefaultPlayerController::ReadyForUIInit() const
+{
+	bool retval = IsRegistered() && IsLocalPlayerController();
+
+	if (retval)
+	{
+		const UWorld* world = GetWorld();
+		const ADefaultGameState* gs = world->GetGameState<ADefaultGameState>();
+		const ADefaultPlayerState* ps = GetPlayerState<ADefaultPlayerState>();
+
+		if (ps && gs)
+		{
+			retval = ps->IsClientInitialized() && gs->IsClientDataReady();
+		}
+	}
+
+
+	return retval;
 }
 
 void ADefaultPlayerController::FinishLocalPlayerSetup()
@@ -95,15 +115,10 @@ void ADefaultPlayerController::PostRegisterInit()
 
 void ADefaultPlayerController::ClientInitUI()
 {
-	if (IsRegistered() && IsLocalController())
+	if (ReadyForUIInit())
 	{
 		ADefaultHUD * hud = GetHUD<ADefaultHUD>();
 		isHUDInitialized = hud->ClientInitializeHUD();
-	}
-	else if (!IsRegistered() && IsLocalController())
-	{
-		/*Gamestate replicated before registration occured*/
-		battemptedHudinit = true;
 	}
 }
 

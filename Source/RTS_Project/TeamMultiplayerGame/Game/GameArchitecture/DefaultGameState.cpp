@@ -18,6 +18,7 @@ bool ADefaultGameState::TeamInitialize(ADefaultMode * GameMode)
 		for (int i = 0; i < GameMode->GetNumTeams(); i++)
 		{
 			ATeamState* newteam = world->SpawnActor<ATeamState>(teamstateclass);
+			newteam->SetOwner(this);
 			newteam->SetTeam(i);
 			newteam->LoadServerDefaults(GameMode);
 			TeamStates.Emplace(newteam);
@@ -61,13 +62,22 @@ ATeamState* ADefaultGameState::GetDefaultTeamState() const
 {
 	ATeamState* retval = nullptr;
 
-	const UWorld* world = GetWorld();
-	const ADefaultPlayerController* pc = world->GetFirstPlayerController<ADefaultPlayerController>();
+	if (HasAuthority() && GetNetMode() != NM_DedicatedServer)
+	{
+		const UWorld* world = GetWorld();
+		const ADefaultPlayerController* pc = world->GetFirstPlayerController<ADefaultPlayerController>();
 
-	if (pc == nullptr) return retval;
-	const int teamid = pc->GetTeamID();
+		if (pc == nullptr) return retval;
+		const int teamid = pc->GetTeamID();
+		retval = GetTeamState(teamid);
+	}
+	else if (!HasAuthority() && TeamStates.Num())
+	{
+		retval = TeamStates[0];
+	}
 
-	return GetTeamState(teamid);
+
+	return retval;
 }
 
 ATeamState* ADefaultGameState::GetTeamState(const int teamid) const
@@ -95,6 +105,11 @@ bool ADefaultGameState::IsTeamFull(int Team_Index) const
 	return (retval);
 }
 
+bool ADefaultGameState::IsClientDataReady() const
+{
+	return TeamStates.Num() > 0 && IsValid(GameModeClass);
+}
+
 void ADefaultGameState::SetMaxTeamSize(int8 InTeamSize)
 {
 	MaxTeamSize = InTeamSize;
@@ -110,6 +125,13 @@ void ADefaultGameState::OnLocalTeamStateRecieved(ATeamState* InState)
 	/*Todo:Add protection / sync if GameState is replicated after Teamstate for some reason*/
 	/*Todo: Currently not called on listen server, but not sure if that's a use case that would ever be needed since server has all teamstates already*/
 	TeamStates.AddUnique(InState);
+
+	if (IsClientDataReady())
+	{
+		const UWorld* world = GetWorld();
+		ADefaultPlayerController* firstcontroller = world->GetFirstPlayerController<ADefaultPlayerController>();
+		firstcontroller->ClientInitUI();
+	}
 }
 
 void ADefaultGameState::ReceivedGameModeClass()
@@ -126,6 +148,10 @@ void ADefaultGameState::ReceivedGameModeClass()
 		if (ps != nullptr && !ps->HasDefaultGameModeLoaded())
 		{
 			ps->LoadGameModeDefaults(GetDefaultGameMode());
+		}
+
+		if (IsClientDataReady())
+		{
 			firstcontroller->ClientInitUI();
 		}
 	}

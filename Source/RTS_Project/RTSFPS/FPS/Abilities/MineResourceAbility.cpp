@@ -106,7 +106,17 @@ bool UMineResourceAbility::ShouldSeverBeam() const
 
 bool UMineResourceAbility::CanHit(AActor * HitActor) const
 {
-    const bool retval = Cast<AResource>(HitActor) != nullptr;
+	AResource* resource = Cast<AResource>(HitActor);
+    bool retval = IsValid(resource);
+
+	if (retval)
+	{
+		const IResourceGatherer* resourcegatherer = GetResourceGatherer();
+		checkf(resourcegatherer, TEXT("UMineResourceAbility::CanHit failed to obtain ResourceGatherer"));
+		retval &= resourcegatherer->CanCarryResource(resource->GetClass());
+	}
+
+
     return(retval);
 }
 

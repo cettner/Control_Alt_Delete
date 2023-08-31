@@ -29,13 +29,11 @@ bool UTeamResourcePanelWidget::Initialize()
 				}
 			}
 		}
+		else
+		{
+			retval = false;
+		}
+
 	}
-	else
-	{
-		retval = false;
-	}
-
-
-
 	return retval;
 }

@@ -46,6 +46,8 @@ class RTS_PROJECT_API ADefaultPlayerController : public APlayerController
 
 	protected:
 
+		virtual bool ReadyForUIInit() const;
+
 		/*Virtual Function that is called after the world is ready registration is complete and data on the client is initialized*/
 		virtual void FinishLocalPlayerSetup();
 

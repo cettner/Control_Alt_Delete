@@ -64,7 +64,7 @@ class RTS_PROJECT_API ATeamResourceState : public ATeamState, public IResourceGa
 		virtual bool HasResource(const FReplicationResourceMap InResourceMap) const override;
 
 		/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
-		virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass) const override;
+		virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass, uint32 InNumtoCarry = 1U) const override;
 
 		/*Returns a Map of All resources Carried by the instance*/
 		virtual FReplicationResourceMap GetAllHeldResources() const override;

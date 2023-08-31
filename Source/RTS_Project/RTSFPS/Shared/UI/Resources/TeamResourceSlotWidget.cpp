@@ -12,7 +12,7 @@ void UTeamResourceSlotWidget::Setup(TSubclassOf<AResource> InResourceClass)
 	{
 		ResourceValueText->TextDelegate.BindUFunction(this, "UpdateCurrentResourceValueText");
 	}
-
+	
 	if (DisplayResourceClass != nullptr)
 	{
 		const AResource* resourcecdo = DisplayResourceClass->GetDefaultObject<AResource>();

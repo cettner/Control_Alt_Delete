@@ -260,12 +260,17 @@ TArray<const UGridTile*> UFlowFieldFollowingComponent::GetAlternateTileMoves(con
 	TArray<const UGridTile*> retval = TArray<const UGridTile*>();
 	const TArray<FGridTileNeighbor> neighboringtiles = CurrentTile->GetNeighbors();
 
-	for (int i = 0; i < neighboringtiles.Num(); i++)
+	if (IsValid(InSolution))
 	{
-		const UGridTile* neighbortile = neighboringtiles[i].NeighborTile;
-		retval.Add(neighbortile);
+		for (int i = 0; i < neighboringtiles.Num(); i++)
+		{
+			const UGridTile* neighbortile = neighboringtiles[i].NeighborTile;
+			if (!InSolution->IsTileBlocked(neighbortile))
+			{
+				retval.Add(neighbortile);
+			}
+		}
 	}
-
 	return retval;
 }
 
@@ -330,13 +335,20 @@ const float UFlowFieldFollowingComponent::CalculateSteeringTileScore(const UGrid
 
 	if (solution->GetWeightForTile(Tile, otherweight)  && solution->GetWeightForTile(Tile, currentweight))
 	{
-		if (otherweight <= currentweight)
+		if (otherweight != UNVISITED_TILE_WEIGHT)
 		{
-			tileweightscore = 1.0f;
+			if (otherweight <= currentweight)
+			{
+				tileweightscore = 1.0f;
+			}
+			else
+			{
+				tileweightscore = currentweight / otherweight;
+			}
 		}
 		else
 		{
-			tileweightscore = currentweight / otherweight;
+			return -MAX_FLT;
 		}
 	} 
 
@@ -351,7 +363,7 @@ const float UFlowFieldFollowingComponent::CalculateSteeringTileScore(const UGrid
 
 
 	// Return the sum of the dot products as the tile score with weighted biasing
-	const float retval = (DirectionDotProduct *  .3) + (tileweightscore *.9) + PreviousMotionDotProduct + (GoalDirectionDotProduct *.7) - CollisionScoreDotProduct;
+	const float retval = (DirectionDotProduct *  .1) + (tileweightscore *.9) + PreviousMotionDotProduct + (GoalDirectionDotProduct *.7) - CollisionScoreDotProduct;
 	return retval;
 }
 

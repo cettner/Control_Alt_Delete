@@ -163,6 +163,3 @@ void AResource::PostInitializeComponents()
 		}
 	}
 }
-
-
-

@@ -20,5 +20,5 @@ void ARTFPSPlayerState::SetIsRTSPlayer(bool isrts)
 void ARTFPSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME_CONDITION(ARTFPSPlayerState, isRtsPlayer, COND_InitialOrOwner);
+	DOREPLIFETIME_CONDITION(ARTFPSPlayerState, isRtsPlayer, COND_InitialOnly);
 }

@@ -325,7 +325,6 @@ void ATeamResourceState::ApplyGlobalUpgrades(IUpgradableInterface* ToUpgrade) co
 
 void ATeamResourceState::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
 {
-
 	const int* currentval = TeamResources.Find(ResourceClass);
 	if (currentval != nullptr)
 	{
@@ -378,7 +377,7 @@ bool ATeamResourceState::HasResource(const FReplicationResourceMap InResourceMap
 	return IResourceGatherer::HasResource(InResourceMap);
 }
 
-bool ATeamResourceState::CanCarryMore(TSubclassOf<AResource> ResourceClass) const
+bool ATeamResourceState::CanCarryMore(TSubclassOf<AResource> ResourceClass, uint32 InNumtoCarry) const
 {
 	return true;
 }

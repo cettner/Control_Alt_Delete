@@ -67,10 +67,14 @@ void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, A
 
 void AAbilityCombatCommander::AddResource(TSubclassOf<AResource> InResourceClass, int InAmount)
 {
-	HeldResources.Increment(InResourceClass, InAmount);
-	const AResource* resourcecdo = InResourceClass.GetDefaultObject();
-	const int resourceweight = resourcecdo->GetResourceWeight();
-	CurrentWeight += (resourceweight * InAmount);
+	const bool retval = HeldResources.Increment(InResourceClass, InAmount);
+	if (retval == true)
+	{
+		const AResource* resourcecdo = InResourceClass.GetDefaultObject();
+		const int resourceweight = resourcecdo->GetResourceWeight();
+		CurrentWeight += (resourceweight * InAmount);
+	}
+
 }
 
 bool AAbilityCombatCommander::RemoveResource(TSubclassOf<AResource> InResourceClass, int InAmount)

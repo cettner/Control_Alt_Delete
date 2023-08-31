@@ -77,6 +77,14 @@ bool UFlowFieldSolutionLayer::IsGoalTile(const UGridTile* InGridTile) const
 	return retval;
 }
 
+bool UFlowFieldSolutionLayer::IsTileBlocked(const UGridTile* InGridTile) const
+{
+	uint8 outcost;
+	checkf(IntegrationLayer->GetTileCost(InGridTile, outcost), TEXT("UFlowFieldSolutionLayer::IsTileBlocked Tile Not Found"));
+	const bool retval = outcost == BLOCKED_TILE_COST;
+	return retval;
+}
+
 void UFlowFieldSolutionLayer::ResetSolution()
 {
 	IntegrationLayer->ResetWeights();

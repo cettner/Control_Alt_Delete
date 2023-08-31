@@ -90,10 +90,15 @@ bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap)
 	return retval;
 }
 
-bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> InResourceClass) const
+bool IResourceGatherer::CanCarryResource(const TSubclassOf<AResource> InResource) const
+{
+	return false;
+}
+
+bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> InResourceClass, uint32 InNumtoCarry) const
 {
 	const AResource* resourcecdo = InResourceClass.GetDefaultObject();
-	const uint32 resourceweight = resourcecdo->GetResourceWeight();
+	const uint32 resourceweight = resourcecdo->GetResourceWeight() * InNumtoCarry;
 	const uint32 currentweight = GetCurrentWeight();
 
 	const uint32 maxweight = GetMaxWeight();

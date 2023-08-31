@@ -30,7 +30,7 @@ public:
 	bool IsTeamValid(int team_id) const;
 	bool IsTeamFull(int Team_Index) const;
 	bool LeaveTeam(ADefaultPlayerState* Player);
-
+	virtual bool IsClientDataReady() const;
 
 protected:
 	void SetMaxTeamSize(int8 InTeamSize);
@@ -60,9 +60,6 @@ public:
 protected:
 	virtual void ReceivedGameModeClass() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-protected:
-
 
 protected:
 	bool initialized = false;

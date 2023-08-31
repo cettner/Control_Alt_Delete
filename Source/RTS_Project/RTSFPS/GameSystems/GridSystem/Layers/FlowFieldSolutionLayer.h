@@ -34,6 +34,7 @@ public:
 
 	bool HasGoal() const;
 	FORCEINLINE bool IsGoalTile(const UGridTile * InGridTile) const;
+	bool IsTileBlocked(const UGridTile* InGridTile) const;
 	FORCEINLINE bool IsGoalActor(const AActor* InGoalActor) const { return GoalActor == InGoalActor; }
 	FORCEINLINE bool GetFlowVectorForTile(const UGridTile* InTile, FVector& OutTile) const;
 	FORCEINLINE bool GetWeightForTile(const UGridTile* InTile, float& Outweight) const;

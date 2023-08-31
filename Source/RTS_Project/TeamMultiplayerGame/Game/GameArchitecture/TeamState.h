@@ -35,7 +35,7 @@ class RTS_PROJECT_API ATeamState : public AInfo
 		virtual void OnRep_TeamID();
 
 	protected:
-		virtual void PostInitializeComponents() override;
+		virtual void OnRep_Owner() override;
 
 	protected:
 		virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;

@@ -73,15 +73,9 @@ void ATeamState::LoadServerDefaults(ADefaultMode* InGameMode)
 
 }
 
-
-void ATeamState::PostInitializeComponents()
+void ATeamState::OnRep_Owner()
 {
-	Super::PostInitializeComponents();
-
-	UWorld* world = GetWorld();
-	ADefaultGameState* gs = world->GetGameState<ADefaultGameState>();
-	if (!HasAuthority() && IsValid(gs))
-	{
-		gs->OnLocalTeamStateRecieved(this);
-	}
+	Super::OnRep_Owner();
+	ADefaultGameState* gs = GetOwner<ADefaultGameState>();
+	gs->OnLocalTeamStateRecieved(this);
 }
