@@ -97,17 +97,20 @@ public:
 		return(Keys.Num());
 	}
 
+	const TArray<TSubclassOf<AResource>>& GetKeys() const
+	{
+		return Keys;
+	}
+
 	TMap<TSubclassOf<AResource>, int> GetMap() const
 	{
 		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
-		if (IsValid())
+		checkf(IsValid(), TEXT("FReplicationResourceMap::GetMap"));
+		
+		for (int i = 0; i < Keys.Num(); i++)
 		{
-			for (int i = 0; i < Keys.Num(); i++)
-			{
-				Map.Emplace(Keys[i], Values[i]);
-			}
+			Map.Emplace(Keys[i], Values[i]);
 		}
-
 
 		return(Map);
 	}

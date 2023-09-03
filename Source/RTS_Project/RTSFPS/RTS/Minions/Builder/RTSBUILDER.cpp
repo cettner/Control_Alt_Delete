@@ -17,6 +17,8 @@ ARTSBUILDER::ARTSBUILDER()
 	AIConfig.SightAffiliation.bDetectFriendlies = false;
 
 	AISenseClasses.Emplace(UAISense_Sight::StaticClass());
+
+	ResourceComp = CreateDefaultSubobject<UResourceGathererComponent>(TEXT("ResourceComp"));
 }
 
 bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
@@ -46,12 +48,12 @@ bool ARTSBUILDER::StopMining()
 
 uint32 ARTSBUILDER::GetCurrentWeight() const
 {
-	return CurrentWeight;
+	return ResourceComp->GetCurrentWeight();
 }
 
 uint32 ARTSBUILDER::GetMaxWeight() const
 {
-	return MaxCarryWeight;
+	return ResourceComp->GetMaxWeight();
 }
 
 void ARTSBUILDER::SetIsMining(const bool InMiningState)
@@ -154,32 +156,26 @@ void ARTSBUILDER::OnResourceNodeDepleted()
 
 void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmount)
 {
+	/*
 	CarriedResources.Increment(InResourceType,InAmount);
 
 	const AResource* resourcecdo = InResourceType.GetDefaultObject();
 	const int resourceweight = resourcecdo->GetResourceWeight();
 	CurrentWeight += (resourceweight * InAmount);
+	*/
+	ResourceComp->AddResource(InResourceType, InAmount);
 }
 
 bool ARTSBUILDER::RemoveResource(const TSubclassOf<AResource> InResourceType, int InAmount)
 {
+	/*
 	bool retval = CarriedResources.Decrement(InResourceType, InAmount);
 	const AResource* resourcecdo = InResourceType.GetDefaultObject();
 	const int resourceweight = resourcecdo->GetResourceWeight();
 	CurrentWeight -= (resourceweight * InAmount);
+	*/
 
-
-	return retval;
-}
-
-uint32 ARTSBUILDER::GetHeldResource(TSubclassOf<AResource> InResourceType) const
-{
-	uint32 retval = 0U;
-	const int* currentcount = CarriedResources.Find(InResourceType);
-
-
-
-	return retval;
+	return 	ResourceComp->RemoveResource(InResourceType, InAmount);
 }
 
 FReplicationResourceMap ARTSBUILDER::GetAllHeldResources() const

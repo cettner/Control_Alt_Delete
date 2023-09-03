@@ -70,7 +70,7 @@ class RTS_PROJECT_API ATeamResourceState : public ATeamState, public IResourceGa
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 
 		/*Returns the amount held by the unit of the particular type of Resource*/
-		virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const override;
+		virtual bool GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const override;
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;
 	/************************************************************************************/

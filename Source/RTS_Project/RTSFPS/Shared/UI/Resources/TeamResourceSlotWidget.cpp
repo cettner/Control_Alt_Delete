@@ -34,17 +34,16 @@ FText UTeamResourceSlotWidget::UpdateCurrentResourceValueText()
 	ATeamResourceState* tr = gs->GetDefaultTeamState<ATeamResourceState>();
 	if (tr == nullptr) return(retval);
 
-	const int resourceval = tr->GetHeldResource(DisplayResourceClass);
-
-
+	uint32 outvalue = 0U;
+	checkf(tr->GetHeldResource(DisplayResourceClass, outvalue), TEXT("UTeamResourceSlotWidget::UpdateCurrentResourceValueText, Failed to obtain Resource Type"));
 	
 	if (bIncludeResourceName == true)
 	{
-		retval = FText::FromString(ResourceName.ToString() + " : " + FString::FromInt(resourceval));
+		retval = FText::FromString(ResourceName.ToString() + " : " + FString::FromInt(outvalue));
 	}
 	else
 	{
-		retval = FText::FromString(FString::FromInt(resourceval));
+		retval = FText::FromString(FString::FromInt(outvalue));
 	}
 
 	return retval;

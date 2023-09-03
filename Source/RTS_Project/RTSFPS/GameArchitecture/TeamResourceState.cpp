@@ -368,8 +368,7 @@ bool ATeamResourceState::RemoveResource(const FReplicationResourceMap InResource
 
 bool ATeamResourceState::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
 {
-	const bool retval = GetHeldResource(ResourceClass) >= amount;
-	return retval;
+	return IResourceGatherer::HasResource(ResourceClass, amount);
 }
 
 bool ATeamResourceState::HasResource(const FReplicationResourceMap InResourceMap) const
@@ -387,16 +386,9 @@ FReplicationResourceMap ATeamResourceState::GetAllHeldResources() const
 	return TeamResources;
 }
 
-uint32 ATeamResourceState::GetHeldResource(TSubclassOf<AResource> ResourceClass) const
+bool ATeamResourceState::GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const
 {
-	uint32 retval = 0U;
-	const int* currentval = TeamResources.Find(ResourceClass);
-	if (currentval != nullptr && *currentval > 0)
-	{
-		retval =  static_cast<uint32>( *currentval);
-	}
-
-	return retval;
+	return IResourceGatherer::GetHeldResource(ResourceClass, OutAmount);
 }
 
 uint32 ATeamResourceState::GetCurrentWeight() const

@@ -32,12 +32,15 @@ public:
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const FReplicationResourceMap InAmounttoTransfer);
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<AResource> ResourceType, const int InAmountToTransfer);
 
+	/*Returns Whether the gatherer has the specified number of units of a particular resource type*/
 	virtual bool HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount = 1U) const;
 	virtual bool HasResource(const FReplicationResourceMap InResourceMap) const;
 
 	/*Returns whether the gatherer supports carrying the Resource type 
 	Note: This should return true even if the gatherer is full, use CanCarryMore to determine if you can fit the desired amount*/
 	virtual bool CanCarryResource(const TSubclassOf<AResource> InResource) const;
+	/*Returns the subclasses of resource that the gatherer can carry (regardless of capacity)*/
+	virtual const TArray<TSubclassOf<AResource>> GetSupportedResources() const;
 
 	/*Returns whether the gatherer can carry at least one more instance of the specified Resource.*/
 	virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass, uint32 InNumtoCarry = 1U) const;
@@ -50,7 +53,7 @@ public:
 	virtual FReplicationResourceMap GetAllHeldResources() const;
 
 	/*Returns the amount held by the unit of the particular type of Resource*/
-	virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const;
+	virtual bool GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const;
 	virtual uint32 GetCurrentWeight() const;
 	virtual uint32 GetMaxWeight() const;
 };

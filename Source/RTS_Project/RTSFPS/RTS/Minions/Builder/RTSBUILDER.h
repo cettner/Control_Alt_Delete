@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "../../RTSMinion.h"
 #include "../../../GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
 #include "../../Orders/RTSMineResourceOrder.h"
+#include "../../../GameSystems/ResourceSystem/ResourceGathererComponent.h"
 #include "RTSBUILDER.generated.h"
 
 /**
@@ -35,12 +37,13 @@ public:
 	UFUNCTION()
 	virtual void OnResourceNodeDepleted();
 
+	/***********IResourceGatherer**********************/
 	virtual void AddResource(TSubclassOf<AResource> type, int amount) override;
 	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
-	virtual uint32 GetHeldResource(TSubclassOf<AResource> ResourceClass) const override;
 	virtual FReplicationResourceMap GetAllHeldResources() const override;
 	virtual uint32 GetCurrentWeight() const override;
 	virtual uint32 GetMaxWeight() const override;
+	/*************************************************/
 
 protected:
 	void SetIsMining(const bool InMiningState);
@@ -57,7 +60,7 @@ protected:
 	const TSubclassOf<URTSMineResourceOrder> MineOrderClass = URTSMineResourceOrder::StaticClass();
 
 	UPROPERTY(EditDefaultsOnly, Category = Resources)
-	uint32 MaxCarryWeight = 50;
+	UResourceGathererComponent* ResourceComp = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Resources)
 	uint32 MineAmount = 5;

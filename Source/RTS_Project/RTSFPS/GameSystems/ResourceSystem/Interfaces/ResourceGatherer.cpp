@@ -5,6 +5,8 @@
 
 // Add default functionality here for any IResourceGatherer functions that are not pure virtual.
 
+
+/*Pure Virtual*/
 void IResourceGatherer::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
 {
 
@@ -13,6 +15,79 @@ void IResourceGatherer::AddResource(TSubclassOf<AResource> ResourceClass, int am
 bool IResourceGatherer::RemoveResource(TSubclassOf<AResource> ResourceClass, int amount)
 {
 	return false;
+}
+
+bool IResourceGatherer::DropsResourceOnDeath() const
+{
+	return false;
+}
+
+FReplicationResourceMap IResourceGatherer::GetAllHeldResources() const
+{
+	return FReplicationResourceMap();
+}
+
+uint32 IResourceGatherer::GetCurrentWeight() const
+{
+	return 0U;
+}
+
+uint32 IResourceGatherer::GetMaxWeight() const
+{
+	return 0xFFFFFFFF;
+}
+
+
+/****** Non Pure Virtual*****/
+bool IResourceGatherer::GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const
+{
+	const FReplicationResourceMap resources = GetAllHeldResources();
+	const int* foundvalue = resources.Find(ResourceClass);
+	const bool retval = foundvalue != nullptr;
+	if (retval)
+	{
+		OutAmount = static_cast<uint32>(*foundvalue);
+	}
+
+	return retval;
+}
+
+bool IResourceGatherer::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
+{
+	const FReplicationResourceMap resources = GetAllHeldResources();
+	const int* carriedvalue = resources.Find(ResourceClass);
+	bool retval = carriedvalue != nullptr;
+
+	if (retval)
+	{
+		retval = *carriedvalue >= static_cast<int>(amount);
+	}
+
+	return retval;
+}
+
+bool IResourceGatherer::CanCarryResource(const TSubclassOf<AResource> InResource) const
+{
+	const FReplicationResourceMap resources = GetAllHeldResources();
+	const bool retval = resources.Find(InResource) != nullptr;
+	return retval;
+}
+
+const TArray<TSubclassOf<AResource>> IResourceGatherer::GetSupportedResources() const
+{
+	const FReplicationResourceMap resources = GetAllHeldResources();
+	return resources.GetKeys();
+}
+
+bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap) const
+{
+	bool retval = InResourceMap.Num() > 0;
+	for (int i = 0; i < InResourceMap.Num(); i++)
+	{
+		retval &= HasResource(InResourceMap[i].Key, static_cast<uint32>(InResourceMap[i].Value));
+	}
+
+	return retval;
 }
 
 void IResourceGatherer::AddResource(const FReplicationResourceMap InResourceMap)
@@ -74,27 +149,6 @@ bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, c
 	return retval;
 }
 
-bool IResourceGatherer::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
-{
-	return false;
-}
-
-bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap) const
-{
-	bool retval = InResourceMap.Num() > 0;
-	for (int i = 0; i < InResourceMap.Num(); i++)
-	{
-		retval &= HasResource(InResourceMap[i].Key, static_cast<uint32>(InResourceMap[i].Value));
-	}
-
-	return retval;
-}
-
-bool IResourceGatherer::CanCarryResource(const TSubclassOf<AResource> InResource) const
-{
-	return false;
-}
-
 bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> InResourceClass, uint32 InNumtoCarry) const
 {
 	const AResource* resourcecdo = InResourceClass.GetDefaultObject();
@@ -153,29 +207,4 @@ bool IResourceGatherer::CanCarryAllResources(const FReplicationResourceMap InRes
 	}
 
 	return retval;
-}
-
-uint32 IResourceGatherer::GetHeldResource(TSubclassOf<AResource> ResourceClass) const
-{
-	return 0U;
-}
-
-bool IResourceGatherer::DropsResourceOnDeath() const
-{
-	return false;
-}
-
-FReplicationResourceMap IResourceGatherer::GetAllHeldResources() const
-{
-	return FReplicationResourceMap();
-}
-
-uint32 IResourceGatherer::GetCurrentWeight() const
-{
-	return 0U;
-}
-
-uint32 IResourceGatherer::GetMaxWeight() const
-{
-	return 0xFFFFFFFF;
 }

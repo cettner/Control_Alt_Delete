@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 
 #include "Interfaces/ResourceGatherer.h"
+#include "ResourceData.h"
 #include "ResourceGathererComponent.generated.h"
 
 
@@ -21,17 +22,35 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	public:	
 		FOnResourceDepletedDelegate& BindResourceDepletionEvent(TSubclassOf<AResource> InResourceType);
 
-	protected:
+	public:
 		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
 		virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
+		virtual FReplicationResourceMap GetAllHeldResources() const override;
+		virtual uint32 GetCurrentWeight() const override;
+		virtual uint32 GetMaxWeight() const override;
+
+	protected:
+		virtual void RecalculateWeight();
+
+	protected:
+		UFUNCTION()
+		virtual void OnRep_HeldResources();
 
 	protected:
 		virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	protected:
-		UPROPERTY(EditDefaultsOnly, Replicated)
-		FReplicationResourceMap Resources = FReplicationResourceMap();
+		UPROPERTY(EditDefaultsOnly)
+		UResourceData* StartingResources = nullptr;
+
+		UPROPERTY(EditDefaultsOnly)
+		uint32 MaxWeight = 10U;
 
 	protected:
+		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
+		FReplicationResourceMap HeldResources = FReplicationResourceMap();
+
 		TMap<TSubclassOf<AResource>,FOnResourceDepletedDelegate> ResourceDelegates;
+
+		uint32 CurrentWeight = 0U;
 };
