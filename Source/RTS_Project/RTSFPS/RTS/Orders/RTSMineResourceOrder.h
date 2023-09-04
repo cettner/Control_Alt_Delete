@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 
-#include "..\..\GameSystems\ResourceSystem\Resource.h"
+#include "..\..\GameSystems\ResourceSystem\MineableResource.h"
 #include "RTSTargetedOrder.h"
 #include "RTSMineResourceOrder.generated.h"
 
@@ -26,13 +26,13 @@ class RTS_PROJECT_API URTSMineResourceOrder : public URTSTargetedOrder
 
 	protected:
 		/*The inital Resource that was selected for harvesting, this can change over the course of the order in the Behavior tree*/
-		TWeakObjectPtr<AResource> StartNode = nullptr;
+		TWeakObjectPtr<AMineableResource> StartNode = nullptr;
 		
 		/*The location of the Resource that was initally ordered, may be used as reference if the node is destroyed prior to reaching it*/
 		FVector StartNodeLocation = FVector();
 		
 		/*The Class of Resource to Mine*/
-		TSubclassOf<AResource> ResourceClassToMine = nullptr;
+		TSubclassOf<UResource> ResourceClassToMine = nullptr;
 
 	public:
 		static const FName ResourceNodeKey;

@@ -7,12 +7,12 @@
 
 
 /*Pure Virtual*/
-void IResourceGatherer::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
+void IResourceGatherer::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
 
 }
 
-bool IResourceGatherer::RemoveResource(TSubclassOf<AResource> ResourceClass, int amount)
+bool IResourceGatherer::RemoveResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
 	return false;
 }
@@ -39,7 +39,7 @@ uint32 IResourceGatherer::GetMaxWeight() const
 
 
 /****** Non Pure Virtual*****/
-bool IResourceGatherer::GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const
+bool IResourceGatherer::GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const
 {
 	const FReplicationResourceMap resources = GetAllHeldResources();
 	const int* foundvalue = resources.Find(ResourceClass);
@@ -52,7 +52,7 @@ bool IResourceGatherer::GetHeldResource(TSubclassOf<AResource> ResourceClass, ui
 	return retval;
 }
 
-bool IResourceGatherer::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
+bool IResourceGatherer::HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount) const
 {
 	const FReplicationResourceMap resources = GetAllHeldResources();
 	const int* carriedvalue = resources.Find(ResourceClass);
@@ -66,14 +66,14 @@ bool IResourceGatherer::HasResource(const TSubclassOf<AResource> ResourceClass, 
 	return retval;
 }
 
-bool IResourceGatherer::CanCarryResource(const TSubclassOf<AResource> InResource) const
+bool IResourceGatherer::CanCarryResource(const TSubclassOf<UResource> InResource) const
 {
 	const FReplicationResourceMap resources = GetAllHeldResources();
 	const bool retval = resources.Find(InResource) != nullptr;
 	return retval;
 }
 
-const TArray<TSubclassOf<AResource>> IResourceGatherer::GetSupportedResources() const
+const TArray<TSubclassOf<UResource>> IResourceGatherer::GetSupportedResources() const
 {
 	const FReplicationResourceMap resources = GetAllHeldResources();
 	return resources.GetKeys();
@@ -136,7 +136,7 @@ bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, c
 	return retval;
 }
 
-bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<AResource> ResourceType, const int InAmountToTransfer)
+bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<UResource> ResourceType, const int InAmountToTransfer)
 {
 	//todo, add check for if the transfer can be completed for the reciever
 	const bool retval = InDonar->RemoveResource(ResourceType, InAmountToTransfer);
@@ -149,9 +149,9 @@ bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, c
 	return retval;
 }
 
-bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> InResourceClass, uint32 InNumtoCarry) const
+bool IResourceGatherer::CanCarryMore(TSubclassOf<UResource> InResourceClass, uint32 InNumtoCarry) const
 {
-	const AResource* resourcecdo = InResourceClass.GetDefaultObject();
+	const UResource* resourcecdo = InResourceClass.GetDefaultObject();
 	const uint32 resourceweight = resourcecdo->GetResourceWeight() * InNumtoCarry;
 	const uint32 currentweight = GetCurrentWeight();
 
@@ -163,10 +163,10 @@ bool IResourceGatherer::CanCarryMore(TSubclassOf<AResource> InResourceClass, uin
 	return retval;
 }
 
-uint32 IResourceGatherer::GetResourceTillFull(TSubclassOf<AResource> InResourceClass) const
+uint32 IResourceGatherer::GetResourceTillFull(TSubclassOf<UResource> InResourceClass) const
 {
 	uint32 retval = 0U;
-	const AResource* defaultresource = InResourceClass.GetDefaultObject();
+	const UResource* defaultresource = InResourceClass.GetDefaultObject();
 	const uint32 singleresourceweight = defaultresource->GetResourceWeight();
 
 	if (singleresourceweight == 0U)
@@ -194,7 +194,7 @@ bool IResourceGatherer::CanCarryAllResources(const FReplicationResourceMap InRes
 	
 	for (int i = 0; i < InResourcestoCarry.Num(); i++)
 	{
-		const AResource * resourcecdo = InResourcestoCarry[i].Key.GetDefaultObject();
+		const UResource * resourcecdo = InResourcestoCarry[i].Key.GetDefaultObject();
 		const uint32 resourceweight = resourcecdo->GetResourceWeight();
 		const uint32 resourcecount = StaticCast<uint32,int32>(InResourcestoCarry[i].Value);
 		estimatedweight += (resourceweight * resourcecount);

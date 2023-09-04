@@ -63,7 +63,7 @@ bool IResourceVendorInterface::IsUnitPurchaseable(const TSubclassOf<UObject> Pur
 	if (resourcecost != nullptr)
 	{
 		const FReplicationResourceMap availableresource = Purchaser->GetAllHeldResources();
-		retval = AResource::CanAfford(availableresource, *resourcecost);
+		retval = UResource::CanAfford(availableresource, *resourcecost);
 	}
 
 	

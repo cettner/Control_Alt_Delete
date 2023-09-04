@@ -10,7 +10,7 @@
 #include "ResourceGathererComponent.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResourceDepletedDelegate, TSubclassOf<AResource>, TScriptInterface<IResourceGatherer>)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResourceDepletedDelegate, TSubclassOf<UResource>, TScriptInterface<IResourceGatherer>)
 
 UCLASS()
 class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, public IResourceGatherer
@@ -20,11 +20,11 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	UResourceGathererComponent();
 
 	public:	
-		FOnResourceDepletedDelegate& BindResourceDepletionEvent(TSubclassOf<AResource> InResourceType);
+		FOnResourceDepletedDelegate& BindResourceDepletionEvent(TSubclassOf<UResource> InResourceType);
 
 	public:
-		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
-		virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
+		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;
+		virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount) override;
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;
@@ -37,6 +37,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		virtual void OnRep_HeldResources();
 
 	protected:
+		virtual void OnRegister() override;
 		virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	protected:
@@ -50,7 +51,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		FReplicationResourceMap HeldResources = FReplicationResourceMap();
 
-		TMap<TSubclassOf<AResource>,FOnResourceDepletedDelegate> ResourceDelegates;
+		TMap<TSubclassOf<UResource>,FOnResourceDepletedDelegate> ResourceDelegates;
 
 		uint32 CurrentWeight = 0U;
 };

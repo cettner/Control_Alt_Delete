@@ -12,7 +12,7 @@
 #include "RTS_Project/RTSFPS/PreGame/RTSFPSLobbyGameState.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "TeamResourceState.h"
-#include "RTS_Project/RTSFPS/Gamesystems/ResourceSystem/Interfaces/ResourceGatherer.h"
+#include "RTS_Project/RTSFPS/Gamesystems/ResourceSystem/MineableResource.h"
 
 
 ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
@@ -27,7 +27,7 @@ ARTFPSMode::ARTFPSMode(const FObjectInitializer& ObjectInitializer)
 	PlayerStateClass = AFPSPlayerState::StaticClass();
 	TeamStateClass = ATeamResourceState::StaticClass();
 	DefaultPawnClass = nullptr;
-	ResourceTypes = TArray<TSubclassOf<AResource>>();
+	ResourceTypes = TArray<TSubclassOf<UResource>>();
 	StartingResource = FReplicationResourceMap();
 
 }
@@ -148,9 +148,9 @@ bool ARTFPSMode::ReadyToEndMatch_Implementation()
 
 	bool retval = true;
 
-	for (TActorIterator<AResource> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	for (TActorIterator<AMineableResource> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
-		const AResource * mapresource = *ActorItr;
+		const AMineableResource * mapresource = *ActorItr;
 
 		if (IsValid(mapresource))
 		{
@@ -192,7 +192,7 @@ FReplicationResourceMap ARTFPSMode::GetStartingResources() const
 	return StartingResource;
 }
 
-TArray<TSubclassOf<AResource>> ARTFPSMode::GetResourceTypes() const
+TArray<TSubclassOf<UResource>> ARTFPSMode::GetResourceTypes() const
 {
 	return ResourceTypes;
 }

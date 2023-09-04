@@ -336,7 +336,7 @@ void ARTSStructure::UnRegisterRTSObject()
 	gs->UnRegisterRTSObject(this);
 }
 
-bool ARTSStructure::IsDropPointFor(TSubclassOf<AResource> ResourceType) const
+bool ARTSStructure::IsDropPointFor(TSubclassOf<UResource> ResourceType) const
 {
 	return (Health->IsAlive());
 }

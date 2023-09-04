@@ -30,8 +30,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 
 	/*********************************Resource Gatherer***********************************/
 	public:
-		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
-		virtual bool RemoveResource(TSubclassOf<AResource> ResourceClass, int amount) override;
+		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;
+		virtual bool RemoveResource(TSubclassOf<UResource> ResourceClass, int amount) override;
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;

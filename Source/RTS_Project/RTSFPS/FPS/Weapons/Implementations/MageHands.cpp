@@ -144,7 +144,7 @@ void AMageHands::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSour
 	}
 }
 
-void AMageHands::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
+void AMageHands::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
 	Cast<IResourceGatherer>(GetPawnOwner())->AddResource(ResourceClass, amount);
 }

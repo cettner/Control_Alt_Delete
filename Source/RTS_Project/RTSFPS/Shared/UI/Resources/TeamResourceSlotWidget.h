@@ -18,7 +18,7 @@ class RTS_PROJECT_API UTeamResourceSlotWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	virtual void Setup(TSubclassOf<AResource> InResourceClass);
+	virtual void Setup(TSubclassOf<UResource> InResourceClass);
 
 protected:
 	UFUNCTION()
@@ -33,7 +33,7 @@ protected:
 	UTextBlock* ResourceValueText;
 
 protected:
-	TSubclassOf<AResource> DisplayResourceClass = nullptr;
+	TSubclassOf<UResource> DisplayResourceClass = nullptr;
 
 	FName ResourceName = FName("Error");
 };

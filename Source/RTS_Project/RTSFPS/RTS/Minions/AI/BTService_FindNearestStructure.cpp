@@ -32,7 +32,7 @@ ARTSStructure* UBTService_FindNearestStructure::GetBestStructure(APawn* Minion, 
 	for (int i = 0; i < structures.Num(); i++)
 	{
 		float distanceto = structures[i]->GetDistanceTo(Minion);
-		if (structures[i]->IsDropPointFor(AResource::StaticClass()) && distanceto < shortestdistance)
+		if (structures[i]->IsDropPointFor(UResource::StaticClass()) && distanceto < shortestdistance)
 		{
 			beststructure = structures[i];
 			shortestdistance = distanceto;

@@ -3,21 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
-#include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
-#include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
-
-#include "Components/StaticMeshComponent.h"
+#include "UObject/NoExportTypes.h"
 #include "Resource.generated.h"
-
-DECLARE_MULTICAST_DELEGATE(FOnResourceNodeDestroyedDelegate)
 
 USTRUCT()
 struct FReplicationResourceMap
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	void Emplace(TSubclassOf<AResource> Key, int Value)
+	void Emplace(TSubclassOf<UResource> Key, int Value)
 	{
 		int index = Keys.IndexOfByKey(Key);
 
@@ -32,7 +26,7 @@ public:
 		}
 	}
 
-	bool Remove(TSubclassOf<AResource> Key)
+	bool Remove(TSubclassOf<UResource> Key)
 	{
 		bool retval = false;
 		int index = Keys.IndexOfByKey(Key);
@@ -47,7 +41,7 @@ public:
 		return retval;
 	}
 
-	bool Increment(TSubclassOf<AResource> Key, int Value)
+	bool Increment(TSubclassOf<UResource> Key, int Value)
 	{
 		bool retval = false;
 
@@ -61,7 +55,7 @@ public:
 		return retval;
 	}
 
-	bool Decrement(TSubclassOf<AResource> Key, int Value)
+	bool Decrement(TSubclassOf<UResource> Key, int Value)
 	{
 		bool retval = false;
 
@@ -79,13 +73,13 @@ public:
 		return retval;
 	}
 
-	const int* Find(TSubclassOf<AResource> Key) const
+	const int* Find(TSubclassOf<UResource> Key) const
 	{
 		int index = Keys.IndexOfByKey(Key);
 
 		if (index != INDEX_NONE)
 		{
-			const int * retval = &Values[index];
+			const int* retval = &Values[index];
 			return(retval);
 		}
 
@@ -97,16 +91,16 @@ public:
 		return(Keys.Num());
 	}
 
-	const TArray<TSubclassOf<AResource>>& GetKeys() const
+	const TArray<TSubclassOf<UResource>>& GetKeys() const
 	{
 		return Keys;
 	}
 
-	TMap<TSubclassOf<AResource>, int> GetMap() const
+	TMap<TSubclassOf<UResource>, int> GetMap() const
 	{
-		TMap<TSubclassOf<AResource>, int> Map = TMap<TSubclassOf<AResource>, int>();
+		TMap<TSubclassOf<UResource>, int> Map = TMap<TSubclassOf<UResource>, int>();
 		checkf(IsValid(), TEXT("FReplicationResourceMap::GetMap"));
-		
+
 		for (int i = 0; i < Keys.Num(); i++)
 		{
 			Map.Emplace(Keys[i], Values[i]);
@@ -121,76 +115,36 @@ public:
 	}
 
 	/*Allows Pair Iteration*/
-	TPair<TSubclassOf<AResource>, int > operator[](int Index) const
+	TPair<TSubclassOf<UResource>, int > operator[](int Index) const
 	{
-		return TPair<TSubclassOf<AResource>, int >(Keys[Index], Values[Index]);
+		return TPair<TSubclassOf<UResource>, int >(Keys[Index], Values[Index]);
 	}
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	TArray<int> Values;
+		TArray<int> Values;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<AResource>> Keys;
+		TArray<TSubclassOf<UResource>> Keys;
 };
 
 
-UCLASS(Blueprintable)
-class RTS_PROJECT_API AResource : public AGridAttachmentActor, public IRTSObjectInterface
+UCLASS(BluePrintable)
+class RTS_PROJECT_API UResource : public UObject
 {
 	GENERATED_BODY()
+
+	public:
+		uint32 GetResourceWeight() const;
+		FName GetResourceName() const;
+
+		/*Helper Static Function for purchasing Things With Resources*/
+		static bool CanAfford(FReplicationResourceMap BuyerResources, FReplicationResourceMap SellerCost);
+
+	protected:
+		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+		uint32 ResourceWeight = 1U;
+
+		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+		FName ResourceName = "Default Resource";
 	
-public:	
-	// Sets default values for this actor's properties
-	AResource();
-	uint32 Mine(uint32 amount_to_mine);
-	uint32 GetResourceWeight() const;
-
-	/*Helper Static Function for purchasing Things With Resources*/
-	static bool CanAfford(FReplicationResourceMap BuyerResources, FReplicationResourceMap SellerCost);
-
-public:
-	/*RTSObject Interface Overrides*/
-	virtual void SetSelected() override;
-	virtual void SetDeselected() override;
-	virtual void RegisterRTSObject() override;
-	virtual void UnRegisterRTSObject() override;
-	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
-	virtual FName GetUnitName() const override;
-	virtual int GetTeam() const override;
-	/*******************************/
-
-protected:
-	virtual void OnResourcesDepleted();
-protected:
-	/*AActor Override*/
-	virtual void BeginPlay() override;
-	virtual void BeginDestroy() override;
-	virtual void PostInitializeComponents() override;
-
-public:
-	FOnResourceNodeDestroyedDelegate OnResourceDestroyedDelegate = FOnResourceNodeDestroyedDelegate();
-
-protected:
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
-	UDecalSelectionComponent* SelectionComp;
-
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
-	UStaticMeshComponent* MeshComp;
-
-protected:
-
-	UPROPERTY(EditAnywhere, Category = Gameplay)
-	bool bisinfinite = false;
-
-	UPROPERTY(EditAnywhere, Category = Gameplay)
-	uint32 ResourceVal = 90;
-
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	uint32 ResourceWeight = 1U;
-
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	UTexture* Thumbnail = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-	FName ResourceName = "Default Resource";
 };

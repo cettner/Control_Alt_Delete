@@ -55,22 +55,22 @@ class RTS_PROJECT_API ATeamResourceState : public ATeamState, public IResourceGa
 		bool CheckAndDispatchUpgrade(TSubclassOf<UUpgrade> UpgradeClass, TArray<AActor*>& Applyto);
 	/*****************************IResourceGatherInterface******************************/
 	public:
-		virtual void AddResource(TSubclassOf<AResource> ResourceClass, int amount) override;
-		virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
+		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;
+		virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount) override;
 		virtual void AddResource(const FReplicationResourceMap InResourceMap) override;
 		virtual bool RemoveResource(const FReplicationResourceMap InResourceMap) override;
 
-		virtual bool HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount = 0U) const override;
+		virtual bool HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount = 0U) const override;
 		virtual bool HasResource(const FReplicationResourceMap InResourceMap) const override;
 
 		/*Returns the count of the specified class that the gatherer can carry until the cap is achieved.*/
-		virtual bool CanCarryMore(TSubclassOf<AResource> ResourceClass, uint32 InNumtoCarry = 1U) const override;
+		virtual bool CanCarryMore(TSubclassOf<UResource> ResourceClass, uint32 InNumtoCarry = 1U) const override;
 
 		/*Returns a Map of All resources Carried by the instance*/
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 
 		/*Returns the amount held by the unit of the particular type of Resource*/
-		virtual bool GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const override;
+		virtual bool GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const override;
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;
 	/************************************************************************************/

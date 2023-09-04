@@ -15,7 +15,7 @@
  */
 
 
-class AResource; class ARTSStructure;
+class ARTSStructure;
 
 UCLASS()
 class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion, public IResourceGatherer
@@ -29,17 +29,17 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool IsMining() const;
-	void StartMining(AResource* Node);
+	void StartMining(AMineableResource* Node);
 	bool StopMining();
 
 	void MineResource(); 
-	bool ExtractResource(AResource* Node);
+	bool ExtractResource(AMineableResource* Node);
 	UFUNCTION()
 	virtual void OnResourceNodeDepleted();
 
 	/***********IResourceGatherer**********************/
-	virtual void AddResource(TSubclassOf<AResource> type, int amount) override;
-	virtual bool RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount) override;
+	virtual void AddResource(TSubclassOf<UResource> type, int amount) override;
+	virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount) override;
 	virtual FReplicationResourceMap GetAllHeldResources() const override;
 	virtual uint32 GetCurrentWeight() const override;
 	virtual uint32 GetMaxWeight() const override;
@@ -47,7 +47,7 @@ public:
 
 protected:
 	void SetIsMining(const bool InMiningState);
-	virtual AResource* GetTargetResource() const;
+	virtual AMineableResource* GetTargetResource() const;
 
 protected:
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
@@ -69,11 +69,7 @@ protected:
 	float MineInterval = 1.0;
 
 protected:
-	FReplicationResourceMap CarriedResources;
-
 	int CurrentWeight = 0;
-
-protected:
 
 	FTimerHandle MineHandler;
 

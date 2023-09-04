@@ -45,7 +45,7 @@ protected:
 public:
 	TSubclassOf<ARTSCamera> GetDefaultRTSClass() const;
 	FReplicationResourceMap GetStartingResources() const;
-	TArray<TSubclassOf<AResource>> GetResourceTypes() const;
+	TArray<TSubclassOf<UResource>> GetResourceTypes() const;
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetDefaultUnitCosts() const;
 	/***********************************************************/
 
@@ -62,7 +62,7 @@ protected:
 	FReplicationResourceMap StartingResource;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "RTS Initialization")
-	TArray<TSubclassOf<AResource>> ResourceTypes;
+	TArray<TSubclassOf<UResource>> ResourceTypes;
 
 	UPROPERTY(EditDefaultsOnly, meta = (MustImplement = "RTSObjectInterface"), Category = "RTS Initialization")
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> DefaultUnitCosts;

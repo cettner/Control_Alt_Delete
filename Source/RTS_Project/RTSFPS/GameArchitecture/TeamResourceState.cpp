@@ -323,7 +323,7 @@ void ATeamResourceState::ApplyGlobalUpgrades(IUpgradableInterface* ToUpgrade) co
 	}
 }
 
-void ATeamResourceState::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
+void ATeamResourceState::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const int* currentval = TeamResources.Find(ResourceClass);
 	if (currentval != nullptr)
@@ -338,7 +338,7 @@ void ATeamResourceState::AddResource(TSubclassOf<AResource> ResourceClass, int a
 	}
 }
 
-bool ATeamResourceState::RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount)
+bool ATeamResourceState::RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount)
 {
 	bool retval = false;
 	if (HasAuthority())
@@ -366,7 +366,7 @@ bool ATeamResourceState::RemoveResource(const FReplicationResourceMap InResource
 	return IResourceGatherer::RemoveResource(InResourceMap);
 }
 
-bool ATeamResourceState::HasResource(const TSubclassOf<AResource> ResourceClass, const uint32 amount) const
+bool ATeamResourceState::HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount) const
 {
 	return IResourceGatherer::HasResource(ResourceClass, amount);
 }
@@ -376,7 +376,7 @@ bool ATeamResourceState::HasResource(const FReplicationResourceMap InResourceMap
 	return IResourceGatherer::HasResource(InResourceMap);
 }
 
-bool ATeamResourceState::CanCarryMore(TSubclassOf<AResource> ResourceClass, uint32 InNumtoCarry) const
+bool ATeamResourceState::CanCarryMore(TSubclassOf<UResource> ResourceClass, uint32 InNumtoCarry) const
 {
 	return true;
 }
@@ -386,7 +386,7 @@ FReplicationResourceMap ATeamResourceState::GetAllHeldResources() const
 	return TeamResources;
 }
 
-bool ATeamResourceState::GetHeldResource(TSubclassOf<AResource> ResourceClass, uint32& OutAmount) const
+bool ATeamResourceState::GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const
 {
 	return IResourceGatherer::GetHeldResource(ResourceClass, OutAmount);
 }

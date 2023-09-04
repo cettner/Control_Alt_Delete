@@ -129,7 +129,7 @@ public:
 
 	bool QueueActor(TSubclassOf<UObject> ObjectClass, AController* InheritingController = nullptr);
 
-	virtual bool IsDropPointFor(TSubclassOf<AResource> ResourceType) const;
+	virtual bool IsDropPointFor(TSubclassOf<UResource> ResourceType) const;
 
 	bool IsQueueFull() const;
 

@@ -2,7 +2,7 @@
 
 
 #include "MineResourceAbility.h"
-#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/MineableResource.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/AbilityComponent.h"
 
 
@@ -33,13 +33,13 @@ void UMineResourceAbility::SetMineAmount(uint32 InAmount)
 
 void UMineResourceAbility::MineResource()
 {
-	AResource * nodetomine = AbilityComp->GetAbilityTarget<AResource>();
+	AMineableResource * nodetomine = AbilityComp->GetAbilityTarget<AMineableResource>();
 	IResourceGatherer * resourcegatherer = GetResourceGatherer();
 	checkf(resourcegatherer, TEXT("UMineResourceAbility::MineResource failed to obtain ResourceGatherer"));
 
 	if (IsValid(nodetomine))
 	{
-		const TSubclassOf<AResource> resourceclass = nodetomine->GetClass();
+		const TSubclassOf<UResource> resourceclass = nodetomine->GetClass();
 		const uint32 maxpull = resourcegatherer->GetResourceTillFull(resourceclass);
 		
 		if (maxpull > 0U)
@@ -91,7 +91,7 @@ bool UMineResourceAbility::ShouldSeverBeam() const
 		const IResourceGatherer* resourcegatherer = GetResourceGatherer();
 		checkf(resourcegatherer, TEXT("UMineResourceAbility::ShouldSeverBeam failed to obtain ResourceGatherer"));
 		
-		const AResource * nodetomine = AbilityComp->GetAbilityTarget<AResource>();
+		const AMineableResource * nodetomine = AbilityComp->GetAbilityTarget<AMineableResource>();
 		retval |= !IsValid(nodetomine);
 
 		if (retval == false)
@@ -106,7 +106,7 @@ bool UMineResourceAbility::ShouldSeverBeam() const
 
 bool UMineResourceAbility::CanHit(AActor * HitActor) const
 {
-	AResource* resource = Cast<AResource>(HitActor);
+	AMineableResource* resource = Cast<AMineableResource>(HitActor);
     bool retval = IsValid(resource);
 
 	if (retval)

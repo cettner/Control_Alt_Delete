@@ -9,10 +9,10 @@ const FName URTSMineResourceOrder::LastMinedLocationKey = "LastMinedLocation";
 
 void URTSMineResourceOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
 {
-	AResource* node = CastChecked<AResource>(InContext.GetActor());
-	StartNode = TWeakObjectPtr<AResource>(node);
+	AMineableResource* node = CastChecked<AMineableResource>(InContext.GetActor());
+	StartNode = TWeakObjectPtr<AMineableResource>(node);
 	StartNodeLocation = node->GetActorLocation();
-	ResourceClassToMine = node->GetClass();
+	ResourceClassToMine = node->GetResourceClass();
 }
 
 void URTSMineResourceOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const

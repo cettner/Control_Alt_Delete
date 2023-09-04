@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.TSubclassOf<UResource>
 
 #include "BTTask_Builder_Mine_Node.h"
 #include "..\..\AI\RTSAIController.h"
@@ -16,7 +16,7 @@ EBTNodeResult::Type UBTTask_Builder_Mine_Node::ExecuteTask(UBehaviorTreeComponen
 {
     EBTNodeResult::Type retval = EBTNodeResult::Failed;
     const ARTSAIController * Controller = Cast<ARTSAIController>(OwnerComp.GetAIOwner());
-    AResource * target = Cast<AResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ResourceNodeKey.SelectedKeyName));
+    AMineableResource * target = Cast<AMineableResource>(OwnerComp.GetBlackboardComponent()->GetValue<UBlackboardKeyType_Object>(ResourceNodeKey.SelectedKeyName));
 
     if(target)
     {

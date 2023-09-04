@@ -4,7 +4,7 @@
 #include "TeamResourceSlotWidget.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h" 
 
-void UTeamResourceSlotWidget::Setup(TSubclassOf<AResource> InResourceClass)
+void UTeamResourceSlotWidget::Setup(TSubclassOf<UResource> InResourceClass)
 {
 	DisplayResourceClass = InResourceClass;
 
@@ -15,8 +15,8 @@ void UTeamResourceSlotWidget::Setup(TSubclassOf<AResource> InResourceClass)
 	
 	if (DisplayResourceClass != nullptr)
 	{
-		const AResource* resourcecdo = DisplayResourceClass->GetDefaultObject<AResource>();
-		ResourceName = resourcecdo->GetUnitName();
+		const UResource* resourcecdo = DisplayResourceClass->GetDefaultObject<UResource>();
+		ResourceName = resourcecdo->GetResourceName();
 	}
 
 }

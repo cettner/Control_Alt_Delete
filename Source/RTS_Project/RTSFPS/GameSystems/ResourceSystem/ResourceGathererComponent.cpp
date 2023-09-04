@@ -14,10 +14,9 @@ UResourceGathererComponent::UResourceGathererComponent()
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 
 	StartingResources = CreateDefaultSubobject<UResourceData>(TEXT("StartingResources"));
-	HeldResources = StartingResources->GetResourceData();
 }
 
-FOnResourceDepletedDelegate& UResourceGathererComponent::BindResourceDepletionEvent(TSubclassOf<AResource> InResourceType)
+FOnResourceDepletedDelegate& UResourceGathererComponent::BindResourceDepletionEvent(TSubclassOf<UResource> InResourceType)
 {
 	if (FOnResourceDepletedDelegate* founddelegate = ResourceDelegates.Find(InResourceType))
 	{
@@ -32,15 +31,19 @@ FOnResourceDepletedDelegate& UResourceGathererComponent::BindResourceDepletionEv
 	}
 }
 
-void UResourceGathererComponent::AddResource(TSubclassOf<AResource> ResourceClass, int amount)
+void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
-	HeldResources.Increment(ResourceClass, amount);
+	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
+	checkf(HeldResources.Increment(ResourceClass, amount), TEXT("UResourceGathererComponent::AddResource, Failed to add Resource because it wasnt supported"));
+	CurrentWeight += resourcecdo->GetResourceWeight() * amount;
 }
 
-bool UResourceGathererComponent::RemoveResource(const TSubclassOf<AResource> ResourceClass, int amount)
+bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount)
 {
+	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
 	bool retval = HeldResources.Decrement(ResourceClass, amount);
-	
+	CurrentWeight -= resourcecdo->GetResourceWeight() * amount;
+
 	if (const int * outvalue = HeldResources.Find(ResourceClass))
 	{
 		if (*outvalue == 0)
@@ -77,7 +80,7 @@ void UResourceGathererComponent::RecalculateWeight()
 	CurrentWeight = 0U;
 	for (int i = 0; i < HeldResources.Num(); i++)
 	{
-		const AResource * resourcecdo = HeldResources[i].Key.GetDefaultObject();
+		const UResource * resourcecdo = HeldResources[i].Key.GetDefaultObject();
 		CurrentWeight += resourcecdo->GetResourceWeight() * HeldResources[i].Value;
 	}
 }
@@ -85,6 +88,12 @@ void UResourceGathererComponent::RecalculateWeight()
 void UResourceGathererComponent::OnRep_HeldResources()
 {
 	RecalculateWeight();
+}
+
+void UResourceGathererComponent::OnRegister()
+{
+	Super::OnRegister();
+	HeldResources = StartingResources->GetResourceData();
 }
 
 void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

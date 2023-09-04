@@ -30,7 +30,7 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 	return(retval);
 }
 
-void ARTSBUILDER::StartMining(AResource * Node)
+void ARTSBUILDER::StartMining(AMineableResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/
 	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, true, MineInterval);
@@ -61,16 +61,16 @@ void ARTSBUILDER::SetIsMining(const bool InMiningState)
 	bIsMining = InMiningState;
 }
 
-AResource* ARTSBUILDER::GetTargetResource() const
+AMineableResource* ARTSBUILDER::GetTargetResource() const
 {
-	AResource* retval = nullptr;
+	AMineableResource* retval = nullptr;
 	const ARTSAIController* controller = GetController<ARTSAIController>();
 	URTSMineResourceOrder * mineorder = controller->GetCurrentOrder<URTSMineResourceOrder>();
 
 	if (IsValid(mineorder))
 	{
 		const FName& resourcenodekey = mineorder->GetResourceNodeKey();
-		retval = Cast<AResource>(controller->GetBlackBoardKeyAsObject(resourcenodekey));
+		retval = Cast<AMineableResource>(controller->GetBlackBoardKeyAsObject(resourcenodekey));
 	}
 
 	return retval;
@@ -79,7 +79,7 @@ AResource* ARTSBUILDER::GetTargetResource() const
 const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FHitResult& InHitContext) const
 {
 	TSubclassOf<URTSTargetedOrder> retval = nullptr;
-	const AResource* resource = Cast<AResource>(InHitContext.GetActor());
+	const AMineableResource* resource = Cast<AMineableResource>(InHitContext.GetActor());
 	if (IsValid(resource))
 	{
 		retval = MineOrderClass;
@@ -106,11 +106,11 @@ bool ARTSBUILDER::IsMining() const
 void ARTSBUILDER::MineResource()
 {
 	ARTSAIController* controller = GetController<ARTSAIController>();
-	AResource* targetnode = GetTargetResource();
+	AMineableResource* targetnode = GetTargetResource();
 	if (IsValid(targetnode))
 	{
 		/*Copy class before as resrouce might not be valid after mining*/
-		const TSubclassOf<AResource> resourceclass = targetnode->GetClass();
+		const TSubclassOf<UResource> resourceclass = targetnode->GetResourceClass();
 		ExtractResource(targetnode);
 		if (!CanCarryMore(resourceclass))
 		{
@@ -126,10 +126,10 @@ void ARTSBUILDER::MineResource()
 
 }
 
-bool ARTSBUILDER::ExtractResource(AResource* Node)
+bool ARTSBUILDER::ExtractResource(AMineableResource* Node)
 {
 	bool retval = false;
-	const TSubclassOf<AResource> resourceclass = Node->GetClass();
+	const TSubclassOf<UResource> resourceclass = Node->GetResourceClass();
 	const uint32 maxpull = GetResourceTillFull(resourceclass);
 
 	if (maxpull > 0U)
@@ -154,7 +154,7 @@ void ARTSBUILDER::OnResourceNodeDepleted()
 	controller->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Failure, EAIMessageType::Task);
 }
 
-void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmount)
+void ARTSBUILDER::AddResource(TSubclassOf<UResource> InResourceType, int InAmount)
 {
 	/*
 	CarriedResources.Increment(InResourceType,InAmount);
@@ -166,19 +166,12 @@ void ARTSBUILDER::AddResource(TSubclassOf<AResource> InResourceType, int InAmoun
 	ResourceComp->AddResource(InResourceType, InAmount);
 }
 
-bool ARTSBUILDER::RemoveResource(const TSubclassOf<AResource> InResourceType, int InAmount)
+bool ARTSBUILDER::RemoveResource(const TSubclassOf<UResource> InResourceType, int InAmount)
 {
-	/*
-	bool retval = CarriedResources.Decrement(InResourceType, InAmount);
-	const AResource* resourcecdo = InResourceType.GetDefaultObject();
-	const int resourceweight = resourcecdo->GetResourceWeight();
-	CurrentWeight -= (resourceweight * InAmount);
-	*/
-
 	return 	ResourceComp->RemoveResource(InResourceType, InAmount);
 }
 
 FReplicationResourceMap ARTSBUILDER::GetAllHeldResources() const
 {
-	return CarriedResources;
+	return ResourceComp->GetAllHeldResources();
 }
