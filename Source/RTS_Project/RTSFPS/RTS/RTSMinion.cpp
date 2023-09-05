@@ -42,6 +42,9 @@ ARTSMinion::ARTSMinion()
 	Selection->SetupAttachment(RootComponent);
 	SetDeselected();
 
+	ResourceComp = CreateDefaultSubobject<UResourceGathererComponent>(TEXT("ResourceComp"));
+	ResourceComp->SetIsReplicated(true);
+
 	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 	Health->OnDeathStart.BindUFunction(this,"OnDeath");
 	Health->SetIsReplicated(true);

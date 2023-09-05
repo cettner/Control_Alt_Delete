@@ -67,42 +67,27 @@ void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, A
 
 void AAbilityCombatCommander::AddResource(TSubclassOf<UResource> InResourceClass, int InAmount)
 {
-	const bool retval = HeldResources.Increment(InResourceClass, InAmount);
-	if (retval == true)
-	{
-		const UResource* resourcecdo = InResourceClass.GetDefaultObject();
-		const int resourceweight = resourcecdo->GetResourceWeight();
-		CurrentWeight += (resourceweight * InAmount);
-	}
-
+	ResourceComp->AddResource(InResourceClass, InAmount);
 }
 
 bool AAbilityCombatCommander::RemoveResource(TSubclassOf<UResource> InResourceClass, int InAmount)
 {
-	const bool retval = HeldResources.Decrement(InResourceClass, InAmount);
-	if (retval == true)
-	{
-		const UResource * resourcecdo = InResourceClass.GetDefaultObject();
-		const int resourceweight = resourcecdo->GetResourceWeight();
-		CurrentWeight -= (resourceweight * InAmount);
-	}
-
-	return retval;
+	return ResourceComp->RemoveResource(InResourceClass, InAmount);
 }
 
 FReplicationResourceMap AAbilityCombatCommander::GetAllHeldResources() const
 {
-	return HeldResources;
+	return ResourceComp->GetAllHeldResources();
 }
 
 uint32 AAbilityCombatCommander::GetCurrentWeight() const
 {
-	return CurrentWeight;
+	return ResourceComp->GetCurrentWeight();
 }
 
 uint32 AAbilityCombatCommander::GetMaxWeight() const
 {
-	return MaxWeight;
+	return ResourceComp->GetMaxWeight();
 }
 
 void AAbilityCombatCommander::GrantExp(uint32 inexp)
@@ -117,6 +102,4 @@ void AAbilityCombatCommander::GrantExp(uint32 inexp)
 void AAbilityCombatCommander::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AAbilityCombatCommander, MaxWeight);
-	DOREPLIFETIME(AAbilityCombatCommander, CurrentWeight);
 }

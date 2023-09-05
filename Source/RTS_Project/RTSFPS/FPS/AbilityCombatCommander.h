@@ -6,7 +6,9 @@
 #include "CombatCommander.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
-#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
+
+
 #include "AbilityCombatCommander.generated.h"
 
 /**
@@ -16,6 +18,9 @@ UCLASS()
 class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceGatherer, public IExpAccumulatorInterface
 {
 	GENERATED_BODY()
+
+
+
 	/************************************IAbilityUserInterface****************************/
 	public:
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
@@ -25,7 +30,6 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
 		virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr) override;
 	/*************************************************************************************/
-
 
 
 	/*********************************Resource Gatherer***********************************/
@@ -47,15 +51,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 
 
 	/****************************************Config Data***************************************/
-	protected:
-		UPROPERTY(EditDefaultsOnly, Replicated)
-		uint32 MaxWeight = 30U;
 
 	/************************************Runtime Data*****************************************/
 
-		FReplicationResourceMap HeldResources = FReplicationResourceMap();
-		
-		UPROPERTY(Replicated)
-		uint32 CurrentWeight = 0U;
 
 };

@@ -60,9 +60,6 @@ protected:
 	const TSubclassOf<URTSMineResourceOrder> MineOrderClass = URTSMineResourceOrder::StaticClass();
 
 	UPROPERTY(EditDefaultsOnly, Category = Resources)
-	UResourceGathererComponent* ResourceComp = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, Category = Resources)
 	uint32 MineAmount = 5;
 
 	UPROPERTY(EditDefaultsOnly, Category = Resources)

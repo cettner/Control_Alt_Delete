@@ -17,8 +17,6 @@ ARTSBUILDER::ARTSBUILDER()
 	AIConfig.SightAffiliation.bDetectFriendlies = false;
 
 	AISenseClasses.Emplace(UAISense_Sight::StaticClass());
-
-	ResourceComp = CreateDefaultSubobject<UResourceGathererComponent>(TEXT("ResourceComp"));
 }
 
 bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
@@ -156,13 +154,6 @@ void ARTSBUILDER::OnResourceNodeDepleted()
 
 void ARTSBUILDER::AddResource(TSubclassOf<UResource> InResourceType, int InAmount)
 {
-	/*
-	CarriedResources.Increment(InResourceType,InAmount);
-
-	const AResource* resourcecdo = InResourceType.GetDefaultObject();
-	const int resourceweight = resourcecdo->GetResourceWeight();
-	CurrentWeight += (resourceweight * InAmount);
-	*/
 	ResourceComp->AddResource(InResourceType, InAmount);
 }
 

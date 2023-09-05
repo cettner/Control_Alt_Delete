@@ -149,6 +149,11 @@ void AMageHands::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 	Cast<IResourceGatherer>(GetPawnOwner())->AddResource(ResourceClass, amount);
 }
 
+bool AMageHands::RemoveResource(TSubclassOf<UResource> ResourceClass, int amount)
+{
+	return Cast<IResourceGatherer>(GetPawnOwner())->RemoveResource(ResourceClass, amount);
+}
+
 uint32 AMageHands::GetCurrentWeight() const
 {
 	return Cast<IResourceGatherer>(GetPawnOwner())->GetCurrentWeight();
@@ -157,6 +162,11 @@ uint32 AMageHands::GetCurrentWeight() const
 uint32 AMageHands::GetMaxWeight() const
 {
 	return Cast<IResourceGatherer>(GetPawnOwner())->GetMaxWeight();
+}
+
+FReplicationResourceMap AMageHands::GetAllHeldResources() const
+{
+	return Cast<IResourceGatherer>(GetPawnOwner())->GetAllHeldResources();
 }
 
 void AMageHands::StartSecondaryFire()

@@ -41,6 +41,14 @@ void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UFPSAnimInstance::UpdateAimOffset(APawn * AnimPawn)
 {
-	const FRotator controllerrotation = AnimPawn->GetControlRotation();
-	Pitch = FMath::ClampAngle(controllerrotation.Pitch, -90.0f, 90.0f);
+	if (AnimPawn->HasAuthority() || AnimPawn->IsLocallyControlled())
+	{
+		const FRotator controllerrotation = AnimPawn->GetControlRotation();
+		Pitch = FMath::ClampAngle(controllerrotation.Pitch, -90.0f, 90.0f);
+	}
+	else
+	{
+		const float remotepitch = FRotator::DecompressAxisFromByte(AnimPawn->RemoteViewPitch);
+		Pitch = FMath::ClampAngle(remotepitch, -90.0f, 90.0f);;
+	}
 }

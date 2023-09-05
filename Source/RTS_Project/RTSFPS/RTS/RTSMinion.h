@@ -11,6 +11,7 @@
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/CombatInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "./Orders/RTSMoveOrder.h"
@@ -127,8 +128,11 @@ protected:
 	UDecalSelectionComponent * Selection = nullptr;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GamePlay)
+	UPROPERTY(EditAnywhere, Category = GamePlay)
 	UHealthComponent* Health;
+
+	UPROPERTY(EditDefaultsOnly, Category = GamePlay)
+	UResourceGathererComponent* ResourceComp = nullptr;
 
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, Category = Gameplay)
 	int TeamID = -1;

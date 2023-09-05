@@ -39,8 +39,10 @@ protected:
 protected:
 	/**********************Resource Gatherer Overrides***************************/
 	virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;
+	virtual bool RemoveResource(TSubclassOf<UResource> ResourceClass, int amount) override;
 	virtual uint32 GetCurrentWeight() const override;
 	virtual uint32 GetMaxWeight() const override;
+	virtual FReplicationResourceMap GetAllHeldResources() const override;
 	/****************************************************************************/
 
 protected:

@@ -39,7 +39,7 @@ void UMineResourceAbility::MineResource()
 
 	if (IsValid(nodetomine))
 	{
-		const TSubclassOf<UResource> resourceclass = nodetomine->GetClass();
+		const TSubclassOf<UResource> resourceclass = nodetomine->GetResourceClass();
 		const uint32 maxpull = resourcegatherer->GetResourceTillFull(resourceclass);
 		
 		if (maxpull > 0U)
@@ -96,7 +96,7 @@ bool UMineResourceAbility::ShouldSeverBeam() const
 
 		if (retval == false)
 		{
-			const uint32 resourcecapacity = resourcegatherer->CanCarryMore(nodetomine->GetClass());
+			const uint32 resourcecapacity = resourcegatherer->CanCarryMore(nodetomine->GetResourceClass());
 			retval |= (resourcecapacity == 0U);
 		}
 	}
@@ -113,7 +113,7 @@ bool UMineResourceAbility::CanHit(AActor * HitActor) const
 	{
 		const IResourceGatherer* resourcegatherer = GetResourceGatherer();
 		checkf(resourcegatherer, TEXT("UMineResourceAbility::CanHit failed to obtain ResourceGatherer"));
-		retval &= resourcegatherer->CanCarryResource(resource->GetClass());
+		retval &= resourcegatherer->CanCarryResource(resource->GetResourceClass());
 	}
 
 
