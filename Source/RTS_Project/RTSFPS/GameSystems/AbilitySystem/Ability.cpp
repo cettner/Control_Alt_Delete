@@ -34,6 +34,7 @@ void UAbility::OnAbilityReleased()
 	if (ReleaseAbilityMontages.Num() && bcanplaymontage)
 	{
 		AbilityComp->SetIsCastSuccessful(true);
+		checkf(ReleaseAbilityMontages[0].AnimFirstPerson || ReleaseAbilityMontages[0].AnimThirdPerson, TEXT("UAbility::OnAbilityReleased Montage Slot is created but null"));
 		float playtime = AbilityComp->PlayAbilityMontage(ReleaseAbilityMontages[0]);
 	}
 	else

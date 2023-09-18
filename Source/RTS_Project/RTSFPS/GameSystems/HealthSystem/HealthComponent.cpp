@@ -3,9 +3,13 @@
 
 #include "HealthComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "GameFramework/Actor.h"
-#include "Perception/AIPerceptionSystem.h"
-#include "Engine.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
+
+
+
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -60,7 +64,8 @@ void UHealthComponent::SetCurrentHealth(float InHealth)
 
 	if (CurrentHealth <= 0.0f)
 	{
-		Die(0.0f, FDamageEvent(), nullptr, nullptr);
+		FDamageEvent damage = FDamageEvent();
+		Die(0.0f, damage, nullptr, nullptr);
 	}
 }
 

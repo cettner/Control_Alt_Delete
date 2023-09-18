@@ -110,10 +110,8 @@ void UBeamParticleAbility::Init(UAbilityComponent * InAbilityComp)
 	Super::Init(InAbilityComp);
 	IAbilityUserInterface * abilityuser = AbilityComp->GetAbilityUser();
 
-	USceneComponent * attatchtocomp = abilityuser->GetParticleAttatchmentComponent();
+	USceneComponent * attatchtocomp = abilityuser->GetParticleAttatchmentComponent(this);
 
-
-	
 	if (BeamEmitter != nullptr && attatchtocomp != nullptr)
 	{
 		EAttachLocation::Type attatchrule = EAttachLocation::SnapToTarget;

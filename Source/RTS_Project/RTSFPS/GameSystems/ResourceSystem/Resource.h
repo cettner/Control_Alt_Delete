@@ -121,10 +121,10 @@ public:
 	}
 protected:
 	UPROPERTY(EditDefaultsOnly)
-		TArray<int> Values;
+	TArray<int> Values;
 
 	UPROPERTY(EditDefaultsOnly)
-		TArray<TSubclassOf<UResource>> Keys;
+	TArray<TSubclassOf<UResource>> Keys;
 };
 
 

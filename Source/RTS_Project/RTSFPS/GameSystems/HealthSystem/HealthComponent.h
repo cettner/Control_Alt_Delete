@@ -7,7 +7,9 @@
 #include "Animation/AnimMontage.h"
 #include "Sound/SoundCue.h"
 #include "GameFramework/MovementComponent.h"
-#include "UObject/ObjectMacros.h"
+#include "Engine/DamageEvents.h"
+
+
 #include "HealthComponent.generated.h"
 
 
@@ -89,7 +91,7 @@ public:
 
 	virtual bool IsAlive() const;
 
-	virtual float HandleDamageEvent(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	virtual float HandleDamageEvent(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 protected:
 	///////////////////////////////////////////////////////////////
@@ -98,10 +100,10 @@ protected:
 	virtual bool CanDie(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser) const;
 
 	/*Starts Death Process, can only be invoked on the server*/
-	virtual bool Die(float KillingDamage, struct FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser);
+	virtual bool Die(float KillingDamage, FDamageEvent const& DamageEvent, AController* Killer, AActor* DamageCauser);
 
 	/**Play Death Effects on Server + Client*/
-	virtual void OnDeath(float KillingDamage, struct FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser);
+	virtual void OnDeath(float KillingDamage, FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser);
 
 	virtual void SetRagDollPhysics(USkeletalMeshComponent * Mesh = nullptr, UMovementComponent * Movement = nullptr);
 
@@ -111,7 +113,7 @@ public:
 	//////////////////////////////////////////////////
     //Damage
 	/** sets up the replication for taking a hit */
-	void ReplicateHit(float Damage, struct FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser, bool bKilled);
+	void ReplicateHit(float Damage, FDamageEvent const& DamageEvent, class APawn* InstigatingPawn, class AActor* DamageCauser, bool bKilled);
 
 	/* Play on hit effects on the client*/
 	void PlayLocalHit(float Damage, FDamageEvent const& DamageEvent, APawn* InstigatingPawn, AActor* DamageCauser);
@@ -121,7 +123,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	virtual float ModifyDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	virtual float ModifyDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
 
 	virtual USkeletalMeshComponent * GetOwnerMesh();
 	
@@ -159,7 +161,7 @@ protected:
 
 	/** Replicate where this pawn was last hit and damaged */
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_LastTakeHitInfo)
-	struct FTakeHitInfo LastTakeHitInfo;
+	FTakeHitInfo LastTakeHitInfo;
 
 	/** Time at which point the last take hit info for the actor times out and won't be replicated;*/
 	float LastTakeHitTimeTimeout;
