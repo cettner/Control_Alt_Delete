@@ -75,6 +75,17 @@ uint32 UResourceGathererComponent::GetMaxWeight() const
 	return MaxWeight;
 }
 
+uint32 UResourceGathererComponent::GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const
+{
+
+	return uint32();
+}
+
+uint32 UResourceGathererComponent::GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return 0U;
+}
+
 void UResourceGathererComponent::RecalculateWeight()
 {
 	CurrentWeight = 0U;

@@ -29,6 +29,11 @@ bool UResource::CanAfford(FReplicationResourceMap BuyerResources, FReplicationRe
 
 uint32 UResource::GetResourceWeight() const
 {
+	if (!IsWeightedResource())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Warning: GetResourceWeight was called on %s which is a discrete resource"), *GetName());
+	}
+
 	return ResourceWeight;
 }
 

@@ -17,11 +17,6 @@ bool IResourceGatherer::RemoveResource(TSubclassOf<UResource> ResourceClass, int
 	return false;
 }
 
-bool IResourceGatherer::DropsResourceOnDeath() const
-{
-	return false;
-}
-
 FReplicationResourceMap IResourceGatherer::GetAllHeldResources() const
 {
 	return FReplicationResourceMap();
@@ -35,6 +30,16 @@ uint32 IResourceGatherer::GetCurrentWeight() const
 uint32 IResourceGatherer::GetMaxWeight() const
 {
 	return 0xFFFFFFFF;
+}
+
+uint32 IResourceGatherer::GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return uint32();
+}
+
+uint32 IResourceGatherer::GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return uint32();
 }
 
 
@@ -88,6 +93,37 @@ bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap)
 	}
 
 	return retval;
+}
+
+uint32 IResourceGatherer::GetResourceMaximum(const TSubclassOf<UResource> InResourceClass)
+{
+	uint32 retval = 0xFFFFFFFF;
+	const UResource* resourcecdo = InResourceClass.GetDefaultObject();
+	if (resourcecdo->IsWeightedResource())
+	{
+		const uint32 maxweight = GetMaxWeight();
+		const uint32 resourceweight = resourcecdo->GetResourceWeight();
+
+		retval = maxweight / resourceweight;
+
+	}
+	else
+	{
+		retval = GetResourceDiscreteMaximum(InResourceClass);
+	}
+
+	return retval;
+}
+
+uint32 IResourceGatherer::GetResourceMinimum(const TSubclassOf<UResource> InResourceClass)
+{
+	const UResource* resourcecdo = InResourceClass.GetDefaultObject();
+	uint32 retval = 0U;
+	if (!resourcecdo->IsWeightedResource())
+	{
+		retval = GetResourceDiscreteMinimum(InResourceClass);
+	}
+	return 0U;
 }
 
 void IResourceGatherer::AddResource(const FReplicationResourceMap InResourceMap)
@@ -152,14 +188,26 @@ bool IResourceGatherer::TransferResourceFromSource(IResourceGatherer* InDonar, c
 bool IResourceGatherer::CanCarryMore(TSubclassOf<UResource> InResourceClass, uint32 InNumtoCarry) const
 {
 	const UResource* resourcecdo = InResourceClass.GetDefaultObject();
-	const uint32 resourceweight = resourcecdo->GetResourceWeight() * InNumtoCarry;
-	const uint32 currentweight = GetCurrentWeight();
+	bool retval = false;
 
-	const uint32 maxweight = GetMaxWeight();
+	if (resourcecdo->IsWeightedResource())
+	{
+		const uint32 resourceweight = resourcecdo->GetResourceWeight() * InNumtoCarry;
+		const uint32 currentweight = GetCurrentWeight();
+		const uint32 maxweight = GetMaxWeight();
+		const uint32 estimatedweight = currentweight + resourceweight;
 
-	const uint32 estimatedweight = currentweight + resourceweight;
+		retval = estimatedweight <= maxweight;
+	}
+	else
+	{
+		uint32 heldresource = 0U;
+		const uint32 discretemax = GetResourceDiscreteMaximum(InResourceClass);
+		GetHeldResource(InResourceClass, heldresource);
+		const uint32 estimatedcount = heldresource + InNumtoCarry;
+		retval = estimatedcount <= discretemax;
+	}
 
-	const bool retval = estimatedweight <= maxweight;
 	return retval;
 }
 
@@ -167,21 +215,32 @@ uint32 IResourceGatherer::GetResourceTillFull(TSubclassOf<UResource> InResourceC
 {
 	uint32 retval = 0U;
 	const UResource* defaultresource = InResourceClass.GetDefaultObject();
-	const uint32 singleresourceweight = defaultresource->GetResourceWeight();
 
-	if (singleresourceweight == 0U)
+	if (defaultresource->IsWeightedResource())
 	{
-		retval = 0xFFFFFFFFU;
+		const uint32 singleresourceweight = defaultresource->GetResourceWeight();
+
+		if (singleresourceweight == 0U)
+		{
+			retval = 0xFFFFFFFFU;
+		}
+		else
+		{
+			const uint32 currentweight = GetCurrentWeight();
+			const uint32 maxweight = GetMaxWeight();
+			if (currentweight < maxweight)
+			{
+				const uint32 availableweight = maxweight - currentweight;
+				retval = availableweight / singleresourceweight;
+			}
+		}
 	}
 	else
 	{
-		const uint32 currentweight = GetCurrentWeight();
-		const uint32 maxweight = GetMaxWeight();
-		if (currentweight < maxweight)
-		{
-			const uint32 availableweight = maxweight - currentweight;
-			retval = availableweight / singleresourceweight;
-		}
+		uint32 heldresource = 0U;
+		const uint32 discretemax = GetResourceDiscreteMaximum(InResourceClass);
+		GetHeldResource(InResourceClass, heldresource);
+		retval =  discretemax - heldresource;
 	}
 
 	return retval;
@@ -195,9 +254,21 @@ bool IResourceGatherer::CanCarryAllResources(const FReplicationResourceMap InRes
 	for (int i = 0; i < InResourcestoCarry.Num(); i++)
 	{
 		const UResource * resourcecdo = InResourcestoCarry[i].Key.GetDefaultObject();
-		const uint32 resourceweight = resourcecdo->GetResourceWeight();
-		const uint32 resourcecount = StaticCast<uint32,int32>(InResourcestoCarry[i].Value);
-		estimatedweight += (resourceweight * resourcecount);
+		if (resourcecdo->IsWeightedResource())
+		{
+			const uint32 resourceweight = resourcecdo->GetResourceWeight();
+			const uint32 resourcecount = StaticCast<uint32, int32>(InResourcestoCarry[i].Value);
+			estimatedweight += (resourceweight * resourcecount);
+		}
+		else
+		{
+			uint32 heldresource = 0U;
+			const uint32 discretemax = GetResourceDiscreteMaximum(InResourcestoCarry[i].Key);
+			GetHeldResource(InResourcestoCarry[i].Key, heldresource);
+			const uint32 estimatedresource = heldresource + InResourcestoCarry[i].Value;
+			const bool canholdresources = estimatedresource <= discretemax;
+			retval &= canholdresources;
+		}
 	}
 
 

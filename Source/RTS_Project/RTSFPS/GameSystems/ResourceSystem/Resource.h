@@ -127,7 +127,6 @@ protected:
 	TArray<TSubclassOf<UResource>> Keys;
 };
 
-
 UCLASS(BluePrintable)
 class RTS_PROJECT_API UResource : public UObject
 {
@@ -136,11 +135,15 @@ class RTS_PROJECT_API UResource : public UObject
 	public:
 		uint32 GetResourceWeight() const;
 		FName GetResourceName() const;
+		FORCEINLINE bool IsWeightedResource() const { return IsWeighted; }
 
 		/*Helper Static Function for purchasing Things With Resources*/
 		static bool CanAfford(FReplicationResourceMap BuyerResources, FReplicationResourceMap SellerCost);
 
 	protected:
+		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+		bool IsWeighted = true;
+
 		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 		uint32 ResourceWeight = 1U;
 

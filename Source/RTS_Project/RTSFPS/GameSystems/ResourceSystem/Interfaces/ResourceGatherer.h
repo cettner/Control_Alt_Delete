@@ -36,6 +36,9 @@ public:
 	virtual bool HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount = 1U) const;
 	virtual bool HasResource(const FReplicationResourceMap InResourceMap) const;
 
+	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass);
+	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass);
+
 	/*Returns whether the gatherer supports carrying the Resource type 
 	Note: This should return true even if the gatherer is full, use CanCarryMore to determine if you can fit the desired amount*/
 	virtual bool CanCarryResource(const TSubclassOf<UResource> InResource) const;
@@ -47,7 +50,6 @@ public:
 	/*Returns the number of resources of the specified class that can be carried until full*/
 	virtual uint32 GetResourceTillFull(TSubclassOf<UResource> ResourceClass) const;
 	virtual bool CanCarryAllResources(const FReplicationResourceMap InResourcestoCarry) const;
-	virtual bool DropsResourceOnDeath() const;
 
 	/*Returns a Map of All resources Carried by the instance*/
 	virtual FReplicationResourceMap GetAllHeldResources() const;
@@ -56,4 +58,9 @@ public:
 	virtual bool GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const;
 	virtual uint32 GetCurrentWeight() const;
 	virtual uint32 GetMaxWeight() const;
+
+
+protected:
+	virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const;
+	virtual uint32 GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const;
 };

@@ -30,6 +30,10 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		virtual uint32 GetMaxWeight() const override;
 
 	protected:
+		virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const override;
+		virtual uint32 GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const override;
+
+	protected:
 		virtual void RecalculateWeight();
 
 	protected:
@@ -50,6 +54,8 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	protected:
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		FReplicationResourceMap HeldResources = FReplicationResourceMap();
+		UPROPERTY(Replicated)
+		FReplicationResourceMap ResourceMaximums = FReplicationResourceMap();
 
 		TMap<TSubclassOf<UResource>,FOnResourceDepletedDelegate> ResourceDelegates;
 
