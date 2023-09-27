@@ -32,6 +32,14 @@ uint32 IResourceGatherer::GetMaxWeight() const
 	return 0xFFFFFFFF;
 }
 
+void IResourceGatherer::SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+{
+}
+
+void IResourceGatherer::SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+{
+}
+
 uint32 IResourceGatherer::GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const
 {
 	return uint32();

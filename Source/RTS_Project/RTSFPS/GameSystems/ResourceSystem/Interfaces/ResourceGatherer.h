@@ -39,6 +39,9 @@ public:
 	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass);
 	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass);
 
+	virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount);
+	virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount);
+
 	/*Returns whether the gatherer supports carrying the Resource type 
 	Note: This should return true even if the gatherer is full, use CanCarryMore to determine if you can fit the desired amount*/
 	virtual bool CanCarryResource(const TSubclassOf<UResource> InResource) const;
@@ -61,6 +64,6 @@ public:
 
 
 protected:
-	virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const;
-	virtual uint32 GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const;
+	virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass) const;
+	virtual uint32 GetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass) const;
 };

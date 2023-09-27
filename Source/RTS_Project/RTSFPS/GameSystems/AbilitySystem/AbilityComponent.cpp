@@ -393,11 +393,6 @@ int UAbilityComponent::GetAbilityCost() const
 	return 0;
 }
 
-bool UAbilityComponent::ConsumeMana(int amount)
-{
-	return false;
-}
-
 IAbilityUserInterface * UAbilityComponent::GetAbilityUser() const
 {
 	return AbilityUser;

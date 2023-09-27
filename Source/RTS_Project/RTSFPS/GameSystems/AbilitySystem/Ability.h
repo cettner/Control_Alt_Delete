@@ -50,20 +50,12 @@ class RTS_PROJECT_API UAbility : public UObject
 		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel() const;
 		bool GetDefaultEnabledState() const;
 		TArray<FName> GetAbilityTags() const;
-	
-	public:
-		int GetManaCost() const;
-		virtual bool ConsumeMana(int amount);
 
 	protected:
 		UWorld * GetWorld() const;
 		bool HasAuthority() const;
 
 	protected:
-		UPROPERTY(EditDefaultsOnly)
-		/*Cost of the Abiliy*/
-		int ManaCost = 0;
-
 		UPROPERTY(EditDefaultsOnly)
 		/*If true, Release Events or Effects will not fire unless bIsCastReady from interface is set to true, otherwise they will always fire*/
 		bool bRequiresReadyCast = true;

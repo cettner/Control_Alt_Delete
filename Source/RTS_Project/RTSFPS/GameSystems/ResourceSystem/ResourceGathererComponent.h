@@ -10,7 +10,8 @@
 #include "ResourceGathererComponent.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnResourceDepletedDelegate, TSubclassOf<UResource>, TScriptInterface<IResourceGatherer>)
+
+DECLARE_MULTICAST_DELEGATE_FourParams(FOnResourceValueChangedDelegate, const TSubclassOf<UResource>, const uint32/*old value*/, const uint32 /*new value*/, TScriptInterface<IResourceGatherer>);
 
 UCLASS()
 class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, public IResourceGatherer
@@ -20,7 +21,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	UResourceGathererComponent();
 
 	public:	
-		FOnResourceDepletedDelegate& BindResourceDepletionEvent(TSubclassOf<UResource> InResourceType);
+		FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType);
 
 	public:
 		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;
@@ -28,6 +29,9 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;
+
+		virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount) override;
+		virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount) override;
 
 	protected:
 		virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const override;
@@ -48,16 +52,17 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		UPROPERTY(EditDefaultsOnly)
 		UResourceData* StartingResources = nullptr;
 
-		UPROPERTY(EditDefaultsOnly)
+	protected:
+		UPROPERTY(Replicated)
 		uint32 MaxWeight = 10U;
 
-	protected:
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		FReplicationResourceMap HeldResources = FReplicationResourceMap();
+
 		UPROPERTY(Replicated)
 		FReplicationResourceMap ResourceMaximums = FReplicationResourceMap();
 
-		TMap<TSubclassOf<UResource>,FOnResourceDepletedDelegate> ResourceDelegates;
+		TMap<TSubclassOf<UResource>, FOnResourceValueChangedDelegate> ResourceDelegates;
 
 		uint32 CurrentWeight = 0U;
 };

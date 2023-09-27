@@ -33,12 +33,8 @@ class RTS_PROJECT_API UResourceData : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	const FReplicationResourceMap& GetResourceData() const { return Resources; }
 	const TMap<TSubclassOf<UResource>, FResourceConfigData>& GetResourceConfig() const { return ResourceConfig; }
 protected:
-	UPROPERTY(EditDefaultsOnly)
-	FReplicationResourceMap Resources = FReplicationResourceMap();
-
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TSubclassOf<UResource>, FResourceConfigData> ResourceConfig = TMap<TSubclassOf<UResource>, FResourceConfigData>();
 };

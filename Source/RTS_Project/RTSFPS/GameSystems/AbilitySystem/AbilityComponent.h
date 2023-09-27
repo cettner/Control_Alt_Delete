@@ -133,8 +133,6 @@ public:
 
 	int GetAbilityCost() const;
 
-	bool ConsumeMana(int amount);
-
 	/*Returns the User Associated witht the Component*/
 	virtual IAbilityUserInterface * GetAbilityUser() const;
 

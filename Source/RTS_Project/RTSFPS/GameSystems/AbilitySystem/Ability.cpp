@@ -75,11 +75,6 @@ void UAbility::NotifyOnLoop()
 	AbilityComp->PlayAbilityMontage(LoopMontage);
 }
 
-int UAbility::GetManaCost() const
-{
-	return ManaCost;
-}
-
 TEnumAsByte<ECollisionChannel> UAbility::GetAbilityCollisionChannel() const
 {
 	return AbilityEffectChannel;
@@ -93,11 +88,6 @@ bool UAbility::GetDefaultEnabledState() const
 TArray<FName> UAbility::GetAbilityTags() const
 {
 	return AbilityTags;
-}
-
-bool UAbility::ConsumeMana(int amount)
-{
-	return AbilityComp->ConsumeMana(amount);
 }
 
 UWorld * UAbility::GetWorld() const

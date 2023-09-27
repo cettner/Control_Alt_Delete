@@ -16,15 +16,15 @@ UResourceGathererComponent::UResourceGathererComponent()
 	StartingResources = CreateDefaultSubobject<UResourceData>(TEXT("StartingResources"));
 }
 
-FOnResourceDepletedDelegate& UResourceGathererComponent::BindResourceDepletionEvent(TSubclassOf<UResource> InResourceType)
+FOnResourceValueChangedDelegate& UResourceGathererComponent::BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType)
 {
-	if (FOnResourceDepletedDelegate* founddelegate = ResourceDelegates.Find(InResourceType))
+	if (FOnResourceValueChangedDelegate* founddelegate = ResourceDelegates.Find(InResourceType))
 	{
 		return *founddelegate;
 	}
 	else
 	{
-		FOnResourceDepletedDelegate newdelegate = FOnResourceDepletedDelegate();
+		FOnResourceValueChangedDelegate newdelegate = FOnResourceValueChangedDelegate();
 		ResourceDelegates.Emplace(InResourceType, newdelegate);
 
 		return *ResourceDelegates.Find(InResourceType);
@@ -34,27 +34,47 @@ FOnResourceDepletedDelegate& UResourceGathererComponent::BindResourceDepletionEv
 void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
-	checkf(HeldResources.Increment(ResourceClass, amount), TEXT("UResourceGathererComponent::AddResource, Failed to add Resource because it wasnt supported"));
-	CurrentWeight += resourcecdo->GetResourceWeight() * amount;
+	const int* slotptr = HeldResources.Find(ResourceClass);
+
+	const uint32 oldvalue = static_cast<uint32>(*slotptr);
+	checkf(slotptr, TEXT("UResourceGathererComponent::AddResource, Failed to add Resource because it wasnt supported"));
+	const uint32 newvalue = static_cast<uint32>(*slotptr);
+
+	HeldResources.Increment(ResourceClass, amount);
+
+	if (resourcecdo->IsWeightedResource())
+	{
+		CurrentWeight += resourcecdo->GetResourceWeight() * amount;
+	}
+
+	FOnResourceValueChangedDelegate* broadcast = ResourceDelegates.Find(ResourceClass);
+
+	if (broadcast != nullptr)
+	{
+		(*broadcast).Broadcast(ResourceClass, oldvalue, newvalue, TScriptInterface<IResourceGatherer>(GetOwner()));
+	}
 }
 
 bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
+	const int* slotptr = HeldResources.Find(ResourceClass);
+	checkf(slotptr, TEXT("UResourceGathererComponent::RemoveResource, Failed to remove Resource because it wasnt supported"));
+
+	const uint32 oldvalue = static_cast<uint32>(*slotptr);
 	bool retval = HeldResources.Decrement(ResourceClass, amount);
-	CurrentWeight -= resourcecdo->GetResourceWeight() * amount;
-
-	if (const int * outvalue = HeldResources.Find(ResourceClass))
+	const uint32 newvalue = static_cast<uint32>(*slotptr);
+	
+	if (resourcecdo->IsWeightedResource())
 	{
-		if (*outvalue == 0)
-		{
-			FOnResourceDepletedDelegate* broadcast = ResourceDelegates.Find(ResourceClass);
+		CurrentWeight -= resourcecdo->GetResourceWeight() * amount;
+	}
 
-			if (broadcast != nullptr)
-			{
-				(*broadcast).Broadcast(ResourceClass, this);
-			}
-		}
+	FOnResourceValueChangedDelegate* broadcast = ResourceDelegates.Find(ResourceClass);
+
+	if (broadcast != nullptr)
+	{
+		(*broadcast).Broadcast(ResourceClass, oldvalue, newvalue, TScriptInterface<IResourceGatherer>(GetOwner()));
 	}
 
 	return retval;
@@ -75,10 +95,22 @@ uint32 UResourceGathererComponent::GetMaxWeight() const
 	return MaxWeight;
 }
 
-uint32 UResourceGathererComponent::GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const
+void UResourceGathererComponent::SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+{
+	ResourceMaximums.Emplace(InResourceClass, InAmount);
+}
+
+void UResourceGathererComponent::SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
 {
 
-	return uint32();
+}
+
+uint32 UResourceGathererComponent::GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const
+{
+	const int* maxptr = ResourceMaximums.Find(ResourceClass);
+	checkf(maxptr, TEXT(" UResourceGathererComponent::GetResourceDiscreteMaximum failed to obtain maximum for Resource"));
+	const uint32 retval = static_cast<uint32>(*maxptr);
+	return retval;
 }
 
 uint32 UResourceGathererComponent::GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const
@@ -92,7 +124,10 @@ void UResourceGathererComponent::RecalculateWeight()
 	for (int i = 0; i < HeldResources.Num(); i++)
 	{
 		const UResource * resourcecdo = HeldResources[i].Key.GetDefaultObject();
-		CurrentWeight += resourcecdo->GetResourceWeight() * HeldResources[i].Value;
+		if (resourcecdo->IsWeightedResource())
+		{
+			CurrentWeight += resourcecdo->GetResourceWeight() * HeldResources[i].Value;
+		}
 	}
 }
 
@@ -104,11 +139,22 @@ void UResourceGathererComponent::OnRep_HeldResources()
 void UResourceGathererComponent::OnRegister()
 {
 	Super::OnRegister();
-	HeldResources = StartingResources->GetResourceData();
+	
+	for (TPair<TSubclassOf<UResource>, FResourceConfigData> resourceconfig : StartingResources->GetResourceConfig())
+	{
+		const TSubclassOf<UResource> resourceclass = resourceconfig.Key;
+		const FResourceConfigData configdata = resourceconfig.Value;
+		HeldResources.Emplace(resourceclass,configdata.StartingValue);
+		SetResourceDiscreteMaximum(resourceclass, configdata.Max);
+		SetResourceDiscreteMinimum(resourceclass, configdata.Min);
+	}
+	RecalculateWeight();
 }
 
 void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UResourceGathererComponent, HeldResources);
+	DOREPLIFETIME(UResourceGathererComponent, ResourceMaximums);
+	DOREPLIFETIME(UResourceGathererComponent, MaxWeight);
 }
