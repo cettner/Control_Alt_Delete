@@ -103,7 +103,7 @@ bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap)
 	return retval;
 }
 
-uint32 IResourceGatherer::GetResourceMaximum(const TSubclassOf<UResource> InResourceClass)
+uint32 IResourceGatherer::GetResourceMaximum(const TSubclassOf<UResource> InResourceClass) const
 {
 	uint32 retval = 0xFFFFFFFF;
 	const UResource* resourcecdo = InResourceClass.GetDefaultObject();
@@ -123,7 +123,7 @@ uint32 IResourceGatherer::GetResourceMaximum(const TSubclassOf<UResource> InReso
 	return retval;
 }
 
-uint32 IResourceGatherer::GetResourceMinimum(const TSubclassOf<UResource> InResourceClass)
+uint32 IResourceGatherer::GetResourceMinimum(const TSubclassOf<UResource> InResourceClass) const
 {
 	const UResource* resourcecdo = InResourceClass.GetDefaultObject();
 	uint32 retval = 0U;

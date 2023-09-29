@@ -36,8 +36,8 @@ public:
 	virtual bool HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount = 1U) const;
 	virtual bool HasResource(const FReplicationResourceMap InResourceMap) const;
 
-	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass);
-	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass);
+	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const;
+	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const;
 
 	virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount);
 	virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount);

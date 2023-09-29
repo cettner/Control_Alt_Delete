@@ -90,6 +90,16 @@ uint32 AAbilityCombatCommander::GetMaxWeight() const
 	return ResourceComp->GetMaxWeight();
 }
 
+uint32 AAbilityCombatCommander::GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return ResourceComp->GetResourceMaximum(ResourceClass);
+}
+
+uint32 AAbilityCombatCommander::GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return ResourceComp->GetResourceMinimum(ResourceClass);
+}
+
 void AAbilityCombatCommander::GrantExp(uint32 inexp)
 {
 	const APlayerController * pc =  GetController<APlayerController>();

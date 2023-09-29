@@ -12,8 +12,7 @@ void UPersonalResourceWidget::NativeConstruct()
 
 float UPersonalResourceWidget::UpdateWeightCapacity()
 {
-	APawn* MyPawn = GetOwningPlayerPawn();
-	IResourceGatherer * resourcecarrier =  GetOwningPlayerPawn<IResourceGatherer>();
+	const IResourceGatherer * resourcecarrier =  GetOwningPlayerPawn<IResourceGatherer>();
 	float retval = 0.0f;
 
 	if (resourcecarrier && (resourcecarrier->GetMaxWeight() > 0U))

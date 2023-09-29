@@ -39,6 +39,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;
+		virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const override;
+		virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const override;
 	/*************************************************************************************/
 	
 
