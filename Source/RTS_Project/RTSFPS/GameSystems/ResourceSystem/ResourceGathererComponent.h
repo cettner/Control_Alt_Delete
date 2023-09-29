@@ -40,6 +40,24 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	protected:
 		virtual void RecalculateWeight();
 
+	// Anthonys cool code club ------------------------------------------------------
+	private:
+		// Adds new key value pair to the back
+		void Emplace(const TSubclassOf<UResource> InKey, const uint32 InValue);
+
+		bool Remove(TSubclassOf<UResource> Key);
+
+		bool IncOrDec(TSubclassOf<UResource> Key, uint32 Value, bool Increment=true);
+
+		bool Increment(TSubclassOf<UResource> Key, uint32 Value);
+
+		bool Decrement(TSubclassOf<UResource> Key, uint32 Value);
+
+		const int* Find(TSubclassOf<UResource> Key) const;
+
+		int Num() const;
+																								   
+	// END ---
 	protected:
 		UFUNCTION()
 		virtual void OnRep_HeldResources();
@@ -56,8 +74,20 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		UPROPERTY(Replicated)
 		uint32 MaxWeight = 10U;
 
+		// TODO: Remove
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		FReplicationResourceMap HeldResources = FReplicationResourceMap();
+
+		// New code 
+		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
+		TArray<uint32> Values;
+		
+		// Will be set at start of game
+		TArray<TSubclassOf<UResource>> Keys;
+
+
+		
+		
 
 		UPROPERTY(Replicated)
 		FReplicationResourceMap ResourceMaximums = FReplicationResourceMap();

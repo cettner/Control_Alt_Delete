@@ -55,6 +55,7 @@ void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClas
 	}
 }
 
+// TODO: Make this say DecrementResource
 bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
@@ -82,6 +83,8 @@ bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> Res
 
 FReplicationResourceMap UResourceGathererComponent::GetAllHeldResources() const
 {
+	//TODO: Make this return a HeldResources 
+	
 	return HeldResources;
 }
 
@@ -131,6 +134,62 @@ void UResourceGathererComponent::RecalculateWeight()
 	}
 }
 
+// Anthonys cool code club ------------------------------------------------------
+void UResourceGathererComponent::Emplace(const TSubclassOf<UResource> InKey, const uint32 InValue)
+{
+	Values.Emplace(InValue);
+	Keys.Emplace(InKey);
+}
+
+bool UResourceGathererComponent::Remove(TSubclassOf<UResource> Key)
+{
+	UE_LOG(LogTemp, Fatal, TEXT("UResourceGathererComponent::Remove not implemented"));
+	return false;
+}
+
+bool UResourceGathererComponent::IncOrDec(TSubclassOf<UResource> Key, uint32 Value, bool Increment)
+{
+	bool retVal = false;
+
+	checkf(Key, TEXT("UResourceGathererComponent::IncOrDec, KEY is NULL"));
+
+	if (Value == 0) {
+		// No need to do anything if adding/subtracting zero
+		retVal = true;
+	}
+	else if (Value > 0) {
+		const int index = Keys.IndexOfByKey(Key);
+
+		checkf(index == INDEX_NONE, TEXT("UResourceGathererComponent::IncOrDec, \
+										  KEY wasn't found in Keys"));
+
+		if (Increment == true) {
+			Values[index] += Value;
+		}
+		else {
+			Values[index] -= Value;
+		}
+
+		retVal = true;
+	}
+	return false;
+}
+
+bool UResourceGathererComponent::Increment(TSubclassOf<UResource> Key, uint32 Value)
+{
+	return IncOrDec(Key, Value);
+	
+}
+
+bool UResourceGathererComponent::Decrement(TSubclassOf<UResource> Key, uint32 Value)
+{
+	return IncOrDec(Key, Value,false);
+}
+
+
+// END ----
+
+
 void UResourceGathererComponent::OnRep_HeldResources()
 {
 	RecalculateWeight();
@@ -154,6 +213,7 @@ void UResourceGathererComponent::OnRegister()
 void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//TODO: Might need to add the values array to this 
 	DOREPLIFETIME(UResourceGathererComponent, HeldResources);
 	DOREPLIFETIME(UResourceGathererComponent, ResourceMaximums);
 	DOREPLIFETIME(UResourceGathererComponent, MaxWeight);
