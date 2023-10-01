@@ -100,6 +100,11 @@ uint32 AAbilityCombatCommander::GetResourceMinimum(const TSubclassOf<UResource> 
 	return ResourceComp->GetResourceMinimum(ResourceClass);
 }
 
+TMap<TSubclassOf<UObject>, FReplicationResourceMap> AAbilityCombatCommander::GetAllDefaultUnitPrices() const
+{
+	return TMap<TSubclassOf<UObject>, FReplicationResourceMap>();
+}
+
 void AAbilityCombatCommander::GrantExp(uint32 inexp)
 {
 	const APlayerController * pc =  GetController<APlayerController>();
