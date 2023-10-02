@@ -34,13 +34,13 @@ FOnResourceValueChangedDelegate& UResourceGathererComponent::BindResourceValueCh
 void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
-	const int* slotptr = HeldResources.Find(ResourceClass);
+	const uint32* slotptr = Find(ResourceClass);
 
 	const uint32 oldvalue = static_cast<uint32>(*slotptr);
 	checkf(slotptr, TEXT("UResourceGathererComponent::AddResource, Failed to add Resource because it wasnt supported"));
 	const uint32 newvalue = static_cast<uint32>(*slotptr);
 
-	HeldResources.Increment(ResourceClass, amount);
+	Increment(ResourceClass, amount);
 
 	if (resourcecdo->IsWeightedResource())
 	{
@@ -59,11 +59,11 @@ void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClas
 bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
-	const int* slotptr = HeldResources.Find(ResourceClass);
+	const uint32* slotptr = Find(ResourceClass);
 	checkf(slotptr, TEXT("UResourceGathererComponent::RemoveResource, Failed to remove Resource because it wasnt supported"));
 
 	const uint32 oldvalue = static_cast<uint32>(*slotptr);
-	bool retval = HeldResources.Decrement(ResourceClass, amount);
+	bool retval = Decrement(ResourceClass, amount);
 	const uint32 newvalue = static_cast<uint32>(*slotptr);
 	
 	if (resourcecdo->IsWeightedResource())
@@ -218,7 +218,7 @@ void UResourceGathererComponent::OnRegister()
 	{
 		const TSubclassOf<UResource> resourceclass = resourceconfig.Key;
 		const FResourceConfigData configdata = resourceconfig.Value;
-		HeldResources.Emplace(resourceclass,configdata.StartingValue);
+		Emplace(resourceclass,configdata.StartingValue);
 		SetResourceDiscreteMaximum(resourceclass, configdata.Max);
 		SetResourceDiscreteMinimum(resourceclass, configdata.Min);
 	}
@@ -228,7 +228,8 @@ void UResourceGathererComponent::OnRegister()
 void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	//TODO: Might need to add the values array to this 
+	//TODO: Might need to add the values array to this
+	DOREPLIFETIME(UResourceGathererComponent, Values);
 	DOREPLIFETIME(UResourceGathererComponent, HeldResources);
 	DOREPLIFETIME(UResourceGathererComponent, ResourceMaximums);
 	DOREPLIFETIME(UResourceGathererComponent, MaxWeight);
