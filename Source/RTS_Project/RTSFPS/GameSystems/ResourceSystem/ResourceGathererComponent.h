@@ -75,10 +75,10 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		uint32 MaxWeight = 10U;
 
 		// TODO: Remove
-		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
-		FReplicationResourceMap HeldResources = FReplicationResourceMap();
+		//UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
+		//FReplicationResourceMap HeldResources = FReplicationResourceMap();
 
-		// New code 
+		 // New code 
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		TArray<uint32> Values;
 		
