@@ -186,7 +186,22 @@ bool UResourceGathererComponent::Decrement(TSubclassOf<UResource> Key, uint32 Va
 	return IncOrDec(Key, Value,false);
 }
 
+const uint32* UResourceGathererComponent::Find(TSubclassOf<UResource> Key) const
+{
+	bool retVal = false;
 
+	const int index = Keys.IndexOfByKey(Key);
+
+	checkf(index == INDEX_NONE, TEXT("UResourceGathererComponent::Find, \
+										  KEY wasn't found in Keys"));
+
+	return &Values[index];
+}
+
+const int UResourceGathererComponent::Num() const
+{
+	return Values.Num();
+}
 // END ----
 
 
