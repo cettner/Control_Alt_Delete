@@ -85,6 +85,12 @@ FReplicationResourceMap UResourceGathererComponent::GetAllHeldResources() const
 {
 	//TODO: Make this return a HeldResources 
 	
+	FReplicationResourceMap HeldResources = FReplicationResourceMap();
+
+	for (int i = 0; i < Keys.Num(); i++) {
+		HeldResources.Emplace(Keys[i], Values[i]);
+	}
+
 	return HeldResources;
 }
 
@@ -124,12 +130,12 @@ uint32 UResourceGathererComponent::GetResourceDiscreteMinimum(const TSubclassOf<
 void UResourceGathererComponent::RecalculateWeight()
 {
 	CurrentWeight = 0U;
-	for (int i = 0; i < HeldResources.Num(); i++)
+	for (int i = 0; i < Keys.Num(); i++)
 	{
-		const UResource * resourcecdo = HeldResources[i].Key.GetDefaultObject();
+		const UResource* resourcecdo = Keys[i].GetDefaultObject();
 		if (resourcecdo->IsWeightedResource())
 		{
-			CurrentWeight += resourcecdo->GetResourceWeight() * HeldResources[i].Value;
+			CurrentWeight += resourcecdo->GetResourceWeight() * Values[i];
 		}
 	}
 }
@@ -160,7 +166,7 @@ bool UResourceGathererComponent::IncOrDec(TSubclassOf<UResource> Key, uint32 Val
 	else if (Value > 0) {
 		const int index = Keys.IndexOfByKey(Key);
 
-		checkf(index == INDEX_NONE, TEXT("UResourceGathererComponent::IncOrDec, \
+		checkf(index != INDEX_NONE, TEXT("UResourceGathererComponent::IncOrDec, \
 										  KEY wasn't found in Keys"));
 
 		if (Increment == true) {
@@ -192,7 +198,7 @@ const uint32* UResourceGathererComponent::Find(TSubclassOf<UResource> Key) const
 
 	const int index = Keys.IndexOfByKey(Key);
 
-	checkf(index == INDEX_NONE, TEXT("UResourceGathererComponent::Find, \
+	checkf(index != INDEX_NONE, TEXT("UResourceGathererComponent::Find, \
 										  KEY wasn't found in Keys"));
 
 	return &Values[index];
@@ -230,7 +236,7 @@ void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	//TODO: Might need to add the values array to this
 	DOREPLIFETIME(UResourceGathererComponent, Values);
-	DOREPLIFETIME(UResourceGathererComponent, HeldResources);
+	//DOREPLIFETIME(UResourceGathererComponent, HeldResources);
 	DOREPLIFETIME(UResourceGathererComponent, ResourceMaximums);
 	DOREPLIFETIME(UResourceGathererComponent, MaxWeight);
 }
