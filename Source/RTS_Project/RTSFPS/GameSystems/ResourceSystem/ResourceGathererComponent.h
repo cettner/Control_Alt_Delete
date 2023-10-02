@@ -53,9 +53,9 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 
 		bool Decrement(TSubclassOf<UResource> Key, uint32 Value);
 
-		const int* Find(TSubclassOf<UResource> Key) const;
+		const uint32* Find(TSubclassOf<UResource> Key) const;
 
-		int Num() const;
+		const int Num() const;
 																								   
 	// END ---
 	protected:
