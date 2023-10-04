@@ -59,12 +59,12 @@ void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClas
 bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount)
 {
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
-	const uint32* slotptr = Find(ResourceClass);
-	checkf(slotptr, TEXT("UResourceGathererComponent::RemoveResource, Failed to remove Resource because it wasnt supported"));
+	const uint32* resourceValuePtr = Find(ResourceClass);
+	checkf(resourceValuePtr, TEXT("UResourceGathererComponent::RemoveResource, Failed to remove Resource because it wasnt supported"));
 
-	const uint32 oldvalue = static_cast<uint32>(*slotptr);
+	const uint32 oldvalue = *resourceValuePtr;
 	bool retval = Decrement(ResourceClass, amount);
-	const uint32 newvalue = static_cast<uint32>(*slotptr);
+	const uint32 newvalue = *resourceValuePtr;
 	
 	if (resourcecdo->IsWeightedResource())
 	{
@@ -189,7 +189,7 @@ bool UResourceGathererComponent::IncOrDec(TSubclassOf<UResource> Key, uint32 Val
 
 		retVal = true;
 	}
-	return false;
+	return retVal;
 }
 
 bool UResourceGathererComponent::Increment(TSubclassOf<UResource> Key, uint32 Value)
