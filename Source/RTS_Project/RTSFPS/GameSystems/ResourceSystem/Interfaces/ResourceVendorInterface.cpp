@@ -9,28 +9,26 @@
 bool IResourceVendorInterface::PurchaseUnit(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer* Purchaser, AController* InstigatingController)
 {
 	bool retval = false;
-	
+
 	if (IsUnitPurchaseable(PurchaseClass, Purchaser, InstigatingController))
 	{
-		const FReplicationResourceMap costs = GetUnitPriceForSource(PurchaseClass, Purchaser, InstigatingController);
+		FReplicationResourceMap costs = FReplicationResourceMap();
+		checkf(GetUnitPriceForSource(PurchaseClass, Purchaser, costs, InstigatingController), TEXT("IResourceVendorInterface::PurchaseUnit Failed to aquire Price Despite Being able to Purchase"));
+		
 		retval = Purchaser->RemoveResource(costs);
 	}
 	
 	return retval;
 }
 
-FReplicationResourceMap IResourceVendorInterface::GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const
+const FReplicationResourceMap IResourceVendorInterface::GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const
 {
 	FReplicationResourceMap retval = FReplicationResourceMap();
 	const TMap<TSubclassOf<UObject>, FReplicationResourceMap> catalogue = GetAllDefaultUnitPrices();
 	const FReplicationResourceMap * priceptr = catalogue.Find(PurchaseClass);
-	
-	if (priceptr != nullptr)
-	{
-		retval = *priceptr;
-	}
+	checkf(priceptr, TEXT("IResourceVendorInterface::GetDefaultUnitPrice Failed to find PurchaseClass"));
 
-	return retval;
+	return *priceptr;
 }
 
 TArray<TSubclassOf<UObject>> IResourceVendorInterface::GetAllPurchaseableUnits() const
@@ -43,15 +41,10 @@ TArray<TSubclassOf<UObject>> IResourceVendorInterface::GetAllPurchaseableUnits()
 
 bool IResourceVendorInterface::RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer* ToRefund, AController* InstigatingController)
 {
-	const FReplicationResourceMap resourcetoreturn = GetUnitPriceForSource(RefundClass, ToRefund, InstigatingController);
-	const bool retval = ToRefund->CanCarryAllResources(resourcetoreturn);
-
-	if (retval == true)
-	{
-		ToRefund->AddResource(resourcetoreturn);
-	}
-
-	return retval;
+	FReplicationResourceMap resourcetoreturn = FReplicationResourceMap();
+	checkf(GetUnitPriceForSource(RefundClass, ToRefund, resourcetoreturn, InstigatingController), TEXT("IResourceVendorInterface::PurchaseUnit Failed to aquire Price Despite Being able to Purchase"));
+	ToRefund->AddResource(resourcetoreturn);
+	return true;
 }
 
 bool IResourceVendorInterface::IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController) const
@@ -70,9 +63,16 @@ bool IResourceVendorInterface::IsUnitPurchaseable(const TSubclassOf<UObject> Pur
 	return retval;
 }
 
-FReplicationResourceMap IResourceVendorInterface::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController) const
+bool IResourceVendorInterface::GetUnitPriceForSource(const TSubclassOf<UObject> InPurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController) const
 {
-	return GetDefaultUnitPrice(PurchaseClass);
+	bool retval = false;
+	if (IsUnitPurchaseable(InPurchaseClass, Purchaser, InstigatingController))
+	{
+		OutPrices = GetDefaultUnitPrice(InPurchaseClass);
+		retval = true;
+	}
+
+	return retval;
 }
 
 TArray<TSubclassOf<UObject>> IResourceVendorInterface::GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser , const AController* InstigatingController) const

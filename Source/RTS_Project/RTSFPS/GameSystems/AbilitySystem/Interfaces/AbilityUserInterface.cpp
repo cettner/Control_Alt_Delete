@@ -5,9 +5,14 @@
 
 // Add default functionality here for any IAbilityUserInterface functions that are not pure virtual.
 
-bool IAbilityUserInterface::CanCastAbility() const
+bool IAbilityUserInterface::CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const
 {
 	return (false);
+}
+
+bool IAbilityUserInterface::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
+{
+	return false;
 }
 
 float IAbilityUserInterface::PlayAbilityMontage(FAbilityAnim AnimToPlay)

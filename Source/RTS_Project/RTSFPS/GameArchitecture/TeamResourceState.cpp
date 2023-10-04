@@ -371,7 +371,7 @@ bool ATeamResourceState::HasResource(const TSubclassOf<UResource> ResourceClass,
 	return IResourceGatherer::HasResource(ResourceClass, amount);
 }
 
-bool ATeamResourceState::HasResource(const FReplicationResourceMap InResourceMap) const
+bool ATeamResourceState::HasResource(const FReplicationResourceMap& InResourceMap) const
 {
 	return IResourceGatherer::HasResource(InResourceMap);
 }

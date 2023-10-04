@@ -7,7 +7,8 @@
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
-
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceVendorComponent.h"
 
 #include "AbilityCombatCommander.generated.h"
 
@@ -15,11 +16,12 @@
  * 
  */
 UCLASS()
-class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceGatherer, public IExpAccumulatorInterface
+class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceGatherer, public IResourceVendorInterface, public IExpAccumulatorInterface
 {
 	GENERATED_BODY()
 
-
+	
+	AAbilityCombatCommander();
 
 	/************************************IAbilityUserInterface****************************/
 	public:
@@ -29,6 +31,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
 		virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr) override;
+		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const override;
+		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
 	/*************************************************************************************/
 
 
@@ -43,6 +47,10 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const override;
 	/*************************************************************************************/
 	
+	/*********************************Resource Vendor***********************************/
+		virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+		virtual bool GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController = nullptr) const override;
+	/***********************************************************************************/
 
 	/*********************************Experiance Accumulator***********************************/
 		virtual void GrantExp(uint32 inexp) override;
@@ -53,6 +61,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 
 
 	/****************************************Config Data***************************************/
+		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+		UResourceVendorComponent* ResourceVendorComp = nullptr;
 
 	/************************************Runtime Data*****************************************/
 

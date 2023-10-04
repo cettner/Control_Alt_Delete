@@ -28,12 +28,12 @@ public:
 	virtual bool PurchaseUnit(const TSubclassOf<UObject> PurchaseClass, IResourceGatherer * Purchaser, AController * InstigatingController = nullptr);
 	virtual bool RefundUnit(const TSubclassOf<UObject> RefundClass, IResourceGatherer * ToRefund, AController* InstigatingController = nullptr);
 	virtual bool IsUnitPurchaseable(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer * Purchaser, const AController* InstigatingController = nullptr) const;
-	virtual FReplicationResourceMap GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController = nullptr) const;
+	virtual bool GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap & OutPrices, const AController* InstigatingController = nullptr) const;
 	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser = nullptr, const AController* InstigatingController = nullptr) const;
 	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllUnitPricesForSource(const IResourceGatherer* Purchaser, const AController* InstigatingController = nullptr) const;
 	
 protected:
-	virtual FReplicationResourceMap GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const;
+	virtual const FReplicationResourceMap GetDefaultUnitPrice(const TSubclassOf<UObject> PurchaseClass) const;
 	virtual TArray<TSubclassOf<UObject>> GetAllPurchaseableUnits() const;
-	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const = 0U;
+	virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const = 0U;
 };

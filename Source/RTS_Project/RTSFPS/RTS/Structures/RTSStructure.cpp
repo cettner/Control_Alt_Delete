@@ -177,7 +177,7 @@ TArray<TSubclassOf<UObject>> ARTSStructure::GetPurchasableUnitsForSource(const I
 	return retval;
 }
 
-TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTSStructure::GetAllDefaultUnitPrices() const
+const TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTSStructure::GetAllDefaultUnitPrices() const
 {
 	const UWorld* world = GetWorld();
 	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
+#include "Net/UnrealNetwork.h"
 #include "Interfaces/ResourceGatherer.h"
 #include "ResourceData.h"
 #include "ResourceGathererComponent.generated.h"

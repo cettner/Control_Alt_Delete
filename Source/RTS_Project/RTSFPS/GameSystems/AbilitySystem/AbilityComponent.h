@@ -131,8 +131,6 @@ public:
 	virtual bool IsAbilityValid() const;
 	virtual bool IsAbilityValid(int AbilityIndex) const;
 
-	int GetAbilityCost() const;
-
 	/*Returns the User Associated witht the Component*/
 	virtual IAbilityUserInterface * GetAbilityUser() const;
 

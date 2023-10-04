@@ -39,7 +39,8 @@ bool UStructureQueueSelectionWidget::UpdateSelectionButtonEnabled()
 	const ATeamResourceState * ts = GS->GetDefaultTeamState<ATeamResourceState>();
 
 	/*For Each Resource Type needed determine if the team has enough*/
-	const FReplicationResourceMap cost = GS->GetUnitPriceForSource(BoundQueueData.SpawnClass, ts, GetOwningPlayer());
+	FReplicationResourceMap cost = FReplicationResourceMap();
+	GS->GetUnitPriceForSource(BoundQueueData.SpawnClass, ts, cost, GetOwningPlayer());
 	CanTeamAfford = ts->HasResource(cost);
 
 	return CanTeamAfford;

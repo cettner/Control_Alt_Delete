@@ -6,19 +6,22 @@
 
 void UProjectileAbility::OnEffect()
 {
-	UWorld* world = GetWorld();
-	FTransform spawntransform = AbilityComp->GetCrosshairTransform(EffectSocketName);
-	AAbilityProjectile* Projectile = world->SpawnActorDeferred<AAbilityProjectile>(ProjectileClass, spawntransform, Cast<AActor>(AbilityComp->GetAbilityUser()), nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding);
-	if (IsValid(Projectile))
+	if (AbilityComp->GetAbilityUser()->SpendAbilityCost(this))
 	{
-		Projectile->SetOwner(AbilityComp->GetOwner());
-		Projectile->InitialSpeed = ProjectileSpeed;
-		Projectile->DirectDamage = ProjectileDamage;
-		Projectile->CollisionChannel = AbilityEffectChannel;
-		Projectile->SetIgnoredActors(AbilityComp->GetAbilityUser()->GetIgnoredTraceActors());
+		UWorld* world = GetWorld();
+		FTransform spawntransform = AbilityComp->GetCrosshairTransform(EffectSocketName);
+		AAbilityProjectile* Projectile = world->SpawnActorDeferred<AAbilityProjectile>(ProjectileClass, spawntransform, Cast<AActor>(AbilityComp->GetAbilityUser()), nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding);
+		if (IsValid(Projectile))
+		{
+			Projectile->SetOwner(AbilityComp->GetOwner());
+			Projectile->InitialSpeed = ProjectileSpeed;
+			Projectile->DirectDamage = ProjectileDamage;
+			Projectile->CollisionChannel = AbilityEffectChannel;
+			Projectile->SetIgnoredActors(AbilityComp->GetAbilityUser()->GetIgnoredTraceActors());
+		}
+
+		AbilityComp->FinishSpawningActor(Projectile, spawntransform);
 	}
-	
-	AbilityComp->FinishSpawningActor(Projectile, spawntransform);
 }
 
 void UProjectileAbility::SetProjectileSpeed(float NewSpeed)

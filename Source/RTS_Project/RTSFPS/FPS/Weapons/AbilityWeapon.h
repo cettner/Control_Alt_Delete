@@ -35,7 +35,8 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	/*****************************************************************/
 
 	/***********************IAbilityUserInterface*********************/
-		virtual bool CanCastAbility() const override;
+		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility>) const override;
+		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
 		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay) override;
 		virtual void StopAbilityMontage(FAbilityAnim AnimToStop) override;
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const override;
@@ -51,10 +52,6 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 
 		virtual USceneComponent * GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility = nullptr) override;
 	/*****************************************************************/
-
-
-	public:
-		virtual int GetCurrentMana() const;
 
 	protected:
 		virtual bool InitAbilities(IAbilityUserInterface * InUser);

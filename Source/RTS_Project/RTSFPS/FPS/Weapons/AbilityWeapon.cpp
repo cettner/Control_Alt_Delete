@@ -55,9 +55,18 @@ void AAbilityWeapon::WeaponPrimarySetting(int ModeToggle)
 	AbilityIndex = AbilityComp->GetNextAvailableIndex(AbilityIndex);
 }
 
-bool AAbilityWeapon::CanCastAbility() const
+bool AAbilityWeapon::CanCastAbility(const TWeakObjectPtr<UAbility> InAbility) const
 {
-	return true;
+	IAbilityUserInterface * weaponwielder = CastChecked<IAbilityUserInterface>(GetPawnOwner());
+	const bool retval = weaponwielder->CanCastAbility(InAbility);
+	return retval;
+}
+
+bool AAbilityWeapon::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
+{
+	IAbilityUserInterface* abilityuser = CastChecked<IAbilityUserInterface>(GetPawnOwner());
+	const bool retval = abilityuser->SpendAbilityCost(SpendingAbility);
+	return retval;
 }
 
 float AAbilityWeapon::PlayAbilityMontage(FAbilityAnim AnimToPlay)
@@ -139,11 +148,6 @@ void AAbilityWeapon::OnEndNotify(UAbilityAnimNotify * CallingContext)
 USceneComponent * AAbilityWeapon::GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility)
 {
 	return GetWeaponMesh();
-}
-
-int AAbilityWeapon::GetCurrentMana() const
-{
-	return Mana;
 }
 
 bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
