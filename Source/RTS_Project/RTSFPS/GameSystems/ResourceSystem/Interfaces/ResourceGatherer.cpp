@@ -92,9 +92,9 @@ const TArray<TSubclassOf<UResource>> IResourceGatherer::GetSupportedResources() 
 	return resources.GetKeys();
 }
 
-bool IResourceGatherer::HasResource(const FReplicationResourceMap InResourceMap) const
+bool IResourceGatherer::HasResource(const FReplicationResourceMap& InResourceMap) const
 {
-	bool retval = InResourceMap.Num() > 0;
+	bool retval = true;
 	for (int i = 0; i < InResourceMap.Num(); i++)
 	{
 		retval &= HasResource(InResourceMap[i].Key, static_cast<uint32>(InResourceMap[i].Value));

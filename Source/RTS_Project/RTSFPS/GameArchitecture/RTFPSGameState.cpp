@@ -91,7 +91,7 @@ void ARTFPSGameState::HandlePlayerDeath(AFPSServerController* Controller)
 
 }
 
-TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSGameState::GetAllDefaultUnitPrices() const
+const TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSGameState::GetAllDefaultUnitPrices() const
 {
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> retval = TMap<TSubclassOf<UObject>, FReplicationResourceMap>();
 	for (int i = 0; i < PurchaseOrdersRep.Num(); i++)

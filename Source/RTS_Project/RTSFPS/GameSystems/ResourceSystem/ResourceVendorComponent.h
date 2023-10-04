@@ -19,11 +19,10 @@ public:
 	// Sets default values for this component's properties
 	UResourceVendorComponent();
 
-
-protected:
+public:
 	/*********************************Resource Vendor***********************************/
-	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
-	virtual FReplicationResourceMap GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController = nullptr) const override;
+	virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+	virtual bool GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController = nullptr) const override;
 	/***********************************************************************************/
 
 protected:

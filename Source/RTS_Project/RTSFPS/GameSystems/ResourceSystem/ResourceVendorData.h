@@ -16,7 +16,7 @@ class RTS_PROJECT_API UResourceVendorData : public UDataAsset
 {
 	GENERATED_BODY()
 
-
+	public:
 		const TMap<TSubclassOf<UObject>, FReplicationResourceMap>& GetDefaultPriceMap() const { return DefaultPriceMap; }
 
 	protected:

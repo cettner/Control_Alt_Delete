@@ -12,19 +12,36 @@ UResourceVendorComponent::UResourceVendorComponent()
 	StartingPrices = CreateDefaultSubobject<UResourceVendorData>(TEXT("Starting Prices"));
 }
 
-TMap<TSubclassOf<UObject>, FReplicationResourceMap> UResourceVendorComponent::GetAllDefaultUnitPrices() const
+const TMap<TSubclassOf<UObject>, FReplicationResourceMap> UResourceVendorComponent::GetAllDefaultUnitPrices() const
 {
-	return TMap<TSubclassOf<UObject>, FReplicationResourceMap>();
+	return StartingPrices->GetDefaultPriceMap();
 }
 
-FReplicationResourceMap UResourceVendorComponent::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, const AController* InstigatingController) const
+bool UResourceVendorComponent::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController) const
 {
-	return FReplicationResourceMap();
+	bool retval = false;
+	const int32 * index = PriceIndexMap.Find(PurchaseClass);
+
+	if (index != nullptr)
+	{
+		OutPrices = ReplicatedPrices[*index];
+		retval = true;
+	}
+
+	return retval;
 }
 
 void UResourceVendorComponent::OnRegister()
 {
 	Super::OnRegister();
+
+	int index = 0;
+	for (TPair<TSubclassOf<UObject>, FReplicationResourceMap> PriceMap : StartingPrices->GetDefaultPriceMap())
+	{
+		PriceIndexMap.Emplace(PriceMap.Key, index);
+		ReplicatedPrices.Emplace(PriceMap.Value);
+		index++;
+	}
 }
 
 void UResourceVendorComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

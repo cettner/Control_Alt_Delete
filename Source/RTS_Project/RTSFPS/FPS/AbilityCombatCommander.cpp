@@ -7,6 +7,11 @@
 #include "GameFramework/PlayerState.h"
 #include "GameFramework/PlayerController.h"
 
+AAbilityCombatCommander::AAbilityCombatCommander() : Super()
+{
+	ResourceVendorComp = CreateDefaultSubobject<UResourceVendorComponent>(TEXT("ResourceVendorComp"));
+}
+
 void AAbilityCombatCommander::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 	IAbilityUserInterface * abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
@@ -65,6 +70,34 @@ void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, A
 	abilityweapon->AddAbility(InAbilityClass, InSource);
 }
 
+bool AAbilityCombatCommander::CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const
+{
+	FReplicationResourceMap abilitycost = FReplicationResourceMap();
+	checkf(GetUnitPriceForSource(TracingAbility->GetClass(), this, abilitycost, GetController()), TEXT("AAbilityCombatCommander::CanCastAbility Failed to obtain pricemap"));
+	bool retval = false;
+	
+	if (HasResource(abilitycost))
+	{
+		retval = true;
+	}
+
+	return retval;
+}
+
+bool AAbilityCombatCommander::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
+{
+	FReplicationResourceMap abilitycost = FReplicationResourceMap();
+	checkf(GetUnitPriceForSource(SpendingAbility->GetClass(), this, abilitycost, GetController()), TEXT("AAbilityCombatCommander::CanCastAbility Failed to obtain pricemap"));
+	bool retval = false;
+
+	if (HasResource(abilitycost))
+	{
+		retval = IResourceGatherer::RemoveResource(abilitycost);
+	}
+
+	return retval;
+}
+
 void AAbilityCombatCommander::AddResource(TSubclassOf<UResource> InResourceClass, int InAmount)
 {
 	ResourceComp->AddResource(InResourceClass, InAmount);
@@ -100,9 +133,14 @@ uint32 AAbilityCombatCommander::GetResourceMinimum(const TSubclassOf<UResource> 
 	return ResourceComp->GetResourceMinimum(ResourceClass);
 }
 
-TMap<TSubclassOf<UObject>, FReplicationResourceMap> AAbilityCombatCommander::GetAllDefaultUnitPrices() const
+const TMap<TSubclassOf<UObject>, FReplicationResourceMap> AAbilityCombatCommander::GetAllDefaultUnitPrices() const
 {
-	return TMap<TSubclassOf<UObject>, FReplicationResourceMap>();
+	return ResourceVendorComp->GetAllDefaultUnitPrices();
+}
+
+bool AAbilityCombatCommander::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController) const
+{
+	return ResourceVendorComp->GetUnitPriceForSource(PurchaseClass,Purchaser, OutPrices, InstigatingController);
 }
 
 void AAbilityCombatCommander::GrantExp(uint32 inexp)

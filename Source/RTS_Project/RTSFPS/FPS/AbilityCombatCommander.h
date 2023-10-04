@@ -8,6 +8,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceVendorComponent.h"
 
 #include "AbilityCombatCommander.generated.h"
 
@@ -19,7 +20,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 {
 	GENERATED_BODY()
 
-
+	
+	AAbilityCombatCommander();
 
 	/************************************IAbilityUserInterface****************************/
 	public:
@@ -29,6 +31,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
 		virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr) override;
+		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const override;
+		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
 	/*************************************************************************************/
 
 
@@ -44,7 +48,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 	/*************************************************************************************/
 	
 	/*********************************Resource Vendor***********************************/
-		virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+		virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+		virtual bool GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController = nullptr) const override;
 	/***********************************************************************************/
 
 	/*********************************Experiance Accumulator***********************************/
@@ -56,6 +61,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 
 
 	/****************************************Config Data***************************************/
+		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+		UResourceVendorComponent* ResourceVendorComp = nullptr;
 
 	/************************************Runtime Data*****************************************/
 

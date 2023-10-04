@@ -42,7 +42,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResour
 
 	/********************IResourceVendorInterface**********************/
 	public:
-		virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+		virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
 	/***************************************************************/
 
 		bool PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface* Purchaser, IUpgradableInterface* ToApply) const;

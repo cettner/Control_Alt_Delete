@@ -17,12 +17,12 @@ UAbilityComponent::UAbilityComponent()
 bool UAbilityComponent::CanUseAbility(int AbilityIndex) const
 {
 	const IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
-	const UAbility * ability = GetAbilityByIndex(AbilityIndex);
+	const TWeakObjectPtr<UAbility> ability = GetAbilityByIndex(AbilityIndex);
 	
-	bool retval = IsValid(ability) && !IsCasting();
+	bool retval = IsValid(ability.Get()) && !IsCasting();
 	if (user && retval)
 	{
-		retval = user->CanCastAbility();
+		retval = user->CanCastAbility(ability);
 	}
 	else
 	{
@@ -386,11 +386,6 @@ bool UAbilityComponent::IsAbilityValid() const
 bool UAbilityComponent::IsAbilityValid(int AbilityIndex) const
 {
 	return ((AbilityIndex > NO_ABILITY_INDEX) && (AbilityIndex < AllAbilites.Num()));
-}
-
-int UAbilityComponent::GetAbilityCost() const
-{
-	return 0;
 }
 
 IAbilityUserInterface * UAbilityComponent::GetAbilityUser() const

@@ -108,7 +108,7 @@ public:
 	virtual TArray<TSubclassOf<UObject>> GetPurchasableUnitsForSource(const IResourceGatherer* Purchaser = nullptr, const AController* InstigatingController = nullptr) const override;
 
 protected:
-	virtual TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
+	virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
 	/************************************************************/
 protected:
 	UFUNCTION()
