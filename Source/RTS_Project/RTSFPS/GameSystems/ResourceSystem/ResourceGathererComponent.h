@@ -84,7 +84,10 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		TArray<uint32> Values;
 		
 		// Will be set at start of game
-		TArray<TSubclassOf<UResource>> Keys;
+		//TArray<TSubclassOf<UResource>> Keys;
+
+		// Map that holds the Keys and the index the Value is at in the parallel array
+		TMap<TSubclassOf<UResource>, int> ResourceToIndex;
 
 
 		

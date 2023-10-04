@@ -87,8 +87,8 @@ FReplicationResourceMap UResourceGathererComponent::GetAllHeldResources() const
 	
 	FReplicationResourceMap HeldResources = FReplicationResourceMap();
 
-	for (int i = 0; i < Keys.Num(); i++) {
-		HeldResources.Emplace(Keys[i], Values[i]);
+	for (TPair<TSubclassOf<UResource>, int > keyValuePair : ResourceToIndex) {
+		HeldResources.Emplace(keyValuePair.Key, Values[keyValuePair.Value]);
 	}
 
 	return HeldResources;
@@ -130,12 +130,22 @@ uint32 UResourceGathererComponent::GetResourceDiscreteMinimum(const TSubclassOf<
 void UResourceGathererComponent::RecalculateWeight()
 {
 	CurrentWeight = 0U;
-	for (int i = 0; i < Keys.Num(); i++)
+
+	TArray<TSubclassOf<UResource>> keys = TArray<TSubclassOf<UResource>>();
+	ResourceToIndex.GetKeys(keys);
+
+	for (int i = 0; i < keys.Num(); i++)
 	{
-		const UResource* resourcecdo = Keys[i].GetDefaultObject();
+		const TSubclassOf<UResource> resourceKeyPtr = keys[i];
+		const UResource* resourcecdo = resourceKeyPtr.GetDefaultObject();
+
 		if (resourcecdo->IsWeightedResource())
 		{
-			CurrentWeight += resourcecdo->GetResourceWeight() * Values[i];
+			// Need to get the index of the value from the Map
+			const int* indexPtr = ResourceToIndex.Find(resourceKeyPtr);
+			const int index = *indexPtr;
+
+			CurrentWeight += resourcecdo->GetResourceWeight() * Values[index];
 		}
 	}
 }
@@ -144,7 +154,7 @@ void UResourceGathererComponent::RecalculateWeight()
 void UResourceGathererComponent::Emplace(const TSubclassOf<UResource> InKey, const uint32 InValue)
 {
 	Values.Emplace(InValue);
-	Keys.Emplace(InKey);
+	ResourceToIndex.Emplace(InKey,Values.Num()-1);
 }
 
 bool UResourceGathererComponent::Remove(TSubclassOf<UResource> Key)
@@ -164,10 +174,11 @@ bool UResourceGathererComponent::IncOrDec(TSubclassOf<UResource> Key, uint32 Val
 		retVal = true;
 	}
 	else if (Value > 0) {
-		const int index = Keys.IndexOfByKey(Key);
-
-		checkf(index != INDEX_NONE, TEXT("UResourceGathererComponent::IncOrDec, \
+		const int* indexPtr = ResourceToIndex.Find(Key);
+		checkf(indexPtr, TEXT("UResourceGathererComponent::IncOrDec, \
 										  KEY wasn't found in Keys"));
+
+		const int index = *indexPtr;
 
 		if (Increment == true) {
 			Values[index] += Value;
@@ -196,10 +207,11 @@ const uint32* UResourceGathererComponent::Find(TSubclassOf<UResource> Key) const
 {
 	bool retVal = false;
 
-	const int index = Keys.IndexOfByKey(Key);
-
-	checkf(index != INDEX_NONE, TEXT("UResourceGathererComponent::Find, \
+	const int* indexPtr = ResourceToIndex.Find(Key);
+	checkf(indexPtr, TEXT("UResourceGathererComponent::Find, \
 										  KEY wasn't found in Keys"));
+
+	const int index = *indexPtr;
 
 	return &Values[index];
 }
