@@ -79,6 +79,38 @@ bool IResourceGatherer::HasResource(const TSubclassOf<UResource> ResourceClass, 
 	return retval;
 }
 
+FReplicationResourceMap IResourceGatherer::GetAllWeightedResources() const
+{
+	const FReplicationResourceMap allresources = GetAllHeldResources();
+	FReplicationResourceMap retval = FReplicationResourceMap();
+	for (int i = 0; i < allresources.Num(); i++)
+	{
+		const TSubclassOf<UResource> resourceclass = allresources[i].Key;
+		const UResource* resourcecdo = resourceclass.GetDefaultObject();
+		if (resourcecdo->IsWeightedResource())
+		{
+			retval.Emplace(resourceclass, allresources[i].Value);
+		}
+	}
+	return retval;
+}
+
+FReplicationResourceMap IResourceGatherer::GetAllDiscreteResources() const
+{
+	const FReplicationResourceMap allresources = GetAllHeldResources();
+	FReplicationResourceMap retval = FReplicationResourceMap();
+	for (int i = 0; i < allresources.Num(); i++)
+	{
+		const TSubclassOf<UResource> resourceclass = allresources[i].Key;
+		const UResource* resourcecdo = resourceclass.GetDefaultObject();
+		if (!resourcecdo->IsWeightedResource())
+		{
+			retval.Emplace(resourceclass, allresources[i].Value);
+		}
+	}
+	return retval;
+}
+
 bool IResourceGatherer::CanCarryResource(const TSubclassOf<UResource> InResource) const
 {
 	const FReplicationResourceMap resources = GetAllHeldResources();

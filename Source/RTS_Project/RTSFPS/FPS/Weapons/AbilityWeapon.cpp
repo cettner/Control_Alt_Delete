@@ -201,6 +201,4 @@ void AAbilityWeapon::ServerStopUseAbility_Implementation()
 void AAbilityWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AAbilityWeapon, Mana);
-
 }

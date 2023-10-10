@@ -83,15 +83,42 @@ bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> Res
 
 FReplicationResourceMap UResourceGathererComponent::GetAllHeldResources() const
 {
-	//TODO: Make this return a HeldResources 
-	
 	FReplicationResourceMap HeldResources = FReplicationResourceMap();
 
-	for (TPair<TSubclassOf<UResource>, int > keyValuePair : ResourceToIndex) {
+	for (TPair<TSubclassOf<UResource>, int > keyValuePair : ResourceToIndex) 
+	{
 		HeldResources.Emplace(keyValuePair.Key, Values[keyValuePair.Value]);
 	}
 
 	return HeldResources;
+}
+
+FReplicationResourceMap UResourceGathererComponent::GetAllWeightedResources() const
+{
+	FReplicationResourceMap retval = FReplicationResourceMap();
+	for (TPair<TSubclassOf<UResource>, int > keyValuePair : ResourceToIndex) 
+	{
+		const UResource* resourcecdo = keyValuePair.Key.GetDefaultObject();
+		if (resourcecdo->IsWeightedResource())
+		{
+			retval.Emplace(keyValuePair.Key, Values[keyValuePair.Value]);
+		}
+	}
+	return retval;
+}
+
+FReplicationResourceMap UResourceGathererComponent::GetAllDiscreteResources() const
+{
+	FReplicationResourceMap retval = FReplicationResourceMap();
+	for (TPair<TSubclassOf<UResource>, int > keyValuePair : ResourceToIndex)
+	{
+		const UResource* resourcecdo = keyValuePair.Key.GetDefaultObject();
+		if (!resourcecdo->IsWeightedResource())
+		{
+			retval.Emplace(keyValuePair.Key, Values[keyValuePair.Value]);
+		}
+	}
+	return retval;
 }
 
 uint32 UResourceGathererComponent::GetCurrentWeight() const
@@ -195,7 +222,6 @@ bool UResourceGathererComponent::IncOrDec(TSubclassOf<UResource> Key, uint32 Val
 bool UResourceGathererComponent::Increment(TSubclassOf<UResource> Key, uint32 Value)
 {
 	return IncOrDec(Key, Value);
-	
 }
 
 bool UResourceGathererComponent::Decrement(TSubclassOf<UResource> Key, uint32 Value)
@@ -222,7 +248,6 @@ const int UResourceGathererComponent::Num() const
 }
 // END ----
 
-
 void UResourceGathererComponent::OnRep_HeldResources()
 {
 	RecalculateWeight();
@@ -246,9 +271,8 @@ void UResourceGathererComponent::OnRegister()
 void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	//TODO: Might need to add the values array to this
+
 	DOREPLIFETIME(UResourceGathererComponent, Values);
-	//DOREPLIFETIME(UResourceGathererComponent, HeldResources);
 	DOREPLIFETIME(UResourceGathererComponent, ResourceMaximums);
 	DOREPLIFETIME(UResourceGathererComponent, MaxWeight);
 }

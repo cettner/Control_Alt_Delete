@@ -56,6 +56,8 @@ public:
 
 	/*Returns a Map of All resources Carried by the instance*/
 	virtual FReplicationResourceMap GetAllHeldResources() const;
+	virtual FReplicationResourceMap GetAllWeightedResources() const;
+	virtual FReplicationResourceMap GetAllDiscreteResources() const;
 
 	/*Returns the amount held by the unit of the particular type of Resource*/
 	virtual bool GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const;

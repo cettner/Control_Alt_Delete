@@ -2,6 +2,8 @@
 
 
 #include "ConjurableShield.h"
+#include "GameFramework/DamageType.h"
+
 
 AConjurableShield::AConjurableShield() : Super()
 {
@@ -21,6 +23,15 @@ void AConjurableShield::PostInitializeComponents()
 		ShieldMesh->SetMaterial(0, ShieldMaterial);
 	}
 
+}
+
+float AConjurableShield::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	AActor* conjureactor = Cast<AActor>(PrimaryConjurer);
+	conjureactor->TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	return 0.0f;
 }
 
 void AConjurableShield::ProcessConjureState()

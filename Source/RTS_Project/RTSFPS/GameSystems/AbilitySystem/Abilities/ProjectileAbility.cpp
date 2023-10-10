@@ -8,7 +8,6 @@ void UProjectileAbility::OnEffect()
 {
 	if (AbilityComp->GetAbilityUser()->SpendAbilityCost(this))
 	{
-		// TODO: Fix chris' broken bug
 		UWorld* world = GetWorld();
 		FTransform spawntransform = AbilityComp->GetCrosshairTransform(EffectSocketName);
 		AAbilityProjectile* Projectile = world->SpawnActorDeferred<AAbilityProjectile>(ProjectileClass, spawntransform, Cast<AActor>(AbilityComp->GetAbilityUser()), nullptr, ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding);

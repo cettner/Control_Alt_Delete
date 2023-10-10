@@ -431,7 +431,7 @@ AActor* UAbilityComponent::SpawnUninitializedActor(TSubclassOf<AActor> ActorClas
 
 AActor* UAbilityComponent::FinishSpawningActor(AActor* InitializedActor, const FTransform &SpawnTransform)
 {
-	return 	UGameplayStatics::FinishSpawningActor(InitializedActor, SpawnTransform);
+	return UGameplayStatics::FinishSpawningActor(InitializedActor, SpawnTransform);
 }
 
 FVector UAbilityComponent::GetControlRotation()
@@ -460,7 +460,7 @@ FTransform UAbilityComponent::GetCrosshairTransform(FName Socketname)
 		aimdirection = GetOwner()->GetActorForwardVector();
 	}
 
-	FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
+	const FTransform retval = FTransform(aimdirection.Rotation(), spawnlocation);
 
 	return retval;
 }

@@ -18,6 +18,7 @@ class RTS_PROJECT_API AConjurableShield : public AConjurableActorBase
 
 	protected:
 		virtual void PostInitializeComponents() override;
+		virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	protected:
 		virtual void ProcessConjureState() override;

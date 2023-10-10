@@ -27,7 +27,7 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 		
 		if (gatherer != nullptr && rtsobject != nullptr)
 		{
-			const FReplicationResourceMap resources = gatherer->GetAllHeldResources();
+			const FReplicationResourceMap resources = gatherer->GetAllWeightedResources();
 
 			for (int i = 0; i < resources.Num(); i++)
 			{
@@ -42,7 +42,7 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 
 			const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
 			ATeamResourceState* ts = gs->GetTeamState<ATeamResourceState>(rtsobject->GetTeam());
-			ts->TransferResourceFromSource(gatherer);
+			ts->TransferResourceFromSource(gatherer, resources);
 
 
 		}

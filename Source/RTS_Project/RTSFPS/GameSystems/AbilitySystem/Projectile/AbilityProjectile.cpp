@@ -125,7 +125,6 @@ void AAbilityProjectile::OnDetonation(const FHitResult& Hit)
 void AAbilityProjectile::OnRep_InitialSpeed()
 {
 	FVector fv = GetActorForwardVector();
-	check(MovementComp);
 	MovementComp->Velocity = InitialSpeed * fv;
 }
 

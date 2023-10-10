@@ -81,9 +81,6 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		UPROPERTY(EditDefaultsOnly)
 		TArray<TSubclassOf<UAbility>> AbilityClasses;
 
-		UPROPERTY(replicated)
-		int Mana = 0;
-
 		/*Ability is indexed locally*/
 		int AbilityIndex = -1;
 };
