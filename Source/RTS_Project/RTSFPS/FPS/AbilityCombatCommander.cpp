@@ -98,41 +98,6 @@ bool AAbilityCombatCommander::SpendAbilityCost(const TWeakObjectPtr<UAbility> Sp
 	return retval;
 }
 
-void AAbilityCombatCommander::AddResource(TSubclassOf<UResource> InResourceClass, int InAmount)
-{
-	ResourceComp->AddResource(InResourceClass, InAmount);
-}
-
-bool AAbilityCombatCommander::RemoveResource(TSubclassOf<UResource> InResourceClass, int InAmount)
-{
-	return ResourceComp->RemoveResource(InResourceClass, InAmount);
-}
-
-FReplicationResourceMap AAbilityCombatCommander::GetAllHeldResources() const
-{
-	return ResourceComp->GetAllHeldResources();
-}
-
-uint32 AAbilityCombatCommander::GetCurrentWeight() const
-{
-	return ResourceComp->GetCurrentWeight();
-}
-
-uint32 AAbilityCombatCommander::GetMaxWeight() const
-{
-	return ResourceComp->GetMaxWeight();
-}
-
-uint32 AAbilityCombatCommander::GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const
-{
-	return ResourceComp->GetResourceMaximum(ResourceClass);
-}
-
-uint32 AAbilityCombatCommander::GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const
-{
-	return ResourceComp->GetResourceMinimum(ResourceClass);
-}
-
 const TMap<TSubclassOf<UObject>, FReplicationResourceMap> AAbilityCombatCommander::GetAllDefaultUnitPrices() const
 {
 	return ResourceVendorComp->GetAllDefaultUnitPrices();
@@ -150,9 +115,4 @@ void AAbilityCombatCommander::GrantExp(uint32 inexp)
 	IExpAccumulatorInterface* expstate = Cast<IExpAccumulatorInterface>(ps);
 	expstate->GrantExp(inexp);
 
-}
-
-void AAbilityCombatCommander::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }

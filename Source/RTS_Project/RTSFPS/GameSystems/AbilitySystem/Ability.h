@@ -20,6 +20,9 @@ struct FAbilityAnim
 	/** animation played on pawn (3rd person view) */
 	UPROPERTY(EditDefaultsOnly, Category = Animation)
 	UAnimMontage* AnimThirdPerson = nullptr;
+
+	bool operator==(const FAbilityAnim& Other) const { return (AnimFirstPerson == Other.AnimFirstPerson) && (AnimThirdPerson == Other.AnimThirdPerson); }
+
 };
 
 /*Forward Declaration*/

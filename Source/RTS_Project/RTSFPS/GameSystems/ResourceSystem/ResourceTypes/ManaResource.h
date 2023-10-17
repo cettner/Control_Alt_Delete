@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/DamageType.h"
-#include "ResourceDamageType.generated.h"
+#include "../Resource.h"
+#include "ManaResource.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTS_PROJECT_API UResourceDamageType : public UDamageType
+class RTS_PROJECT_API UManaResource : public UResource
 {
 	GENERATED_BODY()
 	

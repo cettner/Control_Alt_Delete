@@ -18,7 +18,7 @@
 class ARTSStructure;
 
 UCLASS()
-class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion, public IResourceGatherer
+class RTS_PROJECT_API ARTSBUILDER : public ARTSMinion
 {
 	GENERATED_BODY()
 
@@ -36,14 +36,6 @@ public:
 	bool ExtractResource(AMineableResource* Node);
 	UFUNCTION()
 	virtual void OnResourceNodeDepleted();
-
-	/***********IResourceGatherer**********************/
-	virtual void AddResource(TSubclassOf<UResource> type, int amount) override;
-	virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount) override;
-	virtual FReplicationResourceMap GetAllHeldResources() const override;
-	virtual uint32 GetCurrentWeight() const override;
-	virtual uint32 GetMaxWeight() const override;
-	/*************************************************/
 
 protected:
 	void SetIsMining(const bool InMiningState);

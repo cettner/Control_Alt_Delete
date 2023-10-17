@@ -44,16 +44,6 @@ bool ARTSBUILDER::StopMining()
 	return true;
 }
 
-uint32 ARTSBUILDER::GetCurrentWeight() const
-{
-	return ResourceComp->GetCurrentWeight();
-}
-
-uint32 ARTSBUILDER::GetMaxWeight() const
-{
-	return ResourceComp->GetMaxWeight();
-}
-
 void ARTSBUILDER::SetIsMining(const bool InMiningState)
 {
 	bIsMining = InMiningState;
@@ -152,17 +142,4 @@ void ARTSBUILDER::OnResourceNodeDepleted()
 	controller->SendAIMessage(ARTSAIController::AIMessageOrderRequest, FAIMessage::EStatus::Failure, EAIMessageType::Task);
 }
 
-void ARTSBUILDER::AddResource(TSubclassOf<UResource> InResourceType, int InAmount)
-{
-	ResourceComp->AddResource(InResourceType, InAmount);
-}
 
-bool ARTSBUILDER::RemoveResource(const TSubclassOf<UResource> InResourceType, int InAmount)
-{
-	return 	ResourceComp->RemoveResource(InResourceType, InAmount);
-}
-
-FReplicationResourceMap ARTSBUILDER::GetAllHeldResources() const
-{
-	return ResourceComp->GetAllHeldResources();
-}

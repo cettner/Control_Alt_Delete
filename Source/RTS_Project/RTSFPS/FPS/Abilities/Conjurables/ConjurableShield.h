@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "../../../GameSystems/AbilitySystem/Conjurables/ConjurableActorBase.h"
+#include "GameFramework/DamageType.h"
 #include "ConjurableShield.generated.h"
 
 /**
@@ -25,6 +26,9 @@ class RTS_PROJECT_API AConjurableShield : public AConjurableActorBase
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* ShieldMesh = nullptr;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageType> DamageConversionType = UDamageType::StaticClass();
 
 	protected:
 	UPROPERTY(BlueprintReadWrite)

@@ -178,6 +178,11 @@ void AAbilityWeapon::EndPlay(EEndPlayReason::Type InReason)
 	Super::EndPlay(InReason);
 }
 
+float AAbilityWeapon::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	return MyPawn->TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+}
+
 bool AAbilityWeapon::ServerStartUseAbility_Validate(int InAbilityIndex)
 {
 	return true;

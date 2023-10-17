@@ -62,6 +62,16 @@ ARTSMinion::ARTSMinion()
 	AIConfig.SightAffiliation = Affiliations;
 }
 
+TSubclassOf<UResource> ARTSMinion::GetResourceForDamageEvent(const TSubclassOf<UDamageType>& InDamageType) const
+{
+	TSubclassOf<UResource> retval = DefaultHealthClass;
+	if (const TSubclassOf<UResource> * found = DamageMapping.Find(InDamageType))
+	{
+		retval = *found;
+	}
+	return retval;
+}
+
 void ARTSMinion::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -365,9 +375,53 @@ float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, ACo
 {
  	float ProcessedDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
+	const TSubclassOf<UResource> healthclass = GetResourceForDamageEvent(DamageEvent.DamageTypeClass);
+	if (healthclass != DefaultHealthClass)
+	{
+		const uint32 damagefinal = StaticCast<uint32>(ProcessedDamage);
+		RemoveResource(healthclass, damagefinal);
+	}
+	else
+	{
+		ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
+	}
 
 	return (ProcessedDamage);
+}
+
+void ARTSMinion::AddResource(TSubclassOf<UResource> InResourceType, int InAmount)
+{
+	ResourceComp->AddResource(InResourceType, InAmount);
+}
+
+bool ARTSMinion::RemoveResource(const TSubclassOf<UResource> InResourceType, int InAmount)
+{
+	return 	ResourceComp->RemoveResource(InResourceType, InAmount);
+}
+
+FReplicationResourceMap ARTSMinion::GetAllHeldResources() const
+{
+	return ResourceComp->GetAllHeldResources();
+}
+
+uint32 ARTSMinion::GetCurrentWeight() const
+{
+	return ResourceComp->GetCurrentWeight();
+}
+
+uint32 ARTSMinion::GetMaxWeight() const
+{
+	return ResourceComp->GetMaxWeight();
+}
+
+uint32 ARTSMinion::GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return ResourceComp->GetResourceMaximum(ResourceClass);
+}
+
+uint32 ARTSMinion::GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const
+{
+	return ResourceComp->GetResourceMinimum(ResourceClass);
 }
 
 void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

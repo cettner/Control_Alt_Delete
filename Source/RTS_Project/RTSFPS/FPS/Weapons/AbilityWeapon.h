@@ -62,6 +62,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	protected:
 		virtual void PostInitializeComponents() override;
 		virtual void EndPlay(EEndPlayReason::Type InReason) override;
+		virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	protected:
 

@@ -2,8 +2,8 @@
 
 
 #include "ConjurableShield.h"
-#include "GameFramework/DamageType.h"
 
+#include "Engine/DamageEvents.h"
 
 AConjurableShield::AConjurableShield() : Super()
 {
@@ -27,11 +27,13 @@ void AConjurableShield::PostInitializeComponents()
 
 float AConjurableShield::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
-	AActor* conjureactor = Cast<AActor>(PrimaryConjurer);
-	conjureactor->TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	FDamageEvent convertedevent = DamageEvent;
+	convertedevent.DamageTypeClass = DamageConversionType;
 
-	return 0.0f;
+	AActor* conjureactor = Cast<AActor>(PrimaryConjurer);
+	const float retval = conjureactor->TakeDamage(Damage, convertedevent, EventInstigator, DamageCauser);
+
+	return retval;
 }
 
 void AConjurableShield::ProcessConjureState()

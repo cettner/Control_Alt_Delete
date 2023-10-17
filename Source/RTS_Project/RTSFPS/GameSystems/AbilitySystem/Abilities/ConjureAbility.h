@@ -28,6 +28,7 @@ protected:
 
 protected:
 	virtual void OnEffect() override;
+	virtual void OnAbilityReleased();
 	virtual void OnAbilityEnd() override;
 
 protected:

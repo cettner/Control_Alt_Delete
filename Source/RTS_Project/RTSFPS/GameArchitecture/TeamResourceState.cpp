@@ -255,11 +255,6 @@ void ATeamResourceState::SpawnMinionFromStructure(ARTSStructure* SpawningStructu
 		Minion->SetTeam(SpawningStructure->GetTeam());
 		/*Apply Upgrades that are global to the team*/
 		ApplyGlobalUpgrades(Minion);
-		/*Set Team Colors on listen Server*/
-		if (GetNetMode() == NM_ListenServer)
-		{
-			Minion->OnRep_TeamID();
-		}
 	}
 
 	UGameplayStatics::FinishSpawningActor(Minion, spawntransform);

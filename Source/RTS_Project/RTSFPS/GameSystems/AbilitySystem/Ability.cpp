@@ -31,6 +31,7 @@ void UAbility::OnAbilityReleased()
 {
 	const bool bcanplaymontage = !bRequiresReadyCast || AbilityComp->IsCastReady();
 
+
 	if (ReleaseAbilityMontages.Num() && bcanplaymontage)
 	{
 		AbilityComp->SetIsCastSuccessful(true);

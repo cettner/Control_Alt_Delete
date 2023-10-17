@@ -36,11 +36,21 @@ void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClas
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
 	const uint32* slotptr = Find(ResourceClass);
 
-	const uint32 oldvalue = static_cast<uint32>(*slotptr);
+	const uint32 oldvalue = *slotptr;
 	checkf(slotptr, TEXT("UResourceGathererComponent::AddResource, Failed to add Resource because it wasnt supported"));
-	const uint32 newvalue = static_cast<uint32>(*slotptr);
-
-	Increment(ResourceClass, amount);
+	
+	const uint32 maxvalue = StaticCast<int32>(GetResourceMaximum(ResourceClass));
+	const uint32 expectedvalue = oldvalue + amount;
+	if (expectedvalue > maxvalue)
+	{
+		const uint32 maxpull = maxvalue - oldvalue;
+		Increment(ResourceClass, maxpull);
+	}
+	else
+	{
+		Increment(ResourceClass, amount);
+	}
+	const uint32 newvalue = *slotptr;
 
 	if (resourcecdo->IsWeightedResource())
 	{
@@ -61,9 +71,22 @@ bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> Res
 	const UResource* resourcecdo = ResourceClass.GetDefaultObject();
 	const uint32* resourceValuePtr = Find(ResourceClass);
 	checkf(resourceValuePtr, TEXT("UResourceGathererComponent::RemoveResource, Failed to remove Resource because it wasnt supported"));
-
+	
+	const int32 minvalue = StaticCast<int32>(GetResourceMinimum(ResourceClass));
 	const uint32 oldvalue = *resourceValuePtr;
-	bool retval = Decrement(ResourceClass, amount);
+
+	const int32 expectedvalue = oldvalue - amount;
+	
+	bool retval = false;
+	if (expectedvalue < minvalue)
+	{
+		retval = Decrement(ResourceClass, oldvalue);
+	}
+	else
+	{
+		retval = Decrement(ResourceClass, amount);
+	}
+
 	const uint32 newvalue = *resourceValuePtr;
 	
 	if (resourcecdo->IsWeightedResource())

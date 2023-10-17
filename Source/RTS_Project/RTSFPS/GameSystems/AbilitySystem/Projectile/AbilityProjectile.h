@@ -71,14 +71,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UProjectileMovementComponent* MovementComp = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(EditDefaultsOnly)
 	USphereComponent* SphereComponent = nullptr;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	UParticleSystemComponent * FlightParticles = nullptr;
-
-	UPROPERTY(EditAnyWhere)
-	UParticleSystem * OnHitParticles = nullptr;
 
 
 protected:

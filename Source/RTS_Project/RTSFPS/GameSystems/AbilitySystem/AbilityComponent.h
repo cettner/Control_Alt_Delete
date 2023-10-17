@@ -140,7 +140,7 @@ public:
 	float PlayAbilityMontage(FAbilityAnim PlayAnim);
 	virtual bool StopCurrentAnimation();
 	AActor * SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform = FTransform());
-
+	FORCEINLINE const FAbilityAnim& GetCurrentMontage() const { return CurrentMontage; }
 	template < class T >
 	T * SpawnUninitializedActor(TSubclassOf<AActor> Class, const FTransform &SpawnTransform)
 	{

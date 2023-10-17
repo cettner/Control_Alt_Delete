@@ -85,6 +85,12 @@ void UConjureAbility::OnEffect()
 	}
 }
 
+void UConjureAbility::OnAbilityReleased()
+{
+	Super::OnAbilityReleased();
+	OnAbilityEnd();
+}
+
 void UConjureAbility::OnAbilityEnd()
 {
 	Super::OnAbilityEnd();

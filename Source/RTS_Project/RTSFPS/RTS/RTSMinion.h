@@ -12,6 +12,7 @@
 #include "RTS_Project/RTSFPS/Shared/Interfaces/CombatInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceTypes/HealthResource.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/RTSAIController.h"
 #include "./Orders/RTSMoveOrder.h"
@@ -22,14 +23,31 @@
 class ACommander;
 
 UCLASS(Blueprintable)
-class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgradableInterface, public ICombatInterface
+class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgradableInterface, public ICombatInterface, public IResourceGatherer
 {
 	GENERATED_BODY()
 
 public:
 	ARTSMinion();
 
+	virtual TSubclassOf<UResource> GetResourceForDamageEvent(const TSubclassOf<UDamageType>& InDamageType) const;
+
+	virtual bool IsEnemy(const AActor* InMinion) const;
+
+	virtual void ClearCommander();
+
+	virtual void SetCommander(ACommander* Commander);
+
+protected:
+	UFUNCTION()
+	virtual void OnRep_TeamID();
+
+	UFUNCTION()
+	virtual void OnDeath();
+
+
 	/********************************CombatInterface************************************/
+public:
 	virtual bool StartAttack(const int32 InAttackID = -1) override;
 
 	virtual bool StopAttack(const bool InForceStop = false) override;
@@ -38,19 +56,10 @@ public:
 
 
 	/************************************************************************************/
-	UFUNCTION()
-	virtual void OnDeath();
 
-	virtual bool IsEnemy(const AActor *  InMinion) const;
-
-	virtual void ClearCommander();
-
-	virtual void SetCommander(ACommander * Commander);
-
-	UFUNCTION()
-	virtual void OnRep_TeamID();
 
 /********************AI**************************/
+public:
 	UBehaviorTree* GetBehavior();
 
 	FRTSAIPerceptionConfig GetAIConfig() const;
@@ -97,6 +106,16 @@ protected:
 	virtual void UnRegisterRTSObject() override;
 /*************************************************/
 
+/***********IResourceGatherer**********************/
+	virtual void AddResource(TSubclassOf<UResource> type, int amount) override;
+	virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount) override;
+	virtual FReplicationResourceMap GetAllHeldResources() const override;
+	virtual uint32 GetCurrentWeight() const override;
+	virtual uint32 GetMaxWeight() const override;
+	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const override;
+	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const override;
+/*************************************************/
+
 /**************IUpgradableInterface****************/
 protected:
 	virtual void PostInstallUpgrades() override;
@@ -129,7 +148,13 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = GamePlay)
-	UHealthComponent* Health;
+	UHealthComponent* Health = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = GamePlay)
+	TSubclassOf<UResource> DefaultHealthClass = UHealthResource::StaticClass();
+
+	UPROPERTY(EditDefaultsOnly, Category = GamePlay)
+	TMap<TSubclassOf<UDamageType>, TSubclassOf<UResource>> DamageMapping = TMap<TSubclassOf<UDamageType>, TSubclassOf<UResource>>();
 
 	UPROPERTY(EditDefaultsOnly, Category = GamePlay)
 	UResourceGathererComponent* ResourceComp = nullptr;
