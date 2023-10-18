@@ -39,13 +39,10 @@ void AAbilityWeapon::StopReload()
 void AAbilityWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 {
 	Super::OnEnterInventory(NewOwner);
-
-	IAbilityUserInterface* abilityuser = Cast<IAbilityUserInterface>(NewOwner);
-	checkf(abilityuser,TEXT("AAbilityWeapon::OnEnterInventory : Weapon User Must Inherit IAbilityUserInterface"))
 	
 	if (bAreAbilitiesInitialized == false)
 	{
-		bAreAbilitiesInitialized = InitAbilities(abilityuser);
+		bAreAbilitiesInitialized = InitAbilities(this);
 	}
 
 }
@@ -152,7 +149,7 @@ USceneComponent * AAbilityWeapon::GetParticleAttatchmentComponent(TWeakObjectPtr
 
 bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 {
-	AbilityComp->InitAbilities(this, AbilityClasses);
+	AbilityComp->InitAbilities(InUser, AbilityClasses);
 	AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
 	const bool retval = AbilityIndex > NO_ABILITY_INDEX;
 	return (retval);

@@ -21,8 +21,8 @@ class RTS_PROJECT_API UFlowFieldIntegrationLayer : public UGridLayer
 
 public:
 	FORCEINLINE bool UseEikonalBuild() const { return bUseEikonalBuild; }
-	FORCEINLINE const UGridTile* GetEikonalPathTile(const UGridTile * InTile) const;
-	FORCEINLINE bool GetTileWeight(const UGridTile * InTile, float& OutCost) const;
+	const UGridTile* GetEikonalPathTile(const UGridTile * InTile) const;
+	bool GetTileWeight(const UGridTile * InTile, float& OutCost) const;
 	FORCEINLINE const UGridTile* GetGoalTile() const { return GoalTile; }
 	FORCEINLINE bool IsGoalTile(const UGridTile* InTile) const { return GoalTile == InTile; }
 	void SetGoalTile(const UGridTile* InTile);

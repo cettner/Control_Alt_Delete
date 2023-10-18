@@ -60,11 +60,6 @@ void UFlowFieldSolutionLayer::UnSubscribeAgent(const UObject* UnSubScriber)
 	}
 }
 
-bool UFlowFieldSolutionLayer::IsAgentSubscribed(const UObject* InCheckAgent) const
-{
-	return Subscribers.Contains(InCheckAgent);
-}
-
 bool UFlowFieldSolutionLayer::HasGoal() const
 {
 	const bool retval = IntegrationLayer->DoesGoalExist();

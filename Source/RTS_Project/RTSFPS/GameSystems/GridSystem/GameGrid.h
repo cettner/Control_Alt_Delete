@@ -57,8 +57,8 @@ protected:
 
 public:
 	int32 GetMaxTiles() const;
-	FORCEINLINE int32 GetMaxRows() const;
-	FORCEINLINE int32 GetMaxCols() const;
+	FORCEINLINE int32 GetMaxRows() const { return NumRows; }
+	FORCEINLINE int32 GetMaxCols() const {return NumColomns;}
 	const TArray<UGridTile*>& GetTiles() const { return GridData; };
 	virtual float GetTileRadius() const;
 	virtual float GetTileEdgeLength() const;
@@ -233,7 +233,7 @@ protected:
 	TArray<UFlowFieldSolutionLayer *> ObservedSolutions;
 	TArray<FSolutionRecalculationRequest> SolutionRepathRequests;
 
-#ifdef WITH_EDITOR
+#if WITH_EDITOR
 
 protected:
 	virtual void RebuildGridData(bool bRedrawMesh = true);

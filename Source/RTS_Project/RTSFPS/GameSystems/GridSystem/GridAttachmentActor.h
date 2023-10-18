@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-#ifdef WITH_EDITOR
+#if WITH_EDITOR
 #include "Engine/World.h"
 #endif
 
@@ -40,7 +40,7 @@ protected:
 protected:
 	UGridTile * RootTile = nullptr;
 
-#ifdef WITH_EDITOR
+#if WITH_EDITOR
 public:
 	virtual void OnGridConstructed(AGameGrid * InGrid);
 

@@ -83,8 +83,8 @@ public:
     template<class T>
     T* GetGameGrid() const { Cast<T>(GetGameGrid()); }
     bool IsTileValid() const;
-    FORCEINLINE FVector GetTileCenter() const;
-    FORCEINLINE FVector GetTileNormal() const;
+    FORCEINLINE FVector GetTileCenter() const { return TileCenter; }
+    FORCEINLINE FVector GetTileNormal() const { return TileNormal; }
     const TArray<FGridTileNeighbor> GetNeighbors() const;
     void SetTileFillColor(const FLinearColor InColor);
     void SetTileVisible(const bool InIsVisible);

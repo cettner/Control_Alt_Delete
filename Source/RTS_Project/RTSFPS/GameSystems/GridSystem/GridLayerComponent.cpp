@@ -109,6 +109,7 @@ void UGridLayerComponent::Activate(bool bReset)
     Super::Activate();
 }
 
+#if WITH_EDITOR
 void UGridLayerComponent::PostRootTileChanged()
 {
 	const TSet<UGridTile*> gridspace = GetGridSpace();
@@ -134,4 +135,4 @@ void UGridLayerComponent::PostEditChangeProperty(FPropertyChangedEvent& Property
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
 
-
+#endif

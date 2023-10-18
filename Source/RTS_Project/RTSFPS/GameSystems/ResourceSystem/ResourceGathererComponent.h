@@ -78,22 +78,12 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		UPROPERTY(Replicated)
 		uint32 MaxWeight = 10U;
 
-		// TODO: Remove
-		//UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
-		//FReplicationResourceMap HeldResources = FReplicationResourceMap();
-
 		 // New code 
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		TArray<uint32> Values;
-		
-		// Will be set at start of game
-		//TArray<TSubclassOf<UResource>> Keys;
 
 		// Map that holds the Keys and the index the Value is at in the parallel array
 		TMap<TSubclassOf<UResource>, int> ResourceToIndex;
-
-
-		
 		
 
 		UPROPERTY(Replicated)

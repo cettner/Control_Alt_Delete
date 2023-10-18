@@ -26,18 +26,7 @@ int32 AGameGrid::GetMaxTiles() const
     const int32 retval = numRows * numCols;
 
     return retval;
-}
-
-int32 AGameGrid::GetMaxRows() const
-{
-    return NumRows;
-}
-
-int32 AGameGrid::GetMaxCols() const
-{
-
-    return NumColomns;
-}  
+} 
 
 float AGameGrid::GetTileRadius() const
 {
@@ -712,7 +701,7 @@ void AGameGrid::PostLoad()
 }
 
 
-#ifdef WITH_EDITOR
+#if WITH_EDITOR
 void AGameGrid::RebuildGridData(bool bRedrawMesh)
 {
     BuildGridData();

@@ -20,11 +20,6 @@ bool UGridTile::IsTileValid() const
 	return TileID != INVALID_TILE_ID;
 }
 
-FVector UGridTile::GetTileCenter() const
-{
-	return TileCenter;
-}
-
 const TArray<FGridTileNeighbor> UGridTile::GetNeighbors() const
 {
 	return Neighbors;
@@ -38,11 +33,6 @@ void UGridTile::SetTileFillColor(const FLinearColor InColor)
 void UGridTile::SetTileVisible(const bool InIsVisible)
 {
 	GetGameGrid()->SetTileVisible(GetTileID(), InIsVisible);
-}
-
-FVector UGridTile::GetTileNormal() const
-{
-	return TileNormal;
 }
 
 void UGridTile::SetupTile(const int32 InID, const FVector InTileCenter)

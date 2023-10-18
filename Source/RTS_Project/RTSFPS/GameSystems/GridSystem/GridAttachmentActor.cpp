@@ -91,7 +91,7 @@ AGameGrid* AGridAttachmentActor::FindGrid(UWorld* InWorld)
     return retval;
 }
 
-#ifdef WITH_EDITOR
+#if WITH_EDITOR
 
 static FName Name_RelativeLocation = USceneComponent::GetRelativeLocationPropertyName();
 static FName Name_RelativeRotation = USceneComponent::GetRelativeRotationPropertyName();
