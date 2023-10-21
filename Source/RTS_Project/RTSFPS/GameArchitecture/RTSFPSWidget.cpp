@@ -16,7 +16,7 @@ bool URTSFPSWidget::Initialize()
 {
 	bool retval =  Super::Initialize();
 
-	if (RTSFPSUISwitcher == false) return false;
+	if (RTSFPSUISwitcher == nullptr) return false;
 
 	FPSUI = CreateWidget<UFPSUI>(this, FPSUIClass, "FPSUI");
 	RTSFPSUISwitcher->AddChild(FPSUI);

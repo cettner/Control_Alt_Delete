@@ -132,8 +132,6 @@ protected:
 	UFUNCTION()
 	virtual void  OnRep_LastTakeHitInfo();
 
-	virtual void PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker) override;
-
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
 
 public:

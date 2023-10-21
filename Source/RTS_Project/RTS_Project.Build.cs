@@ -24,6 +24,7 @@ public class RTS_Project : ModuleRules
             "RenderCore",
             "NavigationSystem",
             "OnlineSubsystem",
+            "OnlineSubsystemNull",
             "OnlineSubsystemSteam",
             "ProceduralMeshComponent",
             "Niagara"

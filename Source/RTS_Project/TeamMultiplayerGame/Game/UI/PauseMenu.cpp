@@ -41,12 +41,7 @@ void UPauseMenu::SetVisibility(ESlateVisibility InVisibility)
 
     if (InVisibility == ESlateVisibility::Visible)
     {
-        bIsFocusable = true;
         SetFocus();
-    }
-    else
-    {
-        bIsFocusable = false;
     }
 }
 

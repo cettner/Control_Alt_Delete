@@ -22,9 +22,8 @@ ULobbyGameInstance::ULobbyGameInstance(const FObjectInitializer& ObjectInitializ
 void ULobbyGameInstance::Init()
 {
 	Super::Init();
-	IOnlineSubsystem* SubSystem = IOnlineSubsystem::Get();
 
-	if (SubSystem != nullptr)
+	if (IOnlineSubsystem* SubSystem = IOnlineSubsystem::Get())
 	{
 		SessionInterface = SubSystem->GetSessionInterface();
 
@@ -251,9 +250,7 @@ void ULobbyGameInstance::Host(const FString InServerName, const FSessionSettings
 
 void ULobbyGameInstance::JoinSession(uint32 Index)
 {
-	ULocalPlayer* const Player = GetFirstGamePlayer();
-
-	if (!SessionInterface.IsValid() || (!SessionSearch.IsValid())  || !Player) return;
+	if (!SessionInterface.IsValid() || (!SessionSearch.IsValid())) return;
 
 	if (Index < (uint32)(SessionSearch->SearchResults.Num()))
 	{
@@ -270,7 +267,7 @@ void ULobbyGameInstance::BeginSearchQuery()
 	{
 		SessionSearch->bIsLanQuery = DefaultSessionSettings.bIsLANMatch;
 		SessionSearch->MaxSearchResults = 100;
-		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+		//SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}
 	else
@@ -301,10 +298,17 @@ void ULobbyGameInstance::InitDefaultSessionSettings(FOnlineSessionSettings& OutS
 	OutSettings.bUsesPresence = true;
 	OutSettings.bAllowInvites = true;
 	OutSettings.bAllowJoinInProgress = true;
-	OutSettings.bShouldAdvertise = true;
 	OutSettings.bAllowJoinViaPresence = true;
 	OutSettings.bAllowJoinViaPresenceFriendsOnly = false;
-	OutSettings.bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL";
+	OutSettings.bUseLobbiesIfAvailable = true;
+	if (IOnlineSubsystem::Get()->GetSubsystemName().ToString() == "NULL")
+	{
+		OutSettings.bIsLANMatch = true;
+	}
+	else
+	{
+		OutSettings.bIsLANMatch = false;
+	}
 
 	InitCustomSessionSettings(OutSettings.Settings);
 }
@@ -327,21 +331,15 @@ void ULobbyGameInstance::OnCreateSessionComplete(FName SessionName, bool Success
 	// It will not be success if there are more than one session with the same name already created
 	if (!Success)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[UCoopPuzzleGameInstance::OnCreateSessionComplete] UNSUCESS"));
+		UE_LOG(LogTemp, Warning, TEXT("ULobbyGameInstance::OnCreateSessionComplete Failed to Create Session"));
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[UNetTileMazeGameInstance::OnCreateSessionComplete] SUCESS SessionName: %s"), *SessionName.ToString());
+	//CloseLoadingScreen();
 
-	CloseLoadingScreen();
+	GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("[ULobbyGameInstance::OnCreateSessionComplete::Hosting] %s"), *SessionName.ToString()));
 
-	UEngine* Engine = GetEngine();
-
-	if (Engine == nullptr) return;
-
-	Engine->AddOnScreenDebugMessage(0, 2, FColor::Green, TEXT("[OnCreateSessionComplete::Host]"));
-
-	UE_LOG(LogTemp, Warning, TEXT("[OnCreateSessionComplete::OnCreateSessionComplete] HOST TRAVEL TO LOBBY"));
+	UE_LOG(LogTemp, Log, TEXT("[OnCreateSessionComplete::OnCreateSessionComplete] HOST TRAVEL TO LOBBY"));
 
 	TravelToLobby();
 }
@@ -350,6 +348,7 @@ void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Succes
 {
 	if (Success)
 	{	
+		GEngine->AddOnScreenDebugMessage(0, 2, FColor::Green, FString::Printf(TEXT("[ULobbyGameInstance::OnDestroySessionComplete::Session Destroyed] %s"), *SessionName.ToString()));
 		if (RestartSession)
 		{
 			FStoredSessionSettings storedsettings;
@@ -363,7 +362,6 @@ void ULobbyGameInstance::OnDestroySessionComplete(FName SessionName, bool Succes
 			{
 				UE_LOG(LogTemp, Warning, TEXT("[ULobbyGameInstance::OnDestroySessionComplete] Sesstion Restart Failed, Valid Session Settings not found"));
 			}
-
 		}
 	}
 	else

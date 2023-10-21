@@ -32,7 +32,7 @@ public:
 			Method = InMethod;
 			FunctionName = InName;
 		}
-		
+
 		TBaseDynamicDelegate<FWeakObjectPtr, void>::TMethodPtrResolver<UMainMenuWidgetManager>::FMethodPtr GetMethod() const
 		{
 			return Method;

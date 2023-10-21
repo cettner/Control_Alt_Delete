@@ -62,6 +62,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		const int Num() const;
 																								   
 	// END ---
+
 	protected:
 		UFUNCTION()
 		virtual void OnRep_HeldResources();

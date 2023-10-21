@@ -323,13 +323,6 @@ void UHealthComponent::OnRep_LastTakeHitInfo()
 	}
 }
 
-void UHealthComponent::PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker)
-{
-	Super::PreReplication(ChangedPropertyTracker);
-	// Only replicate this property for a short duration after it changes so join in progress players don't get spammed with fx when joining late
-	DOREPLIFETIME_ACTIVE_OVERRIDE(UHealthComponent, LastTakeHitInfo, GetWorld() && GetWorld()->GetTimeSeconds() < LastTakeHitTimeTimeout);
-}
-
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

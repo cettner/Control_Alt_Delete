@@ -8,7 +8,7 @@ public class RTS_ProjectEditorTarget : TargetRules
 	public RTS_ProjectEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
         IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
         ExtraModuleNames.AddRange( new string[] { "RTS_Project" } );
 	}

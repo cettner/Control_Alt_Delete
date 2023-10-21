@@ -200,7 +200,7 @@ public:
 	void SetLoadingScreen(ULoadingWidget* InMenu);
 	
 	template<class T>
-	T* GetLoadingWidget() const { return Cast<T>(GetCurrentMenu()); }
+	T* GetLoadingWidget() const { return Cast<T>(GetLoadingWidget()); }
 
 	ULoadingWidget* GetLoadingWidget()  const { return LoadingScreen; }
 

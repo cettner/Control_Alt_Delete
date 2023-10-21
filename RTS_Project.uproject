@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.1",
+	"EngineAssociation": "5.3",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -83,6 +83,34 @@
 				"IOS",
 				"TVOS"
 			]
+		},
+		{
+			"Name": "AppleImageUtils",
+			"Enabled": false
+		},
+		{
+			"Name": "AppleMoviePlayer",
+			"Enabled": false
+		},
+		{
+			"Name": "WmfMedia",
+			"Enabled": false
+		},
+		{
+			"Name": "WindowsMoviePlayer",
+			"Enabled": false
+		},
+		{
+			"Name": "MobileLauncherProfileWizard",
+			"Enabled": false
+		},
+		{
+			"Name": "WindowsDeviceProfileSelector",
+			"Enabled": false
+		},
+		{
+			"Name": "WebMMoviePlayer",
+			"Enabled": false
 		}
 	]
 }
