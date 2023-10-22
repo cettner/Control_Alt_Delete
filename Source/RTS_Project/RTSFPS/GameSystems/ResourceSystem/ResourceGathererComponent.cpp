@@ -271,6 +271,31 @@ const int UResourceGathererComponent::Num() const
 }
 // END ----
 
+void UResourceGathererComponent::AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass)
+{
+	//TODO Add Implementation for modifiying an existing regen event;
+	ActiveRegenEvents.Emplace(InResourceClass,InResourceConfig);
+	InResourceConfig.TimerDelegate.BindUFunction(this, FName("HandleResourceRegenEvent"), InResourceClass);
+	GetWorld()->GetTimerManager().SetTimer(InResourceConfig.TimerHandle, InResourceConfig.TimerDelegate, InResourceConfig.TickRate, true);
+}
+
+void UResourceGathererComponent::HandleResourceRegenEvent(TSubclassOf<UResource> InEventKey)
+{
+	const FResourceRegenEventConfig& eventconfig = *ActiveRegenEvents.Find(InEventKey);
+	const int32 amount = eventconfig.GetRegenAmount();
+
+	if (amount > 0)
+	{
+		AddResource(InEventKey, amount);
+	}
+	else if(amount < 0)
+	{
+		const int32 positiveamount = -amount;
+		uint32 value = static_cast<uint32>((positiveamount));
+		RemoveResource(InEventKey, value);
+	}
+}
+
 void UResourceGathererComponent::OnRep_HeldResources()
 {
 	RecalculateWeight();
@@ -280,7 +305,7 @@ void UResourceGathererComponent::OnRegister()
 {
 	Super::OnRegister();
 	
-	for (TPair<TSubclassOf<UResource>, FResourceConfigData> resourceconfig : StartingResources->GetResourceConfig())
+	for (const TPair<TSubclassOf<UResource>, FResourceConfigData> &resourceconfig : StartingResources->GetResourceConfig())
 	{
 		const TSubclassOf<UResource> resourceclass = resourceconfig.Key;
 		const FResourceConfigData configdata = resourceconfig.Value;
@@ -289,6 +314,19 @@ void UResourceGathererComponent::OnRegister()
 		SetResourceDiscreteMinimum(resourceclass, configdata.Min);
 	}
 	RecalculateWeight();
+}
+
+void UResourceGathererComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if(GetOwner()->HasAuthority())
+	{
+		for (const TPair<TSubclassOf<UResource>, FResourceRegenEventConfig>& resourceconfig : StartingResources->GetReSourceRegenConfig())
+		{
+			AddResourceRegenEvent(resourceconfig.Value, resourceconfig.Key);
+		}
+	}
 }
 
 void UResourceGathererComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

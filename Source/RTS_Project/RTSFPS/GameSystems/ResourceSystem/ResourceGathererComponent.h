@@ -14,6 +14,8 @@
 
 DECLARE_MULTICAST_DELEGATE_FourParams(FOnResourceValueChangedDelegate, const TSubclassOf<UResource>, const uint32/*old value*/, const uint32 /*new value*/, TScriptInterface<IResourceGatherer>);
 
+
+
 UCLASS()
 class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, public IResourceGatherer
 {
@@ -63,12 +65,21 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 																								   
 	// END ---
 
+	public:
+		void AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass);
+
+
+	protected:
+		UFUNCTION()
+		void HandleResourceRegenEvent(TSubclassOf<UResource> InEventKey);
+
 	protected:
 		UFUNCTION()
 		virtual void OnRep_HeldResources();
 
 	protected:
 		virtual void OnRegister() override;
+		virtual void BeginPlay() override;
 		virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	protected:
@@ -79,16 +90,16 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		UPROPERTY(Replicated)
 		uint32 MaxWeight = 10U;
 
-		 // New code 
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
 		TArray<uint32> Values;
 
 		// Map that holds the Keys and the index the Value is at in the parallel array
 		TMap<TSubclassOf<UResource>, int> ResourceToIndex;
 		
-
 		UPROPERTY(Replicated)
 		FReplicationResourceMap ResourceMaximums = FReplicationResourceMap();
+
+		TMap<TSubclassOf<UResource>, FResourceRegenEventConfig> ActiveRegenEvents = TMap<TSubclassOf<UResource>, FResourceRegenEventConfig>();
 
 		TMap<TSubclassOf<UResource>, FOnResourceValueChangedDelegate> ResourceDelegates;
 
