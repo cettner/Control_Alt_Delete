@@ -20,7 +20,7 @@ void UBeamParticleAbility::SeverBeam()
 	{
 		BeamComp->Deactivate();
 	}
-	AbilityComp->SetAbilityTarget(nullptr);
+	SetAbilityTarget(nullptr);
 }
 
 bool UBeamParticleAbility::IsTargetInRange() const
@@ -30,9 +30,9 @@ bool UBeamParticleAbility::IsTargetInRange() const
 	const IAbilityUserInterface * abilityuser = AbilityComp->GetAbilityUser();
 	check(abilityuser);
 	const FVector beamstart = abilityuser->GetAbilitySocketLocation(EffectSocketName);
-	AActor * targetactor = AbilityComp->GetAbilityTarget();
+	AActor * targetactor = GetAbilityTarget();
 	FHitResult lasthit;
-	retval &= AbilityComp->GetHitInfoFor(targetactor, lasthit);
+	retval &= GetHitInfoFor(targetactor, lasthit);
 
 	if (retval == true)
 	{
@@ -53,10 +53,10 @@ bool UBeamParticleAbility::IsTargetInRange() const
 bool UBeamParticleAbility::IsTargetInLineOfSight() const
 {
 	bool retval = false;
-	if (AbilityComp->GetAbilityTarget())
+	if (const AActor* targetactor = GetAbilityTarget())
 	{
 		const IAbilityUserInterface * abilityuser = AbilityComp->GetAbilityUser();
-		const AActor * targetactor = AbilityComp->GetAbilityTarget();
+
 		checkf(abilityuser, TEXT("UBeamParticleAbility::IsTargetInLineOfSight Failed IAbuityUserInterface Cast!"));
 		
 		const FVector p1 = AbilityComp->GetCrosshairTransform(EffectSocketName).GetLocation();
@@ -78,9 +78,9 @@ void UBeamParticleAbility::UpdateBeamParameters()
 {
 	if (BeamComp == nullptr) return;
 
-	if (bLinkBeamToTarget && AbilityComp->GetAbilityTarget())
+	if (bLinkBeamToTarget && GetAbilityTarget())
 	{
-		const AActor * Target = AbilityComp->GetAbilityTarget();
+		const AActor * Target = GetAbilityTarget();
 		const FVector endbeam = Target->GetActorLocation();
 		const FName beamparametername = BeamEndParameterName;
 		BeamComp->SetVectorParameter(beamparametername, endbeam);
@@ -90,7 +90,7 @@ void UBeamParticleAbility::UpdateBeamParameters()
 bool UBeamParticleAbility::ShouldSeverBeam() const
 {
 	bool retval = false;
-	if (AbilityComp->GetAbilityTarget() != nullptr && (bLinkBeamToTarget == true))
+	if (GetAbilityTarget() != nullptr && (bLinkBeamToTarget == true))
 	{
 		if (!IsTargetInRange() || !IsTargetInLineOfSight() )
 		{
@@ -108,26 +108,30 @@ bool UBeamParticleAbility::ShouldSeverBeam() const
 void UBeamParticleAbility::Init(UAbilityComponent * InAbilityComp)
 {
 	Super::Init(InAbilityComp);
-	IAbilityUserInterface * abilityuser = AbilityComp->GetAbilityUser();
 
-	USceneComponent * attatchtocomp = abilityuser->GetParticleAttatchmentComponent(this);
-
-	if (BeamEmitter != nullptr && attatchtocomp != nullptr)
+	if (BeamComp == nullptr)
 	{
-		EAttachLocation::Type attatchrule = EAttachLocation::SnapToTarget;
+		IAbilityUserInterface* abilityuser = AbilityComp->GetAbilityUser();
 
-		if (IsValid(BeamEmitter) && attatchtocomp)
+		USceneComponent* attatchtocomp = abilityuser->GetParticleAttatchmentComponent(this);
+
+		if (BeamEmitter != nullptr && attatchtocomp != nullptr)
 		{
-			BeamComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
-				BeamEmitter,
-				attatchtocomp,
-				EffectSocketName,
-				EffectRelativeLocation,
-				EffectRelativeRotation,
-				attatchrule,
-				false, //bAutoDestroy
-				false  //bAutoActivate
-			);
+			EAttachLocation::Type attatchrule = EAttachLocation::SnapToTarget;
+
+			if (IsValid(BeamEmitter) && attatchtocomp)
+			{
+				BeamComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+					BeamEmitter,
+					attatchtocomp,
+					EffectSocketName,
+					EffectRelativeLocation,
+					EffectRelativeRotation,
+					attatchrule,
+					false, //bAutoDestroy
+					false  //bAutoActivate
+				);
+			}
 		}
 	}
 }

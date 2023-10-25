@@ -35,6 +35,7 @@ class RTS_PROJECT_API UAbility : public UObject
 
 	public:
 		virtual void Init(UAbilityComponent * InComp);
+		virtual bool IsInitialized() const;
 
 		virtual void OnAbilityStart();
 		virtual void OnEffect();
@@ -43,6 +44,10 @@ class RTS_PROJECT_API UAbility : public UObject
 		virtual void OnAbilityInterrupted();
 		virtual void OnTick(float DeltaSeconds);
 		virtual void ProcessTarget(AActor * Target);
+
+	public:
+		virtual void SetIsAbilityEnabled(const bool InEnabledState);
+		FORCEINLINE bool IsAbilityEnabled() const { return bIsAbilityEnabled; };
 
 	public:
 		/*Called from AnimNotify to Set Ability is Ready for release*/
@@ -57,6 +62,15 @@ class RTS_PROJECT_API UAbility : public UObject
 	protected:
 		UWorld * GetWorld() const;
 		bool HasAuthority() const;
+		ENetMode GetNetMode() const;
+
+	protected:
+		UFUNCTION()
+		virtual void OnRep_bIsAbilityEnabled();
+
+	protected:
+		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+		virtual bool IsSupportedForNetworking() const override;
 
 	protected:
 		UPROPERTY(EditDefaultsOnly)
@@ -87,5 +101,6 @@ class RTS_PROJECT_API UAbility : public UObject
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
 
-
+		UPROPERTY(ReplicatedUsing = OnRep_bIsAbilityEnabled)
+		bool bIsAbilityEnabled = DefaultEnabledState;
 };

@@ -3,6 +3,7 @@
 
 #include "TraceTargetAbility.h"
 #include "../AbilityComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 void UTraceTargetAbility::NotifyOnReady()
@@ -18,7 +19,7 @@ void UTraceTargetAbility::NotifyOnReady()
 void UTraceTargetAbility::OnAbilityEnd()
 {
 	GetWorld()->GetTimerManager().ClearTimer(ChannelPulseHandler);
-	AbilityComp->SetAbilityTarget(nullptr);
+	SetAbilityTarget(nullptr);
 
 	Super::OnAbilityEnd();
 }
@@ -27,15 +28,37 @@ void UTraceTargetAbility::ProcessTraceHit(FHitResult HitResult, FVector StartTra
 {
 	if(CanHit(HitResult.GetActor()))
 	{
-		AbilityComp->SetAbilityTarget(HitResult.GetActor(), HitResult);
+		SetAbilityTarget(HitResult.GetActor(), HitResult);
 		ProcessTarget(HitResult.GetActor());
 	}
 
 }
 
+bool UTraceTargetAbility::GetHitInfoFor(AActor* HitTarget, FHitResult& Hit) const
+{
+	bool retval = false;
+	if (LastAbilityHit.GetActor() == HitTarget)
+	{
+		Hit = LastAbilityHit;
+		retval = true;
+	}
+	return retval;
+}
+
 bool UTraceTargetAbility::CanHit(AActor * HitActor) const
 {
 	return true;
+}
+
+void UTraceTargetAbility::OnRep_AbilityTarget()
+{
+	ProcessTarget(AbilityTarget);
+}
+
+void UTraceTargetAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UTraceTargetAbility, AbilityTarget);
 }
 
 void UTraceTargetAbility::UpdateChannel()
@@ -49,9 +72,8 @@ void UTraceTargetAbility::UpdateChannel()
 	const FVector aimdirection = abilityuser->GetAbilityAimVector();
 	const FVector endtrace = spawnlocation + (aimdirection * Range);
 
-	UWorld * world = GetWorld();
+	const UWorld * world = GetWorld();
 	FHitResult outhit;
-
 
 	queryparams.AddIgnoredActors(abilityuser->GetIgnoredTraceActors(TWeakObjectPtr<UAbility>(this)));
 
@@ -68,4 +90,14 @@ void UTraceTargetAbility::UpdateChannel()
 	{
 		ProcessTraceHit(outhit, spawnlocation, endtrace);
 	}
+}
+
+void UTraceTargetAbility::SetAbilityTarget(AActor* NewTarget, FHitResult AssociatedHit)
+{
+	if (HasAuthority())
+	{
+		AbilityTarget = NewTarget;
+	}
+
+	LastAbilityHit = AssociatedHit;
 }

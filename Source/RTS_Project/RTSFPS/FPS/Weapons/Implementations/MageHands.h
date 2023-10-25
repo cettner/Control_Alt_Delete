@@ -55,7 +55,7 @@ protected:
 	void ServerStopUseSecondAbility();
 
 	UFUNCTION()
-	virtual void OnRightHandAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies);
+	virtual void OnRightHandAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

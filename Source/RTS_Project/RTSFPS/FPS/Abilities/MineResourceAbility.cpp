@@ -33,7 +33,7 @@ void UMineResourceAbility::SetMineAmount(uint32 InAmount)
 
 void UMineResourceAbility::MineResource()
 {
-	AMineableResource * nodetomine = AbilityComp->GetAbilityTarget<AMineableResource>();
+	AMineableResource * nodetomine = GetAbilityTarget<AMineableResource>();
 	IResourceGatherer * resourcegatherer = GetResourceGatherer();
 	checkf(resourcegatherer, TEXT("UMineResourceAbility::MineResource failed to obtain ResourceGatherer"));
 
@@ -91,7 +91,7 @@ bool UMineResourceAbility::ShouldSeverBeam() const
 		const IResourceGatherer* resourcegatherer = GetResourceGatherer();
 		checkf(resourcegatherer, TEXT("UMineResourceAbility::ShouldSeverBeam failed to obtain ResourceGatherer"));
 		
-		const AMineableResource * nodetomine = AbilityComp->GetAbilityTarget<AMineableResource>();
+		const AMineableResource * nodetomine = GetAbilityTarget<AMineableResource>();
 		retval |= !IsValid(nodetomine);
 
 		if (retval == false)

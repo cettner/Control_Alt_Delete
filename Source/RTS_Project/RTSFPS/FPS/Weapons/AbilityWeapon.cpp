@@ -10,7 +10,6 @@ AAbilityWeapon::AAbilityWeapon() : Super()
 	if (HasAuthority())
 	{
 		AbilityComp = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComp"));
-		check(AbilityComp);
 		AbilityComp->SetIsReplicated(true);
 	}
 }
@@ -155,7 +154,7 @@ bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 	return (retval);
 }
 
-void AAbilityWeapon::OnAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies)
+void AAbilityWeapon::OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> InSpawningAbility)
 {
 	if (AbilityIndex == NO_ABILITY_INDEX)
 	{

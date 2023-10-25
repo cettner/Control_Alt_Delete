@@ -18,11 +18,29 @@ public:
 	virtual void NotifyOnReady() override;
 	virtual void OnAbilityEnd() override;
 	virtual void ProcessTraceHit(FHitResult HitResult, FVector StartTrace, FVector EndTrace);
+	
 
 protected:
 	UFUNCTION()
 	virtual void UpdateChannel();
+	
+	void SetAbilityTarget(AActor* NewTarget, FHitResult AssociatedHit = FHitResult());
+	FORCEINLINE AActor* GetAbilityTarget() const { return AbilityTarget; };
+	template < class T >
+	T* GetAbilityTarget() const
+	{
+		return Cast<T>(GetAbilityTarget());
+	}
+
+	bool GetHitInfoFor(AActor* HitTarget, FHitResult& Hit) const;
+
 	virtual bool CanHit(AActor * HitActor) const;
+
+	UFUNCTION()
+	void OnRep_AbilityTarget();
+
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 protected:
 	FTimerHandle ChannelPulseHandler = FTimerHandle();
@@ -40,4 +58,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	float Range = 150.0f;
+
+	/*Runtime*/
+protected:
+	UPROPERTY(ReplicatedUsing = OnRep_AbilityTarget)
+	AActor* AbilityTarget = nullptr;
+
+	FHitResult LastAbilityHit = FHitResult();
 };

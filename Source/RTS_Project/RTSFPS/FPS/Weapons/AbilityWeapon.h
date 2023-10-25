@@ -57,7 +57,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual bool InitAbilities(IAbilityUserInterface * InUser);
 
 		UFUNCTION()
-		virtual void OnAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies);
+		virtual void OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility);
 
 	protected:
 		virtual void PostInitializeComponents() override;

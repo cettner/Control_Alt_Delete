@@ -4,10 +4,16 @@
 #include "Ability.h"
 #include "AbilityComponent.h"
 
+#include "Net/UnrealNetwork.h"
 
 void UAbility::Init(UAbilityComponent * InComp)
 {
 	AbilityComp = InComp;
+}
+
+bool UAbility::IsInitialized() const
+{
+	return AbilityComp != nullptr;
 }
 
 void UAbility::OnAbilityStart()
@@ -66,6 +72,19 @@ void UAbility::ProcessTarget(AActor * Target)
 	
 }
 
+void UAbility::SetIsAbilityEnabled(const bool InEnabledState)
+{
+	if (HasAuthority() && (bIsAbilityEnabled != InEnabledState))
+	{
+		bIsAbilityEnabled = InEnabledState;
+
+		if (GetNetMode() == ENetMode::NM_DedicatedServer)
+		{
+			OnRep_bIsAbilityEnabled();
+		}
+	}
+}
+
 void UAbility::NotifyOnReady()
 {
 	AbilityComp->PlayAbilityMontage(LoopMontage);
@@ -99,5 +118,32 @@ UWorld * UAbility::GetWorld() const
 bool UAbility::HasAuthority() const
 {
 	return AbilityComp->HasAuthority();
+}
+
+ENetMode UAbility::GetNetMode() const
+{
+	return AbilityComp->GetNetMode();
+}
+
+void UAbility::OnRep_bIsAbilityEnabled()
+{
+	if (AbilityComp != nullptr)
+	{
+		AbilityComp->OnAbilityEnableStateChanged(this);
+	}
+}
+
+void UAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	if (const UBlueprintGeneratedClass* BPClass = Cast<UBlueprintGeneratedClass>(GetClass()))
+	{
+		BPClass->GetLifetimeBlueprintReplicationList(OutLifetimeProps);
+	}
+	DOREPLIFETIME(UAbility, bIsAbilityEnabled);
+}
+
+bool UAbility::IsSupportedForNetworking() const
+{
+	return true;
 }
 

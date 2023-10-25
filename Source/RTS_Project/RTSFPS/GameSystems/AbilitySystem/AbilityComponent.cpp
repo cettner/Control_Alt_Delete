@@ -12,6 +12,7 @@
 UAbilityComponent::UAbilityComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	bReplicateUsingRegisteredSubObjectList = true;
 }
 
 bool UAbilityComponent::CanUseAbility(int AbilityIndex) const
@@ -49,15 +50,6 @@ void UAbilityComponent::SetIsCastSuccessful(bool ReleaseState)
 	}
 }
 
-void UAbilityComponent::SetAbilityTarget(AActor * NewTarget, FHitResult AssociatedHit)
-{
-	if (GetOwner()->HasAuthority())
-	{
-		AbilityTarget = NewTarget;
-	}
-	LastAbilityHit = AssociatedHit;
-}
-
 void UAbilityComponent::SetIsCastReady(bool ReadyState)
 {
 	bIsCastReady = ReadyState;
@@ -78,20 +70,21 @@ void UAbilityComponent::InitAbilities(IAbilityUserInterface* InAbilitiyUser, TAr
 	if (InAbilitiyUser != nullptr)
 	{
 		AbilityUser = InAbilitiyUser;
-
-		for (int i = 0; i < InAllAbilityClasses.Num(); i++)
+		if (HasAuthority())
 		{
-			UAbility * newability =	NewObject<UAbility>(UAbility::StaticClass(), InAllAbilityClasses[i]);
-			newability->Init(this);
-			AllAbilites.Emplace(newability);
-			const bool enabledstate = newability->GetDefaultEnabledState();
-			EnabledAbilities.Emplace(enabledstate);
-		}
+			for (int i = 0; i < InAllAbilityClasses.Num(); i++)
+			{
+				UAbility* newability = NewObject<UAbility>(UAbility::StaticClass(), InAllAbilityClasses[i]);
+				AddReplicatedSubObject(newability);
+				newability->Init(this);
+				AllAbilites.Emplace(newability);
+				const bool enabledstate = newability->GetDefaultEnabledState();
+			}
 
-		if (AllAbilites.Num() > 0)
-		{
-			bAbilitiesInitialized = EnabledAbilities.Num() == AllAbilites.Num();
-			SetCurrentAbility(GetNextAvailableIndex(0, true));
+			if (AllAbilites.Num() > 0)
+			{
+				SetCurrentAbility(GetNextAvailableIndex(NO_ABILITY_INDEX, true));
+			}
 		}
 	}
 }
@@ -152,6 +145,26 @@ void UAbilityComponent::OnCastEnd()
 	}
 }
 
+void UAbilityComponent::OnAbilityEnableStateChanged(UAbility* InAbility)
+{
+	const int checkindex = GetNextAvailableIndex();
+	if (checkindex == NO_ABILITY_INDEX && !IsCasting())
+	{
+		/*If we have no avialable abilities, prevent user from attempting*/
+		CurrentAbilityIndex = NO_ABILITY_INDEX;
+	}
+	else if (CurrentAbilityIndex == NO_ABILITY_INDEX)
+	{
+		/*If we dont have an ability Picked out, give the first one that shows up*/
+		CurrentAbilityIndex = checkindex;
+	}
+
+	if (AbilityChangeDelegate.IsBound())
+	{
+		AbilityChangeDelegate.Broadcast(InAbility);
+	}
+}
+
 void UAbilityComponent::AbilityEffect()
 {
 	if (IsAbilityValid() && GetOwner()->HasAuthority())
@@ -181,19 +194,19 @@ int UAbilityComponent::GetNextEnabledIndex(int StartIndex) const
 {
 	int retval = NO_ABILITY_INDEX;
 	const int numabilities = AllAbilites.Num();
-
-	int nextindex = (StartIndex + 1) % numabilities;
-	bool abilityenabled = IsAbilityEnabled(nextindex);
+    int nextindex = (StartIndex + 1) % numabilities;
+	bool abilityenabled = AllAbilites[nextindex]->IsAbilityEnabled();
+	
 	if (abilityenabled == true)
 	{
 		retval = nextindex;
 	}
 
 	int abilitycount = 0;
-	while ((nextindex != StartIndex) && (retval == NO_ABILITY_INDEX) && (abilitycount < EnabledAbilities.Num()))
+	while ((nextindex != StartIndex) && (retval == NO_ABILITY_INDEX) && (abilitycount < AllAbilites.Num()))
 	{
 		nextindex = (nextindex + 1) % numabilities;
-		abilityenabled = IsAbilityEnabled(nextindex);
+		abilityenabled = AllAbilites[nextindex]->IsAbilityEnabled();
 
 		if (abilityenabled == true)
 		{
@@ -238,10 +251,10 @@ void UAbilityComponent::OnEndNotify()
 bool UAbilityComponent::IsAbilityEnabled(const int InIndex) const
 {
 	bool retval = false;
-	const bool validindex = InIndex > NO_ABILITY_INDEX && InIndex < EnabledAbilities.Num();
+	const bool validindex = InIndex > NO_ABILITY_INDEX && InIndex < AllAbilites.Num();
 	if (validindex == true)
 	{
-		retval = EnabledAbilities[InIndex];
+		retval = AllAbilites[InIndex]->IsAbilityEnabled();
 	}
 	return retval;
 }
@@ -249,16 +262,10 @@ bool UAbilityComponent::IsAbilityEnabled(const int InIndex) const
 bool UAbilityComponent::SetAbilityEnabledState(const int InAbilityIndex, const bool InEnabledState)
 {
 	bool retval = false;
-	TArray<bool> oldabilitystates = EnabledAbilities;
 	if (HasAuthority() && IsAbilityValid(InAbilityIndex))
 	{
-		EnabledAbilities[InAbilityIndex] = InEnabledState;
+		AllAbilites[InAbilityIndex]->SetIsAbilityEnabled(InEnabledState);
 		retval = true;
-	}
-	
-	if (HasAuthority() && (GetNetMode() == NM_ListenServer))
-	{
-		OnRep_EnabledAbilities(oldabilitystates);
 	}
 
 	return(retval);
@@ -343,22 +350,6 @@ bool UAbilityComponent::IsAbilityUsingCrosshair() const
 bool UAbilityComponent::IsUsingAbility() const
 {
 	return false;
-}
-
-AActor * UAbilityComponent::GetAbilityTarget() const
-{
-	return AbilityTarget;
-}
-
-bool UAbilityComponent::GetHitInfoFor(AActor * HitTarget, FHitResult & Hit)
-{
-	bool retval = false;
-	if (LastAbilityHit.GetActor() == HitTarget)
-	{
-		Hit = LastAbilityHit;
-		retval = true;
-	}
-	return retval;
 }
 
 bool UAbilityComponent::IsCasting() const
@@ -469,9 +460,8 @@ void UAbilityComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UAbilityComponent, bIsCasting);
-	DOREPLIFETIME(UAbilityComponent, AbilityTarget);
 	DOREPLIFETIME(UAbilityComponent, bReleaseSuccess);
-	DOREPLIFETIME(UAbilityComponent, EnabledAbilities);
+	DOREPLIFETIME(UAbilityComponent, AllAbilites);
 }
 
 void UAbilityComponent::OnRep_bIsCasting()
@@ -507,34 +497,20 @@ void UAbilityComponent::OnRep_bIsCastReleased()
 	}
 }
 
-void UAbilityComponent::OnRep_AbilityTarget()
+void UAbilityComponent::OnRep_AllAbilities()
 {
-	UAbility* currentability = GetCurrentAbility();
-	if (currentability)
+	for (int i = 0; i < AllAbilites.Num(); i++)
 	{
-		currentability->ProcessTarget(AbilityTarget);
-	}
-}
-
-void UAbilityComponent::OnRep_EnabledAbilities(TArray<bool> PrevEnabledAbilities)
-{
-	const int checkindex = GetNextAvailableIndex();
-	if (checkindex == NO_ABILITY_INDEX && !IsCasting())
-	{
-		/*If we have no avialable abilities, prevent user from attempting*/
-		CurrentAbilityIndex = NO_ABILITY_INDEX;
-	}
-	else if (CurrentAbilityIndex == NO_ABILITY_INDEX)
-	{
-		/*If we dont have an ability Picked out, give the first one that shows up*/
-		CurrentAbilityIndex = checkindex;
-	}
-	
-	if (AbilityChangeDelegate.IsBound())
-	{
-		TArray<int> changedabilityindexs = TArray<int>();
-
-		AbilityChangeDelegate.Broadcast(changedabilityindexs);
+		if (!AllAbilites[i]->IsInitialized())
+		{
+			AllAbilites[i]->Init(this);
+			AbilityChangeDelegate.Broadcast(AllAbilites[i]);
+		}
 	}
 
+	if (AllAbilites.Num() > 0)
+	{
+		const int currentindex = GetNextAvailableIndex(NO_ABILITY_INDEX, true);
+		SetCurrentAbility(currentindex);
+	}
 }

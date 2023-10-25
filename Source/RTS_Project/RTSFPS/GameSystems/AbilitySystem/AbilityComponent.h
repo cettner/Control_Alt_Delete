@@ -8,10 +8,9 @@
 #include "Interfaces/AbilityUserInterface.h"
 #include "AbilityComponent.generated.h"
 
-constexpr int INVALID_ABILITY_COST = -1;
 constexpr int NO_ABILITY_INDEX = -1;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilitiesChangedDelegate, TArray<int>, InChangedAbilities);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityEnableStateChangedDelegate, TWeakObjectPtr<UAbility>, InChangedAbility);
 
 USTRUCT()
 struct FAbilityReplicationBool
@@ -48,10 +47,12 @@ private:
 	int AbilityIndex = -1;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom))
 class RTS_PROJECT_API UAbilityComponent : public UActorComponent
 {
 	GENERATED_BODY()
+	friend UAbility;
+
 
 public:	
 	// Sets default values for this component's properties
@@ -69,17 +70,10 @@ public:
 	virtual void ReleaseAbility();
 	/*Called By Comp Owner to Immediatly Halt the Ability*/
 	virtual void InterruptAbility();
-
-	/*Called by the ability to notify the component that casting has started*/
-	virtual void OnCastStart();
-	/*Called by the ability to notify the component that casting has ended*/
-	virtual void OnCastEnd();
 	
 	/****************Server Trigger***********/
 	/*Called by Ability to notify that the ability was successfully started*/
 	void SetIsCastSuccessful(bool ReleaseState);
-	/*Called By the Ability to notify that a target has been identified*/
-	void SetAbilityTarget(AActor * NewTarget, FHitResult AssociatedHit = FHitResult());
 	/*****************************************/
 
 public:
@@ -110,14 +104,8 @@ public:
 
 	virtual bool IsAbilityUsingCrosshair() const;
 	virtual bool IsUsingAbility() const;
-	AActor * GetAbilityTarget() const;
-	template < class T >
-	T* GetAbilityTarget() const
-	{
-		return Cast<T>(GetAbilityTarget());
-	}
 
-	bool GetHitInfoFor(AActor * HitTarget, FHitResult& Hit);
+
 
 	/*True if the user is currenlty casting or in interim to using the ability, set by the ability after */
 	bool IsCasting() const;
@@ -150,12 +138,17 @@ public:
 
 	AActor * FinishSpawningActor(AActor * InitializedActor, const FTransform& SpawnTransform);
 
-
-
-
 public:
 	virtual FTransform GetSurfaceTransform();
 	virtual FTransform GetCrosshairTransform(FName Socketname);
+
+protected:
+	/*Called by the ability to notify the component that casting has started*/
+	virtual void OnCastStart();
+	/*Called by the ability to notify the component that casting has ended*/
+	virtual void OnCastEnd();
+
+	virtual void OnAbilityEnableStateChanged(UAbility* InAbility);
 
 protected:
 	virtual FVector GetControlRotation();
@@ -173,7 +166,7 @@ protected:
 
 
 public:
-	FOnAbilitiesChangedDelegate AbilityChangeDelegate = FOnAbilitiesChangedDelegate();
+	FOnAbilityEnableStateChangedDelegate AbilityChangeDelegate = FOnAbilityEnableStateChangedDelegate();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
@@ -185,19 +178,12 @@ protected:
 	void OnRep_bIsCastReleased();
 
 	UFUNCTION()
-	void OnRep_AbilityTarget();
-
-	UFUNCTION()
-	void OnRep_EnabledAbilities(TArray<bool> PrevEnabledAbilities);
+	void OnRep_AllAbilities();
 
 protected:
 	IAbilityUserInterface* AbilityUser = nullptr;
 
 	int CurrentAbilityIndex = -1;
-	
-	/*Have to mark this as UPROPERTY or the UObjects are considered Weak Pointers without reference and are "randomly" garbage collected*/
-	UPROPERTY()
-	TArray<UAbility *> AllAbilites;
 
 	FAbilityAnim CurrentMontage;
 
@@ -205,21 +191,18 @@ protected:
 
 	bool bAbilitiesInitialized = false;
 
+protected:
+	/*Have to mark this as UPROPERTY or the UObjects are considered Weak Pointers without reference and are "randomly" garbage collected*/
+	UPROPERTY(ReplicatedUsing = OnRep_AllAbilities)
+	TArray<UAbility*> AllAbilites = TArray<UAbility*>();
+
 private:
 	bool bIsCastReady = false;
-
-	FHitResult LastAbilityHit = FHitResult();
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
 	FAbilityReplicationBool bIsCasting = FAbilityReplicationBool();
 
 	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
 	FAbilityReplicationBool bReleaseSuccess = FAbilityReplicationBool();
-
-	UPROPERTY(ReplicatedUsing = OnRep_AbilityTarget)
-	AActor * AbilityTarget = nullptr;
-
-	UPROPERTY(ReplicatedUsing = OnRep_EnabledAbilities)
-	TArray<bool> EnabledAbilities;
 
 };

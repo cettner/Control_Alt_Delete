@@ -38,7 +38,7 @@ UAbilityComponent * AMageHands::GetHandAbilityComponent(UAbilityAnimNotify * Cal
 	return retval;
 }
 
-void AMageHands::OnRightHandAbilityEnableStateChanged(TArray<int> InChangedAbilityIndicies)
+void AMageHands::OnRightHandAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility)
 {
 	if (RightHandAbilityIndex == NO_ABILITY_INDEX)
 	{
