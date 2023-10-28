@@ -42,6 +42,7 @@ void AAbilityWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 	if (bAreAbilitiesInitialized == false)
 	{
 		bAreAbilitiesInitialized = InitAbilities(this);
+		InitResourceBindings(NewOwner);
 	}
 
 }
@@ -154,11 +155,38 @@ bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 	return (retval);
 }
 
+void AAbilityWeapon::InitResourceBindings(IResourceGatherer* InResourceSource)
+{
+	if (HasAuthority())
+	{
+		/*Todo filter to only relevant resources*/
+		TArray<TSubclassOf<UResource>> resourcetypes = InResourceSource->GetSupportedResources();
+		for (TSubclassOf<UResource> resourceclass : resourcetypes)
+		{
+			FOnResourceValueChangedDelegate& changedelegate = InResourceSource->BindResourceValueChangedEvent(resourceclass);
+			changedelegate.AddUObject(this, &AAbilityWeapon::OnResourceSourceChanged);
+		}
+	}
+}
+
 void AAbilityWeapon::OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> InSpawningAbility)
 {
 	if (AbilityIndex == NO_ABILITY_INDEX)
 	{
 		AbilityIndex = AbilityComp->GetNextAvailableIndex();
+	}
+}
+
+void AAbilityWeapon::OnResourceSourceChanged(const TSubclassOf<UResource> InClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InSource)
+{
+	if (AbilityComp->IsCasting())
+	{
+		const UAbility * currentability = AbilityComp->GetCurrentAbility();
+		FReplicationResourceMap abilitycost = currentability->GetAbilityCost();
+		if (!InSource->HasResource(abilitycost))
+		{
+			AbilityComp->InterruptAbility();
+		}
 	}
 }
 

@@ -85,6 +85,11 @@ void UAbility::SetIsAbilityEnabled(const bool InEnabledState)
 	}
 }
 
+FReplicationResourceMap UAbility::GetAbilityCost() const
+{
+	return AbilityCost;
+}
+
 void UAbility::NotifyOnReady()
 {
 	AbilityComp->PlayAbilityMontage(LoopMontage);

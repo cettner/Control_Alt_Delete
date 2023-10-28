@@ -12,7 +12,6 @@
 
 
 
-DECLARE_MULTICAST_DELEGATE_FourParams(FOnResourceValueChangedDelegate, const TSubclassOf<UResource>, const uint32/*old value*/, const uint32 /*new value*/, TScriptInterface<IResourceGatherer>);
 
 
 
@@ -101,7 +100,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 
 		TMap<TSubclassOf<UResource>, FResourceRegenEventConfig> ActiveRegenEvents = TMap<TSubclassOf<UResource>, FResourceRegenEventConfig>();
 
-		TMap<TSubclassOf<UResource>, FOnResourceValueChangedDelegate> ResourceDelegates;
+		TMap<TSubclassOf<UResource>, FOnResourceValueChangedDelegate> ResourceDelegates = TMap<TSubclassOf<UResource>, FOnResourceValueChangedDelegate>();
 
 		uint32 CurrentWeight = 0U;
 };

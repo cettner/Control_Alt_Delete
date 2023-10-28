@@ -72,8 +72,8 @@ void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, A
 
 bool AAbilityCombatCommander::CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const
 {
-	FReplicationResourceMap abilitycost = FReplicationResourceMap();
-	checkf(GetUnitPriceForSource(TracingAbility->GetClass(), this, abilitycost, GetController()), TEXT("AAbilityCombatCommander::CanCastAbility Failed to obtain pricemap"));
+	FReplicationResourceMap abilitycost = TracingAbility->GetAbilityCost();
+
 	bool retval = false;
 	
 	if (HasResource(abilitycost))

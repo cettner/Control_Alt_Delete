@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Animation/AnimMontage.h"
+
+#include "../ResourceSystem/Resource.h"
 #include "Ability.generated.h"
 
 
@@ -48,6 +50,7 @@ class RTS_PROJECT_API UAbility : public UObject
 	public:
 		virtual void SetIsAbilityEnabled(const bool InEnabledState);
 		FORCEINLINE bool IsAbilityEnabled() const { return bIsAbilityEnabled; };
+		virtual FReplicationResourceMap GetAbilityCost() const ;
 
 	public:
 		/*Called from AnimNotify to Set Ability is Ready for release*/
@@ -103,4 +106,7 @@ class RTS_PROJECT_API UAbility : public UObject
 
 		UPROPERTY(ReplicatedUsing = OnRep_bIsAbilityEnabled)
 		bool bIsAbilityEnabled = DefaultEnabledState;
+
+		UPROPERTY(EditDefaultsOnly)
+		FReplicationResourceMap AbilityCost = FReplicationResourceMap();
 };

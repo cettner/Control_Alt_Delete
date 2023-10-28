@@ -6,6 +6,8 @@
 #include "Weapon.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/AbilityComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
+#include "../../GameSystems/ResourceSystem/Interfaces/ResourceGatherer.h"
+
 #include "AbilityWeapon.generated.h"
 
 /**
@@ -55,9 +57,13 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 
 	protected:
 		virtual bool InitAbilities(IAbilityUserInterface * InUser);
+		virtual void InitResourceBindings(IResourceGatherer * InResourceSource);
+
 
 		UFUNCTION()
 		virtual void OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility);
+
+		virtual void OnResourceSourceChanged(const TSubclassOf<UResource> InClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InSource);
 
 	protected:
 		virtual void PostInitializeComponents() override;

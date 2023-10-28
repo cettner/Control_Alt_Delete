@@ -8,6 +8,9 @@
 
 #include "ResourceGatherer.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE_FourParams(FOnResourceValueChangedDelegate, const TSubclassOf<UResource>, const uint32/*old value*/, const uint32 /*new value*/, TScriptInterface<class IResourceGatherer>);
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UResourceGatherer : public UInterface
@@ -18,6 +21,7 @@ class UResourceGatherer : public UInterface
 /**
  * 
  */
+
 class RTS_PROJECT_API IResourceGatherer
 {
 	GENERATED_BODY()
@@ -31,6 +35,9 @@ public:
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar);
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const FReplicationResourceMap InAmounttoTransfer);
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<UResource> ResourceType, const int InAmountToTransfer);
+
+public:
+	virtual FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType) PURE_VIRTUAL(IResourceGatherer::BindResourceValueChangedEvent, return *new FOnResourceValueChangedDelegate(););
 
 	/*Returns Whether the gatherer has the specified number of units of a particular resource type*/
 	virtual bool HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount = 1U) const;

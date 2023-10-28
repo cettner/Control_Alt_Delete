@@ -424,6 +424,11 @@ uint32 ARTSMinion::GetResourceMinimum(const TSubclassOf<UResource> ResourceClass
 	return ResourceComp->GetResourceMinimum(ResourceClass);
 }
 
+FOnResourceValueChangedDelegate& ARTSMinion::BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType)
+{
+	return ResourceComp->BindResourceValueChangedEvent(InResourceType);
+}
+
 void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

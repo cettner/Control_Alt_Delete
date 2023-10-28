@@ -114,6 +114,7 @@ protected:
 	virtual uint32 GetMaxWeight() const override;
 	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const override;
 	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const override;
+	virtual FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType) override;
 /*************************************************/
 
 /**************IUpgradableInterface****************/
