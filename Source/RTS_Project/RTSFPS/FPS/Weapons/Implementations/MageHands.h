@@ -20,7 +20,10 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 protected:
+	/******************AAilityWeapon Overrides************************/
 	virtual bool InitAbilities(IAbilityUserInterface * ) override;
+	virtual void OnResourceSourceChanged(const TSubclassOf<UResource> InClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InSource) override;
+	/*****************************************************************/
 
 protected:
 	/**********************AWeapon Overrides***************************/

@@ -37,7 +37,6 @@ void UAbility::OnAbilityReleased()
 {
 	const bool bcanplaymontage = !bRequiresReadyCast || AbilityComp->IsCastReady();
 
-
 	if (ReleaseAbilityMontages.Num() && bcanplaymontage)
 	{
 		AbilityComp->SetIsCastSuccessful(true);
@@ -50,6 +49,7 @@ void UAbility::OnAbilityReleased()
 		AbilityComp->StopCurrentAnimation();
 		AbilityComp->OnCastEnd();
 	}
+	AbilityComp->SetIsCastReady(false);
 }
 
 void UAbility::OnAbilityEnd()
@@ -59,7 +59,10 @@ void UAbility::OnAbilityEnd()
 
 void UAbility::OnAbilityInterrupted()
 {
-	OnAbilityEnd();
+	AbilityComp->SetIsCastSuccessful(false);
+	AbilityComp->SetIsCastReady(false);
+	AbilityComp->StopCurrentAnimation();
+	AbilityComp->EndAbility();
 }
 
 void UAbility::OnTick(float DeltaSeconds)

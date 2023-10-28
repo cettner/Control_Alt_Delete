@@ -61,7 +61,7 @@ public:
 
 public:
 	/*Pass through function for Abilities to dermine if they should Execute Authoritative Commands based on the comps owner*/
-	bool HasAuthority();
+	bool HasAuthority() const;
 
 public:
 	/*Called by Comp Owner on inital attempt to use Ability*/

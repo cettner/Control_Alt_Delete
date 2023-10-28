@@ -10,7 +10,6 @@ AMageHands::AMageHands() : Super()
 	if(HasAuthority())
 	{
 		RightHandAbilityComp = CreateDefaultSubobject<UAbilityComponent>(TEXT("RightHandAbilityComp"));
-		check(RightHandAbilityComp);
 		RightHandAbilityComp->SetIsReplicated(true);
 	}
 
@@ -66,6 +65,21 @@ bool AMageHands::InitAbilities(IAbilityUserInterface * InAbilUser)
 	RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
 	
 	return(retval);
+}
+
+void AMageHands::OnResourceSourceChanged(const TSubclassOf<UResource> InClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InSource)
+{
+	Super::OnResourceSourceChanged(InClass, InOldValue, InNewValue, InSource);
+
+	if (RightHandAbilityComp->IsCasting() && RightHandAbilityComp->WantstoCast())
+	{
+		const UAbility* currentability = RightHandAbilityComp->GetCurrentAbility();
+		FReplicationResourceMap abilitycost = currentability->GetAbilityCost();
+		if (!InSource->HasResource(abilitycost))
+		{
+			RightHandAbilityComp->InterruptAbility();
+		}
+	}
 }
 
 void AMageHands::OnReadyNotify(UAbilityAnimNotify * CallingContext)

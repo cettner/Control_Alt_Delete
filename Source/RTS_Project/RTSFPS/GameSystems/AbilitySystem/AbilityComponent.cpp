@@ -89,7 +89,7 @@ void UAbilityComponent::InitAbilities(IAbilityUserInterface* InAbilitiyUser, TAr
 	}
 }
 
-bool UAbilityComponent::HasAuthority()
+bool UAbilityComponent::HasAuthority() const
 {
 	return GetOwner()->HasAuthority();
 }
@@ -119,7 +119,6 @@ void UAbilityComponent::ReleaseAbility()
 	{
 		UAbility* abilitytorelease = GetCurrentAbility();
 		abilitytorelease->OnAbilityReleased();
-		SetIsCastReady(false);
 	}
 
 }
@@ -135,7 +134,7 @@ void UAbilityComponent::InterruptAbility()
 
 void UAbilityComponent::OnCastEnd()
 {
-	if (GetOwner()->HasAuthority())
+	if (HasAuthority())
 	{
 		SetIsCasting(false);
 		if (WantstoCast())

@@ -179,7 +179,7 @@ void AAbilityWeapon::OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> InSpaw
 
 void AAbilityWeapon::OnResourceSourceChanged(const TSubclassOf<UResource> InClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InSource)
 {
-	if (AbilityComp->IsCasting())
+	if (AbilityComp->IsCasting() && AbilityComp->WantstoCast())
 	{
 		const UAbility * currentability = AbilityComp->GetCurrentAbility();
 		FReplicationResourceMap abilitycost = currentability->GetAbilityCost();
