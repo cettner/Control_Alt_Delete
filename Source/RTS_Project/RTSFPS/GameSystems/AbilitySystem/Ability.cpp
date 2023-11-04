@@ -70,11 +70,6 @@ void UAbility::OnTick(float DeltaSeconds)
 
 }
 
-void UAbility::ProcessTarget(AActor * Target)
-{
-	
-}
-
 void UAbility::SetIsAbilityEnabled(const bool InEnabledState)
 {
 	if (HasAuthority() && (bIsAbilityEnabled != InEnabledState))

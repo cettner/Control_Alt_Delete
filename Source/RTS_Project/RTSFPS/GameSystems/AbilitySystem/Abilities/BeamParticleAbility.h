@@ -30,10 +30,10 @@ protected:
 	virtual void Init(UAbilityComponent * InAbilityComp) override;
 	virtual void NotifyOnReady() override;
 	virtual void OnAbilityEnd() override;
-	virtual void ProcessTarget(AActor * Target) override;
 
 protected:
 	virtual void UpdateChannel() override;
+	virtual void OnRep_AbilityTarget() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

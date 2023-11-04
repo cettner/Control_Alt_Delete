@@ -153,15 +153,6 @@ void UBeamParticleAbility::OnAbilityEnd()
 
 }
 
-void UBeamParticleAbility::ProcessTarget(AActor * Target)
-{
-	if (bLinkBeamToTarget == true && Target != nullptr && !BeamComp->IsActive())
-	{
-		StartBeam();
-	}
-
-}
-
 void UBeamParticleAbility::UpdateChannel()
 {
 	Super::UpdateChannel();
@@ -172,5 +163,13 @@ void UBeamParticleAbility::UpdateChannel()
 	else 
 	{
 		UpdateBeamParameters();
+	}
+}
+
+void UBeamParticleAbility::OnRep_AbilityTarget()
+{
+	if (bLinkBeamToTarget == true && AbilityTarget != nullptr && !BeamComp->IsActive())
+	{
+		StartBeam();
 	}
 }

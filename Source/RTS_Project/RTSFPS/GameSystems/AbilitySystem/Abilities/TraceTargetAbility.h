@@ -37,7 +37,7 @@ protected:
 	virtual bool CanHit(AActor * HitActor) const;
 
 	UFUNCTION()
-	void OnRep_AbilityTarget();
+	virtual void OnRep_AbilityTarget();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;

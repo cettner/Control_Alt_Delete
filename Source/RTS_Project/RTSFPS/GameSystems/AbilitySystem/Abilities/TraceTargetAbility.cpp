@@ -29,9 +29,7 @@ void UTraceTargetAbility::ProcessTraceHit(FHitResult HitResult, FVector StartTra
 	if(CanHit(HitResult.GetActor()))
 	{
 		SetAbilityTarget(HitResult.GetActor(), HitResult);
-		ProcessTarget(HitResult.GetActor());
 	}
-
 }
 
 bool UTraceTargetAbility::GetHitInfoFor(AActor* HitTarget, FHitResult& Hit) const
@@ -52,7 +50,6 @@ bool UTraceTargetAbility::CanHit(AActor * HitActor) const
 
 void UTraceTargetAbility::OnRep_AbilityTarget()
 {
-	ProcessTarget(AbilityTarget);
 }
 
 void UTraceTargetAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -66,7 +63,6 @@ void UTraceTargetAbility::UpdateChannel()
 	const FCollisionShape traceshape = FCollisionShape::MakeCapsule(1.0, 1.0);
 	FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
 	IAbilityUserInterface * abilityuser = AbilityComp->GetAbilityUser();
-	check(abilityuser);
 
 	const FVector spawnlocation = abilityuser->GetAbilitySocketLocation(EffectSocketName);
 	const FVector aimdirection = abilityuser->GetAbilityAimVector();
@@ -94,9 +90,10 @@ void UTraceTargetAbility::UpdateChannel()
 
 void UTraceTargetAbility::SetAbilityTarget(AActor* NewTarget, FHitResult AssociatedHit)
 {
-	if (HasAuthority())
+	if (HasAuthority() && AbilityTarget != NewTarget)
 	{
 		AbilityTarget = NewTarget;
+		OnRep_AbilityTarget();
 	}
 
 	LastAbilityHit = AssociatedHit;
