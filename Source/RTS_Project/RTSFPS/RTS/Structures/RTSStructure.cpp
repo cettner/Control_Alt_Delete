@@ -203,16 +203,6 @@ void ARTSStructure::OnDeath()
 	}
 
 	UnRegisterRTSObject();
-	/*
-	AClaimableSquareGameGrid* pgrid = Cast<AClaimableSquareGameGrid>(GetParentGrid());
-	if (pgrid != nullptr)
-	{
-		for (int i = 0; i < Modifiers.Num(); i++)
-		{
-			pgrid->RemoveModifier(Modifiers[i], GridClaimSpace, this);
-		}
-	}
-	*/
 }
 
 float ARTSStructure::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

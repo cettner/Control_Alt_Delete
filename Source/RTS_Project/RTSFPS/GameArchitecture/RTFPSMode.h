@@ -21,10 +21,6 @@ class RTS_PROJECT_API ARTFPSMode : public ADefaultMode
 public:
 	ARTFPSMode(const FObjectInitializer& ObjectInitializer);
 
-public:
-
-
-
 protected:
 	virtual UClass * GetDefaultPawnClassForController_Implementation(AController * InController) override;
 	virtual AActor * FindPlayerStart_Implementation(AController * Player, const FString & IncomingName) override;
@@ -33,13 +29,7 @@ protected:
 	virtual void StartMatch() override;
 	virtual bool ReadyToEndMatch_Implementation() override;
 
-protected:
-	/** The default pawn class used by RTS players. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
-	TSubclassOf<ACommander> DefaultFPSClass = nullptr;
 
 	/********************RTS Initialization*********************/
 public:
@@ -55,6 +45,15 @@ public:
 	UCurveFloat* GetExpCurve() const;
 	uint32 GetMaxLevel() const;
 	/**********************************************************/
+
+protected:
+	/** The default pawn class used by RTS players. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	TSubclassOf<ACommander> DefaultFPSClass = nullptr;
+
 protected:
 	
 	/********************RTS Initialization*********************/
@@ -72,8 +71,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "FPS Initialization")
 	UCurveFloat * ExpCurve = nullptr;
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "FPS Initialization")
 	uint32 MaxLevel = 10U;
+
+
 	/**********************************************************/
 };

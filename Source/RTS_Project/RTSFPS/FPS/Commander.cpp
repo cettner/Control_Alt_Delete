@@ -32,11 +32,19 @@ void ACommander::StopAnimMontage(UAnimMontage* AnimMontage)
 void ACommander::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
+	const ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
 	if (PS == nullptr) return;
 
 	SetTeam(PS->GetTeamID());
+}
 
+void ACommander::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	ADefaultPlayerState* PS = GetPlayerState<ADefaultPlayerState>();
+	if (PS == nullptr) return;
+
+	SetTeam(PS->GetTeamID());
 }
 
 ACommander::ACommander() : Super()
@@ -137,18 +145,21 @@ bool ACommander::IsFirstPerson() const
 
 int ACommander::GetTeam() const
 {
+	ADefaultPlayerState* ps = GetPlayerState<ADefaultPlayerState>();
+	if (ps == nullptr) return TeamID;
 
-	ADefaultPlayerController * PC = GetController<ADefaultPlayerController>();
-	if (PC && PC->PlayerState)
+	const int retval = ps->GetTeamID();
+	return retval;
+}
+
+void ACommander::SetTeam(int InTeamID)
+{
+	/*We dont need Authoritative control on the TeamID because we get it from the playerstate*/
+	TeamID = InTeamID;
+	if (!(GetNetMode() == NM_DedicatedServer && HasAuthority()))
 	{
-		ADefaultPlayerState *  PS = Cast<ADefaultPlayerState>(PC->PlayerState);
-		if (PS)
-		{
-			return(PS->GetTeamID());
-		}
+		OnRep_TeamID();
 	}
-
-	return(TeamID);
 }
 
 bool ACommander::IsServerPawn() const
@@ -169,24 +180,6 @@ void ACommander::OnDeath()
 void ACommander::IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
 {
 	/*TODO:: Add waypoint highlighting for incoming order*/
-}
-
-bool ACommander::GetMarchingOrder(ARTSMinion * needs_orders, FVector &OutVector)
-{
-	int index = Squad.IndexOfByKey(needs_orders);
-	if (index >= 0)
-	{
-		if (form == SQUARE)
-		{
-			OutVector = GetSquareFormation(index,marchwidth);
-			return(true);
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Invalid Formation Requested!")));
-		}
-	}
-	return(false);
 }
 
 IRTSObjectInterface * ACommander::GetLeadRTSObject()
@@ -250,23 +243,6 @@ void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
 	AFPSServerController * PC = GetController<AFPSServerController>();
-
-	IMenuInteractableInterface* menusource = Cast<IMenuInteractableInterface>(hittarget);
-
-	/*
-	if (menusource && menusource->CanOpenMenu(this) && PC)
-	{
-			PC->OpenExternalMenu(menusource->GetMenu());
-	}
-	else if(GetDefaultOrderClass(hittarget) && PC)
-	{
-		AFPSServerController * Server = GetController<AFPSServerController>();
-		if (Server)
-		{
-			Server->Server_Request_Interact(this, hittarget);
-		}
-	} 
-	*/
 }
 
 bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)
@@ -276,63 +252,10 @@ bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)
 
 void ACommander::MinionInteractionHandler_Implementation(ARTSMinion * Interacted)
 {
-	if (!IsEnemy(Interacted))
-	{
-		if (!AddtoSquad(Interacted))
-		{
-			LeaveSquad(Interacted);
-		}
-	}
-	else
-	{
-		for (int i = 0; i < Squad.Num(); i++)
-		{
-			//Squad[i]->SetTarget(Interacted);
-		}
-	}
 }
 
 void ACommander::SelectableInterationHandler_Implementation(AActor * Interacted)
 {
-	for(int i = 0; i < Squad.Num();  i++)
-	{
-		//Squad[i]->SetTarget(Interacted);
-	}
-}
-
-FVector ACommander::GetSquareFormation(int index, float width)
-{
-	FVector mylocation = GetActorLocation();
-	int corner = index % 4;
-
-
-	float xcalc;
-	float ycalc;
-
-	if (corner == 0)
-	{
-		xcalc = width + (width)*(index / 4);
-		ycalc = width + (width)*(index / 4);
-	}
-	else if(corner == 1)
-	{
-		xcalc = width + (width)*(index / 4);
-		ycalc = -width - (width)*(index / 4);
-	}
-	else if (corner == 2)
-	{
-		xcalc = -width - (width)*(index / 4);
-		ycalc = width + (width)*(index / 4);
-	}
-	else
-	{
-		xcalc = -width - (width)*static_cast<float>((index / 4));
-		ycalc = -width - (width)*static_cast<float>((index / 4));
-	}
-
-	FVector RetVal = mylocation + FVector(xcalc, ycalc, 0);
-
-	return (RetVal);
 }
 
 void ACommander::SetupPlayerInputComponent(UInputComponent* ActorInputComponent)
@@ -356,4 +279,6 @@ void ACommander::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACommander, Squad);
+	/*We Get This From the PLayerState so we dont need to replicate the teamid for the pawn*/
+	DISABLE_REPLICATED_PROPERTY(ACommander, TeamID);
 }

@@ -8,6 +8,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
+#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeData.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/CombatInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
@@ -29,6 +30,8 @@ class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgrad
 
 public:
 	ARTSMinion();
+
+	FORCEINLINE TSubclassOf<UUpgradeData> GetUpgradeDataClass() const { return UpgradeDataClass; }
 
 	virtual TSubclassOf<UResource> GetResourceForDamageEvent(const TSubclassOf<UDamageType>& InDamageType) const;
 
@@ -173,6 +176,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
 	float StrayDistance = 4000.0f;
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = Gameplay)
+	TSubclassOf<UUpgradeData> UpgradeDataClass = UUpgradeData::StaticClass();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Orders)

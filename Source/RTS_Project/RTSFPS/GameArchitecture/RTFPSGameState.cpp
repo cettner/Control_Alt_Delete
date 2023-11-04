@@ -250,7 +250,6 @@ void ARTFPSGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(ARTFPSGameState, PurchaseOrdersRep);
 }
 
-
 void ARTFPSGameState::OnRep_PurchaseOrdersRep()
 {
 	PurchaseOrders.Reset();

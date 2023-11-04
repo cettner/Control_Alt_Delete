@@ -10,6 +10,8 @@
 ATeamState::ATeamState() : Super()
 {
 	bReplicates = true;
+	bAlwaysRelevant = false;
+	bNetUseOwnerRelevancy = false;
 }
 
 bool ATeamState::AddPlayer(ADefaultPlayerState* InPlayerstate)

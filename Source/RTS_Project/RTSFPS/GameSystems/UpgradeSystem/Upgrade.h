@@ -9,6 +9,30 @@
 
 class IUpgradableInterface;
 
+constexpr uint32 UPGRADE_UNLEARNED = 0U;
+
+/*Non Essential Helper Class for Implementing Rank System*/
+USTRUCT()
+struct FUpgradeInfo
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	/*Class Of The Upgrade*/
+	UPROPERTY(EditDefaultsOnly, NotReplicated)
+	TSubclassOf<UUpgrade> UpgradeClass = nullptr;
+
+	/*Number of Times the Upgrade Has Been Applied*/
+	UPROPERTY(EditDefaultsOnly)
+	int Rank = UPGRADE_UNLEARNED;
+
+	/*For Comparision, We only care that the class is the same,  That way, if we want to "Find" it in an array
+	we can simulate a "MultiMap" Style Behavior Between the upgrade and its Rank*/
+	friend bool operator == (const FUpgradeInfo& Myself, const FUpgradeInfo& Other)
+	{
+		bool isSame = Myself.UpgradeClass == Other.UpgradeClass;
+		return(isSame);
+	}
+};
 
 USTRUCT()
 struct FUpgradeUnlockCondition

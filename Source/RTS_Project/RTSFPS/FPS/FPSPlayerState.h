@@ -47,11 +47,11 @@ protected:
 /************UpgradabaleInterface**********/
 public:
 	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
-	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades() const override;
+	virtual TArray<TSubclassOf<UUpgrade>> GetKnownUpgrades() const override;
 	virtual UClass * GetUpgradeApplicationClass() const override;
 	virtual UObject * GetUpgradeApplicationObject() override;
 	virtual const UObject * GetUpgradeApplicationObject() const override;
-	virtual uint32 GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const;
+	virtual uint32 GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const;
 /******************************************/
 
 	/************ExpAccumulatorInterface**********/

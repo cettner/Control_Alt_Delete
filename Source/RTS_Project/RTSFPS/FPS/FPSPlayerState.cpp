@@ -81,7 +81,7 @@ bool AFPSPlayerState::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
 	return true;
 }
 
-TArray<TSubclassOf<UUpgrade>> AFPSPlayerState::GetAppliedUpgrades() const
+TArray<TSubclassOf<UUpgrade>> AFPSPlayerState::GetKnownUpgrades() const
 {
 	TArray<TSubclassOf<UUpgrade>> retval = TArray<TSubclassOf<UUpgrade>>();
 	for (int i = 0; i < AppliedUpgrades.Num(); i++)
@@ -143,7 +143,7 @@ const UObject * AFPSPlayerState::GetUpgradeApplicationObject() const
 	return retval;
 }
 
-uint32 AFPSPlayerState::GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const
+uint32 AFPSPlayerState::GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const
 {
 	checkf(UpgradeClass, TEXT("AFPSPlayerState::GetCurrentUpgradeRankFor : UpgradeClass was Null"))
 	uint32 retval = UPGRADE_UNLEARNED;

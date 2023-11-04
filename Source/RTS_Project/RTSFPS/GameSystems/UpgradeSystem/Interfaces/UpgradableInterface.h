@@ -8,29 +8,6 @@
 #include "..\Upgrade.h"
 #include "UpgradableInterface.generated.h"
 
-/*Non Essential Helper Class for Implementing Rank System*/
-USTRUCT()
-struct FUpgradeInfo
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	/*Class Of The Upgrade*/
-	UPROPERTY()
-		TSubclassOf<UUpgrade> UpgradeClass = nullptr;
-
-	/*Number of Times the Upgrade Has Been Applied*/
-	UPROPERTY()
-		int Rank = 0;
-
-	/*For Comparision, We only care that the class is the same,  That way, if we want to "Find" it in an array
-	we can simulate a "MultiMap" Style Behavior Between the upgrade and its Rank*/
-	friend bool operator == (const FUpgradeInfo& Myself, const FUpgradeInfo& Other)
-	{
-		bool isSame = Myself.UpgradeClass == Other.UpgradeClass;
-		return(isSame);
-	}
-};
-
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -40,17 +17,19 @@ class UUpgradableInterface : public UInterface
 };
 
 
-constexpr uint32 UPGRADE_UNLEARNED = 0U;
-
 class RTS_PROJECT_API IUpgradableInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	/*Get CurrentTier for the specified class */
-	virtual uint32 GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const;
-	virtual TArray<TSubclassOf<UUpgrade>> GetAppliedUpgrades() const;
+	/*Get CurrentTier for the specified class 0 means the Upgrade is unknown*/
+	virtual uint32 GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const;
+	virtual TArray<TSubclassOf<UUpgrade>> GetKnownUpgrades() const;
+	virtual TArray<TSubclassOf<UUpgrade>> GetUnknownUpgrades() const;
+	virtual TArray<TSubclassOf<UUpgrade>> GetAllUpgrades() const;
+	/**/
+	virtual bool CanSupportUpgrade(const TSubclassOf<UUpgrade>& UpgradeClass);
 
 	/*If the Actor is spawned via spawn Actor Deffered, then certain components may not be ready to be upgraded, Allows the Use of Add Upgrade and PostInstallUpgrades*/
 	virtual bool CanReceiveUpgrades() const;

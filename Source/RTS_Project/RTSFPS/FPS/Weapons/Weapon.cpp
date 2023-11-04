@@ -200,8 +200,6 @@ void AWeapon::AttachMeshToPawn()
 			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,true);
 			USkeletalMeshComponent* PawnMesh1p = MyPawn->GetSpecifcPawnMesh(true);
 			USkeletalMeshComponent* PawnMesh3p = MyPawn->GetSpecifcPawnMesh(false);
-			check(PawnMesh1p);
-			check(PawnMesh3p);
 			
 			if (PawnMesh1p != FirstPersonMesh)
 			{

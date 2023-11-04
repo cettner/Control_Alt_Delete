@@ -5,15 +5,30 @@
 
 // Add default functionality here for any IUpg
 
-uint32 IUpgradableInterface::GetCurrentUpgradeRankFor(TSubclassOf<UUpgrade> UpgradeClass) const
+uint32 IUpgradableInterface::GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const
 {
 	return UPGRADE_UNLEARNED;
 }
 
 
-TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetAppliedUpgrades() const
+TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetKnownUpgrades() const
 {
 	return TArray<TSubclassOf<UUpgrade>>();
+}
+
+TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetUnknownUpgrades() const
+{
+	return TArray<TSubclassOf<UUpgrade>>();
+}
+
+TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetAllUpgrades() const
+{
+	return TArray<TSubclassOf<UUpgrade>>();
+}
+
+bool IUpgradableInterface::CanSupportUpgrade(const TSubclassOf<UUpgrade>& UpgradeClass)
+{
+	return false;
 }
 
 bool IUpgradableInterface::CanReceiveUpgrades() const

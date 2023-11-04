@@ -53,6 +53,9 @@ class RTS_PROJECT_API ATeamResourceState : public ATeamState, public IResourceGa
 		UFUNCTION(NetMultiCast, reliable, WithValidation)
 		void DispatchUpgrade(TSubclassOf<UUpgrade> UpgradeClass, const TArray<AActor*>& Applyto);
 		bool CheckAndDispatchUpgrade(TSubclassOf<UUpgrade> UpgradeClass, TArray<AActor*>& Applyto);
+
+
+
 	/*****************************IResourceGatherInterface******************************/
 	public:
 		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;

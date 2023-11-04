@@ -13,19 +13,36 @@ class RTS_PROJECT_API ACommander : public ARTSMinion
 {
 	GENERATED_BODY()
 
-protected:
-	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
-	virtual void PossessedBy(AController* NewController) override;
-
 public:
+	ACommander();
+
 	/*Override to allow selection of which mesh should play the animation*/
 	virtual float PlayAnimMontage(class UAnimMontage* AnimMontage, float InPlayRate = 1.f, FName StartSectionName = NAME_None) override;
 
 	/*Stop playing montage*/
 	virtual void StopAnimMontage(class UAnimMontage* AnimMontage) override;
 
-public:
-	ACommander();
+	bool AddtoSquad(ARTSMinion * squadmate);
+
+	bool LeaveSquad(ARTSMinion * leaver);
+
+	bool IsFirstPerson() const;
+
+	virtual bool IsServerPawn() const;
+
+	void SetIsServerPawn(bool IsServer);
+
+	UFUNCTION(Server, reliable, WithValidation)
+	void MinionInteractionHandler(ARTSMinion* Interacted);
+
+	UFUNCTION(Server, reliable, WithValidation)
+	void SelectableInterationHandler(AActor* Interacted);
+
+	USkeletalMeshComponent* GetPawnMesh();
+
+	USkeletalMeshComponent* GetSpecifcPawnMesh(bool WantFirstPerson) const;
+
+protected:
 
 	//handles moving forward/backward
 	UFUNCTION()
@@ -35,15 +52,11 @@ public:
 	UFUNCTION()
 	void MoveRight(float Val);
 
-	bool GetMarchingOrder(ARTSMinion * needs_orders, FVector &Outvector);
-
-	bool AddtoSquad(ARTSMinion * squadmate);
-
-	bool LeaveSquad(ARTSMinion * leaver);
-
-	bool IsFirstPerson() const;
+	UFUNCTION()
+	virtual void Interact();
 
 	/**************RTSMinion Overrides************/
+public:
 	virtual IRTSObjectInterface * GetLeadRTSObject() override;
 
 	virtual void ClearCommander() override;
@@ -51,34 +64,26 @@ public:
 	virtual void SetCommander(ACommander * Commander) override;
 
 	virtual int GetTeam() const override;
-
-	virtual void OnDeath() override;
+	virtual void SetTeam(int InTeamID) override;
 
 	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder) override;
+
+protected:
+	virtual void OnDeath() override;
 	/********************************************/
 
 
-	virtual bool IsServerPawn() const;
-
-	void SetIsServerPawn(bool IsServer);
-
-	UFUNCTION(Server, reliable, WithValidation)
-	void MinionInteractionHandler(ARTSMinion * Interacted);
-
-	UFUNCTION(Server, reliable, WithValidation)
-	void SelectableInterationHandler(AActor * Interacted);
-
-	USkeletalMeshComponent * GetSpecifcPawnMesh(bool WantFirstPerson) const;
-
-	USkeletalMeshComponent* GetPawnMesh();
-
-	UFUNCTION()
-	virtual void Interact();
+	/**************RTSMinion Overrides************/
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+	/********************************************/
 
 public:
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UPROPERTY(Replicated, EditAnywhere, Category = Gameplay)
 	TArray <ARTSMinion*> Squad;
-
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
@@ -87,22 +92,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USkeletalMeshComponent* FPS_Mesh;
 
-
 private:
 	bool bIsServerPawn = false;
-
-	float marchwidth = 150.0f;
 
 	FCollisionQueryParams trace;
 
 	AActor * GetSelectableActor();
-
-	FVector GetSquareFormation(int index, float width);
-
-	enum FORMATION
-	{
-		SQUARE
-	};
-
-	FORMATION form = SQUARE;
 };

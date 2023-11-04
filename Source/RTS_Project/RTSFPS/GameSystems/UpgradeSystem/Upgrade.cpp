@@ -121,7 +121,7 @@ uint32 UUpgrade::GetMaxRank() const
 	return MaxRank;
 }
 
-FString UUpgrade::GetUpgradeDescription(uint32 CurrentRank) const
+FString UUpgrade::GetUpgradeDescription(uint32 InCurrentRank) const
 {
 	return TooltipInfo;
 }

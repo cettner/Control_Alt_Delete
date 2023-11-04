@@ -134,7 +134,7 @@ void ATeamResourceState::ApplyPlayerUpgrades(ARTSMinion* PlayerPawn, AFPSPlayerS
 {
 	if (InState != nullptr)
 	{
-		const TArray<TSubclassOf<UUpgrade>> upgrades = InState->GetAppliedUpgrades();
+		const TArray<TSubclassOf<UUpgrade>> upgrades = InState->GetKnownUpgrades();
 
 		for (int i = 0; i < upgrades.Num(); i++)
 		{

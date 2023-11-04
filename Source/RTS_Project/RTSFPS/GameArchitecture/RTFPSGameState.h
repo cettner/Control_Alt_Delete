@@ -6,7 +6,6 @@
 #include "RTS_Project/RTSFPS/FPS/FPSServerController.h"
 
 #include "RTFPSMode.h"
-#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeManager.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
 #include "RTS_Project/RTSFPS/RTS/Orders/RTSResourcePurchaseOrder.h"
