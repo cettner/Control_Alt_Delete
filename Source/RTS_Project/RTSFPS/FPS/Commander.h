@@ -72,13 +72,11 @@ protected:
 	virtual void OnDeath() override;
 	/********************************************/
 
-
-	/**************RTSMinion Overrides************/
+	/**************AActor Overrides************/
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* ActorInputComponent) override;
-	virtual void PossessedBy(AController* NewController) override;
-	virtual void OnRep_PlayerState() override;
+	virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
 	/********************************************/
 
 public:

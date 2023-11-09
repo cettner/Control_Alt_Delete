@@ -57,18 +57,21 @@ void AFPSServerController::SelectRespawnStructure(ARTSStructure* RespawnStructur
 
 void AFPSServerController::PurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass)
 {
-	if (!HasAuthority())
+	AFPSPlayerState* ps = GetPlayerState<AFPSPlayerState>();
+	const bool canupgrade = ps->MeetsUpgradeDependencies(UpgradeClass);
+	if (canupgrade)
 	{
-		ServerPurchaseExpUpgrade(UpgradeClass);
+		if (!HasAuthority())
+		{
+			ServerPurchaseExpUpgrade(UpgradeClass);
+		}
+		else
+		{
+			const UWorld* world = GetWorld();
+			const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+			gs->PurchaseExpUpgrade(UpgradeClass, ps, ps);
+		}
 	}
-	else
-	{
-		const UWorld * world = GetWorld();
-		const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-		AFPSPlayerState * ps = GetPlayerState<AFPSPlayerState>();
-		gs->PurchaseExpUpgrade(UpgradeClass, ps, ps);
-	}
-
 }
 
 void AFPSServerController::OnPawnDeath()

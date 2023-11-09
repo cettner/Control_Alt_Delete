@@ -9,17 +9,6 @@
 
 
 
-bool URTSAbilityUpgrade::CanUpgrade(const IUpgradableInterface * TestUpgrade) const
-{
-	bool retval = Super::CanUpgrade(TestUpgrade);
-
-	if (retval == true)
-	{
-		retval &= TestUpgrade->GetUpgradeApplicationClass()->ImplementsInterface(UAbilityUserInterface::StaticClass());
-	}
-
-	return retval;
-}
 
 TArray<TWeakObjectPtr<UAbility>> URTSAbilityUpgrade::GetTargetAbilitesFromUser(IAbilityUserInterface * AbilityUser) const
 {

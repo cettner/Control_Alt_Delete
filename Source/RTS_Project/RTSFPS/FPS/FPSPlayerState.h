@@ -12,9 +12,6 @@
 #include "FPSPlayerState.generated.h"
 
 
-
-
-
 enum EPlayerReswpawnState
 {
 	PREGAME,
@@ -29,11 +26,14 @@ class RTS_PROJECT_API AFPSPlayerState : public ARTSPlayerState, public IUpgradab
 {
 	GENERATED_BODY()
 
+	AFPSPlayerState();
+
 public:
 	EPlayerReswpawnState GetRespawnState() const;
 	void SetRespawnState(EPlayerReswpawnState NewState);
 	void SetTotalUpgradePoints(uint32 InTotalUpgradePoints);
 	void SetSpentUpgradePoints(uint32 InSpentUpgradePoints);
+	FORCEINLINE UUpgradeData* GetUpgradeData() const { return UpgradeData; }
 
 protected:
 	UFUNCTION()
@@ -46,12 +46,10 @@ protected:
 	virtual void OnRep_AppliedUpgrades();
 /************UpgradabaleInterface**********/
 public:
-	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
-	virtual TArray<TSubclassOf<UUpgrade>> GetKnownUpgrades() const override;
-	virtual UClass * GetUpgradeApplicationClass() const override;
-	virtual UObject * GetUpgradeApplicationObject() override;
-	virtual const UObject * GetUpgradeApplicationObject() const override;
-	virtual uint32 GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const;
+	virtual TArray<TSubclassOf<UUpgrade>> GetAllUpgrades() const override;
+	virtual uint32 GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const override;
+	virtual bool IncrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToUnLearn) override;
+	virtual bool DecrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToUnLearn) override;
 /******************************************/
 
 	/************ExpAccumulatorInterface**********/
@@ -93,7 +91,7 @@ protected:
 	EPlayerReswpawnState RespawnState = EPlayerReswpawnState::PREGAME;
 
 	UPROPERTY(ReplicatedUsing = OnRep_AppliedUpgrades)
-	TArray<FUpgradeInfo> AppliedUpgrades;
+	UUpgradeData * UpgradeData = nullptr;
 
 	UPROPERTY(ReplicatedUsing = OnRep_TotalUpgradePoints)
 	uint32 TotalUpgradePoints = 0U;

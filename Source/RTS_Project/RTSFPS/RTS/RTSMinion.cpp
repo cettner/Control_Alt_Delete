@@ -90,11 +90,6 @@ void ARTSMinion::PostInitializeComponents()
 void ARTSMinion::BeginPlay()
 {
 	Super::BeginPlay();
-	if (HasAuthority())
-	{
-		bAreComponentsReadyforUpgrades = true;
-		PostInstallUpgrades();
-	}
 	
 	RegisterRTSObject();
 }
@@ -153,13 +148,18 @@ float ARTSMinion::GetMinionStrayDistance() const
 
 void ARTSMinion::RegisterRTSObject()
 {
-	const UWorld * world = GetWorld();
+	UWorld * world = GetWorld();
 	ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+	static FDelegateHandle skiphandle = FDelegateHandle();
 
-	/*This can miss during game startup for actors placed on the map it's corrected in ARTSFPSGamestate::RefreshAllUnits()*/
 	if (IsValid(gs))
 	{
 		gs->RegisterRTSObject(this);
+		skiphandle.Reset();
+	}
+	else
+	{
+		skiphandle = world->GameStateSetEvent.AddUObject(this, &ARTSMinion::OnNotifyReadyforRegistration);
 	}
 }
 
@@ -192,6 +192,23 @@ void ARTSMinion::OnDeath()
 
 	UnRegisterRTSObject();
 
+}
+
+void ARTSMinion::OnUpgradeChanged(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank)
+{
+	if (HasAuthority())
+	{
+		int debug = 9;
+	}
+	else
+	{
+		int debug = 9;
+	}
+}
+
+void ARTSMinion::OnNotifyReadyforRegistration(AGameStateBase* GameState)
+{
+	RegisterRTSObject();
 }
 
 bool ARTSMinion::IsEnemy(const AActor* FriendOrFoe) const
@@ -349,26 +366,6 @@ bool ARTSMinion::UsesAISenses() const
 TArray<TSubclassOf<UAISense>> ARTSMinion::GetAISenses() const
 {
 	return AISenseClasses;
-}
-
-void ARTSMinion::PostInstallUpgrades()
-{
-	for (int i = 0; i < AppliedUpgrades.Num(); i++)
-	{
-		const UUpgrade * upgrade = AppliedUpgrades[i].GetDefaultObject();
-		upgrade->ApplyUpgrade(this);
-	}
-}
-
-bool ARTSMinion::CanReceiveUpgrades() const
-{
-	return bAreComponentsReadyforUpgrades;
-}
-
-bool ARTSMinion::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
-{
-	AppliedUpgrades.Emplace(UpgradeToAdd);
-	return true;
 }
 
 float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)

@@ -6,9 +6,6 @@
 #include "UObject/NoExportTypes.h"
 #include "Upgrade.generated.h"
 
-
-class IUpgradableInterface;
-
 constexpr uint32 UPGRADE_UNLEARNED = 0U;
 
 /*Non Essential Helper Class for Implementing Rank System*/
@@ -18,20 +15,25 @@ struct FUpgradeInfo
 	GENERATED_USTRUCT_BODY()
 public:
 	/*Class Of The Upgrade*/
-	UPROPERTY(EditDefaultsOnly, NotReplicated)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUpgrade> UpgradeClass = nullptr;
 
 	/*Number of Times the Upgrade Has Been Applied*/
 	UPROPERTY(EditDefaultsOnly)
-	int Rank = UPGRADE_UNLEARNED;
+	uint32 Rank = UPGRADE_UNLEARNED;
 
-	/*For Comparision, We only care that the class is the same,  That way, if we want to "Find" it in an array
-	we can simulate a "MultiMap" Style Behavior Between the upgrade and its Rank*/
 	friend bool operator == (const FUpgradeInfo& Myself, const FUpgradeInfo& Other)
 	{
-		bool isSame = Myself.UpgradeClass == Other.UpgradeClass;
+		const bool isSame = Myself.UpgradeClass == Other.UpgradeClass && Myself.Rank == Other.Rank;
 		return(isSame);
 	}
+
+	friend bool operator == (const FUpgradeInfo& Myself, const TSubclassOf<UUpgrade>& Other)
+	{
+		const bool isSame = Myself.UpgradeClass == Other;
+		return(isSame);
+	}
+
 };
 
 USTRUCT()
@@ -78,8 +80,6 @@ class RTS_PROJECT_API UUpgrade : public UObject
 public:
 	/*Refrain From using this directly, use IUpgradableInterface::OnApplyUpgrade*/
 	virtual void ApplyUpgrade(UObject * ToUpgrade) const;
-	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const;
-	virtual bool CanUpgrade(const IUpgradableInterface* TestUpgrade, TArray<FUpgradeDependencyInfo>& OutDependencyInfo) const;
 
 	uint32 GetMaxRank() const;
 	FString GetUpgradeDescription(uint32 CurrentRank = 0U)  const;

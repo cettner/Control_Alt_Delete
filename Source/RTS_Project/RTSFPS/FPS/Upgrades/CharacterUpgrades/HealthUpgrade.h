@@ -14,12 +14,8 @@ UCLASS()
 class RTS_PROJECT_API UHealthUpgrade : public URTSUpgrade
 {
 	GENERATED_BODY()
-	
-public:
-	virtual bool CanUpgrade(const IUpgradableInterface * TestUpgrade) const override;
 
 protected:
-	virtual UHealthComponent * TryGetHealthComp(const IUpgradableInterface * TestUpgrade) const;
 	virtual UHealthComponent * TryGetHealthComp(const UObject * TestUpgrade) const;
 	virtual void ApplyUpgrade(UObject * ToUpgrade) const override;
 

@@ -21,7 +21,6 @@ bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
 		retval &= (purchaser->GetAvailableUpgradePoints() > 0U);
 	}
 
-
 	return retval;
 }
 

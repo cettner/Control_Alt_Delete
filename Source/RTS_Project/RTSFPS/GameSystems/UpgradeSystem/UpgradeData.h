@@ -6,16 +6,26 @@
 #include "UObject/NoExportTypes.h"
 
 #include "Upgrade.h"
+#include "Interfaces/UpgradableInterface.h"
 #include "UpgradeData.generated.h"
 
 
-UCLASS(Blueprintable, DefaultToInstanced)
-class RTS_PROJECT_API UUpgradeData : public UObject
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnUpgradeChangedDelegate, const TSubclassOf<UUpgrade>/*Upgrade*/, const uint32 /*Oldrank*/, const uint32 /*NewRank*/);
+
+UCLASS(Blueprintable)
+class RTS_PROJECT_API UUpgradeData : public UObject, public IUpgradableInterface
 {
 	GENERATED_BODY()
 
 public:
-	FORCEINLINE const TArray<FUpgradeInfo>& GetInitialUpgradeState() const { return UpgradeState; }
+	FORCEINLINE const TArray<FUpgradeInfo>& GetUpgradeState() const { return UpgradeState; }
+	
+	virtual TArray<TSubclassOf<UUpgrade>> GetAllUpgrades() const;
+	virtual uint32 GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const;
+	virtual bool IncrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToUnLearn);
+	virtual bool DecrementUpgrade(const TSubclassOf<UUpgrade>&UpgradeToUnLearn);
+
+	FOnUpgradeChangedDelegate OnUpgradeChanged = FOnUpgradeChangedDelegate();
 
 protected:
 	UFUNCTION()

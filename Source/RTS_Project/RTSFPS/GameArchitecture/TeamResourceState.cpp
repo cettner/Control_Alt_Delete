@@ -30,7 +30,6 @@ void ATeamResourceState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(ATeamResourceState, TeamResources);
 	DOREPLIFETIME(ATeamResourceState, Structures);
 	DOREPLIFETIME(ATeamResourceState, Minions);
-	DOREPLIFETIME(ATeamResourceState, Upgrades);
 }
 
 
@@ -95,33 +94,13 @@ void ATeamResourceState::AddRTSStructure(ARTSStructure* InStructure)
 
 void ATeamResourceState::AddRTSUpgrade(URTSUpgrade* InUpgrade)
 {
-	const TSubclassOf<UUpgrade> upgradeclass = InUpgrade->GetClass();
 
-	FUpgradeInfo infocheck = FUpgradeInfo();
-	infocheck.UpgradeClass = upgradeclass;
-	infocheck.Rank = 1;
-
-	int upgradeindex = Upgrades.Find(infocheck);
-	if (upgradeindex != INDEX_NONE)
-	{
-		/*If We've implemented this upgrade before, increase its rank*/
-		Upgrades[upgradeindex].Rank++;
-	}
-	else
-	{
-		/*New Upgrade, Add it to the list*/
-		Upgrades.AddUnique(infocheck);
-	}
 }
 
 void ATeamResourceState::SpawnStructureAtLocation(TSubclassOf<AActor> StructureClass, FTransform SpawnTransform, ADefaultPlayerController* InvokedController)
 {
 	UWorld* world = GetWorld();
-	check(world);
-
 	ARTSStructure* structure = world->SpawnActorDeferred<ARTSStructure>(StructureClass, SpawnTransform);
-
-	check(structure);
 
 	const int teamid = InvokedController->GetTeamID();
 	structure->SetTeam(teamid);
@@ -129,69 +108,6 @@ void ATeamResourceState::SpawnStructureAtLocation(TSubclassOf<AActor> StructureC
 	UGameplayStatics::FinishSpawningActor(structure, SpawnTransform);
 	AddRTSUnit(structure);
 }
-
-void ATeamResourceState::ApplyPlayerUpgrades(ARTSMinion* PlayerPawn, AFPSPlayerState* InState) const
-{
-	if (InState != nullptr)
-	{
-		const TArray<TSubclassOf<UUpgrade>> upgrades = InState->GetKnownUpgrades();
-
-		for (int i = 0; i < upgrades.Num(); i++)
-		{
-			const uint32 upgraderank = InState->GetCurrentUpgradeRankFor(upgrades[i]);
-			const bool check = upgraderank > UPGRADE_UNLEARNED;
-			checkf(check, TEXT(" ARTFPSGameState::ApplyPlayerUpgrades : Upgrade Applied of Rank 0"));
-
-			const UUpgrade* upgrade = upgrades[i].GetDefaultObject();
-
-			for (uint32 k = 0U; k < upgraderank; k++)
-			{
-				PlayerPawn->OnApplyUpgrade(upgrade);
-			}
-		}
-	}
-}
-
-bool ATeamResourceState::DispatchUpgrade_Validate(TSubclassOf<UUpgrade> UpgradeClass, const TArray<AActor*>& Applyto)
-{
-	return true;
-}
-
-void ATeamResourceState::DispatchUpgrade_Implementation(TSubclassOf<UUpgrade> UpgradeClass, const TArray<AActor*>& Applyto)
-{
-	if (HasAuthority())
-	{
-		UUpgrade* newupgrade = NewObject<UUpgrade>(UUpgrade::StaticClass(), UpgradeClass);
-		for (int i = 0; i < Applyto.Num(); i++)
-		{
-			IUpgradableInterface* UpgradeMe = Cast<IUpgradableInterface>(Applyto[i]);
-			UpgradeMe->OnApplyUpgrade(newupgrade);
-		}
-	}
-
-
-}
-
-bool ATeamResourceState::CheckAndDispatchUpgrade(TSubclassOf<UUpgrade> UpgradeClass, TArray<AActor*>& Applyto)
-{
-	if (!HasAuthority()) return false;
-
-	for (int i = 0; i < Applyto.Num(); i++)
-	{
-		IUpgradableInterface* UpgradeMe = Cast<IUpgradableInterface>(Applyto[i]);
-		if (UpgradeMe == nullptr)
-		{
-			Applyto.RemoveAt(i);
-			UE_LOG(LogTemp, Warning, TEXT("WARNING AUpgradeManager::CheckAndDispatchUpgrade Actor Does not implement Upgradable interface, Removing it from RPC"));
-		}
-	}
-
-	DispatchUpgrade(UpgradeClass, Applyto);
-
-	return true;
-}
-
-
 
 bool ATeamResourceState::SpawnUnitFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData)
 {
@@ -238,12 +154,6 @@ void ATeamResourceState::SpawnMinionFromStructure(ARTSStructure* SpawningStructu
 	{
 		Minion->SetTeam(pc->GetPlayerState<ADefaultPlayerState>()->GetTeamID());
 
-		/*Apply Upgrades that are global to the team*/
-		ApplyGlobalUpgrades(Minion);
-
-		/*Apply Upgrades that are specific to the player*/
-		ApplyPlayerUpgrades(Minion, pc->GetPlayerState<AFPSPlayerState>());
-
 		/*Get And Destroy the Pawn the player was Using and give them the new one*/
 		APawn* respawnpawn = pc->GetPawn();
 		pc->UnPossess();
@@ -253,8 +163,6 @@ void ATeamResourceState::SpawnMinionFromStructure(ARTSStructure* SpawningStructu
 	else
 	{
 		Minion->SetTeam(SpawningStructure->GetTeam());
-		/*Apply Upgrades that are global to the team*/
-		ApplyGlobalUpgrades(Minion);
 	}
 
 	UGameplayStatics::FinishSpawningActor(Minion, spawntransform);
@@ -264,58 +172,8 @@ void ATeamResourceState::SpawnMinionFromStructure(ARTSStructure* SpawningStructu
 void ATeamResourceState::SpawnUpgradeFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData)
 {
 	/*Handle A new Upgrade Purchase*/
-	const int teamid = SpawningStructure->GetTeam();
 	URTSUpgrade* const defaultupgrade = Cast<URTSUpgrade>(SpawnData.SpawnClass.GetDefaultObject());
-	const TSubclassOf<UUpgrade> upgradeclass = TSubclassOf<UUpgrade>(defaultupgrade->GetClass());
-	const AController* PC = SpawnData.RecieveingController;
-	TArray<AActor*> minionactors = TArray<AActor*>();
 
-	if (defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
-	{
-		/*Upgrade All Existing Minions On the Map*/
-		for (int i = 0; i < Minions.Num(); i++)
-		{
-			if (defaultupgrade->CanUpgrade(Minions[i]))
-			{
-				minionactors.Emplace(Minions[i]);
-			}
-		}
-
-		CheckAndDispatchUpgrade(upgradeclass, minionactors);
-		AddRTSUnit(defaultupgrade);
-	}
-	else if (!defaultupgrade->IsGlobal() && defaultupgrade->IsPersistent())
-	{
-		ARTSMinion* playerpawn = PC->GetPawn<ARTSMinion>();
-		if (IsValid(playerpawn) && defaultupgrade->CanUpgrade(playerpawn))
-		{
-			minionactors.Emplace(playerpawn);
-		}
-		CheckAndDispatchUpgrade(upgradeclass, minionactors);
-		AFPSPlayerState* ps = PC->GetPlayerState<AFPSPlayerState>();
-		ps->AddUpgrade(upgradeclass);
-	}
-}
-
-void ATeamResourceState::ApplyGlobalUpgrades(IUpgradableInterface* ToUpgrade) const
-{
-	for (int i = 0; i < Upgrades.Num(); i++)
-	{
-		const UUpgrade* upgrade = Upgrades[i].UpgradeClass.GetDefaultObject();
-		if (upgrade->CanUpgrade(ToUpgrade))
-		{
-			const uint32 upgraderank = Upgrades[i].Rank;
-
-			const bool check = upgraderank > UPGRADE_UNLEARNED;
-			checkf(check, TEXT("ARTFPSGameState::ApplyGlobalUpgrades : Upgrade Applied of Rank 0"));
-
-			for (uint32 k = 0U; k < upgraderank; k++)
-			{
-				ToUpgrade->OnApplyUpgrade(upgrade);
-			}
-
-		}
-	}
 }
 
 void ATeamResourceState::AddResource(TSubclassOf<UResource> ResourceClass, int amount)

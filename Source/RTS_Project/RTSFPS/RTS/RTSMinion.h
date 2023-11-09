@@ -7,7 +7,6 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 
-#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/UpgradableInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeData.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/CombatInterface.h"
@@ -24,7 +23,7 @@
 class ACommander;
 
 UCLASS(Blueprintable)
-class ARTSMinion : public ACharacter, public IRTSObjectInterface, public IUpgradableInterface, public ICombatInterface, public IResourceGatherer
+class ARTSMinion : public ACharacter, public IRTSObjectInterface, public ICombatInterface, public IResourceGatherer
 {
 	GENERATED_BODY()
 
@@ -47,7 +46,13 @@ protected:
 
 	UFUNCTION()
 	virtual void OnDeath();
+	
+	UFUNCTION()
+	virtual void OnUpgradeChanged(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank);
 
+private:
+	UFUNCTION()
+	void OnNotifyReadyforRegistration(AGameStateBase* GameState);
 
 	/********************************CombatInterface************************************/
 public:
@@ -119,13 +124,6 @@ protected:
 	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const override;
 	virtual FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType) override;
 /*************************************************/
-
-/**************IUpgradableInterface****************/
-protected:
-	virtual void PostInstallUpgrades() override;
-	virtual bool CanReceiveUpgrades() const override;
-	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd) override;
-/**************************************************/
 
 /*********************AActor***********************/
 public:

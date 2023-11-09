@@ -10,7 +10,8 @@ bool UUpgradeNodeWidget::Initialize()
 {
 	const bool retval = Super::Initialize();
 	UpgradeButton->OnClicked.AddDynamic(this, &UUpgradeNodeWidget::OnUpgradeButtonClicked);
-
+	UpgradeButton->bIsEnabledDelegate.BindDynamic(this, &UUpgradeNodeWidget::IsNodeEnabled);
+	ProgressText->TextDelegate.BindDynamic(this, &UUpgradeNodeWidget::GetNodeProgressText);
 	return retval;
 }
 
@@ -20,25 +21,28 @@ void UUpgradeNodeWidget::AddExternalDependencies(TArray<FUpgradeDependencyInfo>&
 
 void UUpgradeNodeWidget::SetProgressText(uint32 current, uint32 max)
 {
-	const FString currenttext = FString::FromInt(current);
-	const FString maxtext = FString::FromInt(max);
-	
-	const FString fullstring = currenttext + " / " + maxtext;
-	const FText ptext = FText::FromString(fullstring);
-
-	ProgressText->SetText(ptext);
-}
-
-void UUpgradeNodeWidget::SetNodeEnabled(bool isenabled)
-{
-	SetIsEnabled(isenabled);
 }
 
 bool UUpgradeNodeWidget::CanPurchaseUpgrade() const
 {
+	const UUpgradeTreeWidget* parenttree = GetParentTree();
+	if (!parenttree) return false;
+
+	const IUpgradableInterface* upgradeuser = parenttree->GetUpgradeUser();
+	if (!upgradeuser) return false;
+
 	const uint32 maxrank = GetUpgradeMaxRank();
-	const bool isenabled = GetIsEnabled();
-	return isenabled && (CurrentRank < maxrank);
+	const uint32 currentrank = GetUserCurrentRank();
+
+	bool retval = (currentrank < maxrank);
+	if (!retval) return false;
+
+	if (retval)
+	{
+		retval = upgradeuser->MeetsUpgradeDependencies(UpgradeToApply);
+	}
+
+	return retval;
 }
 
 void UUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const
@@ -56,11 +60,44 @@ void UUpgradeNodeWidget::OnUpgradeButtonClicked()
 	}
 }
 
+bool UUpgradeNodeWidget::IsNodeEnabled()
+{
+	return CanPurchaseUpgrade();
+}
+
+FText UUpgradeNodeWidget::GetNodeProgressText()
+{
+	const uint32 maxrank = GetUpgradeMaxRank();
+	const uint32 currentrank = GetUserCurrentRank();
+
+	const FString currenttext = FString::FromInt(currentrank);
+	const FString maxtext = FString::FromInt(maxrank);
+
+	const FString fullstring = currenttext + " / " + maxtext;
+	const FText retval = FText::FromString(fullstring);
+
+	return retval;
+}
+
 uint32 UUpgradeNodeWidget::GetUpgradeMaxRank() const
 {
 	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
 	return defaultupgrade->GetMaxRank();
 
+}
+
+uint32 UUpgradeNodeWidget::GetUserCurrentRank() const
+{
+	uint32 retval = UPGRADE_UNLEARNED;
+	const UUpgradeTreeWidget* parenttree = GetParentTree();
+	const IUpgradableInterface* upgradeuser = parenttree->GetUpgradeUser();
+
+	if (upgradeuser != nullptr)
+	{
+		retval = upgradeuser->GetCurrentUpgradeRankFor(UpgradeToApply);
+	}
+
+	return retval;
 }
 
 TArray<FUpgradeUnlockCondition> UUpgradeNodeWidget::GetUnlockConditions() const
@@ -89,20 +126,16 @@ bool UUpgradeNodeWidget::Setup(UUpgradeTreeWidget * InParentTree)
 
 void UUpgradeNodeWidget::RefreshNode(const IUpgradableInterface* UpgradeUser)
 {
-	CurrentRank = UpgradeUser->GetCurrentUpgradeRankFor(UpgradeToApply);
+	const uint32 currentrank = GetUserCurrentRank();
 	const uint32 maxrank = GetUpgradeMaxRank();
-	const UUpgrade* defaultupgrade = UpgradeToApply.GetDefaultObject();
 
-
-	TArray<FUpgradeDependencyInfo> tooltipdependencies;
-	const bool isnodeenabled = defaultupgrade->CanUpgrade(UpgradeUser, tooltipdependencies);
+	TArray<FUpgradeDependencyInfo> tooltipdependencies = TArray<FUpgradeDependencyInfo>();
+	const bool isnodeenabled = UpgradeUser->MeetsUpgradeDependencies(UpgradeToApply, tooltipdependencies);
 
 	UUpgradeToolTipWidget* tooltip = Cast<UUpgradeToolTipWidget>(GetToolTip());
 	tooltip->FormatDependencies(tooltipdependencies);
 
-
-	SetProgressText(CurrentRank, maxrank);
-	SetNodeEnabled(isnodeenabled);
+	SetProgressText(currentrank, maxrank);
 }
 
 UUpgradeTreeWidget * UUpgradeNodeWidget::GetParentTree() const

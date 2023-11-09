@@ -12,7 +12,7 @@
 /**
  * 
  */
-UCLASS(Blueprintable)
+UCLASS()
 class RTS_PROJECT_API ARTSUpgradeManager : public AInfo
 {
 	GENERATED_BODY()
@@ -25,7 +25,8 @@ protected:
 	UFUNCTION()
 	virtual void OnRep_TeamID();
 
-
+	virtual void RegisterMinion(ARTSMinion* InMinion);
+	virtual void UnRegisterMinion(ARTSMinion* InMinion);
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
@@ -35,6 +36,8 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID)
 	int32 TeamID = -1;
 
-	UPROPERTY(EditDefaultsOnly, Replicated, Instanced)
+	TMap<TSubclassOf<ARTSMinion>, int32> IndexMapping = TMap<TSubclassOf<ARTSMinion>, int32>();
+
+	UPROPERTY(Replicated)
 	TArray<UUpgradeData*> Upgrades = TArray<UUpgradeData*>();
 };

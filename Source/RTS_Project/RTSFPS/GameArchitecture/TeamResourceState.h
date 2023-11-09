@@ -45,16 +45,6 @@ class RTS_PROJECT_API ATeamResourceState : public ATeamState, public IResourceGa
 		virtual bool SpawnUnitFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData);
 		virtual void SpawnMinionFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData);
 		virtual void SpawnUpgradeFromStructure(ARTSStructure* SpawningStructure, const FStructureQueueData SpawnData);
-	
-	protected:
-		virtual void ApplyGlobalUpgrades(IUpgradableInterface* ToUpgrade) const;
-		virtual void ApplyPlayerUpgrades(ARTSMinion* PlayerPawn, AFPSPlayerState* InController) const;
-
-		UFUNCTION(NetMultiCast, reliable, WithValidation)
-		void DispatchUpgrade(TSubclassOf<UUpgrade> UpgradeClass, const TArray<AActor*>& Applyto);
-		bool CheckAndDispatchUpgrade(TSubclassOf<UUpgrade> UpgradeClass, TArray<AActor*>& Applyto);
-
-
 
 	/*****************************IResourceGatherInterface******************************/
 	public:
@@ -97,7 +87,4 @@ class RTS_PROJECT_API ATeamResourceState : public ATeamState, public IResourceGa
 		
 		UPROPERTY(Replicated)
 		TArray<ARTSStructure*> Structures = TArray<ARTSStructure*>();
-		
-		UPROPERTY(Replicated)
-		TArray<FUpgradeInfo> Upgrades = TArray<FUpgradeInfo>();
 };

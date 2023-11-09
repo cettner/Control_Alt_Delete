@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Commander.h"
-#include "FPSServerController.h"
+#include "FPSPlayerstate.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 
@@ -29,22 +29,27 @@ void ACommander::StopAnimMontage(UAnimMontage* AnimMontage)
 	}
 }
 
-void ACommander::PossessedBy(AController* NewController)
+void ACommander::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
 {
-	Super::PossessedBy(NewController);
-	const ADefaultPlayerState * PS = GetPlayerState<ADefaultPlayerState>();
+	Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
+
+	AFPSPlayerState * PS = Cast<AFPSPlayerState>(NewPlayerState);
 	if (PS == nullptr) return;
-
 	SetTeam(PS->GetTeamID());
-}
 
-void ACommander::OnRep_PlayerState()
-{
-	Super::OnRep_PlayerState();
-	ADefaultPlayerState* PS = GetPlayerState<ADefaultPlayerState>();
-	if (PS == nullptr) return;
+	/*Load Our UpgradeSet and register for new ones*/
+	UUpgradeData* upgradeset = PS->GetUpgradeData();
+	if (upgradeset != nullptr)
+	{
+		const TArray<TSubclassOf<UUpgrade>> knownupgrades = upgradeset->GetKnownUpgrades();
+		for (TSubclassOf<UUpgrade> upgrade : knownupgrades)
+		{
+			const uint32 currentrank = upgradeset->GetCurrentUpgradeRankFor(upgrade);
+			OnUpgradeChanged(upgrade, UPGRADE_UNLEARNED, currentrank);
+		}
 
-	SetTeam(PS->GetTeamID());
+		upgradeset->OnUpgradeChanged.AddUFunction(this, "OnUpgradeChanged");
+	}
 }
 
 ACommander::ACommander() : Super()
@@ -242,7 +247,6 @@ bool ACommander::SelectableInterationHandler_Validate(AActor * Interacted)
 void ACommander::Interact()
 {
 	AActor * hittarget = GetSelectableActor();
-	AFPSServerController * PC = GetController<AFPSServerController>();
 }
 
 bool ACommander::MinionInteractionHandler_Validate(ARTSMinion * Interacted)

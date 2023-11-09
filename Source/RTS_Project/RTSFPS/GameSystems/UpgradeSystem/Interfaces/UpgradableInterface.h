@@ -23,29 +23,28 @@ class RTS_PROJECT_API IUpgradableInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual bool InstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade, const uint32 InRank);
+	/*Installs the upgrade if unknown, will attempt to increase rank if it is already known*/
+	virtual bool InstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade);
+	/*Set the rank of the upgrade to UNKNOWN_UPGRADE equivalent of InstallUpgrade(InUpgrade,UNKNOWN_UPGRADE)*/
+	virtual bool UninstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade);
+	/*Set the rank of the upgrade to it's maximum rank*/
+	virtual bool MaxInstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade);
 	/*Get CurrentTier for the specified class 0 means the Upgrade is unknown*/
 	virtual uint32 GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& UpgradeClass) const;
 	virtual TArray<TSubclassOf<UUpgrade>> GetKnownUpgrades() const;
 	virtual TArray<TSubclassOf<UUpgrade>> GetUnknownUpgrades() const;
 	virtual TArray<TSubclassOf<UUpgrade>> GetAllUpgrades() const;
+	virtual bool MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>& UpgradeClass) const;
+	virtual bool MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>& UpgradeClass, TArray<FUpgradeDependencyInfo>& OutDependencyInfo) const;
+
+	virtual TArray<TSubclassOf<UUpgrade>> GetInstalledUpgrades() const;
 	/**/
-	virtual bool CanSupportUpgrade(const TSubclassOf<UUpgrade>& UpgradeClass);
-
-	/*If the Actor is spawned via spawn Actor Deffered, then certain components may not be ready to be upgraded, Allows the Use of Add Upgrade and PostInstallUpgrades*/
-	virtual bool CanReceiveUpgrades() const;
-
-	virtual void OnApplyUpgrade(const UUpgrade * Upgrade);
-
-	/*Returns the Actual Interface object to be modifed, in case it's nested in a wrapper class like a playerstate or higher level pawn. Returns the interface object by default*/
-	virtual const UObject * GetUpgradeApplicationObject() const;
-
-	virtual UObject * GetUpgradeApplicationObject();
-
-	virtual UClass * GetUpgradeApplicationClass() const;
-
-	virtual bool AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd);
+	virtual bool CanSupportUpgrade(const TSubclassOf<UUpgrade>& UpgradeClass) const;
 
 protected:
-	virtual void PostInstallUpgrades();
-
+	virtual bool LearnUpgrade(const TSubclassOf<UUpgrade>& UpgradeToAdd);
+	virtual bool UnLearnUpgrade(const TSubclassOf<UUpgrade>& UpgradeToUnLearn);
+	virtual bool IncrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToUnLearn) PURE_VIRTUAL(IUpgradableInterface::IncrementUpgrade, return false;);
+	virtual bool DecrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToUnLearn) PURE_VIRTUAL(IUpgradableInterface::DecrementUpgrade, return false;);
 };

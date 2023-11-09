@@ -7,6 +7,10 @@
 #include "GameFramework/GameStateBase.h"
 #include "Net/UnrealNetwork.h"
 
+AFPSPlayerState::AFPSPlayerState() : Super()
+{
+	bReplicateUsingRegisteredSubObjectList = true;
+}
 
 EPlayerReswpawnState AFPSPlayerState::GetRespawnState() const
 {
@@ -52,94 +56,16 @@ void AFPSPlayerState::OnRep_SpentUpgradePoints()
 
 void AFPSPlayerState::OnRep_AppliedUpgrades()
 {
-	const UWorld* world = GetWorld();
-	ARTSFPSHUD* hud = world->GetFirstPlayerController()->GetHUD<ARTSFPSHUD>();
-	hud->RefreshUpgradeTree();
+
 }
 
-bool AFPSPlayerState::AddUpgrade(TSubclassOf<UUpgrade> UpgradeToAdd)
-{
-	FUpgradeInfo upgradewrapper;
-	upgradewrapper.UpgradeClass = UpgradeToAdd;
-	upgradewrapper.Rank = 1;
-
-	int findindex = AppliedUpgrades.Find(upgradewrapper);
-	if (findindex != INDEX_NONE)
-	{
-		AppliedUpgrades[findindex].Rank++;
-	}
-	else
-	{
-		AppliedUpgrades.Emplace(upgradewrapper);
-	}
-
-	if (HasAuthority() && IsLocalPlayerState())
-	{
-		OnRep_AppliedUpgrades();
-	}
-
-	return true;
-}
-
-TArray<TSubclassOf<UUpgrade>> AFPSPlayerState::GetKnownUpgrades() const
+TArray<TSubclassOf<UUpgrade>> AFPSPlayerState::GetAllUpgrades() const
 {
 	TArray<TSubclassOf<UUpgrade>> retval = TArray<TSubclassOf<UUpgrade>>();
-	for (int i = 0; i < AppliedUpgrades.Num(); i++)
+	if (IsValid(UpgradeData))
 	{
-		retval.Emplace(AppliedUpgrades[i].UpgradeClass);
+		retval = UpgradeData->GetAllUpgrades();
 	}
-
-	return retval;
-}
-
-UClass * AFPSPlayerState::GetUpgradeApplicationClass() const
-{
-	UClass * retval = nullptr;
-	const UWorld * world = GetWorld();
-
-	if (HasAuthority() && !IsRTSPlayer())
-	{
-		const ARTFPSMode * gm = world->GetAuthGameMode<ARTFPSMode>();
-		retval = gm->GetDefaultFPSClass();
-	}
-	else if(!IsRTSPlayer())
-	{
-		const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
-		const ARTFPSMode * gm = gs->GetDefaultGameMode<ARTFPSMode>();
-		if (gm != nullptr)
-		{
-			retval = gm->GetDefaultFPSClass();
-		}
-	}
-
-	return retval;
-}
-
-UObject * AFPSPlayerState::GetUpgradeApplicationObject()
-{
-	APawn * retval = GetPawn();
-	const UClass * upgradeclass = GetUpgradeApplicationClass();
-	bool isfpsclasspawn = IsValid(retval) && (retval->GetClass() == upgradeclass);
-	
-	if (isfpsclasspawn == false)
-	{
-		retval = nullptr;
-	}
-
-	return retval;
-}
-
-const UObject * AFPSPlayerState::GetUpgradeApplicationObject() const
-{
-	APawn * retval = GetPawn();
-	const UClass * upgradeclass = GetUpgradeApplicationClass();
-	bool isfpsclasspawn = IsValid(retval) && (retval->GetClass() == upgradeclass);
-
-	if (isfpsclasspawn == false)
-	{
-		retval = nullptr;
-	}
-
 	return retval;
 }
 
@@ -147,15 +73,22 @@ uint32 AFPSPlayerState::GetCurrentUpgradeRankFor(const TSubclassOf<UUpgrade>& Up
 {
 	checkf(UpgradeClass, TEXT("AFPSPlayerState::GetCurrentUpgradeRankFor : UpgradeClass was Null"))
 	uint32 retval = UPGRADE_UNLEARNED;
-	for (int i = 0; i < AppliedUpgrades.Num(); i++)
+	if (IsValid(UpgradeData))
 	{
-		if (UpgradeClass == AppliedUpgrades[i].UpgradeClass)
-		{
-			retval = AppliedUpgrades[i].Rank;
-			break;
-		}
+		retval = UpgradeData->GetCurrentUpgradeRankFor(UpgradeClass);
 	}
+
 	return retval;
+}
+
+bool AFPSPlayerState::IncrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToIncrement)
+{
+	return UpgradeData->IncrementUpgrade(UpgradeToIncrement);
+}
+
+bool AFPSPlayerState::DecrementUpgrade(const TSubclassOf<UUpgrade>& UpgradeToDecrement)
+{
+	return UpgradeData->DecrementUpgrade(UpgradeToDecrement);
 }
 
 uint32 AFPSPlayerState::GetCurrentExp() const
@@ -240,7 +173,6 @@ void AFPSPlayerState::GrantExp(uint32 inexp)
 			OnLevelUp();
 		}
 	}
-
 }
 
 void AFPSPlayerState::OnLevelUp()
@@ -264,9 +196,7 @@ void AFPSPlayerState::OnLevelUp()
 		{
 			GrantExp(remainder);
 		}
-
-	}
-	
+	}	
 }
 
 void AFPSPlayerState::LoadGameModeDefaults(const AGameModeBase* GameModeCDO)
@@ -285,6 +215,7 @@ void AFPSPlayerState::LoadGameModeDefaults(const AGameModeBase* GameModeCDO)
 void AFPSPlayerState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 	if (HasAuthority())
 	{
 		const UWorld * world = GetWorld();
@@ -293,6 +224,13 @@ void AFPSPlayerState::PostInitializeComponents()
 
 		MaxLevel= gm->GetMaxLevel();
 		ExpCurve = gm->GetExpCurve();
+		
+		const TSubclassOf<ACommander> commanderclass = gm->GetDefaultFPSClass();
+		const ACommander* commandercdo = commanderclass.GetDefaultObject();
+		const TSubclassOf<UUpgradeData> upgradedataclass = commandercdo->GetUpgradeDataClass();
+
+		UpgradeData = NewObject<UUpgradeData>(this, upgradedataclass);
+		AddReplicatedSubObject(UpgradeData);
 	}
 }
 
@@ -302,6 +240,7 @@ void AFPSPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME_CONDITION(AFPSPlayerState, TotalUpgradePoints, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AFPSPlayerState, SpentUpgradePoints, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AFPSPlayerState, CurrentExperiance, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AFPSPlayerState, AppliedUpgrades, COND_OwnerOnly);
+	/*Other players need to know the local upgrade state to view local effects*/
+	DOREPLIFETIME(AFPSPlayerState, UpgradeData);
 
 }

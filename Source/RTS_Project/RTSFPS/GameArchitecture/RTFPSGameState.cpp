@@ -190,22 +190,14 @@ TArray<URTSResourcePurchaseOrder*> ARTFPSGameState::GetPurchaseOrders(const TArr
 bool ARTFPSGameState::PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface * Purchaser, IUpgradableInterface * ToApply) const
 {
 	bool retval = true;
-	const UUpgrade* defaultupgrade = PurchaseClass.GetDefaultObject();
-	IUpgradableInterface * toupgrade = ToApply;
-	checkf(defaultupgrade,TEXT("ARTFPSGameState::PurchaseExpUpgrade : Failed to Obtain Upgrade CDO"))
-	
-	const bool hasupgradepoints = Purchaser->GetAvailableUpgradePoints() > 0U;
-	const bool canupgrade = defaultupgrade->CanUpgrade(ToApply);
 
-	if (canupgrade && hasupgradepoints)
+	if (Purchaser->SpendUpgradePoints(1U))
 	{
-		Purchaser->SpendUpgradePoints(1U);
-		ToApply->OnApplyUpgrade(defaultupgrade);
+		retval = ToApply->InstallUpgrade(PurchaseClass);
 	}
 	else
 	{
 		retval = false;
-		return retval;
 	}
 
 
@@ -215,9 +207,21 @@ bool ARTFPSGameState::PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseCla
 bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 {
 	bool result = Super::TeamInitialize(GameMode);
-
+	
+	UWorld* world = GetWorld();
 	const ARTFPSMode * gm = Cast<ARTFPSMode>(GameMode);
 	
+	for (int32 i = 0; i < TeamStates.Num(); i++)
+	{
+		const ATeamState* ts = TeamStates[i];
+		const int32 teamid = ts->GetTeam();
+		
+		ARTSUpgradeManager * upgrademanager = world->SpawnActor<ARTSUpgradeManager>(ARTSUpgradeManager::StaticClass());
+		upgrademanager->SetOwner(this);
+		upgrademanager->SetTeamID(teamid);
+		UpgradeManagers.Emplace(upgrademanager);
+	}
+
 	/*Give Each Player their Starting Resources and Unit Pricing*/
 	/*Set for Server, Clients load from the GameMode CDO on GM class replication*/
 	const TMap<TSubclassOf<UObject>, FReplicationResourceMap> costs = gm->GetDefaultUnitCosts();

@@ -7,7 +7,7 @@
 
 #include "RTFPSMode.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
-#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
+#include "RTS_Project/RTSFPS/Shared/Upgrades/RTSUpgradeManager.h"
 #include "RTS_Project/RTSFPS/RTS/Orders/RTSResourcePurchaseOrder.h"
 #include "TeamResourceState.h"
 #include "RTFPSGameState.generated.h"
@@ -21,7 +21,7 @@
 /*Foward Declarations*/
 class  ARTSMinion;
 class  ARTSStructure;
-class IRTSObjectInterface;
+class  IRTSObjectInterface;
 struct FStructureQueueData;
 
 
@@ -81,7 +81,8 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResour
 		TArray<URTSResourcePurchaseOrder*> PurchaseOrdersRep;
 
 	protected:
-		TArray<IRTSObjectInterface*> RTSObjects;
+		TArray<IRTSObjectInterface*> RTSObjects = TArray<IRTSObjectInterface*>();
+		TArray<ARTSUpgradeManager*> UpgradeManagers = TArray<ARTSUpgradeManager*>();
 
 		/*Any unit that wishes to have a purchase order property references from here, this is to reduce per-instance creation of properties*/
 		TMap<TSubclassOf<UObject>,URTSResourcePurchaseOrder*> PurchaseOrders = TMap<TSubclassOf<UObject>, URTSResourcePurchaseOrder*>();

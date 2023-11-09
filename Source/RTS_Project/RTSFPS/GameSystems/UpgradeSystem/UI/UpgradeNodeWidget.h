@@ -18,7 +18,7 @@
 
 /*Foward Declaration*/
 class UUpgradeTreeWidget;
-
+class IUpgradableInterface;
 
 UCLASS()
 class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
@@ -38,8 +38,6 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		virtual void AddExternalDependencies(TArray<FUpgradeDependencyInfo> & OutInfo) const;
 
 		virtual void SetProgressText(uint32 current, uint32 max);
-		
-		virtual void SetNodeEnabled(bool isenabled);
 
 		/*Whether the User has enough resource / talent points to purchase */
 		virtual bool CanPurchaseUpgrade() const;
@@ -49,7 +47,14 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		UFUNCTION()
 		virtual void OnUpgradeButtonClicked();
 
+		UFUNCTION()
+		virtual bool IsNodeEnabled();
+
+		UFUNCTION()
+		virtual FText GetNodeProgressText();
+
 		uint32 GetUpgradeMaxRank() const;
+		uint32 GetUserCurrentRank() const;
 		TArray<FUpgradeUnlockCondition> GetUnlockConditions() const;
 		TArray<TSubclassOf<UUpgrade>> GetExclusiveConditions() const;
 
@@ -76,7 +81,5 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		/*Runtime Data*/
 	protected:
 		UUpgradeTreeWidget* ParentTree = nullptr;
-		
-		uint32 CurrentRank = 0U;
 
 };

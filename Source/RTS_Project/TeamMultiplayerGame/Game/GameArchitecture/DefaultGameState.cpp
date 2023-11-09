@@ -9,7 +9,6 @@ bool ADefaultGameState::TeamInitialize(ADefaultMode * GameMode)
 {
 	if (HasAuthority())
 	{
-		check(GameMode);
 		SetMaxTeamSize(GameMode->GetTeamSize());
 		SetNumTeams(GameMode->GetNumTeams());
 		const TSubclassOf<ATeamState> teamstateclass = GameMode->GetTeamStateClass();
@@ -67,7 +66,6 @@ ATeamState* ADefaultGameState::GetDefaultTeamState() const
 		const UWorld* world = GetWorld();
 		const ADefaultPlayerController* pc = world->GetFirstPlayerController<ADefaultPlayerController>();
 
-		if (pc == nullptr) return retval;
 		const int teamid = pc->GetTeamID();
 		retval = GetTeamState(teamid);
 	}
