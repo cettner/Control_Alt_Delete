@@ -32,15 +32,15 @@ FReply UExternalTalentTreeWidget::NativeOnKeyDown(const FGeometry& InGeometry, c
     return retval;
 }
 
-/*
-void UExternalTalentTreeWidget::AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder)
+FReply UExternalTalentTreeWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-    Super::AddToScreen(LocalPlayer, ZOrder);
-    RefreshNodes();
-    bIsFocusable = true;
-    SetFocus();
+    return FReply::Handled();
 }
-*/
+
+FReply UExternalTalentTreeWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+    return FReply::Handled();
+}
 
 void UExternalTalentTreeWidget::OnEscapeAction()
 {

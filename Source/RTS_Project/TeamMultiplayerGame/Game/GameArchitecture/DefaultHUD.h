@@ -53,6 +53,8 @@ class RTS_PROJECT_API ADefaultHUD : public AHUD
 		virtual void ProcessInputSettings(const FStackWidgetInfo InWidgetinfo);
 		void SetInputMode(const FInputModeDataBase& InData);
 		void SetMouseCursorVisible(bool bIsCursorVisible, EMouseCursor::Type CursorType = EMouseCursor::Default);
+		virtual void OnWidgetAdded(UWidget* InWidget, ULocalPlayer* InLocalPlayer);
+
 
 	protected:
 		UPROPERTY(EditDefaultsOnly)

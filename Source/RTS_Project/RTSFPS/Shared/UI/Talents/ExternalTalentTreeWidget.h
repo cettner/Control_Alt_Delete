@@ -22,6 +22,8 @@ class RTS_PROJECT_API UExternalTalentTreeWidget : public UUpgradeTreeWidget, pub
 	public:
 		virtual FStackWidgetInfo GetWidgetInputSettings() const override;
 		virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+		virtual FReply 	NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+		virtual FReply 	NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 		//virtual void AddToScreen(ULocalPlayer* LocalPlayer, int32 ZOrder) override;
 
 	protected:

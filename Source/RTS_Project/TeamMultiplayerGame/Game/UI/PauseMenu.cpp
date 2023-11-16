@@ -4,6 +4,12 @@
 #include "PauseMenu.h"
 #include "..\GameArchitecture\DefaultMode.h"
 
+UPauseMenu::UPauseMenu() : Super()
+{
+    SetIsFocusable(true);
+    SetKeyboardFocus();
+}
+
 bool UPauseMenu::Initialize()
 {
     bool Success = Super::Initialize();
@@ -35,20 +41,15 @@ bool UPauseMenu::Initialize()
     return (Success);
 }
 
-void UPauseMenu::SetVisibility(ESlateVisibility InVisibility)
+FReply UPauseMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-    Super::SetVisibility(InVisibility);
+    FReply retval = FReply::Handled();
 
-    if (InVisibility == ESlateVisibility::Visible)
+    if (InKeyEvent.GetKey() == EKeys::Escape)
     {
-        SetFocus();
+        OnResumePlayButtonPressed();
     }
-}
-
-void UPauseMenu::SetResumeHotKey(const FName ActionName)
-{
-    FName oldhotkey = ResumeHotKey;
-    ResumeHotKey = ActionName;
+    return retval;
 }
 
 void UPauseMenu::OnResumePlayButtonPressed()

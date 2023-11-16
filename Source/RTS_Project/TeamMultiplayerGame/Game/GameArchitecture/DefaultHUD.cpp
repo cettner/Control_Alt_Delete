@@ -2,7 +2,7 @@
 
 
 #include "DefaultHUD.h"
-
+#include "Blueprint/GameViewportSubsystem.h"
 
 void ADefaultHUD::PostInitializeComponents()
 {
@@ -23,6 +23,10 @@ bool ADefaultHUD::ClientInitializeHUD()
 	{
 		GetPrimaryUI()->AddToViewport();
 	}
+
+	UGameViewportSubsystem* viewportsubsystem = UGameViewportSubsystem::Get(GetWorld());
+	viewportsubsystem->OnWidgetAdded.AddUObject(this, &ADefaultHUD::OnWidgetAdded);
+
 	return retval;
 }
 
@@ -70,6 +74,11 @@ void ADefaultHUD::SetMouseCursorVisible(bool bIsCursorVisible, EMouseCursor::Typ
 {
 	GetOwningPlayerController()->bShowMouseCursor = bIsCursorVisible;
 	GetOwningPlayerController()->CurrentMouseCursor = CursorType;
+}
+
+void ADefaultHUD::OnWidgetAdded(UWidget* InWidget, ULocalPlayer* InLocalPlayer)
+{
+
 }
 
 void ADefaultHUD::PauseMenuEnable(bool bInEnabled)
