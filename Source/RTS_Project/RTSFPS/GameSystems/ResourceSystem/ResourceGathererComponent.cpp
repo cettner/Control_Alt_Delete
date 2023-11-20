@@ -257,8 +257,7 @@ const uint32* UResourceGathererComponent::Find(TSubclassOf<UResource> Key) const
 	bool retVal = false;
 
 	const int* indexPtr = ResourceToIndex.Find(Key);
-	checkf(indexPtr, TEXT("UResourceGathererComponent::Find, \
-										  KEY wasn't found in Keys"));
+	checkf(indexPtr, TEXT("UResourceGathererComponent::FindKEY wasn't found in Keys"));
 
 	const int index = *indexPtr;
 

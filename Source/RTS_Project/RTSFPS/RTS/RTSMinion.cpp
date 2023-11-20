@@ -45,9 +45,9 @@ ARTSMinion::ARTSMinion()
 	ResourceComp = CreateDefaultSubobject<UResourceGathererComponent>(TEXT("ResourceComp"));
 	ResourceComp->SetIsReplicated(true);
 
-	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
-	Health->OnDeathStart.BindUFunction(this,"OnDeath");
-	Health->SetIsReplicated(true);
+	DeathComp = CreateDefaultSubobject<UDeathComponent>(TEXT("DeathComp"));
+	DeathComp->OnDeathStart.BindUObject(this, &ARTSMinion::OnDeath);
+	DeathComp->SetIsReplicated(true);
 
 	/*Radial from forward vector ie: 180 == abs(0 +- 90)*/
 	AIConfig.PeripheralVision = 180.0;
@@ -75,6 +75,8 @@ TSubclassOf<UResource> ARTSMinion::GetResourceForDamageEvent(const TSubclassOf<U
 void ARTSMinion::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	FOnResourceValueChangedDelegate& changedelegate = BindResourceValueChangedEvent(DefaultHealthClass);
+	changedelegate.AddUObject(this, &ARTSMinion::OnHealthResourceChanged);
 
 	if (HasAuthority())
 	{
@@ -111,7 +113,7 @@ int32 ARTSMinion::GetAttackIndexForTarget(const AActor* InToAttack) const
 
 bool ARTSMinion::IsAlive() const
 {
-	const bool retval = Health && Health->IsAlive();
+	const bool retval = DeathComp && DeathComp->IsAlive();
 	return (retval);
 }
 
@@ -184,25 +186,36 @@ void ARTSMinion::OnDeath()
 		GS->OnUnitDeath(this);
 	}
 
-	ARTSHUD * hud = GetWorld()->GetFirstPlayerController()->GetHUD<ARTSHUD>();
-	if (hud)
+	/*Todo: make this an event / delegate broadcast to the hud rather than calling it directly*/
+	if (GetNetMode() != NM_DedicatedServer && IsSelected())
 	{
+		ARTSHUD* hud = GetWorld()->GetFirstPlayerController()->GetHUD<ARTSHUD>();
 		hud->ForceRemoveSelection(this);
 	}
 
 	UnRegisterRTSObject();
-
 }
 
-void ARTSMinion::OnUpgradeChanged(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank)
+void ARTSMinion::OnUpgradeChanged(const TSubclassOf<UUpgrade> InUpgradeclass, const int32 InOldRank, const int32 InNewRank)
 {
-	if (HasAuthority())
+	InstallUpgrade(InUpgradeclass, InOldRank, InNewRank);
+}
+
+bool ARTSMinion::InstallUpgrade(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank)
+{
+	return false;
+}
+
+UObject* ARTSMinion::GetUpgradeSubObject(const TSubclassOf<UUpgrade>& InUpgradeclass) const
+{
+	return nullptr;
+}
+
+void ARTSMinion::OnHealthResourceChanged(const TSubclassOf<UResource> InResourceClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InGatherer)
+{
+	if (InResourceClass == DefaultHealthClass && InNewValue == 0U)
 	{
-		int debug = 9;
-	}
-	else
-	{
-		int debug = 9;
+		DeathComp->Die();
 	}
 }
 
@@ -373,16 +386,8 @@ float ARTSMinion::TakeDamage(float Damage, FDamageEvent const & DamageEvent, ACo
  	float ProcessedDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
 	const TSubclassOf<UResource> healthclass = GetResourceForDamageEvent(DamageEvent.DamageTypeClass);
-	if (healthclass != DefaultHealthClass)
-	{
-		const uint32 damagefinal = StaticCast<uint32>(ProcessedDamage);
-		RemoveResource(healthclass, damagefinal);
-	}
-	else
-	{
-		ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
-	}
-
+	const uint32 damagefinal = StaticCast<uint32>(ProcessedDamage);
+	RemoveResource(healthclass, damagefinal);
 	return (ProcessedDamage);
 }
 

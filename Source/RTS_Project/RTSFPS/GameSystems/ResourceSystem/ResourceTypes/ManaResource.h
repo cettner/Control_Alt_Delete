@@ -13,5 +13,7 @@ UCLASS()
 class RTS_PROJECT_API UManaResource : public UResource
 {
 	GENERATED_BODY()
+
+	UManaResource();
 	
 };

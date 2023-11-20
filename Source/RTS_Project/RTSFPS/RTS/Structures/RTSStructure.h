@@ -8,7 +8,7 @@
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/MenuInteractableInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/DeathComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 #include "Interfaces/BuildableInterface.h"
@@ -174,13 +174,13 @@ protected:
 	FTimerDelegate BuildUpdateDelegate;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Health)
-	UHealthComponent* Health;
+	UPROPERTY(EditDefaultsOnly, Category = DeathComp)
+	UDeathComponent* DeathComp = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = Health)
+	UPROPERTY(EditDefaultsOnly, Category = DeathComp)
 	float UnConstructedHealth = 100.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = Health)
+	UPROPERTY(EditDefaultsOnly, Category = DeathComp)
 	TArray<UAnimMontage*> DestroyAnimations = TArray<UAnimMontage*>();
 
 protected:

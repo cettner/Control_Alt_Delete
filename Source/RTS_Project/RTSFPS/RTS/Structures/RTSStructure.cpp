@@ -26,9 +26,9 @@ ARTSStructure::ARTSStructure() : Super()
 	Selection->SetupAttachment(MeshComp);
 	SetDeselected();
 
-	Health = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
-	Health->OnDeathStart.BindUFunction(this, "OnDeath");
-	Health->SetIsReplicated(true);
+	DeathComp = CreateDefaultSubobject<UDeathComponent>(TEXT("DeathComp"));
+	DeathComp->OnDeathStart.BindUFunction(this, "OnDeath");
+	DeathComp->SetIsReplicated(true);
 
 	MenuClass = nullptr;
 	Menu = nullptr;
@@ -50,7 +50,6 @@ void ARTSStructure::PostInitializeComponents()
 
 		if (!bSkipsConstruction)
 		{
-			Health->SetCurrentHealth(UnConstructedHealth);
 			bISConstructed = false;
 			BeginConstruction();
 		}
@@ -67,7 +66,7 @@ void ARTSStructure::PostInitializeComponents()
 		UAnimMontage* DestroyAnimation;
 		uint8_t destroyindex = abs(rand() % DestroyAnimations.Num());
 		DestroyAnimation = DestroyAnimations[destroyindex];
-		Health->SetDeathanimMontage(DestroyAnimation);
+		DeathComp->SetDeathanimMontage(DestroyAnimation);
 	}
 
 }
@@ -209,8 +208,6 @@ float ARTSStructure::TakeDamage(float Damage, FDamageEvent const& DamageEvent, A
 {
 	float ProcessedDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
-	ProcessedDamage = Health->HandleDamageEvent(ProcessedDamage, DamageEvent, EventInstigator, DamageCauser);
-
 	return (ProcessedDamage);
 }
 
@@ -328,7 +325,7 @@ void ARTSStructure::UnRegisterRTSObject()
 
 bool ARTSStructure::IsDropPointFor(TSubclassOf<UResource> ResourceType) const
 {
-	return (Health->IsAlive());
+	return (DeathComp->IsAlive());
 }
 
 bool ARTSStructure::IsQueueFull() const

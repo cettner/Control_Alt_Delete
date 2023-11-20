@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "RTS_Project/RTSFPS/Shared/Upgrades/RTSUpgrade.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
 #include "HealthUpgrade.generated.h"
 
 /**
@@ -14,11 +13,6 @@ UCLASS()
 class RTS_PROJECT_API UHealthUpgrade : public URTSUpgrade
 {
 	GENERATED_BODY()
-
-protected:
-	virtual UHealthComponent * TryGetHealthComp(const UObject * TestUpgrade) const;
-	virtual void ApplyUpgrade(UObject * ToUpgrade) const override;
-
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

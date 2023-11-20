@@ -3,3 +3,7 @@
 
 #include "HealthResource.h"
 
+UHealthResource::UHealthResource()
+{
+	IsWeighted = false;
+}

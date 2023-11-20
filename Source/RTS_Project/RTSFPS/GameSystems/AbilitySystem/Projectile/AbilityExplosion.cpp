@@ -2,8 +2,6 @@
 
 
 #include "AbilityExplosion.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
-#include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"

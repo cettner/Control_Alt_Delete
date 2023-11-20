@@ -10,7 +10,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UpgradeData.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/CombatInterface.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/DeathComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceTypes/HealthResource.h"
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
@@ -43,12 +43,17 @@ public:
 protected:
 	UFUNCTION()
 	virtual void OnRep_TeamID();
-
-	UFUNCTION()
+	
+	virtual void OnHealthResourceChanged(const TSubclassOf<UResource> InResourceClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InGatherer);
+	
 	virtual void OnDeath();
 	
 	UFUNCTION()
 	virtual void OnUpgradeChanged(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank);
+	virtual bool InstallUpgrade(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank);
+	virtual UObject* GetUpgradeSubObject(const TSubclassOf<UUpgrade>& InUpgradeclass) const;
+
+
 
 private:
 	UFUNCTION()
@@ -61,8 +66,6 @@ public:
 	virtual bool StopAttack(const bool InForceStop = false) override;
 
 	virtual int32 GetAttackIndexForTarget(const AActor * InToAttack) const override;
-
-
 	/************************************************************************************/
 
 
@@ -149,8 +152,8 @@ protected:
 	UDecalSelectionComponent * Selection = nullptr;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = GamePlay)
-	UHealthComponent* Health = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = GamePlay)
+	UDeathComponent* DeathComp = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = GamePlay)
 	TSubclassOf<UResource> DefaultHealthClass = UHealthResource::StaticClass();
@@ -188,7 +191,8 @@ protected:
 
 protected:
 	bool bAreComponentsReadyforUpgrades = false;
-	TArray<TSubclassOf<UUpgrade>> AppliedUpgrades;
+
+	TArray<TSubclassOf<UUpgrade>> InstalledUpgrades;
 
 protected:
 	bool bIsBoxSelectable = false;

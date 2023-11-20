@@ -3,3 +3,7 @@
 
 #include "ManaResource.h"
 
+UManaResource::UManaResource()
+{
+	IsWeighted = false;
+}

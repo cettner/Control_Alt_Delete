@@ -2,7 +2,7 @@
 
 
 #include "BTDecorator_IsTargetAlive.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
+#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/DeathComponent.h"
 
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 
@@ -19,7 +19,7 @@ bool UBTDecorator_IsTargetAlive::CalculateRawConditionValue(UBehaviorTreeCompone
 
 	if (target)
 	{
-		UHealthComponent* TargetHealth = Cast<UHealthComponent>(target->FindComponentByClass(UHealthComponent::StaticClass()));
+		UDeathComponent* TargetHealth = Cast<UDeathComponent>(target->FindComponentByClass(UDeathComponent::StaticClass()));
 		if (TargetHealth)
 		{
 			isAlive = TargetHealth->IsAlive();

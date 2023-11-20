@@ -3,11 +3,7 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-#include "Components/WidgetSwitcher.h"
 
-#include "Components/TextBlock.h"
-#include "RTS_Project/RTSFPS/GameSystems/HealthSystem/HealthComponent.h"
-#include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/UI/UpgradeTreeWidget.h"
 #include "FPSUI.generated.h"
 
 /**

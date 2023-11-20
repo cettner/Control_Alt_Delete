@@ -13,5 +13,7 @@ UCLASS()
 class RTS_PROJECT_API UHealthResource : public UResource
 {
 	GENERATED_BODY()
-	
+
+	UHealthResource();
+
 };
