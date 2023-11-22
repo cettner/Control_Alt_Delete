@@ -126,6 +126,9 @@ protected:
 	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const override;
 	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const override;
 	virtual FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType) override;
+	virtual void AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass) override;
+	virtual bool ClearResourceRegenEvent(const TSubclassOf<UResource>& InResourceClass) override;
+	virtual uint32 ClearAllResourceRegenEvents() override;
 /*************************************************/
 
 /*********************AActor***********************/

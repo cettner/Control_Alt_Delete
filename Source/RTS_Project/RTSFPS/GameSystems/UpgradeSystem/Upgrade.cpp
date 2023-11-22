@@ -4,9 +4,9 @@
 #include "Upgrade.h"
 #include "Interfaces/UpgradableInterface.h"
 
-void UUpgrade::ApplyUpgrade(UObject * ToUpgrade, const uint32 OldRank, const uint32 NewRank) const
+bool UUpgrade::ApplyUpgrade(UObject* ToUpgrade, const uint32 OldRank, const uint32 NewRank, const bool HasAuthority, const bool IsLocal) const
 {
-
+	return false;
 }
 
 uint32 UUpgrade::GetMaxRank() const

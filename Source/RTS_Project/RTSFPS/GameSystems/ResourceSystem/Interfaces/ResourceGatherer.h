@@ -10,6 +10,53 @@
 
 
 DECLARE_MULTICAST_DELEGATE_FourParams(FOnResourceValueChangedDelegate, const TSubclassOf<UResource>, const uint32/*old value*/, const uint32 /*new value*/, TScriptInterface<class IResourceGatherer>);
+DECLARE_DELEGATE_RetVal(int32, FGetResource);
+
+USTRUCT()
+struct FResourceRegenEventConfig
+{
+	GENERATED_USTRUCT_BODY()
+
+		friend class UResourceGathererComponent;
+
+public:
+	int32 GetRegenAmount() const
+	{
+		int32 retval = FlatRegenAmount;
+		if (RegenAmountHandler.IsBound())
+		{
+			retval = RegenAmountHandler.Execute();
+		}
+
+		return retval;
+	}
+
+public:
+	UPROPERTY(EditDefaultsOnly)
+		float TickRate = .5f;
+
+	/*Regen amount per tick*/
+	UPROPERTY(EditDefaultsOnly)
+		int32 FlatRegenAmount = 0;
+
+	UPROPERTY(EditDefaultsOnly)
+		/*Whether the regen should start immediatly, this might disabled if you want to configure RegenAmountHandler before play start*/
+		bool bEnabledAtStart = true;
+
+	/*Optionally allows for an external source to supply the amount of regen provided per tick*/
+	FGetResource RegenAmountHandler = FGetResource();
+
+protected:
+	/*Runtime Specifies the function to execute when the timer elapses*/
+	FTimerDelegate TimerDelegate = FTimerDelegate();
+
+	/*Allows cancellation of the regen timer*/
+	FTimerHandle TimerHandle = FTimerHandle();
+
+	TSubclassOf<UResource> ResourceClass = nullptr;
+};
+
+
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -18,9 +65,6 @@ class UResourceGatherer : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 
 class RTS_PROJECT_API IResourceGatherer
 {
@@ -38,6 +82,10 @@ public:
 
 public:
 	virtual FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType) PURE_VIRTUAL(IResourceGatherer::BindResourceValueChangedEvent, return *new FOnResourceValueChangedDelegate(););
+	virtual void AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass);
+	virtual bool ClearResourceRegenEvent(const TSubclassOf<UResource>& InResourceClass);
+	virtual uint32 ClearAllResourceRegenEvents();
+	virtual const FResourceRegenEventConfig* GetCurrentRegenEventConfig(const TSubclassOf<UResource>& InResourceClass) const;
 
 	/*Returns Whether the gatherer has the specified number of units of a particular resource type*/
 	virtual bool HasResource(const TSubclassOf<UResource> ResourceClass, const uint32 amount = 1U) const;

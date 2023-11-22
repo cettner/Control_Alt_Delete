@@ -5,6 +5,7 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/TeamMultiplayerGame/Game/GameArchitecture/DefaultPlayerState.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
+#include "RTS_Project/RTSFPS/FPS/Upgrades/Resource/ResourceUpgrade.h" 
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -203,12 +204,27 @@ void ARTSMinion::OnUpgradeChanged(const TSubclassOf<UUpgrade> InUpgradeclass, co
 
 bool ARTSMinion::InstallUpgrade(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank)
 {
-	return false;
+	bool retval = false;
+	UObject* upgradeobject = GetUpgradeSubObject(Upgradeclass);
+
+	if (IsValid(upgradeobject))
+	{
+		const bool bislocal = !(HasAuthority() && GetNetMode() == NM_DedicatedServer);
+		const UUpgrade* upgrade = Upgradeclass->GetDefaultObject<UUpgrade>();
+		retval = upgrade->ApplyUpgrade(upgradeobject, OldRank, NewRank, HasAuthority(), bislocal);
+	}
+
+	return retval;
 }
 
 UObject* ARTSMinion::GetUpgradeSubObject(const TSubclassOf<UUpgrade>& InUpgradeclass) const
 {
-	return nullptr;
+	UObject* retval = nullptr;
+	if (InUpgradeclass->IsChildOf(UResourceUpgrade::StaticClass()))
+	{
+		retval = ResourceComp;
+	}
+	return retval;
 }
 
 void ARTSMinion::OnHealthResourceChanged(const TSubclassOf<UResource> InResourceClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InGatherer)
@@ -429,6 +445,21 @@ uint32 ARTSMinion::GetResourceMinimum(const TSubclassOf<UResource> ResourceClass
 FOnResourceValueChangedDelegate& ARTSMinion::BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType)
 {
 	return ResourceComp->BindResourceValueChangedEvent(InResourceType);
+}
+
+void ARTSMinion::AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass)
+{
+	ResourceComp->AddResourceRegenEvent(InResourceConfig, InResourceClass);
+}
+
+bool ARTSMinion::ClearResourceRegenEvent(const TSubclassOf<UResource>& InResourceClass)
+{
+	return ResourceComp->ClearResourceRegenEvent(InResourceClass);
+}
+
+uint32 ARTSMinion::ClearAllResourceRegenEvents()
+{
+	return ResourceComp->ClearAllResourceRegenEvents();
 }
 
 void ARTSMinion::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const

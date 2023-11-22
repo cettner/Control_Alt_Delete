@@ -257,7 +257,7 @@ const uint32* UResourceGathererComponent::Find(TSubclassOf<UResource> Key) const
 	bool retVal = false;
 
 	const int* indexPtr = ResourceToIndex.Find(Key);
-	checkf(indexPtr, TEXT("UResourceGathererComponent::FindKEY wasn't found in Keys"));
+	checkf(indexPtr, TEXT("UResourceGathererComponent:: Key index not found"));
 
 	const int index = *indexPtr;
 
@@ -272,10 +272,20 @@ const int UResourceGathererComponent::Num() const
 
 void UResourceGathererComponent::AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass)
 {
-	//TODO Add Implementation for modifiying an existing regen event;
-	ActiveRegenEvents.Emplace(InResourceClass,InResourceConfig);
-	InResourceConfig.TimerDelegate.BindUFunction(this, FName("HandleResourceRegenEvent"), InResourceClass);
-	GetWorld()->GetTimerManager().SetTimer(InResourceConfig.TimerHandle, InResourceConfig.TimerDelegate, InResourceConfig.TickRate, true);
+	if (FResourceRegenEventConfig* existingconfig = ActiveRegenEvents.Find(InResourceClass))
+	{	
+		existingconfig->FlatRegenAmount = InResourceConfig.FlatRegenAmount;
+		existingconfig->RegenAmountHandler = InResourceConfig.RegenAmountHandler;
+		existingconfig->TickRate = InResourceConfig.TickRate;
+
+		GetWorld()->GetTimerManager().SetTimer(existingconfig->TimerHandle, existingconfig->TimerDelegate, existingconfig->TickRate, true);
+	}
+	else
+	{
+		ActiveRegenEvents.Emplace(InResourceClass, InResourceConfig);
+		InResourceConfig.TimerDelegate.BindUFunction(this, FName("HandleResourceRegenEvent"), InResourceClass);
+		GetWorld()->GetTimerManager().SetTimer(InResourceConfig.TimerHandle, InResourceConfig.TimerDelegate, InResourceConfig.TickRate, true);
+	}
 }
 
 void UResourceGathererComponent::HandleResourceRegenEvent(TSubclassOf<UResource> InEventKey)

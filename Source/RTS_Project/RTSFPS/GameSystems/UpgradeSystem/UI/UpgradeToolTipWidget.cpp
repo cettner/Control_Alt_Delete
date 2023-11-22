@@ -40,6 +40,12 @@ void UUpgradeToolTipWidget::FormatDependencyText(const FUpgradeDependencyInfo In
 void UUpgradeToolTipWidget::Setup(TSubclassOf<UUpgrade> InUpgradeClass)
 {
 	const UUpgrade* owningupgrade = InUpgradeClass.GetDefaultObject();
+	
+	#if WITH_EDITOR
+	/*Nodes are Blank originally when added in editor*/
+	if (owningupgrade == nullptr) return;
+	#endif
+
 	const FName upgradename = owningupgrade->GetUpgradeName();
 	const FText nametext = FText::FromName(upgradename);
 

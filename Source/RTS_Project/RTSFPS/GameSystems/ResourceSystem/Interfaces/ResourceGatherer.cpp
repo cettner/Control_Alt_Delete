@@ -50,6 +50,24 @@ uint32 IResourceGatherer::GetResourceDiscreteMinimum(const TSubclassOf<UResource
 	return uint32();
 }
 
+void IResourceGatherer::AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass)
+{
+}
+
+bool IResourceGatherer::ClearResourceRegenEvent(const TSubclassOf<UResource>& InResourceClass)
+{
+	return false;
+}
+
+uint32 IResourceGatherer::ClearAllResourceRegenEvents()
+{
+	return uint32();
+}
+
+const FResourceRegenEventConfig* IResourceGatherer::GetCurrentRegenEventConfig(const TSubclassOf<UResource>& InResourceClass) const
+{
+	return nullptr;
+}
 
 /****** Non Pure Virtual*****/
 bool IResourceGatherer::GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const
@@ -319,3 +337,5 @@ bool IResourceGatherer::CanCarryAllResources(const FReplicationResourceMap InRes
 
 	return retval;
 }
+
+

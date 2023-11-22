@@ -72,14 +72,14 @@ public:
 };
 
 
-UCLASS()
+UCLASS(Abstract, Blueprintable)
 class RTS_PROJECT_API UUpgrade : public UObject
 {
 	GENERATED_BODY()
 
 public:
 	/*Refrain From using this directly, use IUpgradableInterface::OnApplyUpgrade*/
-	virtual void ApplyUpgrade(UObject * ToUpgrade, const uint32 OldRank, const uint32 NewRank) const;
+	virtual bool ApplyUpgrade(UObject * ToUpgrade, const uint32 OldRank, const uint32 NewRank, const bool HasAuthority, const bool IsLocal) const;
 
 	uint32 GetMaxRank() const;
 	FString GetUpgradeDescription(uint32 CurrentRank = 0U)  const;
