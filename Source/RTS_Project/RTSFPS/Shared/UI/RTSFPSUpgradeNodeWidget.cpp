@@ -11,6 +11,12 @@ void URTSFPSUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) c
 	pc->PurchaseExpUpgrade(UpgradeToApply);
 }
 
+void URTSFPSUpgradeNodeWidget::RemoveUpgrade(IUpgradableInterface* UpgradeUser) const
+{
+	AFPSServerController* pc = GetOwningPlayer<AFPSServerController>();
+	pc->RefundExpUpgrade(UpgradeToApply);
+}
+
 bool URTSFPSUpgradeNodeWidget::CanPurchaseUpgrade() const
 {
 	bool retval = Super::CanPurchaseUpgrade();

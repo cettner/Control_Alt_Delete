@@ -45,7 +45,7 @@ class RTS_PROJECT_API ARTFPSGameState : public ADefaultGameState, public IResour
 	/***************************************************************/
 
 		bool PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface* Purchaser, IUpgradableInterface* ToApply) const;
-
+		bool RefundExpUpgrade(const TSubclassOf<UUpgrade> InRefundClass, IExpAccumulatorInterface* Purchaser, IUpgradableInterface* ToApply) const;
 
     protected:
 		virtual bool TeamInitialize(ADefaultMode* GameMode) override;

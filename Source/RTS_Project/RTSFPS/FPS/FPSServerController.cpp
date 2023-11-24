@@ -74,6 +74,26 @@ void AFPSServerController::PurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass
 	}
 }
 
+void AFPSServerController::RefundExpUpgrade(const TSubclassOf<UUpgrade>& UpgradeClass)
+{
+	AFPSPlayerState* ps = GetPlayerState<AFPSPlayerState>();
+	const bool canupgrade = ps->MeetsRemovalDependencies(UpgradeClass);
+
+	if (canupgrade)
+	{
+		if (!HasAuthority())
+		{
+			ServerRefundExpUpgrade(UpgradeClass);
+		}
+		else
+		{
+			const UWorld* world = GetWorld();
+			const ARTFPSGameState* gs = world->GetGameState<ARTFPSGameState>();
+			gs->RefundExpUpgrade(UpgradeClass, ps, ps);
+		}
+	}
+}
+
 void AFPSServerController::OnPawnDeath()
 {
 	GetPlayerState<AFPSPlayerState>()->SetRespawnState(EPlayerReswpawnState::SELECTINGRESPAWN);
@@ -117,6 +137,16 @@ bool AFPSServerController::ServerPurchaseExpUpgrade_Validate(TSubclassOf<UUpgrad
 void AFPSServerController::ServerPurchaseExpUpgrade_Implementation(TSubclassOf<UUpgrade> UpgradeClass)
 {
 	PurchaseExpUpgrade(UpgradeClass);
+}
+
+bool AFPSServerController::ServerRefundExpUpgrade_Validate(TSubclassOf<UUpgrade> UpgradeClass)
+{
+	return true;
+}
+
+void AFPSServerController::ServerRefundExpUpgrade_Implementation(TSubclassOf<UUpgrade> UpgradeClass)
+{
+	RefundExpUpgrade(UpgradeClass);
 }
 
 void AFPSServerController::SetupInputComponent()

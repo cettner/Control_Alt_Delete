@@ -25,6 +25,8 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 		
 		void PurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass);
 
+		void RefundExpUpgrade(const TSubclassOf<UUpgrade>& UpgradeClass);
+
 		virtual void OnPawnDeath();
 
 		UFUNCTION()
@@ -39,6 +41,9 @@ class RTS_PROJECT_API AFPSServerController : public ARTSPlayerController
 
 		UFUNCTION(Server, reliable, WithValidation)
 		void ServerPurchaseExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass);
+
+		UFUNCTION(Server, reliable, WithValidation)
+		void ServerRefundExpUpgrade(TSubclassOf<UUpgrade> UpgradeClass);
 
     protected:
 		virtual void SetupInputComponent() override;

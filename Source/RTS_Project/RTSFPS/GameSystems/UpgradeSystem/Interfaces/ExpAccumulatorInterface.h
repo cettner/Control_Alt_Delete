@@ -32,12 +32,14 @@ public:
 
 	virtual void GrantExp(uint32 inexp);
 
+
 public:
 	virtual uint32 GetAvailableUpgradePoints() const;
 	virtual uint32 GetSpentUpgradePoints() const;
 	virtual uint32 GetTotalUpgradePoints() const;
 
 	virtual bool SpendUpgradePoints(uint32 PointsToSpend = 1U);
+	virtual void RefundUpgradePoints(const uint32 InPointsToRefund);
 
 protected:
 	virtual void OnLevelUp();

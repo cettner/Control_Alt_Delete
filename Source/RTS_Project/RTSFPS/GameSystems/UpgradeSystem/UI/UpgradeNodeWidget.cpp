@@ -10,7 +10,7 @@ bool UUpgradeNodeWidget::Initialize()
 {
 	const bool retval = Super::Initialize();
 	UpgradeButton->OnClicked.AddDynamic(this, &UUpgradeNodeWidget::OnUpgradeButtonClicked);
-	UpgradeButton->bIsEnabledDelegate.BindDynamic(this, &UUpgradeNodeWidget::IsNodeEnabled);
+	bIsEnabledDelegate.BindDynamic(this, &UUpgradeNodeWidget::IsNodeEnabled);
 	ProgressText->TextDelegate.BindDynamic(this, &UUpgradeNodeWidget::GetNodeProgressText);
 	return retval;
 }
@@ -31,16 +31,20 @@ bool UUpgradeNodeWidget::CanPurchaseUpgrade() const
 	const IUpgradableInterface* upgradeuser = parenttree->GetUpgradeUser();
 	if (!upgradeuser) return false;
 
-	const uint32 maxrank = GetUpgradeMaxRank();
-	const uint32 currentrank = GetUserCurrentRank();
+	bool retval = upgradeuser->MeetsUpgradeDependencies(UpgradeToApply);
 
-	bool retval = (currentrank < maxrank);
-	if (!retval) return false;
+	return retval;
+}
 
-	if (retval)
-	{
-		retval = upgradeuser->MeetsUpgradeDependencies(UpgradeToApply);
-	}
+bool UUpgradeNodeWidget::CanRemoveUpgrade() const
+{
+	const UUpgradeTreeWidget* parenttree = GetParentTree();
+	if (!parenttree) return false;
+
+	const IUpgradableInterface* upgradeuser = parenttree->GetUpgradeUser();
+	if (!upgradeuser) return false;
+
+	const bool retval = upgradeuser->MeetsRemovalDependencies(UpgradeToApply);
 
 	return retval;
 }
@@ -50,6 +54,24 @@ void UUpgradeNodeWidget::ApplyUpgrade(IUpgradableInterface* UpgradeUser) const
 
 }
 
+void UUpgradeNodeWidget::RemoveUpgrade(IUpgradableInterface* UpgradeUser) const
+{
+
+}
+
+FReply UUpgradeNodeWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InKeyEvent)
+{
+	FReply retval = FReply::Unhandled();
+
+	if (InKeyEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		OnUpgradeButtonRightClicked();
+		retval = FReply::Handled();
+	}
+
+	return retval;
+}
+
 void UUpgradeNodeWidget::OnUpgradeButtonClicked()
 {
 	const UUpgradeTreeWidget * parenttree = GetParentTree();
@@ -57,6 +79,16 @@ void UUpgradeNodeWidget::OnUpgradeButtonClicked()
 	if (CanPurchaseUpgrade()  && (upgradeuser != nullptr))
 	{
 		ApplyUpgrade(upgradeuser);
+	}
+}
+
+void UUpgradeNodeWidget::OnUpgradeButtonRightClicked()
+{
+	const UUpgradeTreeWidget* parenttree = GetParentTree();
+	IUpgradableInterface* upgradeuser = parenttree->GetUpgradeUser();
+	if (CanRemoveUpgrade())
+	{
+		RemoveUpgrade(upgradeuser);
 	}
 }
 

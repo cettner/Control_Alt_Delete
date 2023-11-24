@@ -120,8 +120,7 @@ uint32 AFPSPlayerState::GetMaxLevel() const
 
 int32 AFPSPlayerState::GetExptoNextLevel() const
 {
-	/*WARNING: This value can be negative, so we do lose a bit in this conversion*/
-	const int32 retval = (int32)GetMaxExpForCurrentLevel() - (int32)GetCurrentExp();
+	const int32 retval = static_cast<int32>(GetMaxExpForCurrentLevel()) - static_cast<int32>(GetCurrentExp());
 	return retval;
 }
 
@@ -160,6 +159,15 @@ bool AFPSPlayerState::SpendUpgradePoints(uint32 PointsToSpend)
 		retval = true;
 	}
 	return retval;
+}
+
+void AFPSPlayerState::RefundUpgradePoints(const uint32 InPointsToRefund)
+{
+	const int32 newspenttotal = static_cast<int32>(GetSpentUpgradePoints()) -  static_cast<int32>(InPointsToRefund);
+	if (newspenttotal >= 0)
+	{
+		SetSpentUpgradePoints(newspenttotal);
+	}
 }
 
 void AFPSPlayerState::GrantExp(uint32 inexp)

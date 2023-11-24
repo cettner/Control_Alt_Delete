@@ -37,6 +37,8 @@ public:
 	virtual TArray<TSubclassOf<UUpgrade>> GetAllUpgrades() const;
 	virtual bool MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>& UpgradeClass) const;
 	virtual bool MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>& UpgradeClass, TArray<FUpgradeDependencyInfo>& OutDependencyInfo) const;
+	virtual bool MeetsRemovalDependencies(const TSubclassOf<UUpgrade>& UpgradeClass) const;
+	virtual bool MeetsRemovalDependencies(const TSubclassOf<UUpgrade>& UpgradeClass, TArray<TSubclassOf<UUpgrade>>& OutViolatedUpgrades) const;
 
 	virtual TArray<TSubclassOf<UUpgrade>> GetInstalledUpgrades() const;
 	/**/

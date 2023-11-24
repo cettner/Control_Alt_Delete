@@ -36,7 +36,7 @@ void AResourceDropPoint::OnOverlapBegin(UPrimitiveComponent * OverlappedComponen
 				if (expuser != nullptr)
 				{
 					const uint32 resourcescored = resources[i].Value;
-					expuser->GrantExp(resourcescored);
+					expuser->GrantExp(resourcescored * 4U);
 				}
 			}
 

@@ -15,7 +15,6 @@ TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetAllUpgrades() const
 	return TArray<TSubclassOf<UUpgrade>>();
 }
 
-
 TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetInstalledUpgrades() const
 {
 	return TArray<TSubclassOf<UUpgrade>>();
@@ -127,6 +126,63 @@ bool IUpgradableInterface::MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>&
 	return retval;
 }
 
+bool IUpgradableInterface::MeetsRemovalDependencies(const TSubclassOf<UUpgrade>& InUpgradeClass) const
+{
+	const uint32 currentrank = GetCurrentUpgradeRankFor(InUpgradeClass);
+	if (currentrank == UPGRADE_UNLEARNED) return false;
+
+	bool retval = true;
+	const uint32 removedrank = currentrank - 1U;
+	const TArray<TSubclassOf<UUpgrade>> knownupgrades = GetKnownUpgrades();
+
+	for (int i = 0; i < knownupgrades.Num(); i++)
+	{
+		const UUpgrade* upgradecdo = knownupgrades[i].GetDefaultObject();
+		const TArray<FUpgradeUnlockCondition> unlockconditions = upgradecdo->GetUnlockConditions();
+
+		for (int y = 0; y < unlockconditions.Num(); y++)
+		{
+			const FUpgradeUnlockCondition unlockcondition = unlockconditions[y];
+
+			if ((unlockcondition.GetParent() == InUpgradeClass) && (unlockcondition.GetRank() < removedrank))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool IUpgradableInterface::MeetsRemovalDependencies(const TSubclassOf<UUpgrade>& InUpgradeClass, TArray<TSubclassOf<UUpgrade>>& OutViolatedUpgrades) const
+{
+	OutViolatedUpgrades.Reset();
+	const uint32 currentrank = GetCurrentUpgradeRankFor(InUpgradeClass);
+	if (currentrank == UPGRADE_UNLEARNED) return false;
+
+	bool retval = true;
+	const uint32 removedrank = currentrank - 1U;
+	const TArray<TSubclassOf<UUpgrade>> knownupgrades = GetKnownUpgrades();
+	
+	for (int i = 0; i < knownupgrades.Num(); i++)
+	{
+		UUpgrade* upgradecdo = knownupgrades[i].GetDefaultObject();
+		const TArray<FUpgradeUnlockCondition> unlockconditions = upgradecdo->GetUnlockConditions();
+		
+		for (int y = 0; y < unlockconditions.Num(); y++)
+		{
+			const FUpgradeUnlockCondition unlockcondition = unlockconditions[y];
+
+			if ((unlockcondition.GetParent() == InUpgradeClass) && (unlockcondition.GetRank() < removedrank))
+			{
+				OutViolatedUpgrades.Emplace(unlockcondition.GetParent());
+				retval = false;
+			}
+		}
+	}
+	
+	return retval;
+}
+
 TArray<TSubclassOf<UUpgrade>> IUpgradableInterface::GetKnownUpgrades() const
 {
 	TArray<TSubclassOf<UUpgrade>> retval = TArray<TSubclassOf<UUpgrade>>();
@@ -212,7 +268,12 @@ bool IUpgradableInterface::InstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade
 
 bool IUpgradableInterface::UninstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade)
 {
-	return InstallUpgrade(InUpgrade, UPGRADE_UNLEARNED);
+	const uint32 currentrank = GetCurrentUpgradeRankFor(InUpgrade);
+	if (currentrank == UPGRADE_UNLEARNED) return false;
+	
+	const uint32 newrank = currentrank - 1U;
+
+	return InstallUpgrade(InUpgrade, newrank);
 }
 
 bool IUpgradableInterface::MaxInstallUpgrade(const TSubclassOf<UUpgrade>& InUpgrade)
@@ -229,7 +290,6 @@ bool IUpgradableInterface::CanSupportUpgrade(const TSubclassOf<UUpgrade>& Upgrad
 {
 	return GetAllUpgrades().Contains(UpgradeClass);
 }
-
 
 bool IUpgradableInterface::LearnUpgrade(const TSubclassOf<UUpgrade>& UpgradeToAdd)
 {

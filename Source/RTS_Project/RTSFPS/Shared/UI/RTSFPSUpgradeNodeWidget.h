@@ -17,6 +17,7 @@ class RTS_PROJECT_API URTSFPSUpgradeNodeWidget : public UUpgradeNodeWidget
 	GENERATED_BODY()
 	protected:
 		virtual void ApplyUpgrade(IUpgradableInterface* UpgradeUser) const override;
+		virtual void RemoveUpgrade(IUpgradableInterface* UpgradeUser) const override;
 		virtual bool CanPurchaseUpgrade() const override;
 	
 	protected:

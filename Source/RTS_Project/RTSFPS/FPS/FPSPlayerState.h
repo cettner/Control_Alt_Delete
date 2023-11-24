@@ -70,6 +70,7 @@ public:
 	/*External Functions*/
 	virtual void GrantExp(uint32 inexp) override;
 	virtual bool SpendUpgradePoints(uint32 PointsToSpend = 1U) override;
+	virtual void RefundUpgradePoints(const uint32 InPointsToRefund) override;
 
 protected:
 	virtual void OnLevelUp() override;

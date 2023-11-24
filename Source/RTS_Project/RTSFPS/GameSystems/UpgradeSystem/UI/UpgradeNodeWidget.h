@@ -42,10 +42,18 @@ class RTS_PROJECT_API UUpgradeNodeWidget : public UUserWidget
 		/*Whether the User has enough resource / talent points to purchase */
 		virtual bool CanPurchaseUpgrade() const;
 
+		virtual bool CanRemoveUpgrade() const;
+
 		virtual void ApplyUpgrade(IUpgradableInterface* UpgradeUser) const;
+		
+		virtual void RemoveUpgrade(IUpgradableInterface* UpgradeUser) const;
+
+		virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InKeyEvent) override;
 		
 		UFUNCTION()
 		virtual void OnUpgradeButtonClicked();
+
+		virtual void OnUpgradeButtonRightClicked();
 
 		UFUNCTION()
 		virtual bool IsNodeEnabled();

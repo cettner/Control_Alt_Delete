@@ -189,17 +189,25 @@ TArray<URTSResourcePurchaseOrder*> ARTFPSGameState::GetPurchaseOrders(const TArr
 
 bool ARTFPSGameState::PurchaseExpUpgrade(const TSubclassOf<UUpgrade> PurchaseClass, IExpAccumulatorInterface * Purchaser, IUpgradableInterface * ToApply) const
 {
-	bool retval = true;
+	bool retval = false;
 
 	if (Purchaser->SpendUpgradePoints(1U))
 	{
 		retval = ToApply->InstallUpgrade(PurchaseClass);
 	}
-	else
-	{
-		retval = false;
-	}
 
+	return retval;
+}
+
+bool ARTFPSGameState::RefundExpUpgrade(const TSubclassOf<UUpgrade> InRefundClass, IExpAccumulatorInterface* Purchaser, IUpgradableInterface* ToApply) const
+{
+	bool retval = false;
+
+	if (ToApply->UninstallUpgrade(InRefundClass))
+	{
+		Purchaser->RefundUpgradePoints(1U);
+		retval = true;
+	}
 
 	return retval;
 }
@@ -210,7 +218,7 @@ bool ARTFPSGameState::TeamInitialize(ADefaultMode* GameMode)
 	
 	UWorld* world = GetWorld();
 	const ARTFPSMode * gm = Cast<ARTFPSMode>(GameMode);
-	
+
 	for (int32 i = 0; i < TeamStates.Num(); i++)
 	{
 		const ATeamState* ts = TeamStates[i];

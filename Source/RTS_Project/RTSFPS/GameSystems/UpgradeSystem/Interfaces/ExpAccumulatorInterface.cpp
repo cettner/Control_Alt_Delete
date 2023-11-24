@@ -63,6 +63,10 @@ bool IExpAccumulatorInterface::SpendUpgradePoints(uint32 PointsToSpend)
 	return false;
 }
 
+void IExpAccumulatorInterface::RefundUpgradePoints(const uint32 InPointsToRefund)
+{
+}
+
 void IExpAccumulatorInterface::GrantExp(uint32 inexp)
 {
 }
