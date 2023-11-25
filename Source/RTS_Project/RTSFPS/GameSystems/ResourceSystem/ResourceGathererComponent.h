@@ -28,6 +28,8 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	public:
 		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;
 		virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount) override;
+		virtual bool SetResource(const TSubclassOf<UResource>& InResource, const uint32 InAmount) override;
+
 		virtual FReplicationResourceMap GetAllHeldResources() const override;
 		virtual FReplicationResourceMap GetAllWeightedResources() const override;
 		virtual FReplicationResourceMap GetAllDiscreteResources() const override;
@@ -35,8 +37,13 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		virtual uint32 GetCurrentWeight() const override;
 		virtual uint32 GetMaxWeight() const override;
 
-		virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount) override;
-		virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount) override;
+		virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules = EResourceBoundsAdjustment::ADJUST_IF_OUT_OF_BOUNDS) override;
+		virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules = EResourceBoundsAdjustment::ADJUST_IF_OUT_OF_BOUNDS) override;
+
+		virtual void AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass) override;
+		virtual bool ClearResourceRegenEvent(const TSubclassOf<UResource>& InResourceClass) override;
+		virtual uint32 ClearAllResourceRegenEvents() override;
+		virtual const FResourceRegenEventConfig* GetCurrentRegenEventConfig(const TSubclassOf<UResource>& InResourceClass) const override;
 
 	protected:
 		virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const override;
@@ -63,10 +70,6 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		const int Num() const;
 																								   
 	// END ---
-
-	public:
-		void AddResourceRegenEvent(FResourceRegenEventConfig InResourceConfig, const TSubclassOf<UResource>& InResourceClass);
-
 
 	protected:
 		UFUNCTION()

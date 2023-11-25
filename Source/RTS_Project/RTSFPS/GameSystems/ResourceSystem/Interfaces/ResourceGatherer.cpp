@@ -32,11 +32,11 @@ uint32 IResourceGatherer::GetMaxWeight() const
 	return 0xFFFFFFFF;
 }
 
-void IResourceGatherer::SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+void IResourceGatherer::SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules)
 {
 }
 
-void IResourceGatherer::SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+void IResourceGatherer::SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules)
 {
 }
 
@@ -67,6 +67,11 @@ uint32 IResourceGatherer::ClearAllResourceRegenEvents()
 const FResourceRegenEventConfig* IResourceGatherer::GetCurrentRegenEventConfig(const TSubclassOf<UResource>& InResourceClass) const
 {
 	return nullptr;
+}
+
+bool IResourceGatherer::SetResource(const TSubclassOf<UResource>& InResource, const uint32 InAmount)
+{
+	return false;
 }
 
 /****** Non Pure Virtual*****/
@@ -181,7 +186,7 @@ uint32 IResourceGatherer::GetResourceMinimum(const TSubclassOf<UResource> InReso
 	{
 		retval = GetResourceDiscreteMinimum(InResourceClass);
 	}
-	return 0U;
+	return retval;
 }
 
 void IResourceGatherer::AddResource(const FReplicationResourceMap InResourceMap)

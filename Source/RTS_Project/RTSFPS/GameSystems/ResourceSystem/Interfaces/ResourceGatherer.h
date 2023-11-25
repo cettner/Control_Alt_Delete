@@ -56,7 +56,13 @@ protected:
 	TSubclassOf<UResource> ResourceClass = nullptr;
 };
 
-
+enum EResourceBoundsAdjustment
+{
+	DONT_ADJUST,
+	ADJUST_IF_OUT_OF_BOUNDS,
+	ADJUST_ON_INCREMENT_OR_OUT_OF_BOUNDS,
+	ALWAYS_ADJUST
+};
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -76,6 +82,7 @@ public:
 	virtual bool RemoveResource(const TSubclassOf<UResource> ResourceClass, int amount);
 	virtual void AddResource(const FReplicationResourceMap InResourceMap);
 	virtual bool RemoveResource(const FReplicationResourceMap InResourceMap);
+	virtual bool SetResource(const TSubclassOf<UResource>& InResource, const uint32 amount);
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar);
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const FReplicationResourceMap InAmounttoTransfer);
 	virtual bool TransferResourceFromSource(IResourceGatherer* InDonar, const TSubclassOf<UResource> ResourceType, const int InAmountToTransfer);
@@ -94,8 +101,8 @@ public:
 	virtual uint32 GetResourceMaximum(const TSubclassOf<UResource> ResourceClass) const;
 	virtual uint32 GetResourceMinimum(const TSubclassOf<UResource> ResourceClass) const;
 
-	virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount);
-	virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount);
+	virtual void SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules = EResourceBoundsAdjustment::ADJUST_IF_OUT_OF_BOUNDS);
+	virtual void SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules = EResourceBoundsAdjustment::ADJUST_IF_OUT_OF_BOUNDS);
 
 	/*Returns whether the gatherer supports carrying the Resource type 
 	Note: This should return true even if the gatherer is full, use CanCarryMore to determine if you can fit the desired amount*/

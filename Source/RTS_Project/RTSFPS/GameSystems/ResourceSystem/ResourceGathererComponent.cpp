@@ -39,7 +39,7 @@ void UResourceGathererComponent::AddResource(TSubclassOf<UResource> ResourceClas
 	const uint32 oldvalue = *slotptr;
 	checkf(slotptr, TEXT("UResourceGathererComponent::AddResource, Failed to add Resource because it wasnt supported"));
 	
-	const uint32 maxvalue = StaticCast<int32>(GetResourceMaximum(ResourceClass));
+	const uint32 maxvalue = GetResourceMaximum(ResourceClass);
 	const uint32 expectedvalue = oldvalue + amount;
 	if (expectedvalue > maxvalue)
 	{
@@ -104,6 +104,42 @@ bool UResourceGathererComponent::RemoveResource(const TSubclassOf<UResource> Res
 	return retval;
 }
 
+bool UResourceGathererComponent::SetResource(const TSubclassOf<UResource>& InResource, const uint32 InAmount)
+{
+	uint32 oldvalue = 0U;
+	GetHeldResource(InResource, oldvalue);
+	UResource* resourcecdo = InResource.GetDefaultObject();
+	bool retval = true;
+
+	if (InAmount != oldvalue)
+	{
+		const int* indexptr = ResourceToIndex.Find(InResource);
+		checkf(indexptr, TEXT("UResourceGathererComponent::IncOrDec, key wasn't found in resource indicies"));
+
+		const int index = *indexptr;
+		const uint32 resourcemin = GetResourceMinimum(InResource);
+		const uint32 resourcemax = GetResourceMaximum(InResource);
+		const uint32 clampedvalue = FMath::Clamp(InAmount, resourcemin, resourcemax);
+
+		Values[index] = clampedvalue;
+
+		if (resourcecdo->IsWeightedResource())
+		{
+			RecalculateWeight();
+		}
+		
+		FOnResourceValueChangedDelegate* broadcast = ResourceDelegates.Find(InResource);
+
+		if (broadcast != nullptr)
+		{
+			(*broadcast).Broadcast(InResource, oldvalue, clampedvalue, TScriptInterface<IResourceGatherer>(GetOwner()));
+		}
+
+	}
+
+	return retval;
+}
+
 FReplicationResourceMap UResourceGathererComponent::GetAllHeldResources() const
 {
 	FReplicationResourceMap HeldResources = FReplicationResourceMap();
@@ -154,12 +190,83 @@ uint32 UResourceGathererComponent::GetMaxWeight() const
 	return MaxWeight;
 }
 
-void UResourceGathererComponent::SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+void UResourceGathererComponent::SetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass, uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules)
 {
-	ResourceMaximums.Emplace(InResourceClass, InAmount);
+	if (!ResourceMaximums.Find(InResourceClass))
+	{
+		ResourceMaximums.Emplace(InResourceClass, InAmount);
+	}
+	else
+	{
+		const uint32 maxtochange = GetResourceMaximum(InResourceClass);
+		const uint32 currentmin = GetResourceMinimum(InResourceClass);
+		if (maxtochange == InAmount) return;
+
+		if (InAmount < currentmin)
+		{
+			InAmount = currentmin;
+			UE_LOG(LogTemp, Warning, TEXT("Warning UResourceGathererComponent::SetResourceDiscreteMaximum Requested Maximum was lower than the current Minimum, adjusting to minimum"))
+		}
+
+		const bool bincrementing = InAmount > maxtochange;
+		ResourceMaximums.Emplace(InResourceClass, InAmount);
+
+		if (AdjustmentRules != EResourceBoundsAdjustment::DONT_ADJUST)
+		{
+			uint32 currentvalue = 0U;
+			checkf(GetHeldResource(InResourceClass, currentvalue), TEXT("UResourceGathererComponent::SetResourceDiscreteMaximum Resource to be adjusted not found"));
+
+			if (AdjustmentRules == EResourceBoundsAdjustment::ADJUST_IF_OUT_OF_BOUNDS)
+			{
+				/*Set will ignore if the value is unchanged*/
+				currentvalue = FMath::Clamp(currentvalue, currentmin, InAmount);
+				SetResource(InResourceClass, currentvalue);
+			}
+			else if (AdjustmentRules == EResourceBoundsAdjustment::ADJUST_ON_INCREMENT_OR_OUT_OF_BOUNDS)
+			{
+				uint32 totalresourceamount = currentvalue;
+				if (bincrementing)
+				{
+					/*we do the increment here so the change delegate is only triggered once*/
+					const uint32 addedresources = InAmount - maxtochange;
+					totalresourceamount += addedresources;
+				}
+
+				/*Set will ignore if the value is unchanged*/
+				totalresourceamount = FMath::Clamp(totalresourceamount, currentmin, InAmount);
+				SetResource(InResourceClass, totalresourceamount);
+			}
+			else if (AdjustmentRules == EResourceBoundsAdjustment::ALWAYS_ADJUST)
+			{
+				uint32 totalresourceamount = StaticCast<int32>(currentvalue);
+				if (bincrementing)
+				{
+					/*we do the increment here so the change delegate is only triggered once*/
+					const uint32 addedresources = InAmount - maxtochange;
+					totalresourceamount += addedresources;
+				}
+				else
+				{
+					const int32 removedresources = StaticCast<int32>(maxtochange - InAmount);
+					int32 estimatedvalue = StaticCast<int32>(totalresourceamount) - removedresources;
+					if (estimatedvalue < StaticCast<int32>(currentmin))
+					{
+						estimatedvalue = StaticCast<int32>(currentmin);
+					}
+					totalresourceamount = StaticCast<uint32>(estimatedvalue);
+				}
+
+				/*Set will ignore if the value is unchanged*/
+				totalresourceamount = FMath::Clamp(totalresourceamount, currentmin, InAmount);
+				SetResource(InResourceClass, totalresourceamount);
+			}
+		}
+	}
+
+
 }
 
-void UResourceGathererComponent::SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount)
+void UResourceGathererComponent::SetResourceDiscreteMinimum(const TSubclassOf<UResource> InResourceClass, const uint32 InAmount, const EResourceBoundsAdjustment AdjustmentRules)
 {
 
 }
@@ -219,21 +326,24 @@ bool UResourceGathererComponent::IncOrDec(TSubclassOf<UResource> Key, uint32 Val
 
 	checkf(Key, TEXT("UResourceGathererComponent::IncOrDec, KEY is NULL"));
 
-	if (Value == 0) {
+	if (Value == 0) 
+	{
 		// No need to do anything if adding/subtracting zero
 		retVal = true;
 	}
-	else if (Value > 0) {
+	else if (Value > 0) 
+	{
 		const int* indexPtr = ResourceToIndex.Find(Key);
-		checkf(indexPtr, TEXT("UResourceGathererComponent::IncOrDec, \
-										  KEY wasn't found in Keys"));
+		checkf(indexPtr, TEXT("UResourceGathererComponent::IncOrDec, key wasn't found in resource indicies"));
 
 		const int index = *indexPtr;
 
-		if (Increment == true) {
+		if (Increment == true) 
+		{
 			Values[index] += Value;
 		}
-		else {
+		else 
+		{
 			Values[index] -= Value;
 		}
 
@@ -282,26 +392,61 @@ void UResourceGathererComponent::AddResourceRegenEvent(FResourceRegenEventConfig
 	}
 	else
 	{
-		ActiveRegenEvents.Emplace(InResourceClass, InResourceConfig);
-		InResourceConfig.TimerDelegate.BindUFunction(this, FName("HandleResourceRegenEvent"), InResourceClass);
-		GetWorld()->GetTimerManager().SetTimer(InResourceConfig.TimerHandle, InResourceConfig.TimerDelegate, InResourceConfig.TickRate, true);
+		FResourceRegenEventConfig& newconfig = ActiveRegenEvents.Emplace(InResourceClass, InResourceConfig);
+		newconfig.TimerDelegate.BindUFunction(this, FName("HandleResourceRegenEvent"), InResourceClass);
+		GetWorld()->GetTimerManager().SetTimer(newconfig.TimerHandle, newconfig.TimerDelegate, newconfig.TickRate, true);
 	}
+}
+
+bool UResourceGathererComponent::ClearResourceRegenEvent(const TSubclassOf<UResource>& InResourceClass)
+{
+	bool retval = false;
+	if (FResourceRegenEventConfig * eventconfig = ActiveRegenEvents.Find(InResourceClass))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(eventconfig->TimerHandle);
+
+		retval = ActiveRegenEvents.Remove(InResourceClass) > 0;
+	}
+
+	return retval;
+}
+
+uint32 UResourceGathererComponent::ClearAllResourceRegenEvents()
+{
+	uint32 retval = 0U;
+	for (const TPair<TSubclassOf<UResource>,FResourceRegenEventConfig>& resource : ActiveRegenEvents)
+	{
+		if (ClearResourceRegenEvent(resource.Key))
+		{
+			retval++;
+		}
+	}
+
+	return retval;
+}
+
+const FResourceRegenEventConfig* UResourceGathererComponent::GetCurrentRegenEventConfig(const TSubclassOf<UResource>& InResourceClass) const
+{
+	return ActiveRegenEvents.Find(InResourceClass);
 }
 
 void UResourceGathererComponent::HandleResourceRegenEvent(TSubclassOf<UResource> InEventKey)
 {
-	const FResourceRegenEventConfig& eventconfig = *ActiveRegenEvents.Find(InEventKey);
-	const int32 amount = eventconfig.GetRegenAmount();
+	if (FResourceRegenEventConfig* eventconfigptr = ActiveRegenEvents.Find(InEventKey))
+	{
+		FResourceRegenEventConfig eventconfig = *eventconfigptr;
+		const int32 amount = eventconfig.GetRegenAmount();
 
-	if (amount > 0)
-	{
-		AddResource(InEventKey, amount);
-	}
-	else if(amount < 0)
-	{
-		const int32 positiveamount = -amount;
-		uint32 value = static_cast<uint32>((positiveamount));
-		RemoveResource(InEventKey, value);
+		if (amount > 0)
+		{
+			AddResource(InEventKey, amount);
+		}
+		else if (amount < 0)
+		{
+			const int32 positiveamount = -amount;
+			uint32 value = static_cast<uint32>((positiveamount));
+			RemoveResource(InEventKey, value);
+		}
 	}
 }
 
