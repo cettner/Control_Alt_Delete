@@ -9,7 +9,6 @@
 
 AAbilityCombatCommander::AAbilityCombatCommander() : Super()
 {
-	ResourceVendorComp = CreateDefaultSubobject<UResourceVendorComponent>(TEXT("ResourceVendorComp"));
 }
 
 void AAbilityCombatCommander::OnReadyNotify(UAbilityAnimNotify * CallingContext)
@@ -86,8 +85,7 @@ bool AAbilityCombatCommander::CanCastAbility(const TWeakObjectPtr<UAbility> Trac
 
 bool AAbilityCombatCommander::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
 {
-	FReplicationResourceMap abilitycost = FReplicationResourceMap();
-	checkf(GetUnitPriceForSource(SpendingAbility->GetClass(), this, abilitycost, GetController()), TEXT("AAbilityCombatCommander::CanCastAbility Failed to obtain pricemap"));
+	FReplicationResourceMap abilitycost = SpendingAbility->GetAbilityCost();
 	bool retval = false;
 
 	if (HasResource(abilitycost))
@@ -98,20 +96,9 @@ bool AAbilityCombatCommander::SpendAbilityCost(const TWeakObjectPtr<UAbility> Sp
 	return retval;
 }
 
-const TMap<TSubclassOf<UObject>, FReplicationResourceMap> AAbilityCombatCommander::GetAllDefaultUnitPrices() const
-{
-	return ResourceVendorComp->GetAllDefaultUnitPrices();
-}
-
-bool AAbilityCombatCommander::GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController) const
-{
-	return ResourceVendorComp->GetUnitPriceForSource(PurchaseClass,Purchaser, OutPrices, InstigatingController);
-}
-
 void AAbilityCombatCommander::GrantExp(uint32 inexp)
 {
-	const APlayerController * pc =  GetController<APlayerController>();
-	APlayerState* ps = pc->GetPlayerState<APlayerState>();
+	APlayerState* ps = GetPlayerState<APlayerState>();
 	IExpAccumulatorInterface* expstate = Cast<IExpAccumulatorInterface>(ps);
 	expstate->GrantExp(inexp);
 

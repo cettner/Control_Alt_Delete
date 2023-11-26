@@ -54,6 +54,11 @@ void IAbilityUserInterface::AddAbility(TSubclassOf<UAbility> AbilityClass, AActo
 {
 }
 
+TArray<TSubclassOf<UAbility>> IAbilityUserInterface::GetSupportedAbilities() const
+{
+	return TArray<TSubclassOf<UAbility>>();
+}
+
 void IAbilityUserInterface::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 }

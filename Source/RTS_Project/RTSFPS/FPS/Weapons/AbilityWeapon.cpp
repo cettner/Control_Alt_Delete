@@ -120,6 +120,11 @@ void AAbilityWeapon::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* In
 	AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
 }
 
+TArray<TSubclassOf<UAbility>> AAbilityWeapon::GetSupportedAbilities() const
+{
+	return TArray<TSubclassOf<UAbility>>();
+}
+
 void AAbilityWeapon::OnReadyNotify(UAbilityAnimNotify * CallingContext)
 {
 	SetWeaponState(EWeaponState::Firing);
@@ -225,9 +230,4 @@ bool AAbilityWeapon::ServerStopUseAbility_Validate()
 void AAbilityWeapon::ServerStopUseAbility_Implementation()
 {
 	AbilityComp->ReleaseAbility();
-}
-
-void AAbilityWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }

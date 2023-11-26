@@ -18,7 +18,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 {
 	GENERATED_BODY()
 
-	protected:
+	protected: 
 		AAbilityWeapon();
 
 	public:
@@ -46,6 +46,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr) override;
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
 		virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource) override;
+		virtual TArray<TSubclassOf<UAbility>> GetSupportedAbilities() const;
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
@@ -77,8 +78,6 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 
 		UFUNCTION(reliable, server, WithValidation)
 		void ServerStopUseAbility();
-
-		void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
 
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;

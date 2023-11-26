@@ -34,6 +34,7 @@ class RTS_PROJECT_API IAbilityUserInterface
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const;
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByTag(FName InTag) const;
 		virtual void AddAbility(TSubclassOf<UAbility> AbilityClass, AActor * InSource = nullptr);
+		virtual TArray<TSubclassOf<UAbility>> GetSupportedAbilities() const;
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr);
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr);

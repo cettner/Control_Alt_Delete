@@ -7,7 +7,6 @@
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
-#include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceVendorComponent.h"
 
 #include "AbilityCombatCommander.generated.h"
 
@@ -15,7 +14,7 @@
  * 
  */
 UCLASS()
-class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IResourceVendorInterface, public IExpAccumulatorInterface
+class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public IAbilityUserInterface, public IExpAccumulatorInterface
 {
 	GENERATED_BODY()
 
@@ -34,21 +33,7 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
 	/*************************************************************************************/
 
-	/*********************************Resource Vendor***********************************/
-		virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
-		virtual bool GetUnitPriceForSource(const TSubclassOf<UObject> PurchaseClass, const IResourceGatherer* Purchaser, FReplicationResourceMap& OutPrices, const AController* InstigatingController = nullptr) const override;
-	/***********************************************************************************/
-
 	/*********************************Experiance Accumulator***********************************/
 		virtual void GrantExp(uint32 inexp) override;
 	/******************************************************************************************/
-
-
-	/****************************************Config Data***************************************/
-		UPROPERTY(EditDefaultsOnly, Category = Gameplay)
-		UResourceVendorComponent* ResourceVendorComp = nullptr;
-
-	/************************************Runtime Data*****************************************/
-
-
 };
