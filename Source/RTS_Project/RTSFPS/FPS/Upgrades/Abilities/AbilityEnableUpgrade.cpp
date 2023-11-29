@@ -9,23 +9,37 @@ UAbilityEnableUpgrade::UAbilityEnableUpgrade()
 }
 
 bool UAbilityEnableUpgrade::ApplyUpgrade(UObject* ToUpgrade, const uint32 OldRank, const uint32 NewRank, const bool HasAuthority, const bool IsLocal) const
-{
-	IAbilityUserInterface * abilityuser = CastChecked<IAbilityUserInterface>(ToUpgrade);
+{	
 	bool retval = false;
-	if (NewRank > UPGRADE_UNLEARNED)
+	if (HasAuthority)
 	{
-		for (const TSubclassOf<UAbility>& abilitytoenable : TargetAbilites)
+		IAbilityUserInterface* abilityuser = CastChecked<IAbilityUserInterface>(ToUpgrade);
+		int32 installcheck = 0U;
+
+		if (NewRank > UPGRADE_UNLEARNED)
 		{
-			abilityuser->EnableAbility(abilitytoenable);
-			retval = true;
+			for (const TSubclassOf<UAbility>& abilitytoenable : TargetAbilites)
+			{
+				abilityuser->EnableAbility(abilitytoenable);
+				installcheck++;
+			}
 		}
+		else
+		{
+			for (const TSubclassOf<UAbility>& abilitytoenable : TargetAbilites)
+			{
+				if (abilityuser->DisableAbility(abilitytoenable))
+				{
+					installcheck++;
+				}
+			}
+		}
+
+		retval = installcheck == TargetAbilites.Num();
 	}
 	else
 	{
-		for (const TSubclassOf<UAbility>& abilitytoenable : TargetAbilites)
-		{
-			retval &= abilityuser->DisableAbility(abilitytoenable);
-		}
+		retval = true;
 	}
 
 	return retval;

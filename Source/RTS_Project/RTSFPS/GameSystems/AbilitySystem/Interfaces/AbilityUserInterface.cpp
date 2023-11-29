@@ -77,7 +77,7 @@ TSet<TSubclassOf<UAbility>> IAbilityUserInterface::GetSupportedAbilities() const
 
 bool IAbilityUserInterface::SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const
 {
-	return false;
+	return GetSupportedAbilities().Contains(Inabilityclass);
 }
 
 void IAbilityUserInterface::OnReadyNotify(UAbilityAnimNotify * CallingContext)

@@ -326,7 +326,14 @@ bool UAbilityComponent::SetAbilityEnabledState(const int InAbilityIndex, const b
 	bool retval = false;
 	if (HasAuthority() && IsAbilityValid(InAbilityIndex))
 	{
+		/*If We're disabling an ability we're currently using, interrupt it*/
+		if (IsCasting() && GetCurrentAbility() == AllAbilites[InAbilityIndex] && !InEnabledState)
+		{
+			InterruptAbility();
+		}
+
 		AllAbilites[InAbilityIndex]->SetIsAbilityEnabled(InEnabledState);
+
 		retval = true;
 	}
 

@@ -94,7 +94,7 @@ void UUpgradeNodeWidget::OnUpgradeButtonRightClicked()
 
 bool UUpgradeNodeWidget::IsNodeEnabled()
 {
-	return CanPurchaseUpgrade();
+	return CanPurchaseUpgrade() || (GetUserCurrentRank() > UPGRADE_UNLEARNED);
 }
 
 FText UUpgradeNodeWidget::GetNodeProgressText()

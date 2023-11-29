@@ -25,8 +25,6 @@ bool IUpgradableInterface::MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>&
 {
 	const UUpgrade* upgradecdo = UpgradeClass.GetDefaultObject();
 	bool retval = true;
-	const TArray<TSubclassOf<UUpgrade>> exclusions = upgradecdo->GetExclusiveConditions();
-	const TArray<FUpgradeUnlockCondition> unlockconditions = upgradecdo->GetUnlockConditions();
 	const uint32 maxrank = upgradecdo->GetMaxRank();
 
 	if (GetCurrentUpgradeRankFor(UpgradeClass) >= maxrank)
@@ -34,6 +32,9 @@ bool IUpgradableInterface::MeetsUpgradeDependencies(const TSubclassOf<UUpgrade>&
 		retval = false;
 		return retval;
 	}
+
+	const TArray<TSubclassOf<UUpgrade>> exclusions = upgradecdo->GetExclusiveConditions();
+	const TArray<FUpgradeUnlockCondition> unlockconditions = upgradecdo->GetUnlockConditions();
 
 	for (int i = 0; i < unlockconditions.Num(); i++)
 	{

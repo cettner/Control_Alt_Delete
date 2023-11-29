@@ -37,9 +37,14 @@ UAbilityComponent * AMageHands::GetHandAbilityComponent(UAbilityAnimNotify * Cal
 	return retval;
 }
 
-void AMageHands::OnRightHandAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility)
+void AMageHands::OnRightHandAbilityEnableStateChanged(UAbility * InChangedAbility)
 {
 	if (RightHandAbilityIndex == NO_ABILITY_INDEX)
+	{
+		RightHandAbilityIndex = RightHandAbilityComp->GetNextAvailableIndex();
+	}
+	/*If the previewed ability is now disabled, cycle to a new ability*/
+	else if (IsValid(InChangedAbility) && !InChangedAbility->IsAbilityEnabled() && InChangedAbility == AbilityComp->GetAbilityByIndex(RightHandAbilityIndex))
 	{
 		RightHandAbilityIndex = RightHandAbilityComp->GetNextAvailableIndex();
 	}

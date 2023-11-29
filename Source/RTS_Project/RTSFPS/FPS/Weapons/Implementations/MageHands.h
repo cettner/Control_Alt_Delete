@@ -63,7 +63,7 @@ protected:
 	void ServerStopUseSecondAbility();
 
 	UFUNCTION()
-	virtual void OnRightHandAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility);
+	virtual void OnRightHandAbilityEnableStateChanged(UAbility * InChangedAbility);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

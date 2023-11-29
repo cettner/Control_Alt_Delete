@@ -64,7 +64,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual void InitResourceBindings(IResourceGatherer * InResourceSource);
 
 		UFUNCTION()
-		virtual void OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility);
+		virtual void OnAbilityEnableStateChanged(UAbility * InChangedAbility);
 
 		virtual void OnResourceSourceChanged(const TSubclassOf<UResource> InClass, const uint32 InOldValue, const uint32 InNewValue, TScriptInterface<IResourceGatherer> InSource);
 

@@ -192,9 +192,14 @@ void AAbilityWeapon::InitResourceBindings(IResourceGatherer* InResourceSource)
 	}
 }
 
-void AAbilityWeapon::OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> InSpawningAbility)
+void AAbilityWeapon::OnAbilityEnableStateChanged(UAbility * InSpawningAbility)
 {
 	if (AbilityIndex == NO_ABILITY_INDEX)
+	{
+		AbilityIndex = AbilityComp->GetNextAvailableIndex();
+	}
+	/*If the previewed ability is now disabled, cycle to a new ability*/
+	else if (IsValid(InSpawningAbility) && !InSpawningAbility->IsAbilityEnabled() && InSpawningAbility == AbilityComp->GetAbilityByIndex(AbilityIndex))
 	{
 		AbilityIndex = AbilityComp->GetNextAvailableIndex();
 	}

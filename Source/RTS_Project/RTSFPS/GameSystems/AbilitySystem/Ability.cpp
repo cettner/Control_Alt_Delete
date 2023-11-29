@@ -133,10 +133,13 @@ void UAbility::OnRep_bIsAbilityEnabled()
 
 void UAbility::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+	/*
+	At this time we dont support bp replicated variables
 	if (const UBlueprintGeneratedClass* BPClass = Cast<UBlueprintGeneratedClass>(GetClass()))
 	{
 		BPClass->GetLifetimeBlueprintReplicationList(OutLifetimeProps);
 	}
+	*/
 	DOREPLIFETIME(UAbility, bIsAbilityEnabled);
 }
 

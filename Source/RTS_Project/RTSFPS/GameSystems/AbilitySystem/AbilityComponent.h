@@ -10,7 +10,7 @@
 
 constexpr int NO_ABILITY_INDEX = -1;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityEnableStateChangedDelegate, TWeakObjectPtr<UAbility>, InChangedAbility);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAbilityEnableStateChangedDelegate, UAbility*, InChangedAbility);
 
 USTRUCT()
 struct FAbilityReplicationBool
