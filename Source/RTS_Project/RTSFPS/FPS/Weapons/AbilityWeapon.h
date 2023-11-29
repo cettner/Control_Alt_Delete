@@ -39,14 +39,17 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	/***********************IAbilityUserInterface*********************/
 		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility>) const override;
 		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
-		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay) override;
-		virtual void StopAbilityMontage(FAbilityAnim AnimToStop) override;
+		virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay) override;
+		virtual void StopAbilityMontage(const FAbilityAnim& AnimToPlay) override;
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const override;
 		virtual FVector GetAbilityAimVector() const override;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr) override;
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
-		virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource) override;
-		virtual TArray<TSubclassOf<UAbility>> GetSupportedAbilities() const;
+		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
+		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
+		virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
@@ -60,7 +63,6 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual bool InitAbilities(IAbilityUserInterface * InUser);
 		virtual void InitResourceBindings(IResourceGatherer * InResourceSource);
 
-
 		UFUNCTION()
 		virtual void OnAbilityEnableStateChanged(TWeakObjectPtr<UAbility> SpawningAbility);
 
@@ -72,7 +74,6 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual float TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	protected:
-
 		UFUNCTION(reliable, server, WithValidation)
 		void ServerStartUseAbility(int AbilityIndextoStart);
 
@@ -80,12 +81,13 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		void ServerStopUseAbility();
 
 	protected:
+		/*Config*/
+		UPROPERTY(EditDefaultsOnly, Category = Abilities)
 		UAbilityComponent * AbilityComp = nullptr;
 
+	protected:
+		/*Runtime*/
 		bool bAreAbilitiesInitialized = false;
-
-		UPROPERTY(EditDefaultsOnly)
-		TArray<TSubclassOf<UAbility>> AbilityClasses;
 
 		/*Ability is indexed locally*/
 		int AbilityIndex = -1;

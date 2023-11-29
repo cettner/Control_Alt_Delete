@@ -103,11 +103,6 @@ TEnumAsByte<ECollisionChannel> UAbility::GetAbilityCollisionChannel() const
 	return AbilityEffectChannel;
 }
 
-bool UAbility::GetDefaultEnabledState() const
-{
-	return DefaultEnabledState;
-}
-
 TArray<FName> UAbility::GetAbilityTags() const
 {
 	return AbilityTags;

@@ -48,7 +48,7 @@ private:
 };
 
 UCLASS( ClassGroup=(Custom))
-class RTS_PROJECT_API UAbilityComponent : public UActorComponent
+class RTS_PROJECT_API UAbilityComponent : public UActorComponent, public IAbilityUserInterface
 {
 	GENERATED_BODY()
 	friend UAbility;
@@ -57,7 +57,7 @@ class RTS_PROJECT_API UAbilityComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UAbilityComponent();
-	void InitAbilities(IAbilityUserInterface * InAbilitiyUser, TArray<TSubclassOf<UAbility>> InAllAbilityClasses);
+	void InitAbilities(IAbilityUserInterface * InAbilitiyUser);
 
 public:
 	/*Pass through function for Abilities to dermine if they should Execute Authoritative Commands based on the comps owner*/
@@ -70,42 +70,32 @@ public:
 	virtual void ReleaseAbility();
 	/*Called By Comp Owner to Immediatly Halt the Ability*/
 	virtual void InterruptAbility();
+
+	/*******IAbilityUserInterface Override********/
+public:
+	virtual void OnReadyNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
+	virtual void OnLoopNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
+	virtual void OnEffectNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
+	virtual void OnEndNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
+
+	virtual UAbility* GetNextEnabledAbility(const UAbility* InIterator = nullptr) const;
+	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
+	virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
+	virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const;
 	
-	/****************Server Trigger***********/
-	/*Called by Ability to notify that the ability was successfully started*/
-	void SetIsCastSuccessful(bool ReleaseState);
-	/*****************************************/
+	virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay) override;
 
-public:
-	/*Start the Abilities Effect*/
-	virtual void AbilityEffect();
-	/*Notify the ability that it has ended*/
-	virtual void EndAbility();
-
-public:
-	virtual void OnReadyNotify();
-	virtual void OnLoopNotify();
-	virtual void OnEffectNotify();
-	virtual void OnEndNotify();
-
-public:
-	virtual bool IsAbilityEnabled(const int InIndex) const;
-	/****************Server Trigger***********/
-	virtual bool SetAbilityEnabledState(int InAbilityIndex, bool InEnabledState);
-	virtual bool SetAbilityEnabledState(TSubclassOf<UAbility> InEnabledClass, bool InEnabledState);
-	/*****************************************/
+	virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+	virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+	virtual bool IsAbilityEnabled(const TSubclassOf<UAbility>& InAbilityClass) const override;
+	/*********************************************/
 
 public:
 	virtual UAbility * GetCurrentAbility() const;
 	virtual UAbility * GetAbilityByIndex(int InIndex) const;
-	virtual int GetAbilityIndexByClass(TSubclassOf<UAbility> InEnabledClass) const;
+	virtual int GetAbilityIndexByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
 	virtual int GetCurrentAbilityIndex() const;
 	virtual int GetNextAvailableIndex(const int InCurrentIndex = NO_ABILITY_INDEX, const bool bOnlyEnabledAbilities = true) const;
-
-	virtual bool IsAbilityUsingCrosshair() const;
-	virtual bool IsUsingAbility() const;
-
-
 
 	/*True if the user is currenlty casting or in interim to using the ability, set by the ability after */
 	bool IsCasting() const;
@@ -122,10 +112,7 @@ public:
 	/*Returns the User Associated witht the Component*/
 	virtual IAbilityUserInterface * GetAbilityUser() const;
 
-	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const;
-
 public:
-	float PlayAbilityMontage(FAbilityAnim PlayAnim);
 	virtual bool StopCurrentAnimation();
 	AActor * SpawnUninitializedActor(TSubclassOf<AActor> ActorClass, const FTransform &SpawnTransform = FTransform());
 	FORCEINLINE const FAbilityAnim& GetCurrentMontage() const { return CurrentMontage; }
@@ -150,23 +137,30 @@ protected:
 
 	virtual void OnAbilityEnableStateChanged(UAbility* InAbility);
 
+	/*Start the Abilities Effect*/
+	virtual void AbilityEffect();
+	/*Notify the ability that it has ended*/
+	virtual void EndAbility();
+
 protected:
-	virtual FVector GetControlRotation();
-	virtual int GetNextEnabledIndex(int StartIndex = 0) const;
+	virtual int GetNextEnabledIndex(int StartIndex = NO_ABILITY_INDEX) const;
 	virtual bool CanUseAbility(int AbilityIndex) const;
 	
-	/*ServerReplication Triggers*/
 	void SetIsCasting(bool CastingState);
 	void SetIsCastReady(bool ReadyState);
-	/*****************************/
+
+	/****************Server Trigger***********/
+	/*Called by Ability to notify that the ability was successfully started*/
+	void SetIsCastSuccessful(bool ReleaseState);
+	/*****************************************/
 
 	void SetWantsToCast(bool InState);
 	void SetCurrentAbility(int InAbilityIndex);
 
+	virtual bool IsAbilityEnabled(const int InIndex) const;
+	virtual bool SetAbilityEnabledState(int InAbilityIndex, bool InEnabledState);
+	virtual bool SetAbilityEnabledState(const TSubclassOf<UAbility>& InEnabledClass, bool InEnabledState);
 
-
-public:
-	FOnAbilityEnableStateChangedDelegate AbilityChangeDelegate = FOnAbilityEnableStateChangedDelegate();
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
@@ -180,6 +174,24 @@ protected:
 	UFUNCTION()
 	void OnRep_AllAbilities();
 
+public:
+	FOnAbilityEnableStateChangedDelegate AbilityChangeDelegate = FOnAbilityEnableStateChangedDelegate();
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSet<TSubclassOf<UAbility>> AbilityClasses = TSet<TSubclassOf<UAbility>>();
+
+protected:
+	/*Have to mark this as UPROPERTY or the UObjects are considered Weak Pointers without reference and are "randomly" garbage collected*/
+	UPROPERTY(ReplicatedUsing = OnRep_AllAbilities)
+	TArray<UAbility*> AllAbilites = TArray<UAbility*>();
+
+	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
+	FAbilityReplicationBool bIsCasting = FAbilityReplicationBool();
+
+	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
+	FAbilityReplicationBool bReleaseSuccess = FAbilityReplicationBool();
+
 protected:
 	IAbilityUserInterface* AbilityUser = nullptr;
 
@@ -191,18 +203,5 @@ protected:
 
 	bool bAbilitiesInitialized = false;
 
-protected:
-	/*Have to mark this as UPROPERTY or the UObjects are considered Weak Pointers without reference and are "randomly" garbage collected*/
-	UPROPERTY(ReplicatedUsing = OnRep_AllAbilities)
-	TArray<UAbility*> AllAbilites = TArray<UAbility*>();
-
-private:
 	bool bIsCastReady = false;
-
-	UPROPERTY(ReplicatedUsing = OnRep_bIsCasting)
-	FAbilityReplicationBool bIsCasting = FAbilityReplicationBool();
-
-	UPROPERTY(ReplicatedUsing = OnRep_bIsCastReleased)
-	FAbilityReplicationBool bReleaseSuccess = FAbilityReplicationBool();
-
 };

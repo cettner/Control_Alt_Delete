@@ -65,20 +65,19 @@ void UAbilityComponent::SetCurrentAbility(int InAbilityIndex)
 	CurrentAbilityIndex = InAbilityIndex;
 }
 
-void UAbilityComponent::InitAbilities(IAbilityUserInterface* InAbilitiyUser, TArray<TSubclassOf<UAbility>> InAllAbilityClasses)
+void UAbilityComponent::InitAbilities(IAbilityUserInterface* InAbilitiyUser)
 {
 	if (InAbilitiyUser != nullptr)
 	{
 		AbilityUser = InAbilitiyUser;
 		if (HasAuthority())
 		{
-			for (int i = 0; i < InAllAbilityClasses.Num(); i++)
+			for (const TSubclassOf<UAbility>& abilityclass : AbilityClasses)
 			{
-				UAbility* newability = NewObject<UAbility>(UAbility::StaticClass(), InAllAbilityClasses[i]);
+				UAbility* newability = NewObject<UAbility>(UAbility::StaticClass(), abilityclass);
 				AddReplicatedSubObject(newability);
 				newability->Init(this);
 				AllAbilites.Emplace(newability);
-				const bool enabledstate = newability->GetDefaultEnabledState();
 			}
 
 			if (AllAbilites.Num() > 0)
@@ -218,7 +217,7 @@ int UAbilityComponent::GetNextEnabledIndex(int StartIndex) const
 	return retval;
 }
 
-void UAbilityComponent::OnReadyNotify()
+void UAbilityComponent::OnReadyNotify(UAbilityAnimNotify* CallingContext)
 {
 	if (IsAbilityValid())
 	{
@@ -228,7 +227,7 @@ void UAbilityComponent::OnReadyNotify()
 	}
 }
 
-void UAbilityComponent::OnLoopNotify()
+void UAbilityComponent::OnLoopNotify(UAbilityAnimNotify* CallingContext)
 {
 	if (IsAbilityValid())
 	{
@@ -237,14 +236,78 @@ void UAbilityComponent::OnLoopNotify()
 	}
 }
 
-void UAbilityComponent::OnEffectNotify()
+void UAbilityComponent::OnEffectNotify(UAbilityAnimNotify* CallingContext)
 {
 	AbilityEffect();
 }
 
-void UAbilityComponent::OnEndNotify()
+void UAbilityComponent::OnEndNotify(UAbilityAnimNotify* CallingContext)
 {
 	EndAbility();
+}
+
+UAbility* UAbilityComponent::GetNextEnabledAbility(const UAbility* InIterator) const
+{
+	UAbility* retval = nullptr;
+	int index = NO_ABILITY_INDEX;
+
+	if (InIterator != nullptr)
+	{
+		index = GetAbilityIndexByClass(InIterator->GetClass());
+		index = GetNextEnabledIndex(index);
+	}
+	else
+	{
+		index = GetNextEnabledIndex(NO_ABILITY_INDEX);
+	}
+
+	if (index != NO_ABILITY_INDEX)
+	{
+		retval = AllAbilites[index];
+	}
+
+	return retval;
+}
+
+TSet<TSubclassOf<UAbility>> UAbilityComponent::GetSupportedAbilities() const
+{
+	return AbilityClasses;
+}
+
+bool UAbilityComponent::SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const
+{
+	return AbilityClasses.Contains(Inabilityclass);
+}
+
+void UAbilityComponent::EnableAbility(const TSubclassOf<UAbility>& InAbilityClass)
+{
+	SetAbilityEnabledState(InAbilityClass, true);
+}
+
+bool UAbilityComponent::DisableAbility(const TSubclassOf<UAbility>& InAbilityClass)
+{
+	const bool retval = SetAbilityEnabledState(InAbilityClass, false);
+	return retval;
+}
+
+bool UAbilityComponent::IsAbilityEnabled(const TSubclassOf<UAbility>& InAbilityClass) const
+{
+	const int index = GetAbilityIndexByClass(InAbilityClass);
+	const bool retval = IsAbilityEnabled(index);
+	return retval;
+}
+
+TArray<TWeakObjectPtr<UAbility>> UAbilityComponent::GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const
+{
+	TArray<TWeakObjectPtr<UAbility>> classabilities = TArray<TWeakObjectPtr<UAbility>>();
+	for (int i = 0; i < AllAbilites.Num(); i++)
+	{
+		if (AllAbilites[i]->GetClass()->IsChildOf(AbilityClass))
+		{
+			classabilities.Emplace(TWeakObjectPtr<UAbility>(AllAbilites[i]));
+		}
+	}
+	return(classabilities);
 }
 
 bool UAbilityComponent::IsAbilityEnabled(const int InIndex) const
@@ -270,7 +333,7 @@ bool UAbilityComponent::SetAbilityEnabledState(const int InAbilityIndex, const b
 	return(retval);
 }
 
-bool UAbilityComponent::SetAbilityEnabledState(TSubclassOf<UAbility> InEnabledClass, bool InEnabledState)
+bool UAbilityComponent::SetAbilityEnabledState(const TSubclassOf<UAbility>& InEnabledClass, bool InEnabledState)
 {
 	const int index = GetAbilityIndexByClass(InEnabledClass);
 
@@ -305,14 +368,14 @@ UAbility * UAbilityComponent::GetAbilityByIndex(int InIndex) const
 	return retval;
 }
 
-int UAbilityComponent::GetAbilityIndexByClass(TSubclassOf<UAbility> InEnabledClass) const
+int UAbilityComponent::GetAbilityIndexByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
 	int retval = NO_ABILITY_INDEX;
-	if (InEnabledClass != nullptr)
+	if (InAbilityClass != nullptr)
 	{
 		for (int i = 0; i < AllAbilites.Num(); i++)
 		{
-			if (AllAbilites[i]->GetClass() == InEnabledClass)
+			if (AllAbilites[i]->GetClass() == InAbilityClass)
 			{
 				retval = i;
 				break;
@@ -326,29 +389,6 @@ int UAbilityComponent::GetAbilityIndexByClass(TSubclassOf<UAbility> InEnabledCla
 int UAbilityComponent::GetCurrentAbilityIndex() const
 {
 	return CurrentAbilityIndex;
-}
-
-TArray<TWeakObjectPtr<UAbility>> UAbilityComponent::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
-{
-	TArray<TWeakObjectPtr<UAbility>> classabilities = TArray<TWeakObjectPtr<UAbility>>();
-	for(int i = 0; i < AllAbilites.Num(); i++)
-	{
-		if(AllAbilites[i]->GetClass()->IsChildOf(AbilityClass))
-		{
-			classabilities.Emplace(TWeakObjectPtr<UAbility>(AllAbilites[i]));
-		}
-	}
-	return(classabilities);
-}
-
-bool UAbilityComponent::IsAbilityUsingCrosshair() const
-{
-	return false;
-}
-
-bool UAbilityComponent::IsUsingAbility() const
-{
-	return false;
 }
 
 bool UAbilityComponent::IsCasting() const
@@ -383,15 +423,15 @@ IAbilityUserInterface * UAbilityComponent::GetAbilityUser() const
 	return AbilityUser;
 }
 
-float UAbilityComponent::PlayAbilityMontage(FAbilityAnim PlayAnim)
+float UAbilityComponent::PlayAbilityMontage(const FAbilityAnim& AnimToPlay)
 {
 	IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
 	float playtime = -1.0f;
 
 	if (user != nullptr)
 	{
-		playtime = user->PlayAbilityMontage(PlayAnim);
-		CurrentMontage = PlayAnim;
+		playtime = user->PlayAbilityMontage(AnimToPlay);
+		CurrentMontage = AnimToPlay;
 	}
 
 	return playtime;
@@ -422,11 +462,6 @@ AActor* UAbilityComponent::SpawnUninitializedActor(TSubclassOf<AActor> ActorClas
 AActor* UAbilityComponent::FinishSpawningActor(AActor* InitializedActor, const FTransform &SpawnTransform)
 {
 	return UGameplayStatics::FinishSpawningActor(InitializedActor, SpawnTransform);
-}
-
-FVector UAbilityComponent::GetControlRotation()
-{
-	return FVector();
 }
 
 FTransform UAbilityComponent::GetSurfaceTransform()

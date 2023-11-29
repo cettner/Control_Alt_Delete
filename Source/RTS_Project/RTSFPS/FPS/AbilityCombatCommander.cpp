@@ -51,22 +51,120 @@ void AAbilityCombatCommander::OnEndNotify(UAbilityAnimNotify * CallingContext)
 	}
 }
 
-TArray<TWeakObjectPtr<UAbility>> AAbilityCombatCommander::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+TArray<TWeakObjectPtr<UAbility>> AAbilityCombatCommander::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
 	IAbilityUserInterface * abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
 	TArray<TWeakObjectPtr<UAbility>> retval = TArray<TWeakObjectPtr<UAbility>>();
 	if (abilityweapon != nullptr)
 	{
-		retval = abilityweapon->GetAbilitiesByClass(AbilityClass);
+		retval = abilityweapon->GetAbilitiesByClass(InAbilityClass);
 	}
 	return retval;
 }
 
-void AAbilityCombatCommander::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource)
+TWeakObjectPtr<UAbility> AAbilityCombatCommander::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
+	TWeakObjectPtr<UAbility> retval = nullptr;
+	for (int32 i = 0; i < Inventory.Num(); i++)
+	{
+		if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+		{
+			if (abilityweapon->SupportsAbility(InAbilityClass))
+			{
+				retval = abilityweapon->GetFirstAbilityByClass(InAbilityClass);
+			}
+		}
+	}
+
+	return retval;
+}
+
+void AAbilityCombatCommander::EnableAbility(const TSubclassOf<UAbility>& InAbilityClass)
+{
+	for (int32 i = 0; i < Inventory.Num(); i++)
+	{
+		if (IAbilityUserInterface * abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+		{
+			if (abilityweapon->SupportsAbility(InAbilityClass))
+			{
+				abilityweapon->EnableAbility(InAbilityClass);
+			}
+		}
+	}
 	IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
 
-	abilityweapon->AddAbility(InAbilityClass, InSource);
+	abilityweapon->EnableAbility(InAbilityClass);
+}
+
+bool AAbilityCombatCommander::DisableAbility(const TSubclassOf<UAbility>& InAbilityClass)
+{
+	bool retval = false;
+	for (int32 i = 0; i < Inventory.Num(); i++)
+	{
+		if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+		{
+			if (abilityweapon->SupportsAbility(InAbilityClass))
+			{
+				retval |= abilityweapon->DisableAbility(InAbilityClass);
+			}
+		}
+	}
+
+	return retval;
+}
+
+bool AAbilityCombatCommander::IsAbilityEnabled(const TSubclassOf<UAbility>& InAbilityClass) const
+{
+	const bool issupported = SupportsAbility(InAbilityClass);
+	bool retval = false;
+	
+	if (issupported)
+	{
+		for (int32 i = 0; i < Inventory.Num(); i++)
+		{
+			if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+			{
+				if (abilityweapon->IsAbilityEnabled(InAbilityClass))
+				{
+					retval = true;
+					break;
+				}
+			}
+		}
+	}
+
+	return retval;
+}
+
+TSet<TSubclassOf<UAbility>> AAbilityCombatCommander::GetSupportedAbilities() const
+{
+	TSet<TSubclassOf<UAbility>> retval = TSet<TSubclassOf<UAbility>>();
+	for (int32 i = 0; i < Inventory.Num(); i++)
+	{
+		if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+		{
+			retval.Append(abilityweapon->GetSupportedAbilities());
+		}
+	}
+	
+	return retval;
+}
+
+bool AAbilityCombatCommander::SupportsAbility(const TSubclassOf<UAbility>& InAbilityclass) const
+{
+	bool retval = false;
+	for (int32 i = 0; i < Inventory.Num(); i++)
+	{
+		if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+		{
+			if (abilityweapon->SupportsAbility(InAbilityclass))
+			{
+				retval = true;
+				break;
+			}
+		}
+	}
+	return retval;
 }
 
 bool AAbilityCombatCommander::CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const
@@ -96,10 +194,10 @@ bool AAbilityCombatCommander::SpendAbilityCost(const TWeakObjectPtr<UAbility> Sp
 	return retval;
 }
 
-void AAbilityCombatCommander::GrantExp(uint32 inexp)
+void AAbilityCombatCommander::GrantExp(uint32 InExp)
 {
 	APlayerState* ps = GetPlayerState<APlayerState>();
 	IExpAccumulatorInterface* expstate = Cast<IExpAccumulatorInterface>(ps);
-	expstate->GrantExp(inexp);
-
+	expstate->GrantExp(InExp);
 }
+

@@ -7,6 +7,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/AbilitySystem/Interfaces/AbilityUserInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/UpgradeSystem/Interfaces/ExpAccumulatorInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/ResourceGathererComponent.h"
+#include "RTS_Project/RTSFPS/FPS/Upgrades/Abilities/AbilityUserUpgrade.h"
 
 #include "AbilityCombatCommander.generated.h"
 
@@ -27,13 +28,18 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
-		virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr) override;
+		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+		virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+		virtual bool IsAbilityEnabled(const TSubclassOf<UAbility>& AbilityClass) const;
+		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const;
+		virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const;
 		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const override;
 		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
 	/*************************************************************************************/
 
 	/*********************************Experiance Accumulator***********************************/
-		virtual void GrantExp(uint32 inexp) override;
+		virtual void GrantExp(uint32 InExp) override;
 	/******************************************************************************************/
 };

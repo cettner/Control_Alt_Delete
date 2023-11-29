@@ -26,15 +26,22 @@ class RTS_PROJECT_API IAbilityUserInterface
 	public:
 		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const;
 		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility);
-		virtual float PlayAbilityMontage(FAbilityAnim AnimToPlay);
-		virtual void StopAbilityMontage(FAbilityAnim AnimToStop);
+		virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay);
+		virtual void  StopAbilityMontage(const FAbilityAnim& AnimToStop);
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const;
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const;
+
+		virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
+		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
 		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByTag(FName InTag) const;
-		virtual void AddAbility(TSubclassOf<UAbility> AbilityClass, AActor * InSource = nullptr);
-		virtual TArray<TSubclassOf<UAbility>> GetSupportedAbilities() const;
+		
+		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass);
+		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass);
+		virtual bool IsAbilityEnabled(const TSubclassOf<UAbility>& AbilityClass) const;
+		
+		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const;
+		virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const;
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr);
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr);

@@ -60,9 +60,7 @@ bool AMageHands::InitAbilities(IAbilityUserInterface * InAbilUser)
 {
 	bool retval = Super::InitAbilities(InAbilUser);
 
-	RightHandAbilityComp->InitAbilities(this, RightAbilityClasses);
-
-	RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
+	RightHandAbilityComp->InitAbilities(this);
 	
 	return(retval);
 }
@@ -117,45 +115,44 @@ void AMageHands::OnEndNotify(UAbilityAnimNotify * CallingContext)
 
 }
 
-TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	TArray<TWeakObjectPtr<UAbility>> retval = Super::GetAbilitiesByClass(AbilityClass);
-	retval.Append(RightHandAbilityComp->GetAbilitiesByClass(AbilityClass));
+	TArray<TWeakObjectPtr<UAbility>> retval = Super::GetAbilitiesByClass(InAbilityClass);
+	retval.Append(RightHandAbilityComp->GetAbilitiesByClass(InAbilityClass));
 	return retval;
 }
 
-void AMageHands::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource)
+TWeakObjectPtr<UAbility> AMageHands::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	const UAbility* defaultability = InAbilityClass.GetDefaultObject();
-	const TArray<FName> abilitytags = defaultability->GetAbilityTags();
-	const bool ismainhandability = abilitytags.Contains(MainHandAbilityTag);
-	const bool bisoffhandability = abilitytags.Contains(OffHandAbilityTag);
+	TWeakObjectPtr<UAbility> retval = Super::GetFirstAbilityByClass(InAbilityClass);
+	if (retval == nullptr)
+	{
+		retval = RightHandAbilityComp->GetFirstAbilityByClass(InAbilityClass);
+	}
+
+	return retval;
+}
+
+void AMageHands::EnableAbility(const TSubclassOf<UAbility>& InAbilityClass)
+{
+	Super::EnableAbility(InAbilityClass);
 	
+	if (RightHandAbilityComp->SupportsAbility(InAbilityClass))
+	{
+		RightHandAbilityComp->EnableAbility(InAbilityClass);
+	}
+}
 
-	if (bisoffhandability == true && ismainhandability == true)
-	{
-		RightHandAbilityComp->SetAbilityEnabledState(InAbilityClass, true);
-		AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
-	}
-	else if (bisoffhandability == true)
-	{
-		RightHandAbilityComp->SetAbilityEnabledState(InAbilityClass, true);
-	}
-	else
-	{
-		AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
-	}
+bool AMageHands::DisableAbility(const TSubclassOf<UAbility>& InAbilityClass)
+{
+	bool retval = Super::DisableAbility(InAbilityClass);
 
-	/*If we didnt have an ability before and added one get a new index*/
-	if (RightHandAbilityIndex == NO_ABILITY_INDEX)
+	if (RightHandAbilityComp->SupportsAbility(InAbilityClass))
 	{
-		RightHandAbilityIndex = RightHandAbilityComp->GetCurrentAbilityIndex();
+		retval |= RightHandAbilityComp->DisableAbility(InAbilityClass);
 	}
 
-	if (AbilityIndex == NO_ABILITY_INDEX)
-	{
-		AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
-	}
+	return retval;
 }
 
 void AMageHands::AddResource(TSubclassOf<UResource> ResourceClass, int amount)

@@ -15,12 +15,12 @@ bool IAbilityUserInterface::SpendAbilityCost(const TWeakObjectPtr<UAbility> Spen
 	return false;
 }
 
-float IAbilityUserInterface::PlayAbilityMontage(FAbilityAnim AnimToPlay)
+float IAbilityUserInterface::PlayAbilityMontage(const FAbilityAnim& AnimToPlay)
 {
 	return 0.0f;
 }
 
-void IAbilityUserInterface::StopAbilityMontage(FAbilityAnim AnimToStop)
+void IAbilityUserInterface::StopAbilityMontage(const FAbilityAnim& AnimToPlay)
 {
 
 }
@@ -40,7 +40,12 @@ TArray<AActor*> IAbilityUserInterface::GetIgnoredTraceActors(TWeakObjectPtr<UAbi
 	return TArray<AActor*>();
 }
 
-TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+TWeakObjectPtr<UAbility> IAbilityUserInterface::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+{
+	return TWeakObjectPtr<UAbility>();
+}
+
+TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
 	return TArray<TWeakObjectPtr<UAbility>>();
 }
@@ -50,13 +55,29 @@ TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByTag(FName 
 	return TArray<TWeakObjectPtr<UAbility>>();
 }
 
-void IAbilityUserInterface::AddAbility(TSubclassOf<UAbility> AbilityClass, AActor* InSource)
+void IAbilityUserInterface::EnableAbility(const TSubclassOf<UAbility>& AbilityClass)
 {
+
 }
 
-TArray<TSubclassOf<UAbility>> IAbilityUserInterface::GetSupportedAbilities() const
+bool IAbilityUserInterface::DisableAbility(const TSubclassOf<UAbility>& AbilityClass)
 {
-	return TArray<TSubclassOf<UAbility>>();
+	return false;
+}
+
+bool IAbilityUserInterface::IsAbilityEnabled(const TSubclassOf<UAbility>& AbilityClass) const
+{
+	return false;
+}
+
+TSet<TSubclassOf<UAbility>> IAbilityUserInterface::GetSupportedAbilities() const
+{
+	return TSet<TSubclassOf<UAbility>>();
+}
+
+bool IAbilityUserInterface::SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const
+{
+	return false;
 }
 
 void IAbilityUserInterface::OnReadyNotify(UAbilityAnimNotify * CallingContext)

@@ -31,13 +31,18 @@ protected:
 	virtual void StopSecondaryFire() override;
 	virtual USkeletalMeshComponent* GetWeaponMesh() const override;
 	/*****************************************************************/
+
+	/*********************IAbilityInterface*************************/
 protected:
 	virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
-	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const override;
-	virtual void AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource = nullptr) override;
+	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+	virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
+	virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+	virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+	/***************************************************************/
 
 protected:
 	/**********************Resource Gatherer Overrides***************************/
@@ -62,9 +67,6 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<UAbility>> RightAbilityClasses;
-
-	UPROPERTY(EditDefaultsOnly)
 	FName OffHandAbilityTag = "OffHand";
 
 	UPROPERTY(EditDefaultsOnly)
@@ -73,6 +75,7 @@ protected:
 
 protected:
 	/*Container For All Right Hand Assets*/
+	UPROPERTY(EditDefaultsOnly, Category = Abilities)
 	UAbilityComponent* RightHandAbilityComp = nullptr;
 
 	int RightHandAbilityIndex = -1;

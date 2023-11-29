@@ -199,7 +199,7 @@ void ARTSMinion::OnDeath()
 
 void ARTSMinion::OnUpgradeChanged(const TSubclassOf<UUpgrade> InUpgradeclass, const int32 InOldRank, const int32 InNewRank)
 {
-	InstallUpgrade(InUpgradeclass, InOldRank, InNewRank);
+	checkf(InstallUpgrade(InUpgradeclass, InOldRank, InNewRank), TEXT("ARTSMinion::OnUpgradeChanged Failed to Install Upgrade"));
 }
 
 bool ARTSMinion::InstallUpgrade(const TSubclassOf<UUpgrade> Upgradeclass, const int32 OldRank, const int32 NewRank)
@@ -207,12 +207,14 @@ bool ARTSMinion::InstallUpgrade(const TSubclassOf<UUpgrade> Upgradeclass, const 
 	bool retval = false;
 	UObject* upgradeobject = GetUpgradeSubObject(Upgradeclass);
 
-	if (IsValid(upgradeobject))
+	if (upgradeobject == nullptr)
 	{
-		const bool bislocal = !(HasAuthority() && GetNetMode() == NM_DedicatedServer);
-		const UUpgrade* upgrade = Upgradeclass->GetDefaultObject<UUpgrade>();
-		retval = upgrade->ApplyUpgrade(upgradeobject, OldRank, NewRank, HasAuthority(), bislocal);
+		upgradeobject = this;
 	}
+
+	const bool bislocal = !(HasAuthority() && GetNetMode() == NM_DedicatedServer);
+	const UUpgrade* upgrade = Upgradeclass->GetDefaultObject<UUpgrade>();
+	retval = upgrade->ApplyUpgrade(upgradeobject, OldRank, NewRank, HasAuthority(), bislocal);
 
 	return retval;
 }

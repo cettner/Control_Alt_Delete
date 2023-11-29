@@ -58,7 +58,6 @@ class RTS_PROJECT_API UAbility : public UObject
 
 	public:
 		TEnumAsByte<ECollisionChannel> GetAbilityCollisionChannel() const;
-		bool GetDefaultEnabledState() const;
 		TArray<FName> GetAbilityTags() const;
 
 	protected:
@@ -95,16 +94,13 @@ class RTS_PROJECT_API UAbility : public UObject
 		TEnumAsByte<ECollisionChannel>  AbilityEffectChannel;
 
 		UPROPERTY(EditDefaultsOnly)
-		bool DefaultEnabledState = true;
-
-		UPROPERTY(EditDefaultsOnly)
 		TArray<FName> AbilityTags = TArray<FName>();
 
 	protected:
 		UAbilityComponent * AbilityComp = nullptr;
 
-		UPROPERTY(ReplicatedUsing = OnRep_bIsAbilityEnabled)
-		bool bIsAbilityEnabled = DefaultEnabledState;
+		UPROPERTY(EditDefaultsOnly, ReplicatedUsing = OnRep_bIsAbilityEnabled)
+		bool bIsAbilityEnabled = false;
 
 		UPROPERTY(EditDefaultsOnly)
 		FReplicationResourceMap AbilityCost = FReplicationResourceMap();

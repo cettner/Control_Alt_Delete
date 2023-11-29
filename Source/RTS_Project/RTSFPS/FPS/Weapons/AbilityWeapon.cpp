@@ -66,7 +66,7 @@ bool AAbilityWeapon::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbi
 	return retval;
 }
 
-float AAbilityWeapon::PlayAbilityMontage(FAbilityAnim AnimToPlay)
+float AAbilityWeapon::PlayAbilityMontage(const FAbilityAnim& AnimToPlay)
 {
 	FWeaponAnim converter;
 	converter.AnimFirstPerson = AnimToPlay.AnimFirstPerson;
@@ -75,7 +75,7 @@ float AAbilityWeapon::PlayAbilityMontage(FAbilityAnim AnimToPlay)
 	return PlayWeaponAnimation(converter); 
 }
 
-void AAbilityWeapon::StopAbilityMontage(FAbilityAnim AnimToStop)
+void AAbilityWeapon::StopAbilityMontage(const FAbilityAnim& AnimToStop)
 {
 	FWeaponAnim converter;
 	converter.AnimFirstPerson = AnimToStop.AnimFirstPerson;
@@ -110,19 +110,37 @@ TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> T
 	return outvec;
 }
 
-TArray<TWeakObjectPtr<UAbility>> AAbilityWeapon::GetAbilitiesByClass(TSubclassOf<UAbility> AbilityClass) const
+TArray<TWeakObjectPtr<UAbility>> AAbilityWeapon::GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const
 {
 	return AbilityComp->GetAbilitiesByClass(AbilityClass);
 }
 
-void AAbilityWeapon::AddAbility(TSubclassOf<UAbility> InAbilityClass, AActor* InSource)
+void AAbilityWeapon::EnableAbility(const TSubclassOf<UAbility>& AbilityClass)
 {
-	AbilityComp->SetAbilityEnabledState(InAbilityClass, true);
+	if (AbilityComp->SupportsAbility(AbilityClass))
+	{
+		AbilityComp->EnableAbility(AbilityClass);
+	}
 }
 
-TArray<TSubclassOf<UAbility>> AAbilityWeapon::GetSupportedAbilities() const
+bool AAbilityWeapon::DisableAbility(const TSubclassOf<UAbility>& AbilityClass)
 {
-	return TArray<TSubclassOf<UAbility>>();
+	bool retval = false;
+	if (AbilityComp->SupportsAbility(AbilityClass))
+	{
+		retval = AbilityComp->DisableAbility(AbilityClass);
+	}
+	return retval;
+}
+
+TSet<TSubclassOf<UAbility>> AAbilityWeapon::GetSupportedAbilities() const
+{
+	return AbilityComp->GetSupportedAbilities();
+}
+
+TWeakObjectPtr<UAbility> AAbilityWeapon::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+{
+	return AbilityComp->GetFirstAbilityByClass(InAbilityClass);
 }
 
 void AAbilityWeapon::OnReadyNotify(UAbilityAnimNotify * CallingContext)
@@ -154,7 +172,7 @@ USceneComponent * AAbilityWeapon::GetParticleAttatchmentComponent(TWeakObjectPtr
 
 bool AAbilityWeapon::InitAbilities(IAbilityUserInterface * InUser)
 {
-	AbilityComp->InitAbilities(InUser, AbilityClasses);
+	AbilityComp->InitAbilities(InUser);
 	AbilityIndex = AbilityComp->GetCurrentAbilityIndex();
 	const bool retval = AbilityIndex > NO_ABILITY_INDEX;
 	return (retval);
@@ -187,7 +205,7 @@ void AAbilityWeapon::OnResourceSourceChanged(const TSubclassOf<UResource> InClas
 	if (AbilityComp->IsCasting() && AbilityComp->WantstoCast())
 	{
 		const UAbility * currentability = AbilityComp->GetCurrentAbility();
-		FReplicationResourceMap abilitycost = currentability->GetAbilityCost();
+		const FReplicationResourceMap abilitycost = currentability->GetAbilityCost();
 		if (!InSource->HasResource(abilitycost))
 		{
 			AbilityComp->InterruptAbility();
