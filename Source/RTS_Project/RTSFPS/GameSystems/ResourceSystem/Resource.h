@@ -43,12 +43,18 @@ public:
 
 	bool Increment(TSubclassOf<UResource> Key, int Value)
 	{
+		//todo return the new value instead
 		bool retval = false;
 
 		if (const int* curval = Find(Key))
 		{
 			const int newval = *curval + Value;
 			Emplace(Key, newval);
+			retval = true;
+		}
+		else
+		{
+			Emplace(Key, Value);
 			retval = true;
 		}
 
@@ -58,7 +64,7 @@ public:
 	bool Decrement(TSubclassOf<UResource> Key, int Value)
 	{
 		bool retval = false;
-
+		//todo return the new value instead
 		if (const int* curval = Find(Key))
 		{
 			int newval = *curval - Value;
@@ -67,6 +73,11 @@ public:
 				newval = 0;
 			}
 			Emplace(Key, newval);
+			retval = true;
+		}
+		else
+		{
+			Emplace(Key, 0);
 			retval = true;
 		}
 

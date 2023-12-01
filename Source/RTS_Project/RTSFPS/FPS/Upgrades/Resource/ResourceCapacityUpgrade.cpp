@@ -12,15 +12,28 @@ bool UResourceCapacityUpgrade::ApplyUpgrade(UObject* ToUpgrade, const uint32 Old
     {
         IResourceGatherer* gatherer = CastChecked<IResourceGatherer>(ToUpgrade);
 
-        const uint32 currentmax = gatherer->GetResourceMaximum(TargetResource);
-        const int32 rankdiff = static_cast<int32>(NewRank) - static_cast<int32>(OldRank);
+        if (!UpdateWeight)
+        {
+            const uint32 currentmax = gatherer->GetResourceMaximum(TargetResource);
+            const int32 rankdiff = static_cast<int32>(NewRank) - static_cast<int32>(OldRank);
 
-        const int32 totalchange = rankdiff * BaseChangeValue;
-        const int32 newmax = currentmax + totalchange;
+            const int32 totalchange = rankdiff * BaseChangeValue;
+            const int32 newmax = currentmax + totalchange;
 
-        checkf(newmax > -1, TEXT("UResourceCapacityUpgrade::ApplyUpgrade calculated maximum was negative"))
+            checkf(newmax > -1, TEXT("UResourceCapacityUpgrade::ApplyUpgrade calculated maximum was negative"))
 
-        gatherer->SetResourceDiscreteMaximum(TargetResource, static_cast<uint32>(newmax));
+            gatherer->SetResourceDiscreteMaximum(TargetResource, static_cast<uint32>(newmax));
+        }
+        else
+        {
+            const uint32 currentmax = gatherer->GetMaxWeight();
+            const int32 rankdiff = static_cast<int32>(NewRank) - static_cast<int32>(OldRank);
+            const int32 totalchange = rankdiff * BaseChangeValue;
+            const int32 newmax = currentmax + totalchange;
+
+            gatherer->SetMaxWeight(newmax, EWeightedResourceBoundsAdjustment::REMOVE_SMALLEST);
+        }
+
         retval = true;
     }
     else

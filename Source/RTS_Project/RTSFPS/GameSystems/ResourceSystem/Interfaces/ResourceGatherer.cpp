@@ -74,6 +74,11 @@ bool IResourceGatherer::SetResource(const TSubclassOf<UResource>& InResource, co
 	return false;
 }
 
+void IResourceGatherer::SetMaxWeight(const uint32 InAmount, const EWeightedResourceBoundsAdjustment AdjustmentRules)
+{
+
+}
+
 /****** Non Pure Virtual*****/
 bool IResourceGatherer::GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const
 {

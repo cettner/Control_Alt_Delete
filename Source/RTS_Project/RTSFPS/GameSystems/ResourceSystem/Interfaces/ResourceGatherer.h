@@ -56,12 +56,19 @@ protected:
 	TSubclassOf<UResource> ResourceClass = nullptr;
 };
 
-enum EResourceBoundsAdjustment
+enum class EResourceBoundsAdjustment
 {
 	DONT_ADJUST,
 	ADJUST_IF_OUT_OF_BOUNDS,
 	ADJUST_ON_INCREMENT_OR_OUT_OF_BOUNDS,
 	ALWAYS_ADJUST
+};
+
+enum class EWeightedResourceBoundsAdjustment
+{
+	DONT_ADJUST,
+	REMOVE_SMALLEST,
+	REMOVE_LARGEST,
 };
 
 // This class does not need to be modified.
@@ -125,7 +132,7 @@ public:
 	virtual bool GetHeldResource(TSubclassOf<UResource> ResourceClass, uint32& OutAmount) const;
 	virtual uint32 GetCurrentWeight() const;
 	virtual uint32 GetMaxWeight() const;
-
+	virtual void SetMaxWeight(const uint32 InAmount, const EWeightedResourceBoundsAdjustment AdjustmentRules = EWeightedResourceBoundsAdjustment::REMOVE_SMALLEST);
 
 protected:
 	virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> InResourceClass) const;

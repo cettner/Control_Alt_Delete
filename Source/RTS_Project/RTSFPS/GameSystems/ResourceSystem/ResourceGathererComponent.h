@@ -49,6 +49,8 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		virtual uint32 GetResourceDiscreteMaximum(const TSubclassOf<UResource> ResourceClass) const override;
 		virtual uint32 GetResourceDiscreteMinimum(const TSubclassOf<UResource> ResourceClass) const override;
 
+		virtual void SetMaxWeight(const uint32 InAmount, const EWeightedResourceBoundsAdjustment AdjustmentRules = EWeightedResourceBoundsAdjustment::REMOVE_SMALLEST) override;
+
 	protected:
 		virtual void RecalculateWeight();
 
@@ -96,7 +98,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		TArray<uint32> Values;
 
 		// Map that holds the Keys and the index the Value is at in the parallel array
-		TMap<TSubclassOf<UResource>, int> ResourceToIndex;
+		TMap<TSubclassOf<UResource>, int> ResourceToIndex = TMap<TSubclassOf<UResource>, int>();
 		
 		UPROPERTY(Replicated)
 		FReplicationResourceMap ResourceMaximums = FReplicationResourceMap();

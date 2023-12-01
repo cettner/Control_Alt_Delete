@@ -284,6 +284,130 @@ uint32 UResourceGathererComponent::GetResourceDiscreteMinimum(const TSubclassOf<
 	return 0U;
 }
 
+void UResourceGathererComponent::SetMaxWeight(const uint32 InAmount, const EWeightedResourceBoundsAdjustment AdjustmentRules)
+{
+	MaxWeight = InAmount;
+	const uint32 currentweight = GetCurrentWeight();
+
+	/*Identify if we should drop resources*/
+	if ((AdjustmentRules != EWeightedResourceBoundsAdjustment::DONT_ADJUST) && (currentweight > MaxWeight))
+	{
+
+		struct SortableWeightedResource
+		{
+			// Default constructor
+			SortableWeightedResource()
+				: ResourceType(nullptr), Amount(0) {}
+
+			// Constructor with parameters
+			SortableWeightedResource(TSubclassOf<UResource> InResourceType, uint32 InAmount)
+				: ResourceType(InResourceType), Amount(InAmount) {}
+
+			uint32 GetContributedWeight() const 
+			{
+				uint32 retval = 0U;
+				if (ResourceType)
+				{
+					const UResource* resourcecdo = ResourceType.GetDefaultObject();
+					retval = resourcecdo->GetResourceWeight() * Amount;
+				}
+				return retval;
+
+			}
+
+			uint32 GetIndividualWeight() const
+			{
+				uint32 retval = 0U;
+				const UResource* resourcecdo = ResourceType.GetDefaultObject();
+				retval = resourcecdo->GetResourceWeight();
+				
+				return retval;
+			}
+
+			bool operator<(const SortableWeightedResource& Other) const
+			{
+				if (ResourceType && Other.ResourceType)
+				{
+					// Get the weight of resources for comparison
+					uint32 WeightA = ResourceType.GetDefaultObject()->GetResourceWeight();
+					uint32 WeightB = Other.ResourceType.GetDefaultObject()->GetResourceWeight();
+
+					return WeightA < WeightB;
+				}
+				// Return false if any resource type is null
+				return false;
+			}
+
+			bool Decrement() 
+			{ 
+				if (Amount > 0U)
+				{
+					Amount--;
+				}
+			}
+
+
+
+		public:
+			TSubclassOf<UResource> ResourceType = nullptr;
+			uint32 Amount = 0U;
+		};
+
+		//minimum weight we need to be back in capacity
+		const uint32 neededweight = currentweight - MaxWeight;
+		uint32 accumulatedweight = 0U;
+
+		TArray<SortableWeightedResource> sortedresources = TArray<SortableWeightedResource>();
+		for (TPair<TSubclassOf<UResource>, int>& elem : ResourceToIndex)
+		{
+			const UResource* resourcecdo = elem.Key.GetDefaultObject();
+			/*If we have an amount of a given resource sort them by weight*/
+			if (resourcecdo->IsWeightedResource() && (Values[elem.Value] > 0U) && (resourcecdo->GetResourceWeight() > 0U))
+			{
+				SortableWeightedResource resourcetosort = SortableWeightedResource(elem.Key, Values[elem.Value]);
+				sortedresources.Emplace(resourcetosort);
+			}
+		}
+
+		sortedresources.Sort();
+		FReplicationResourceMap resourcestoremove = FReplicationResourceMap();
+
+		if (AdjustmentRules == EWeightedResourceBoundsAdjustment::REMOVE_LARGEST)
+		{
+			int i = sortedresources.Num() - 1;
+			while (accumulatedweight < neededweight && i >= 0)
+			{
+				uint32 individualWeight = sortedresources[i].GetIndividualWeight();
+				while (accumulatedweight + individualWeight <= neededweight && sortedresources[i].Amount > 0)
+				{
+					accumulatedweight += individualWeight;
+					resourcestoremove.Increment(sortedresources[i].ResourceType, 1);
+					sortedresources[i].Decrement();
+				}
+				i--;
+			}
+		}
+		else // REMOVE_SMALLEST
+		{
+			int i = 0;
+			while (accumulatedweight < neededweight && i < sortedresources.Num())
+			{
+				uint32 individualWeight = sortedresources[i].GetIndividualWeight();
+				while (accumulatedweight + individualWeight <= neededweight && sortedresources[i].Amount > 0)
+				{
+					accumulatedweight += individualWeight;
+					resourcestoremove.Increment(sortedresources[i].ResourceType, 1);
+					sortedresources[i].Decrement();
+				}
+				i++;
+			}
+		}
+
+		IResourceGatherer::RemoveResource(resourcestoremove);
+		checkf(GetMaxWeight() >= GetCurrentWeight(), TEXT("UResourceGathererComponent::SetMaxWeight Failed to clamp currentweight within MaxweightCapacity"))
+	}
+}
+
 void UResourceGathererComponent::RecalculateWeight()
 {
 	CurrentWeight = 0U;
