@@ -42,6 +42,7 @@ protected:
 	virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
 	virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 	virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
+	virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
 	/***************************************************************/
 
 protected:

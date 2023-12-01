@@ -91,9 +91,6 @@ void AAbilityCombatCommander::EnableAbility(const TSubclassOf<UAbility>& InAbili
 			}
 		}
 	}
-	IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
-
-	abilityweapon->EnableAbility(InAbilityClass);
 }
 
 bool AAbilityCombatCommander::DisableAbility(const TSubclassOf<UAbility>& InAbilityClass)

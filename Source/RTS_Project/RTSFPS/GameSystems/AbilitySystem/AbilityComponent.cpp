@@ -20,7 +20,7 @@ bool UAbilityComponent::CanUseAbility(int AbilityIndex) const
 	const IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
 	const TWeakObjectPtr<UAbility> ability = GetAbilityByIndex(AbilityIndex);
 	
-	bool retval = IsValid(ability.Get()) && !IsCasting();
+	bool retval = IsValid(ability.Get()) && !IsCasting() && ability->IsAbilityEnabled();
 	if (user && retval)
 	{
 		retval = user->CanCastAbility(ability);
@@ -368,7 +368,7 @@ UAbility * UAbilityComponent::GetCurrentAbility() const
 UAbility * UAbilityComponent::GetAbilityByIndex(int InIndex) const
 {
 	UAbility * retval = nullptr;
-	if (CurrentAbilityIndex > NO_ABILITY_INDEX)
+	if (InIndex > NO_ABILITY_INDEX)
 	{
 		retval = AllAbilites[InIndex];
 	}

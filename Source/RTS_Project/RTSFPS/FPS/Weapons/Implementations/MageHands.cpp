@@ -44,7 +44,7 @@ void AMageHands::OnRightHandAbilityEnableStateChanged(UAbility * InChangedAbilit
 		RightHandAbilityIndex = RightHandAbilityComp->GetNextAvailableIndex();
 	}
 	/*If the previewed ability is now disabled, cycle to a new ability*/
-	else if (IsValid(InChangedAbility) && !InChangedAbility->IsAbilityEnabled() && InChangedAbility == AbilityComp->GetAbilityByIndex(RightHandAbilityIndex))
+	else if (IsValid(InChangedAbility) && !InChangedAbility->IsAbilityEnabled() && InChangedAbility == RightHandAbilityComp->GetAbilityByIndex(RightHandAbilityIndex))
 	{
 		RightHandAbilityIndex = RightHandAbilityComp->GetNextAvailableIndex();
 	}
@@ -157,6 +157,13 @@ bool AMageHands::DisableAbility(const TSubclassOf<UAbility>& InAbilityClass)
 		retval |= RightHandAbilityComp->DisableAbility(InAbilityClass);
 	}
 
+	return retval;
+}
+
+TSet<TSubclassOf<UAbility>> AMageHands::GetSupportedAbilities() const
+{
+	TSet<TSubclassOf<UAbility>> retval = Super::GetSupportedAbilities();
+	retval.Append(RightHandAbilityComp->GetSupportedAbilities());
 	return retval;
 }
 
