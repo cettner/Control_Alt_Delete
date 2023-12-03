@@ -145,7 +145,7 @@ bool IUpgradableInterface::MeetsRemovalDependencies(const TSubclassOf<UUpgrade>&
 		{
 			const FUpgradeUnlockCondition unlockcondition = unlockconditions[y];
 
-			if ((unlockcondition.GetParent() == InUpgradeClass) && (unlockcondition.GetRank() < removedrank))
+			if ((unlockcondition.GetParent() == InUpgradeClass) && (unlockcondition.GetRank() > removedrank))
 			{
 				return false;
 			}
