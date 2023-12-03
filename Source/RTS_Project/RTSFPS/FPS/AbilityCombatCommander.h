@@ -28,18 +28,23 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
-		virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+		virtual TArray<UAbility*> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+		virtual UAbility* GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 		virtual bool IsAbilityEnabled(const TSubclassOf<UAbility>& AbilityClass) const;
 		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const;
 		virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const;
-		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const override;
-		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
+		virtual bool CanCastAbility(const UAbility * TracingAbility) const override;
+		virtual bool SpendAbilityCost(const UAbility * SpendingAbility) override;
 	/*************************************************************************************/
 
 	/*********************************Experiance Accumulator***********************************/
 		virtual void GrantExp(uint32 InExp) override;
 	/******************************************************************************************/
+
+	/***********************************ARTSMinion*********************************************/
+		virtual UObject* GetUpgradeSubObject(const TSubclassOf<UUpgrade>& InUpgradeclass) const override;
+	/******************************************************************************************/
+
 };

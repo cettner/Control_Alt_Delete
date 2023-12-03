@@ -23,7 +23,7 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 	UResourceGathererComponent();
 
 	public:	
-		FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType);
+		FOnResourceValueChangedDelegate& BindResourceValueChangedEvent(const TSubclassOf<UResource> InResourceType) override;
 
 	public:
 		virtual void AddResource(TSubclassOf<UResource> ResourceClass, int amount) override;

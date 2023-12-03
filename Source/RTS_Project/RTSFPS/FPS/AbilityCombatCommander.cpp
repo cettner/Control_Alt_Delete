@@ -2,6 +2,7 @@
 
 
 #include "AbilityCombatCommander.h"
+#include "Upgrades/Abilities/AbilityUpgrade.h"
 
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/PlayerState.h"
@@ -51,20 +52,23 @@ void AAbilityCombatCommander::OnEndNotify(UAbilityAnimNotify * CallingContext)
 	}
 }
 
-TArray<TWeakObjectPtr<UAbility>> AAbilityCombatCommander::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+TArray<UAbility *> AAbilityCombatCommander::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	IAbilityUserInterface * abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
-	TArray<TWeakObjectPtr<UAbility>> retval = TArray<TWeakObjectPtr<UAbility>>();
-	if (abilityweapon != nullptr)
+	TArray<UAbility*> retval = TArray<UAbility*>();
+
+	for (int32 i = 0; i < Inventory.Num(); i++)
 	{
-		retval = abilityweapon->GetAbilitiesByClass(InAbilityClass);
+		if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
+		{
+			retval.Append(abilityweapon->GetAbilitiesByClass(InAbilityClass));
+		}
 	}
 	return retval;
 }
 
-TWeakObjectPtr<UAbility> AAbilityCombatCommander::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+UAbility * AAbilityCombatCommander::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	TWeakObjectPtr<UAbility> retval = nullptr;
+	UAbility * retval = nullptr;
 	for (int32 i = 0; i < Inventory.Num(); i++)
 	{
 		if (IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(Inventory[i]))
@@ -164,7 +168,7 @@ bool AAbilityCombatCommander::SupportsAbility(const TSubclassOf<UAbility>& InAbi
 	return retval;
 }
 
-bool AAbilityCombatCommander::CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const
+bool AAbilityCombatCommander::CanCastAbility(const UAbility * TracingAbility) const
 {
 	FReplicationResourceMap abilitycost = TracingAbility->GetAbilityCost();
 
@@ -178,7 +182,7 @@ bool AAbilityCombatCommander::CanCastAbility(const TWeakObjectPtr<UAbility> Trac
 	return retval;
 }
 
-bool AAbilityCombatCommander::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
+bool AAbilityCombatCommander::SpendAbilityCost(const UAbility * SpendingAbility)
 {
 	FReplicationResourceMap abilitycost = SpendingAbility->GetAbilityCost();
 	bool retval = false;
@@ -196,5 +200,18 @@ void AAbilityCombatCommander::GrantExp(uint32 InExp)
 	APlayerState* ps = GetPlayerState<APlayerState>();
 	IExpAccumulatorInterface* expstate = Cast<IExpAccumulatorInterface>(ps);
 	expstate->GrantExp(InExp);
+}
+
+UObject* AAbilityCombatCommander::GetUpgradeSubObject(const TSubclassOf<UUpgrade>& InUpgradeclass) const
+{
+	UObject* retval = Super::GetUpgradeSubObject(InUpgradeclass);
+
+	if (!retval && InUpgradeclass->IsChildOf(UAbilityUpgrade::StaticClass()))
+	{
+		const UAbilityUpgrade* upgradecdo = CastChecked<UAbilityUpgrade>(InUpgradeclass.GetDefaultObject());
+		retval = GetFirstAbilityByClass(upgradecdo->GetAbilityClass());
+	}
+
+	return retval;
 }
 

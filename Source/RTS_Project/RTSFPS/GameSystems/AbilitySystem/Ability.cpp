@@ -88,6 +88,11 @@ FReplicationResourceMap UAbility::GetAbilityCost() const
 	return AbilityCost;
 }
 
+void UAbility::SetAbilityCost(const FReplicationResourceMap& InMap)
+{
+	AbilityCost = InMap;
+}
+
 void UAbility::NotifyOnReady()
 {
 	AbilityComp->PlayAbilityMontage(LoopMontage);

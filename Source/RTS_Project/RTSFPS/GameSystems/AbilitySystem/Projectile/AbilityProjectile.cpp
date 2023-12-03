@@ -26,12 +26,10 @@ AAbilityProjectile::AAbilityProjectile()
 	
 	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-
 	RootComponent = SphereComponent;
 
 	FlightParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleComp"));
 	FlightParticles->SetupAttachment(RootComponent);
-
 }
 
 void AAbilityProjectile::PostInitializeComponents()
@@ -67,10 +65,10 @@ void AAbilityProjectile::SetIgnoredActors(TArray<AActor*> IgnoreThese)
 void AAbilityProjectile::SetIgnoredActor(AActor * IgnoreThis)
 {
 	SphereComponent->IgnoreActorWhenMoving(IgnoreThis,true);
-	IgnoredActors.AddUnique(IgnoreThis);
+	IgnoredActors.Emplace(IgnoreThis);
 }
 
-AAbilityExplosion* AAbilityProjectile::SpawnExplosionatLocation(FTransform InTransform) const
+AAbilityExplosion* AAbilityProjectile::SpawnExplosionatLocation(const FTransform& InTransform) const
 {
 	UWorld* world = GetWorld();
 	FActorSpawnParameters spawnparams;
@@ -80,6 +78,18 @@ AAbilityExplosion* AAbilityProjectile::SpawnExplosionatLocation(FTransform InTra
 	AAbilityExplosion* explosion = world->SpawnActor<AAbilityExplosion>(ExplosionClass, InTransform, spawnparams);
 
 	return explosion;
+}
+
+void AAbilityProjectile::SetHasDetonated(const bool InDetonated)
+{
+	if (HasAuthority())
+	{
+		bHasDetonated = InDetonated;
+		if (GetNetMode() != ENetMode::NM_DedicatedServer)
+		{
+			OnRep_bHasDetonated();
+		}
+	}
 }
 
 void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
@@ -94,25 +104,19 @@ void AAbilityProjectile::OnProjectileImpact(UPrimitiveComponent * HitComponent, 
 
 		if (bDetonatesOnImpact == true)
 		{
-			OnDetonation(Hit);
+			OnDetonation(Hit.Location, Hit.Normal.Rotation(), GetActorForwardVector());
 		}
 
 	}
 }
 
-void AAbilityProjectile::OnDetonation(const FHitResult& Hit)
-{
-	if (IsValid(FlightParticles))
-	{
-		FlightParticles->Deactivate();
-	}
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	
+void AAbilityProjectile::OnDetonation(const FVector& InLocation, const FRotator& HitNormal, const FVector& ProjectileNormal)
+{	
 	if (HasAuthority())
 	{
-		bHasDetonated = true;
+		SetHasDetonated(true);
 		
-		const FTransform explosiontransform = FTransform(Hit.Normal.Rotation(), Hit.Location,FVector(1.0,1.0,1.0));
+		const FTransform explosiontransform = FTransform(HitNormal, InLocation, FVector(1.0,1.0,1.0));
 
 		SpawnExplosionatLocation(explosiontransform);
 		SetLifeSpan(2.0f);
@@ -123,7 +127,7 @@ void AAbilityProjectile::OnDetonation(const FHitResult& Hit)
 
 void AAbilityProjectile::OnRep_InitialSpeed()
 {
-	FVector fv = GetActorForwardVector();
+	const FVector fv = GetActorForwardVector();
 	MovementComp->Velocity = InitialSpeed * fv;
 }
 
@@ -131,7 +135,10 @@ void AAbilityProjectile::OnRep_bHasDetonated()
 {
 	if (bHasDetonated == true)
 	{
-		OnDetonation();
+		if (IsValid(FlightParticles))
+		{
+			FlightParticles->Deactivate();
+		}
 	}
 }
 
@@ -140,4 +147,14 @@ void AAbilityProjectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(AAbilityProjectile, InitialSpeed, COND_InitialOnly);
 	DOREPLIFETIME(AAbilityProjectile, bHasDetonated);
+}
+
+void AAbilityProjectile::LifeSpanExpired()
+{
+	if (HasAuthority() && !bHasDetonated && bDetonatesOnLifeTime)
+	{
+		SpawnExplosionatLocation(GetActorTransform());
+	}
+
+	Super::LifeSpanExpired();
 }

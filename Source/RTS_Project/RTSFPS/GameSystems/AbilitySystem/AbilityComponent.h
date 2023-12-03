@@ -79,9 +79,11 @@ public:
 	virtual void OnEndNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
 
 	virtual UAbility* GetNextEnabledAbility(const UAbility* InIterator = nullptr) const;
-	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
+	virtual TArray<UAbility *> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
+	virtual UAbility* GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 	virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
-	virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const;
+
+	virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const override;
 	
 	virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay) override;
 

@@ -49,7 +49,8 @@ class RTS_PROJECT_API UAbility : public UObject
 	public:
 		virtual void SetIsAbilityEnabled(const bool InEnabledState);
 		FORCEINLINE bool IsAbilityEnabled() const { return bIsAbilityEnabled; };
-		virtual FReplicationResourceMap GetAbilityCost() const ;
+		virtual FReplicationResourceMap GetAbilityCost() const;
+		virtual void SetAbilityCost(const FReplicationResourceMap& InMap);
 
 	public:
 		/*Called from AnimNotify to Set Ability is Ready for release*/

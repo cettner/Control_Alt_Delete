@@ -11,7 +11,7 @@ struct FReplicationResourceMap
 {
 	GENERATED_USTRUCT_BODY()
 public:
-	void Emplace(TSubclassOf<UResource> Key, int Value)
+	void Emplace(const TSubclassOf<UResource>& Key, int Value)
 	{
 		int index = Keys.IndexOfByKey(Key);
 
@@ -26,7 +26,7 @@ public:
 		}
 	}
 
-	bool Remove(TSubclassOf<UResource> Key)
+	bool Remove(const TSubclassOf<UResource>& Key)
 	{
 		bool retval = false;
 		int index = Keys.IndexOfByKey(Key);
@@ -41,7 +41,7 @@ public:
 		return retval;
 	}
 
-	bool Increment(TSubclassOf<UResource> Key, int Value)
+	bool Increment(const TSubclassOf<UResource>& Key, int Value)
 	{
 		//todo return the new value instead
 		bool retval = false;
@@ -61,7 +61,7 @@ public:
 		return retval;
 	}
 
-	bool Decrement(TSubclassOf<UResource> Key, int Value)
+	bool Decrement(const TSubclassOf<UResource>& Key, int Value)
 	{
 		bool retval = false;
 		//todo return the new value instead
@@ -84,7 +84,7 @@ public:
 		return retval;
 	}
 
-	const int* Find(TSubclassOf<UResource> Key) const
+	const int* Find(const TSubclassOf<UResource>& Key) const
 	{
 		int index = Keys.IndexOfByKey(Key);
 

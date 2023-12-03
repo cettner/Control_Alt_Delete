@@ -38,8 +38,8 @@ protected:
 	virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 	virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
-	virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
-	virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
+	virtual TArray<UAbility*> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+	virtual UAbility* GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 	virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 	virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 	virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;

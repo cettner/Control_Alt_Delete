@@ -5,12 +5,12 @@
 
 // Add default functionality here for any IAbilityUserInterface functions that are not pure virtual.
 
-bool IAbilityUserInterface::CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const
+bool IAbilityUserInterface::CanCastAbility(const UAbility * TracingAbility) const
 {
 	return (false);
 }
 
-bool IAbilityUserInterface::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
+bool IAbilityUserInterface::SpendAbilityCost(const UAbility * SpendingAbility)
 {
 	return false;
 }
@@ -40,19 +40,19 @@ TArray<AActor*> IAbilityUserInterface::GetIgnoredTraceActors(TWeakObjectPtr<UAbi
 	return TArray<AActor*>();
 }
 
-TWeakObjectPtr<UAbility> IAbilityUserInterface::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+UAbility * IAbilityUserInterface::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	return TWeakObjectPtr<UAbility>();
+	return nullptr;
 }
 
-TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+TArray<UAbility*> IAbilityUserInterface::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	return TArray<TWeakObjectPtr<UAbility>>();
+	return TArray<UAbility*>();
 }
 
-TArray<TWeakObjectPtr<UAbility>> IAbilityUserInterface::GetAbilitiesByTag(FName InTag) const
+TArray<UAbility*> IAbilityUserInterface::GetAbilitiesByTag(FName InTag) const
 {
-	return TArray<TWeakObjectPtr<UAbility>>();
+	return TArray<UAbility*>();
 }
 
 void IAbilityUserInterface::EnableAbility(const TSubclassOf<UAbility>& AbilityClass)

@@ -18,9 +18,9 @@ UAbilityComponent::UAbilityComponent()
 bool UAbilityComponent::CanUseAbility(int AbilityIndex) const
 {
 	const IAbilityUserInterface * user = GetOwner<IAbilityUserInterface>();
-	const TWeakObjectPtr<UAbility> ability = GetAbilityByIndex(AbilityIndex);
+	const UAbility * ability = GetAbilityByIndex(AbilityIndex);
 	
-	bool retval = IsValid(ability.Get()) && !IsCasting() && ability->IsAbilityEnabled();
+	bool retval = IsValid(ability) && !IsCasting() && ability->IsAbilityEnabled();
 	if (user && retval)
 	{
 		retval = user->CanCastAbility(ability);
@@ -297,17 +297,28 @@ bool UAbilityComponent::IsAbilityEnabled(const TSubclassOf<UAbility>& InAbilityC
 	return retval;
 }
 
-TArray<TWeakObjectPtr<UAbility>> UAbilityComponent::GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const
+TArray<UAbility *> UAbilityComponent::GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const
 {
-	TArray<TWeakObjectPtr<UAbility>> classabilities = TArray<TWeakObjectPtr<UAbility>>();
+	TArray<UAbility *> classabilities = TArray<UAbility *>();
 	for (int i = 0; i < AllAbilites.Num(); i++)
 	{
 		if (AllAbilites[i]->GetClass()->IsChildOf(AbilityClass))
 		{
-			classabilities.Emplace(TWeakObjectPtr<UAbility>(AllAbilites[i]));
+			classabilities.Emplace(AllAbilites[i]);
 		}
 	}
 	return(classabilities);
+}
+
+UAbility* UAbilityComponent::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+{
+	UAbility* retval = nullptr;
+	const int32 index = GetAbilityIndexByClass(InAbilityClass);
+	if (index != NO_ABILITY_INDEX)
+	{
+		retval = AllAbilites[index];
+	}
+	return retval;
 }
 
 bool UAbilityComponent::IsAbilityEnabled(const int InIndex) const

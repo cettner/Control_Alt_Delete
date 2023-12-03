@@ -52,14 +52,14 @@ void AAbilityWeapon::WeaponPrimarySetting(int ModeToggle)
 	AbilityIndex = AbilityComp->GetNextAvailableIndex(AbilityIndex);
 }
 
-bool AAbilityWeapon::CanCastAbility(const TWeakObjectPtr<UAbility> InAbility) const
+bool AAbilityWeapon::CanCastAbility(const UAbility * InAbility) const
 {
 	IAbilityUserInterface * weaponwielder = CastChecked<IAbilityUserInterface>(GetPawnOwner());
 	const bool retval = weaponwielder->CanCastAbility(InAbility);
 	return retval;
-}
+} 
 
-bool AAbilityWeapon::SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility)
+bool AAbilityWeapon::SpendAbilityCost(const UAbility * SpendingAbility)
 {
 	IAbilityUserInterface* abilityuser = CastChecked<IAbilityUserInterface>(GetPawnOwner());
 	const bool retval = abilityuser->SpendAbilityCost(SpendingAbility);
@@ -110,7 +110,7 @@ TArray<AActor*> AAbilityWeapon::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> T
 	return outvec;
 }
 
-TArray<TWeakObjectPtr<UAbility>> AAbilityWeapon::GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const
+TArray<UAbility*> AAbilityWeapon::GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const
 {
 	return AbilityComp->GetAbilitiesByClass(AbilityClass);
 }
@@ -138,7 +138,7 @@ TSet<TSubclassOf<UAbility>> AAbilityWeapon::GetSupportedAbilities() const
 	return AbilityComp->GetSupportedAbilities();
 }
 
-TWeakObjectPtr<UAbility> AAbilityWeapon::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+UAbility * AAbilityWeapon::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
 	return AbilityComp->GetFirstAbilityByClass(InAbilityClass);
 }

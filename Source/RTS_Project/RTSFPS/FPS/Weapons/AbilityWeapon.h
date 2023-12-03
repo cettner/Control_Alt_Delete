@@ -37,18 +37,18 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 	/*****************************************************************/
 
 	/***********************IAbilityUserInterface*********************/
-		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility>) const override;
-		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility) override;
+		virtual bool CanCastAbility(const UAbility *) const override;
+		virtual bool SpendAbilityCost(const UAbility * SpendingAbility) override;
 		virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay) override;
 		virtual void StopAbilityMontage(const FAbilityAnim& AnimToPlay) override;
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const override;
 		virtual FVector GetAbilityAimVector() const override;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr) override;
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
+		virtual TArray<UAbility *> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
 		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
-		virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
+		virtual UAbility * GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 
 
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;

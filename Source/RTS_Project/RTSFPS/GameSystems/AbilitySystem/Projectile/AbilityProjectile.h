@@ -19,24 +19,25 @@ class RTS_PROJECT_API AAbilityProjectile : public AActor
 public:	
 	AAbilityProjectile();
 
-protected:
-	virtual void PostInitializeComponents() override;
-
-public:	
-	virtual void OnRep_Owner() override;
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
 public:
 	void SetIgnoredActors(TArray<AActor*> IgnoreThese);
-	void SetIgnoredActor(AActor * IgnoreThis);
+	void SetIgnoredActor(AActor* IgnoreThis);
 
-	AAbilityExplosion* SpawnExplosionatLocation(FTransform InTransform) const;
+protected:
+	virtual void PostInitializeComponents() override;
+	virtual void OnRep_Owner() override;
+	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
+	virtual void LifeSpanExpired() override;
+
+protected:
+	void SetHasDetonated(const bool InDetonated);
+	AAbilityExplosion* SpawnExplosionatLocation(const FTransform& InTransform) const;
 
 protected:
 	UFUNCTION()
 	virtual void OnProjectileImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	virtual void OnDetonation(const FHitResult& Hit = FHitResult());
+	virtual void OnDetonation(const FVector& InVector, const FRotator& HitNormal, const FVector& ProjectileNormal);
 
 protected:
 	UFUNCTION()
@@ -65,6 +66,9 @@ public:
 	bool bDetonatesOnImpact = true;
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bDetonatesOnLifeTime = true;
+
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AAbilityExplosion> ExplosionClass = nullptr;
 
 protected:
@@ -79,6 +83,6 @@ protected:
 
 
 protected:
-	TArray<AActor *> IgnoredActors = TArray<AActor *>();
+	TSet<AActor *> IgnoredActors = TSet<AActor *>();
 
 };

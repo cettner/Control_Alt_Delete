@@ -120,16 +120,16 @@ void AMageHands::OnEndNotify(UAbilityAnimNotify * CallingContext)
 
 }
 
-TArray<TWeakObjectPtr<UAbility>> AMageHands::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+TArray<UAbility *> AMageHands::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	TArray<TWeakObjectPtr<UAbility>> retval = Super::GetAbilitiesByClass(InAbilityClass);
+	TArray<UAbility *> retval = Super::GetAbilitiesByClass(InAbilityClass);
 	retval.Append(RightHandAbilityComp->GetAbilitiesByClass(InAbilityClass));
 	return retval;
 }
 
-TWeakObjectPtr<UAbility> AMageHands::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
+UAbility * AMageHands::GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
-	TWeakObjectPtr<UAbility> retval = Super::GetFirstAbilityByClass(InAbilityClass);
+	UAbility * retval = Super::GetFirstAbilityByClass(InAbilityClass);
 	if (retval == nullptr)
 	{
 		retval = RightHandAbilityComp->GetFirstAbilityByClass(InAbilityClass);

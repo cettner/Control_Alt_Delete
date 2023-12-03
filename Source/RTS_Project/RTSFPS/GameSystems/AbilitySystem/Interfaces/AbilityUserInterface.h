@@ -24,17 +24,17 @@ class RTS_PROJECT_API IAbilityUserInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 	public:
-		virtual bool CanCastAbility(const TWeakObjectPtr<UAbility> TracingAbility) const;
-		virtual bool SpendAbilityCost(const TWeakObjectPtr<UAbility> SpendingAbility);
+		virtual bool CanCastAbility(const UAbility * TracingAbility) const;
+		virtual bool SpendAbilityCost(const UAbility * SpendingAbility);
 		virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay);
 		virtual void  StopAbilityMontage(const FAbilityAnim& AnimToStop);
 		virtual FVector GetAbilitySocketLocation(FName SocketName) const;
 		virtual FVector GetAbilityAimVector() const;
 		virtual TArray<AActor *> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility = nullptr);
 
-		virtual TWeakObjectPtr<UAbility> GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
-		virtual TArray<TWeakObjectPtr<UAbility>> GetAbilitiesByTag(FName InTag) const;
+		virtual UAbility * GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
+		virtual TArray<UAbility*> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const;
+		virtual TArray<UAbility*> GetAbilitiesByTag(FName InTag) const;
 		
 		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass);
 		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass);
