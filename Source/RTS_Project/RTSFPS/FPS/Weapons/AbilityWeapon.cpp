@@ -44,7 +44,6 @@ void AAbilityWeapon::OnEnterInventory(ACombatCommander * NewOwner)
 		bAreAbilitiesInitialized = InitAbilities(this);
 		InitResourceBindings(NewOwner);
 	}
-
 }
 
 void AAbilityWeapon::WeaponPrimarySetting(int ModeToggle)

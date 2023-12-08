@@ -53,7 +53,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsSprinting = false;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TEnumAsByte<Combat_Stance> WeaponStance = NO_WEAPON_STANCE;
 
 	UPROPERTY(BlueprintReadOnly)

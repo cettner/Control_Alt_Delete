@@ -10,7 +10,7 @@
 void UFPSAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
+	 
 	APawn * Pawn =  TryGetPawnOwner();
 
 	if (Pawn)

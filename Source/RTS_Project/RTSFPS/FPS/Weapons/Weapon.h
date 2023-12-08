@@ -16,13 +16,6 @@ class ACombatCommander;
 
 
 
-/*Specifies Attatchment Location on Mesh*/
-UENUM(BlueprintType)
-enum Weapon_Grip_Type
-{
-	EMPTY_GRIP,
-	RIFLE_GRIP,
-};
 
 /**
  *
@@ -32,7 +25,7 @@ enum Combat_Stance
 {
 	NO_WEAPON_STANCE,
 	MAGE_STANCE,
-	RIFLE_STANCE,
+	TWO_HANDED_STANCE
 };
 
 
@@ -71,9 +64,6 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
-public:	
-	Weapon_Grip_Type GetType();
-
 public:
 //////////////////////////////////////////////
 //PURE VIRTUAL FUNCTIONS FOR CHILD CLASSES ///
@@ -95,18 +85,18 @@ public:
 /*********************************************************************************************/
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Meshes")
+	UPROPERTY(EditDefaultsOnly, Category = "Meshes")
 	USkeletalMeshComponent * FirstPersonMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Meshes")
+	UPROPERTY(EditDefaultsOnly, Category="Meshes")
 	USkeletalMeshComponent * ThirdPersonMesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Meshes")
+	UPROPERTY(EditDefaultsOnly, Category="Meshes")
 	UBoxComponent * CollisionComp;
 
 public:
 	/*If True Will bind secondary fire button on equipped*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Gameplay")
+	UPROPERTY(EditDefaultsOnly, Category="Gameplay")
 	bool bHasSecondary = false;  
 
 	/*If true, Secondary will be allowed to fire while primary fire is active*/
@@ -221,7 +211,4 @@ protected:
 	virtual void OnRep_MyPawn();
 
 	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const override;
-
-private:
-	Weapon_Grip_Type Grip_Type = EMPTY_GRIP;
 };

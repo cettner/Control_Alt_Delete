@@ -43,11 +43,6 @@ AWeapon::AWeapon() : Super()
 
 }
 
-Weapon_Grip_Type AWeapon::GetType()
-{
-	return(Grip_Type);
-}
-
 void AWeapon::StartSecondaryFire()
 {
 
@@ -218,14 +213,15 @@ void AWeapon::AttachMeshToPawn()
 		}
 		else
 		{
-			FName AttachPoint = MyPawn->GetWeaponAttachPoint(this,false);
+
 			USkeletalMeshComponent* UseWeaponMesh = GetWeaponMesh();
-			USkeletalMeshComponent* UsePawnMesh = MyPawn->GetPawnMesh();
+			USkeletalMeshComponent* UsePawnMesh = MyPawn->GetSpecifcPawnMesh(false);
 
 			if (UseWeaponMesh != UsePawnMesh)
 			{
-				UseWeaponMesh->AttachToComponent(UsePawnMesh, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
-				UseWeaponMesh->SetHiddenInGame(false, true);
+				const FName AttachPoint = MyPawn->GetWeaponAttachPoint(this, false);
+				const bool ehcak = ThirdPersonMesh->AttachToComponent(UsePawnMesh, FAttachmentTransformRules::KeepRelativeTransform, AttachPoint);
+				ThirdPersonMesh->SetHiddenInGame(false, true);
 			}
 		}
 	}
