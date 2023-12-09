@@ -96,6 +96,10 @@ void IAbilityUserInterface::OnEndNotify(UAbilityAnimNotify * CallingContext)
 {
 }
 
+void IAbilityUserInterface::OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference)
+{
+}
+
 USceneComponent * IAbilityUserInterface::GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility)
 {
 	return nullptr;

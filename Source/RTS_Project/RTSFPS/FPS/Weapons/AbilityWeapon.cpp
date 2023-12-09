@@ -164,6 +164,11 @@ void AAbilityWeapon::OnEndNotify(UAbilityAnimNotify * CallingContext)
 	AbilityComp->OnEndNotify();
 }
 
+void AAbilityWeapon::OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference)
+{
+	AbilityComp->OnTickNotify(InFrameDeltaTime, InEventReference);
+}
+
 USceneComponent * AAbilityWeapon::GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility)
 {
 	return GetWeaponMesh();

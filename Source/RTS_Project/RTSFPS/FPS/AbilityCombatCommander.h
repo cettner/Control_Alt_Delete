@@ -28,6 +28,7 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
+		virtual void OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference) override;
 		virtual TArray<UAbility*> GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 		virtual UAbility* GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;

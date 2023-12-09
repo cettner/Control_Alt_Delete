@@ -52,6 +52,16 @@ void AAbilityCombatCommander::OnEndNotify(UAbilityAnimNotify * CallingContext)
 	}
 }
 
+void AAbilityCombatCommander::OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference)
+{
+	IAbilityUserInterface* abilityweapon = Cast<IAbilityUserInterface>(CurrentWeapon);
+
+	if (abilityweapon != nullptr)
+	{
+		abilityweapon->OnTickNotify(InFrameDeltaTime, InEventReference);
+	}
+}
+
 TArray<UAbility *> AAbilityCombatCommander::GetAbilitiesByClass(const TSubclassOf<UAbility>& InAbilityClass) const
 {
 	TArray<UAbility*> retval = TArray<UAbility*>();

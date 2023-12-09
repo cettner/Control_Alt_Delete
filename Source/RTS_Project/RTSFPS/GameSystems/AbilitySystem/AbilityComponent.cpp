@@ -246,6 +246,15 @@ void UAbilityComponent::OnEndNotify(UAbilityAnimNotify* CallingContext)
 	EndAbility();
 }
 
+void UAbilityComponent::OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference)
+{
+	if (IsAbilityValid())
+	{
+		UAbility* abilitytotick = GetCurrentAbility();
+		abilitytotick->OnTick(InFrameDeltaTime);
+	}
+}
+
 UAbility* UAbilityComponent::GetNextEnabledAbility(const UAbility* InIterator) const
 {
 	UAbility* retval = nullptr;
@@ -453,6 +462,18 @@ float UAbilityComponent::PlayAbilityMontage(const FAbilityAnim& AnimToPlay)
 	}
 
 	return playtime;
+}
+
+FVector UAbilityComponent::GetAbilitySocketLocation(FName SocketName) const
+{
+	IAbilityUserInterface* user = GetOwner<IAbilityUserInterface>();
+	return user->GetAbilitySocketLocation(SocketName);
+}
+
+TArray<AActor*> UAbilityComponent::GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility)
+{
+	IAbilityUserInterface* user = GetOwner<IAbilityUserInterface>();
+	return user->GetIgnoredTraceActors(TracingAbility);
 }
 
 bool UAbilityComponent::StopCurrentAnimation()

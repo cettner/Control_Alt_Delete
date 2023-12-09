@@ -77,6 +77,7 @@ public:
 	virtual void OnLoopNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
 	virtual void OnEffectNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
 	virtual void OnEndNotify(UAbilityAnimNotify* CallingContext = nullptr) override;
+	virtual void OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference) override;
 
 	virtual UAbility* GetNextEnabledAbility(const UAbility* InIterator = nullptr) const;
 	virtual TArray<UAbility *> GetAbilitiesByClass(const TSubclassOf<UAbility>& AbilityClass) const override;
@@ -86,6 +87,8 @@ public:
 	virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const override;
 	
 	virtual float PlayAbilityMontage(const FAbilityAnim& AnimToPlay) override;
+	virtual FVector GetAbilitySocketLocation(FName SocketName) const override;
+	virtual TArray<AActor*> GetIgnoredTraceActors(TWeakObjectPtr<UAbility> TracingAbility);
 
 	virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 	virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;

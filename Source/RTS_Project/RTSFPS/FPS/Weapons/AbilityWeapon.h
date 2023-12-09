@@ -54,7 +54,7 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
-		//virtual void OnStateNotify();
+		virtual void OnTickNotify(float InFrameDeltaTime, const FAnimNotifyEventReference& InEventReference) override;
 
 		virtual USceneComponent * GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility = nullptr) override;
 	/*****************************************************************/
