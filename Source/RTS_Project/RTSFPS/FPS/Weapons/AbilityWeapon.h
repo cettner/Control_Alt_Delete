@@ -50,11 +50,11 @@ class RTS_PROJECT_API AAbilityWeapon : public AWeapon, public IAbilityUserInterf
 		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
 		virtual UAbility * GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 
-
 		virtual void OnReadyNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnLoopNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEffectNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
 		virtual void OnEndNotify(UAbilityAnimNotify * CallingContext = nullptr) override;
+		//virtual void OnStateNotify();
 
 		virtual USceneComponent * GetParticleAttatchmentComponent(TWeakObjectPtr<UAbility> SpawningAbility = nullptr) override;
 	/*****************************************************************/

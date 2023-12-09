@@ -360,7 +360,9 @@ void ACombatCommander::SpawnDefaultInventory()
 	{
 		FActorSpawnParameters SpawnInfo;
 		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AWeapon* NewWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultInventoryClasses[i], SpawnInfo);
+		FTransform spawnlocation = GetMesh()->GetSocketTransform(WeaponAttachPoint3P);
+		AWeapon* NewWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultInventoryClasses[i], spawnlocation, SpawnInfo);
+
 		Inventory.AddUnique(NewWeapon);
 		NewWeapon->SetOwningPawn(this);
 	}

@@ -32,8 +32,8 @@ class RTS_PROJECT_API AAbilityCombatCommander : public ACombatCommander, public 
 		virtual UAbility* GetFirstAbilityByClass(const TSubclassOf<UAbility>& InAbilityClass) const override;
 		virtual void EnableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
 		virtual bool DisableAbility(const TSubclassOf<UAbility>& AbilityClass) override;
-		virtual bool IsAbilityEnabled(const TSubclassOf<UAbility>& AbilityClass) const;
-		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const;
+		virtual bool IsAbilityEnabled(const TSubclassOf<UAbility>& AbilityClass) const override;
+		virtual TSet<TSubclassOf<UAbility>> GetSupportedAbilities() const override;
 		virtual bool SupportsAbility(const TSubclassOf<UAbility>& Inabilityclass) const;
 		virtual bool CanCastAbility(const UAbility * TracingAbility) const override;
 		virtual bool SpendAbilityCost(const UAbility * SpendingAbility) override;
