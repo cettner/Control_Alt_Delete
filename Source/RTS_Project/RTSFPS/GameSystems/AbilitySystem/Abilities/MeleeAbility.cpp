@@ -11,18 +11,20 @@ void UMeleeAbility::OnTick(float InDeltaseconds)
 	if (HasAuthority() && shouldtrace)
 	{
 		FHitResult outhit = FHitResult();
-		UWorld * world = GetWorld();
+		const UWorld * world = GetWorld();
 		const FVector starttrace = AbilityComp->GetAbilitySocketLocation(MeleeStartTraceSocketName);
 		const FVector endtrace = AbilityComp->GetAbilitySocketLocation(MeleeEndTraceSocketName);
 
 		FCollisionQueryParams queryparams = FCollisionQueryParams::DefaultQueryParam;
-		const FName TraceTag("DebugMeleeTag");
-		world->DebugDrawTraceTag = TraceTag;
-		queryparams.TraceTag = TraceTag;
+		//const FName TraceTag("DebugMeleeTag");
+		//world->DebugDrawTraceTag = TraceTag;
+		//queryparams.TraceTag = TraceTag;
 		queryparams.bTraceComplex = false;
 		queryparams.bReturnFaceIndex = true;
 		queryparams.bReturnPhysicalMaterial = false;
 		queryparams.bFindInitialOverlaps = false;
+
+		/*Get the default ignore list, then add the actors we've already hit for the current sequence*/
 		TArray ignoredactors = AbilityComp->GetIgnoredTraceActors(this);
 		ignoredactors.Append(HitActors);
 		queryparams.AddIgnoredActors(ignoredactors);

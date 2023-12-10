@@ -18,6 +18,12 @@ struct FAbilityReplicationBool
 	GENERATED_USTRUCT_BODY()
 
 public:
+	FAbilityReplicationBool() = default;
+	FAbilityReplicationBool(bool InSuccess, int InIndex)
+	{
+		Set(InSuccess, InIndex);
+	}
+
 	void Set(bool InSuccess, int InAbilityIndex)
 	{
 		Success = InSuccess;
@@ -159,7 +165,7 @@ protected:
 	void SetIsCastSuccessful(bool ReleaseState);
 	/*****************************************/
 
-	void SetWantsToCast(bool InState);
+	void SetWantsToCast(const FAbilityReplicationBool& InState);
 	void SetCurrentAbility(int InAbilityIndex);
 
 	virtual bool IsAbilityEnabled(const int InIndex) const;
@@ -204,7 +210,7 @@ protected:
 
 	FAbilityAnim CurrentMontage;
 
-	bool bWantstoCast = false;
+	FAbilityReplicationBool bWantstoCast = FAbilityReplicationBool();
 
 	bool bAbilitiesInitialized = false;
 

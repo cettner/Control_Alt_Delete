@@ -55,7 +55,7 @@ void UAbilityComponent::SetIsCastReady(bool ReadyState)
 	bIsCastReady = ReadyState;
 }
 
-void UAbilityComponent::SetWantsToCast(bool InState)
+void UAbilityComponent::SetWantsToCast(const FAbilityReplicationBool& InState)
 {
 	bWantstoCast = InState;
 }
@@ -95,7 +95,7 @@ bool UAbilityComponent::HasAuthority() const
 
 void UAbilityComponent::StartAbility(int InAbilityIndex)
 {
-	SetWantsToCast(true);
+	SetWantsToCast(FAbilityReplicationBool(true,InAbilityIndex));
 
 	if (CanUseAbility(InAbilityIndex))
 	{
@@ -112,7 +112,7 @@ void UAbilityComponent::OnCastStart()
 
 void UAbilityComponent::ReleaseAbility()
 {
-	SetWantsToCast(false);
+	SetWantsToCast(FAbilityReplicationBool(false, NO_ABILITY_INDEX));
 
 	if (IsAbilityValid())
 	{
@@ -138,7 +138,7 @@ void UAbilityComponent::OnCastEnd()
 		SetIsCasting(false);
 		if (WantstoCast())
 		{
-			StartAbility(CurrentAbilityIndex);
+			StartAbility(bWantstoCast.Index());
 		}
 	}
 }
@@ -425,7 +425,7 @@ bool UAbilityComponent::IsCasting() const
 
 bool UAbilityComponent::WantstoCast() const
 {
-	return bWantstoCast;
+	return bWantstoCast.WasSuccessful() && bWantstoCast.Index() != NO_ABILITY_INDEX;
 }
 
 bool UAbilityComponent::IsCastReady() const

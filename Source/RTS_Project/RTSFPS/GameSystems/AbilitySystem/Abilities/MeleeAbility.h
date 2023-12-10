@@ -15,6 +15,10 @@ class RTS_PROJECT_API UMeleeAbility : public UAbility
 	GENERATED_BODY()
 	
 
+	public:
+		virtual void SetBaseDamage(const uint32 InDamage) { Damage = InDamage; }
+		FORCEINLINE uint32 GetBaseDamage() const { return Damage; };
+
 	protected:
 		virtual void OnTick(float InDeltaseconds) override;
 		virtual void OnAbilityEnd() override;
