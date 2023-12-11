@@ -33,3 +33,17 @@ TArray<FUpgradeUnlockCondition> UUpgrade::GetUnlockConditions() const
 {
 	return UnlockConditions;
 }
+
+float UUpgrade::EnhanceFloat(float InOriginalValue, float InEnhancementValue, const uint32 InOldRank, const uint32 InNewRank)
+{
+	if (InOriginalValue < 0.0f)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UUpgrade::EnhanceFloat Enhancement value was negative"));
+	}
+
+	const int32 rankdiff = static_cast<int32>(InNewRank) - static_cast<int32>(InOldRank);
+	const float totalhitchange = rankdiff * InEnhancementValue;
+	const float newhitcount = InOriginalValue + totalhitchange;
+
+	return newhitcount;
+}

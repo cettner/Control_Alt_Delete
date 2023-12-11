@@ -88,6 +88,9 @@ public:
 	TArray<TSubclassOf<UUpgrade>> GetExclusiveConditions() const;
 	TArray<FUpgradeUnlockCondition> GetUnlockConditions() const;
 
+protected:
+	static float EnhanceFloat(float InOriginalValue, float InEnhancementValue, const uint32 InOldRank, const uint32 InNewRank);
+
 	/*Configuration Data*/
 protected:
 	UPROPERTY(EditDefaultsOnly)

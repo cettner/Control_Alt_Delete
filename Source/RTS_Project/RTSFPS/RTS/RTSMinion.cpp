@@ -6,6 +6,7 @@
 #include "RTS_Project/TeamMultiplayerGame/Game/GameArchitecture/DefaultPlayerState.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 #include "RTS_Project/RTSFPS/FPS/Upgrades/Resource/ResourceUpgrade.h" 
+#include "RTS_Project/RTSFPS/FPS/Upgrades/Movement/MovementUpgrade.h"
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -225,6 +226,10 @@ UObject* ARTSMinion::GetUpgradeSubObject(const TSubclassOf<UUpgrade>& InUpgradec
 	if (InUpgradeclass->IsChildOf(UResourceUpgrade::StaticClass()))
 	{
 		retval = ResourceComp;
+	}
+	else if (InUpgradeclass->IsChildOf(UMovementUpgrade::StaticClass()))
+	{
+		retval = GetCharacterMovement();
 	}
 	return retval;
 }

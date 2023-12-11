@@ -42,6 +42,7 @@ void UMeleeAbility::OnAbilityEnd()
 {
 	HitActors.Reset();
 	shouldtrace = true;
+	CurrentActorHitCount = 0U;
 
 	Super::OnAbilityEnd();
 }
@@ -54,8 +55,9 @@ void UMeleeAbility::ProcessHit(const FHitResult& Inblockinghit)
 	{
 		FDamageEvent damageevent = FDamageEvent();
 		hitactor->TakeDamage(StaticCast<float>(Damage), damageevent, nullptr, AbilityComp->GetOwner());
-		/*Stop tracing if we only hit one target at a time;*/
-		if (!bAllowMultiActorHit)
+		CurrentActorHitCount++;
+		/*Stop tracing if we only hit the max number of targets*/
+		if (CurrentActorHitCount >= MaxActorHitCount)
 		{
 			shouldtrace = false;
 		}
