@@ -3,6 +3,7 @@
 #include "MineableResource.h"
 #include "RTS_Project/RTSFPS/GameArchitecture/RTFPSGameState.h"
 
+#include "NavAreas/NavArea_Obstacle.h"
 
 
 
@@ -14,10 +15,13 @@ AMineableResource::AMineableResource() : Super()
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	bReplicates = true;
 
+	NavModifierComp = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
+	NavModifierComp->AreaClass = UNavArea_Obstacle::StaticClass();
+	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComp->SetCanEverAffectNavigation(true);
-	MeshComp->bFillCollisionUnderneathForNavmesh = true;
+	MeshComp->SetCanEverAffectNavigation(false);
+	MeshComp->bFillCollisionUnderneathForNavmesh = false;
 	MeshComp->bReceivesDecals = false;
 	MeshComp->SetupAttachment(RootComponent);
 

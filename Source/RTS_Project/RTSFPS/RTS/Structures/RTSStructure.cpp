@@ -4,6 +4,7 @@
 #include "UI/StructureSpawnQueueWidget.h"
 
 #include "Net/UnrealNetwork.h"
+#include "NavAreas/NavArea_Obstacle.h"
 
 // Sets default values
 ARTSStructure::ARTSStructure() : Super() 
@@ -15,6 +16,7 @@ ARTSStructure::ARTSStructure() : Super()
 	bReplicates = true;
 
 	NavModifierComp = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
+	NavModifierComp->AreaClass = UNavArea_Obstacle::StaticClass();
 
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -30,9 +32,6 @@ ARTSStructure::ARTSStructure() : Super()
 	DeathComp = CreateDefaultSubobject<UDeathComponent>(TEXT("DeathComp"));
 	DeathComp->OnDeathStart.BindUFunction(this, "OnDeath");
 	DeathComp->SetIsReplicated(true);
-
-	MenuClass = nullptr;
-	Menu = nullptr;
 }
 
 void ARTSStructure::PostInitializeComponents()
@@ -359,7 +358,7 @@ bool ARTSStructure::ScoreResource(IResourceGatherer* Donar)
 	gs = world->GetGameState<ARTFPSGameState>();
 	ATeamResourceState* ts = gs->GetTeamState<ATeamResourceState>(GetTeam());
 	
-	const bool retval = ts->TransferResourceFromSource(Donar);
+	const bool retval = ts->TransferResourceFromSource(Donar, Donar->GetAllWeightedResources());
 
 	return  retval;
 }

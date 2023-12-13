@@ -20,7 +20,7 @@ bool UGridTile::IsTileValid() const
 	return TileID != INVALID_TILE_ID;
 }
 
-const TArray<FGridTileNeighbor> UGridTile::GetNeighbors() const
+const TArray<FGridTileNeighbor>& UGridTile::GetNeighbors() const
 {
 	return Neighbors;
 }
@@ -72,7 +72,7 @@ void UGridTile::AddNeighbor(const FGridTileNeighbor& InNeighbor)
 	Neighbors.AddUnique(InNeighbor);
 }
 
-TSet<FLine> UGridTile::GetTileBoundaryLines() const
+const TSet<FLine>& UGridTile::GetTileBoundaryLines() const
 {
 	return TileBounds;
 }

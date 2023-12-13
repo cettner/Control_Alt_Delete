@@ -8,6 +8,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 #include "Interfaces/ResourceGeneratorInterface.h"
 
+#include "NavModifierComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "MineableResource.generated.h"
 
@@ -56,7 +57,10 @@ protected:
 	UDecalSelectionComponent* SelectionComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
-	UStaticMeshComponent* MeshComp;
+	UStaticMeshComponent* MeshComp = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = Navigation)
+	UNavModifierComponent* NavModifierComp = nullptr;
 
 protected:
 

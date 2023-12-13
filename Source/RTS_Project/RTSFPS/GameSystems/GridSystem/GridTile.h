@@ -85,14 +85,14 @@ public:
     bool IsTileValid() const;
     FORCEINLINE FVector GetTileCenter() const { return TileCenter; }
     FORCEINLINE FVector GetTileNormal() const { return TileNormal; }
-    const TArray<FGridTileNeighbor> GetNeighbors() const;
+    const TArray<FGridTileNeighbor>& GetNeighbors() const;
     void SetTileFillColor(const FLinearColor InColor);
     void SetTileVisible(const bool InIsVisible);
 
 protected: 
     void SetupTile(const int32 InID, const FVector InTileCenter);
     void AddNeighbor(const FGridTileNeighbor& InNeighbor);
-    TSet<FLine> GetTileBoundaryLines() const;
+    const TSet<FLine>& GetTileBoundaryLines() const;
     UWorld* GetWorld() const;
 
 protected:
