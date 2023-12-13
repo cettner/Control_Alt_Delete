@@ -14,10 +14,11 @@ ARTSStructure::ARTSStructure() : Super()
 
 	bReplicates = true;
 
+	NavModifierComp = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
+
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComp->SetCanEverAffectNavigation(true);
-	MeshComp->bFillCollisionUnderneathForNavmesh = true;
+	MeshComp->SetCanEverAffectNavigation(false);
 	MeshComp->bReceivesDecals = false;
 	MeshComp->SetupAttachment(RootComponent);
 
@@ -75,34 +76,6 @@ void ARTSStructure::BeginPlay()
 {
 	Super::BeginPlay();
 	RegisterRTSObject();
-}
-
-UUserWidget* ARTSStructure::GetMenu()
-{
-	UWorld* World = GetWorld();
-
-	if (World == nullptr || !IsConstructed()) return nullptr;
-
-	if (MenuClass)
-	{
-		Menu = CreateWidget <UStructureSpawnQueueWidget>(World, MenuClass);
-		if (Menu)
-		{
-			Menu->Setup(this);
-		}
-	}
-
-	return(Menu);
-}
-
-bool ARTSStructure::CanOpenMenu(APawn* InvokingPawn) const
-{
-	ARTSMinion * minion = Cast<ARTSMinion>(InvokingPawn);
-	if (minion && IsConstructed())
-	{
-		return(GetTeam() == minion->GetTeam());
-	}
-	return false;
 }
 
 float ARTSStructure::GetPercentConstructed() const

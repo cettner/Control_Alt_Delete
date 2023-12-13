@@ -13,6 +13,7 @@
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 #include "Interfaces/BuildableInterface.h"
 
+#include "NavModifierComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
 #include "RTSStructure.generated.h"
@@ -81,13 +82,6 @@ protected:
 	virtual void RegisterRTSObject() override;
 	virtual void UnRegisterRTSObject() override;
 	virtual void SetTeamColors(FLinearColor TeamColor) override;
-	/************************************************************/
-
-	/***********IMenuInteractable Interface overrides************/
-public:
-	virtual UUserWidget* GetMenu() override;
-	virtual bool CanOpenMenu(APawn * InvokingPawn) const override;
-
 	/************************************************************/
 
 	/**************IBuildable Interface Overrides****************/
@@ -185,10 +179,13 @@ protected:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Selection)
-	UDecalSelectionComponent* Selection;
+	UDecalSelectionComponent* Selection = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
-	USkeletalMeshComponent* MeshComp;
+	USkeletalMeshComponent* MeshComp = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = Navigation)
+	UNavModifierComponent* NavModifierComp = nullptr;
 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, Category = Gameplay)

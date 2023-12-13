@@ -22,10 +22,10 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	UFlowFieldFollowingComponent* pathfollowingcomp = CreateDefaultSubobject<UFlowFieldFollowingComponent>(TEXT("FlowFieldFollowingComp"));
+	//UFlowFieldFollowingComponent* pathfollowingcomp = CreateDefaultSubobject<UFlowFieldFollowingComponent>(TEXT("FlowFieldFollowingComp"));
 
 	SetPerceptionComponent(*PerceptionComp);
-	SetPathFollowingComponent(pathfollowingcomp);
+	//SetPathFollowingComponent(pathfollowingcomp);
 
 	SightConfig->SightRadius = DefaultPerceptionConfig.SightRadius;
 	SightConfig->LoseSightRadius = DefaultPerceptionConfig.LoseSightRadius;
@@ -131,6 +131,8 @@ ETeamAttitude::Type ARTSAIController::GetTeamAttitudeTowards(const AActor& Other
 
 FPathFollowingRequestResult ARTSAIController::MoveTo(const FAIMoveRequest& MoveRequest, FNavPathSharedPtr* OutPath)
 {
+	FPathFollowingRequestResult ResultData = Super::MoveTo(MoveRequest, OutPath);
+	/*
 	FPathFollowingRequestResult ResultData;
 	ResultData.Code = EPathFollowingRequestResult::Failed;
 
@@ -166,7 +168,7 @@ FPathFollowingRequestResult ARTSAIController::MoveTo(const FAIMoveRequest& MoveR
 		}
 
 	}
-
+	*/
 	return ResultData;
 }
 
