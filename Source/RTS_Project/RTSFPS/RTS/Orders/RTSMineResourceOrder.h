@@ -38,5 +38,5 @@ class RTS_PROJECT_API URTSMineResourceOrder : public URTSTargetedOrder
 		static const FName ResourceNodeKey;
 		static const FName ResourceClassKey;
 		static const FName LastMinedLocationKey;
-
+		static const FName ResourceDroppointKey;
 };

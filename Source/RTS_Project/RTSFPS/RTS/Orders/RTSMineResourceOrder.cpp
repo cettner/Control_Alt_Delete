@@ -6,6 +6,7 @@
 const FName URTSMineResourceOrder::ResourceNodeKey = "TargetNode";
 const FName URTSMineResourceOrder::ResourceClassKey = "ResourceClass";
 const FName URTSMineResourceOrder::LastMinedLocationKey = "LastMinedLocation";
+const FName URTSMineResourceOrder::ResourceDroppointKey = "ResourceDroppoint";
 
 void URTSMineResourceOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
 {

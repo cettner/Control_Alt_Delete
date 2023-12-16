@@ -32,6 +32,11 @@ ARTSStructure::ARTSStructure() : Super()
 	DeathComp = CreateDefaultSubobject<UDeathComponent>(TEXT("DeathComp"));
 	DeathComp->OnDeathStart.BindUFunction(this, "OnDeath");
 	DeathComp->SetIsReplicated(true);
+
+	ResourceDropBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("ResourceDropBounds"));
+	ResourceDropBounds->SetupAttachment(RootComponent);
+	ResourceDropBounds->SetCanEverAffectNavigation(false);
+
 }
 
 void ARTSStructure::PostInitializeComponents()

@@ -187,6 +187,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Navigation)
 	UNavModifierComponent* NavModifierComp = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category = Navigation)
+	UBoxComponent* ResourceDropBounds = nullptr;
+
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, Category = Gameplay)
 	int TeamID = -1;
