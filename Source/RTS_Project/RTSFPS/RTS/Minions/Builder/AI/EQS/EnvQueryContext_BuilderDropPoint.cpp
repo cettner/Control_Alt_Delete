@@ -17,6 +17,8 @@ void UEnvQueryContext_BuilderDropPoint::ProvideContext(FEnvQueryInstance& QueryI
 	}
 
 	ARTSAIController * aic = QuerierActor->GetController<ARTSAIController>();
+	if (aic == nullptr) return;
+
 	AActor * droppointactor = Cast<AActor>(aic->GetBlackBoardKeyAsObject(URTSMineResourceOrder::ResourceDroppointKey));
 
 	if (droppointactor)

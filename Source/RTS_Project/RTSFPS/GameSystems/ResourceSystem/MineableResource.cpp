@@ -14,14 +14,11 @@ AMineableResource::AMineableResource() : Super()
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	bReplicates = true;
-
-	NavModifierComp = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
-	NavModifierComp->AreaClass = UNavArea_Obstacle::StaticClass();
 	
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComp->SetCanEverAffectNavigation(false);
-	MeshComp->bFillCollisionUnderneathForNavmesh = false;
+	MeshComp->SetCanEverAffectNavigation(true);
+	MeshComp->bFillCollisionUnderneathForNavmesh = true;
 	MeshComp->bReceivesDecals = false;
 	MeshComp->SetupAttachment(RootComponent);
 

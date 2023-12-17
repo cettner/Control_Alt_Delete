@@ -10,10 +10,11 @@
 #include "RTS_Project/RTSFPS/Shared/Components/DecalSelectionComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/HealthSystem/DeathComponent.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Interfaces/ResourceVendorInterface.h"
+#include "RTS_Project/RTSFPS/RTS/Minions/AI/EQS/Interface/QueryBoundsInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 #include "Interfaces/BuildableInterface.h"
 
-#include "NavModifierComponent.h"
+#include "AI/Navigation/NavRelevantInterface.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Animation/SkeletalMeshActor.h"
 #include "RTSStructure.generated.h"
@@ -59,7 +60,7 @@ struct FStructureSpawnData
 class UStructureSpawnQueueWidget;
 
 UCLASS()
-class RTS_PROJECT_API ARTSStructure : public AGridAttachmentActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface, public IResourceVendorInterface
+class RTS_PROJECT_API ARTSStructure : public AGridAttachmentActor, public IRTSObjectInterface, public IMenuInteractableInterface, public IBuildableInterface, public IResourceVendorInterface, public IQueryBoundsInterface
 {
 	GENERATED_BODY()
 	
@@ -104,6 +105,14 @@ public:
 protected:
 	virtual const TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetAllDefaultUnitPrices() const override;
 	/************************************************************/
+
+
+	/*************************IQueryBoundsInterface***************************/
+public:
+	virtual bool IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context = nullptr) override;
+	virtual bool SupportsContext(const TSubclassOf<UEnvQueryContext>& Context) override;
+
+	/*************************************************************************/
 protected:
 	UFUNCTION()
 	virtual void OnDeath();
@@ -183,9 +192,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* MeshComp = nullptr;
-
-	UPROPERTY(EditDefaultsOnly, Category = Navigation)
-	UNavModifierComponent* NavModifierComp = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Navigation)
 	UBoxComponent* ResourceDropBounds = nullptr;

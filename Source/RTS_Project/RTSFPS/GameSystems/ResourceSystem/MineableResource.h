@@ -59,9 +59,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 	UStaticMeshComponent* MeshComp = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = Navigation)
-	UNavModifierComponent* NavModifierComp = nullptr;
-
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Gameplay)

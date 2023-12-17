@@ -4,7 +4,6 @@
 #include "UI/StructureSpawnQueueWidget.h"
 
 #include "Net/UnrealNetwork.h"
-#include "NavAreas/NavArea_Obstacle.h"
 
 // Sets default values
 ARTSStructure::ARTSStructure() : Super() 
@@ -15,12 +14,9 @@ ARTSStructure::ARTSStructure() : Super()
 
 	bReplicates = true;
 
-	NavModifierComp = CreateDefaultSubobject<UNavModifierComponent>(TEXT("NavModifier"));
-	NavModifierComp->AreaClass = UNavArea_Obstacle::StaticClass();
-
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComp->SetCanEverAffectNavigation(false);
+	MeshComp->SetCanEverAffectNavigation(true);
 	MeshComp->bReceivesDecals = false;
 	MeshComp->SetupAttachment(RootComponent);
 
@@ -158,6 +154,30 @@ const TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTSStructure::GetAllD
 	const UWorld* world = GetWorld();
 	const ARTFPSGameState * gs = world->GetGameState<ARTFPSGameState>();
 	return gs->GetAllDefaultUnitPrices();
+}
+
+bool ARTSStructure::IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context)
+{
+	FTransform BoxTransform = ResourceDropBounds->GetComponentTransform();
+
+	// Invert the transform to get the local space of the box
+	FVector LocalPoint = BoxTransform.InverseTransformPosition(InPoint);
+
+	// Get the box extent
+	FVector BoxExtent = ResourceDropBounds->GetScaledBoxExtent();
+
+	// Check if the point is within the box extent
+	bool bIsInside = FMath::Abs(LocalPoint.X) <= BoxExtent.X &&
+		FMath::Abs(LocalPoint.Y) <= BoxExtent.Y &&
+		FMath::Abs(LocalPoint.Z) <= BoxExtent.Z;
+
+
+	return bIsInside;
+}
+
+bool ARTSStructure::SupportsContext(const TSubclassOf<UEnvQueryContext>& Context)
+{
+	return false;
 }
 
 void ARTSStructure::OnDeath()
