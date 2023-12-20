@@ -91,11 +91,11 @@ class RTS_PROJECT_API UResourceGathererComponent : public UActorComponent, publi
 		UResourceData* StartingResources = nullptr;
 
 	protected:
-		UPROPERTY(Replicated)
+		UPROPERTY(EditDefaultsOnly, Replicated)
 		uint32 MaxWeight = 10U;
 
 		UPROPERTY(ReplicatedUsing = OnRep_HeldResources)
-		TArray<uint32> Values;
+		TArray<uint32> Values = TArray<uint32>();
 
 		// Map that holds the Keys and the index the Value is at in the parallel array
 		TMap<TSubclassOf<UResource>, int> ResourceToIndex = TMap<TSubclassOf<UResource>, int>();

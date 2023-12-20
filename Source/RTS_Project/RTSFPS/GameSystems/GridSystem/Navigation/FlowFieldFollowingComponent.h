@@ -12,26 +12,6 @@
 
 #define COLLISION_DYNAMIC_OBSTACLE ECC_GameTraceChannel5
 
-USTRUCT()
-struct FObstacleScan
-{
-	GENERATED_USTRUCT_BODY()
-public:
-	FVector collisionscore = FVector::ZeroVector;
-	//if a dynamic obstacle is blocking the navigation path
-	bool bisBlocked = false;
-	//if true, the actor scanned is the goal or is on top of on the goal tile,
-	bool bblockedgoal = false;
-
-	void Reset() 
-	{
-		bisBlocked = false;
-		bblockedgoal = false;
-		collisionscore = FVector::ZeroVector;
-	}
-
-};
-
 
 UCLASS()
 class UFlowFieldFollowingComponent : public UPathFollowingComponent, public IFlockAgentInterface
@@ -83,7 +63,7 @@ class UFlowFieldFollowingComponent : public UPathFollowingComponent, public IFlo
 
 	protected:
 		/*Map Correlating an obstacle and the angles it was struck from relative to the current flowfields intended direction*/
-		FObstacleScan ScannedObstacles;
+		FObstacleScan ScannedObstacles = FObstacleScan();
 		FVector PreviousMovement = FVector::ZeroVector;
 
 		const UGridTile* CurrentTile = nullptr;

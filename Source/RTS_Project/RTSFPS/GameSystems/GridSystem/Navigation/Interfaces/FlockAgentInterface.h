@@ -9,8 +9,6 @@
 
 struct FObstacleTraceData
 {
-	//Offset to start the trace arc, then rotated about the forward axis
-	FVector TraceOriginOffset = FVector::ZeroVector;
 	//Length of the Trace to be performed
 	float TraceLength = 0.0f;
 	//Arc Size in Relative 
@@ -21,6 +19,29 @@ struct FObstacleTraceData
 	ECollisionChannel TraceChannel = ECollisionChannel::ECC_Pawn;
 
 	static const FObstacleTraceData DefaultObstacleTraceData;
+};
+
+USTRUCT()
+struct FObstacleScan
+{
+	GENERATED_USTRUCT_BODY()
+public:
+	float obstaclemagnitude = 0.0f;
+
+	FVector collisionscore = FVector::ZeroVector;
+	//if a dynamic obstacle is blocking the navigation path
+	bool bisBlocked = false;
+	//if true, the actor scanned is the goal or is on top of on the goal tile,
+	bool bblockedgoal = false;
+
+	void Reset()
+	{
+		bisBlocked = false;
+		bblockedgoal = false;
+		collisionscore = FVector::ZeroVector;
+		obstaclemagnitude = 0.0;
+	}
+
 };
 
 // This class does not need to be modified.

@@ -6,7 +6,6 @@
 
 const FObstacleTraceData FObstacleTraceData::DefaultObstacleTraceData
 {
-	FVector::ZeroVector,         // TraceOriginOffset
 	200.0f,                              // TraceLength
 	90.0f,								 // TraceArcSizeDegrees
 	5,                                  // TraceCount
