@@ -22,41 +22,11 @@ void ARTSPlayerController::IssueDefaultOrder(const TArray<TScriptInterface<IRTSO
 	}
 	else
 	{
-		/*Units may have different default orders, but we should only issue one order per type, so we map each order type to its associated units*/
-		TMultiMap<TSubclassOf<URTSTargetedOrder>, TScriptInterface<IRTSObjectInterface>> ordermap = TMultiMap<TSubclassOf<URTSTargetedOrder>, TScriptInterface<IRTSObjectInterface>>();
-		for (int i = 0; i < InUnits.Num(); i++)
-		{
-			if (IsValid(InUnits[i].GetObject()))
-			{
-				const TSubclassOf<URTSTargetedOrder> defaultorder = InUnits[i]->GetDefaultOrderClass(InHitContext);
-				/*This can return null if the unit has nothing to do for the given context*/
-				if (defaultorder != nullptr)
-				{
-					ordermap.Add(defaultorder, InUnits[i]);
-				}
-			}
-		}
-		
-		/*For each class, create a new order and assign it to the units that implement it*/
-		TArray<TSubclassOf<URTSTargetedOrder>> keys = TArray<TSubclassOf<URTSTargetedOrder>>();
-		TArray<TScriptInterface<IRTSObjectInterface>> outunits = TArray<TScriptInterface<IRTSObjectInterface>>();
-		ordermap.GetKeys(keys);
-		for (int i = 0; i < keys.Num(); i++)
-		{
-			outunits.Reset();
-			URTSTargetedOrder* ordertoissue = CreateTargetOrder(keys[i], InHitContext);
-			ordermap.MultiFind(keys[i], outunits);
-			IssueOrder(outunits, ordertoissue, InHitContext, InbIsQueuedOrder);
-		}
+		UWorld* world = GetWorld();
+		ARTFPSMode* gm = world->GetAuthGameMode<ARTFPSMode>();
+		gm->GetOrderManager()->BuildOrderGroup(InUnits, InHitContext, this);
 
 	}
-}
-
-URTSTargetedOrder* ARTSPlayerController::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext)
-{
-	URTSTargetedOrder*  retval = NewObject<URTSTargetedOrder>(this, OrderClass);
-	retval->SetTargetContext(this, InHitContext);
-	return retval;
 }
 
 void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, URTSOrder* InOrder, const FHitResult InHitContext, const bool InbIsQueuedOrder)

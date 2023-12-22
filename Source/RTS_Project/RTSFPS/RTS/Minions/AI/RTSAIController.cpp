@@ -22,10 +22,8 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	BehaviorComp = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BehaviorComp"));
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	//UFlowFieldFollowingComponent* pathfollowingcomp = CreateDefaultSubobject<UFlowFieldFollowingComponent>(TEXT("FlowFieldFollowingComp"));
 
 	SetPerceptionComponent(*PerceptionComp);
-	//SetPathFollowingComponent(pathfollowingcomp);
 
 	SightConfig->SightRadius = DefaultPerceptionConfig.SightRadius;
 	SightConfig->LoseSightRadius = DefaultPerceptionConfig.LoseSightRadius;
@@ -258,77 +256,43 @@ bool ARTSAIController::IsAbortingTask() const
 	return BehaviorComp->IsAbortPending();
 }
 
-URTSOrder* ARTSAIController::GetCurrentOrder() const
+URTSOrder* ARTSAIController::GetActiveOrder() const
 {
 	return Cast<URTSOrder>(BlackboardComp->GetValueAsObject(AICurrentOrderKey));
 }
 
-URTSOrder* ARTSAIController::GetAbortingOrder() const
-{
-	return AbortingOrder;
-}
-
-void ARTSAIController::EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder)
-{
-	if (!InbIsEnquedOrder)
-	{
-		ClearOrders();
-		SetCurrentOrder(InOrder);
-	}
-	else if(IsValid(GetCurrentOrder()))
-	{
-		EnquedOrders.Enqueue(InOrder);
-		NumOrders += 1;
-	}
-	else
-	{
-		SetCurrentOrder(InOrder);
-	}
-}
-
 void ARTSAIController::ClearOrders()
 {
-	EnquedOrders.Empty();
-	if (IsValid(GetCurrentOrder()))
+	if (IsValid(GetActiveOrder()))
 	{
 		OnOrderFinished(nullptr, false);
 	}
 }
 
-void ARTSAIController::SetCurrentOrder(URTSOrder* InOrder)
+void ARTSAIController::SetActiveOrder(URTSOrder* InOrder)
 {
-	if (InOrder != GetCurrentOrder())
+	if (InOrder != nullptr)
 	{
-		URTSOrder* nextorder = nullptr;
+		if (IsValid(OrderGroupKey) && (InOrder->GetOrderGroup() != OrderGroupKey->GetOrderGroup()))
+		{
+			URTSOrderGroup* ordergroup = OrderGroupKey->GetOrderGroup();
+			ordergroup->DeregisterUnit(TScriptInterface<IRTSObjectInterface>(GetPawn()), OrderGroupKey);
+			OrderGroupKey = nullptr;
+		}
 
-		if (InOrder != nullptr)
-		{
-			/*Make Sure the blackboard is properly loaded before we set the current order*/
-			InOrder->LoadAIBlackBoard(BlackboardComp);
-			BlackboardComp->SetValueAsObject(AICurrentOrderKey, InOrder);
-			CurrentOrder = InOrder;
-		}
-		/*NullOrder, possibly due to completion of a previous order, check queue if we have one available and load it*/
-		else if (InOrder == nullptr && EnquedOrders.Dequeue(nextorder))
-		{
-			NumOrders -= 1;
-			/*Make Sure the blackboard is properly loaded before we set the current order*/
-			nextorder->LoadAIBlackBoard(BlackboardComp);
-			BlackboardComp->SetValueAsObject(AICurrentOrderKey, nextorder);
-			CurrentOrder = nextorder;
-		}
-		/*Clear the Order*/
-		else
-		{
-			BlackboardComp->ClearValue(AICurrentOrderKey);
-			CurrentOrder = nullptr;
-		}
+		InOrder->LoadAIBlackBoard(BlackboardComp);
+		BlackboardComp->SetValueAsObject(AICurrentOrderKey, InOrder);
+		OrderGroupKey = InOrder;
+	}
+	else
+	{
+		BlackboardComp->ClearValue(AICurrentOrderKey);
 	}
 }
 
 void ARTSAIController::OnOrderFinished(UBTTaskNode* InTaskNode, const bool InOrderSuccess)
 {
-	SetCurrentOrder(nullptr);
+	SetActiveOrder(nullptr);
 }
 
 void ARTSAIController::ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors)

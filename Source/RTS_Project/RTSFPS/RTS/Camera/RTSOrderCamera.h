@@ -15,11 +15,6 @@ UCLASS()
 class RTS_PROJECT_API ARTSOrderCamera : public ARTSSelectionCamera
 {
 	GENERATED_BODY()
-
-	public:
-		virtual void LoadOrder(URTSTargetedOrder * InOrder);
-		virtual URTSTargetedOrder * GetOrder() const;
-		virtual void ClearOrder();
 	
 	protected:
 		virtual void OrderSelected();
@@ -29,12 +24,6 @@ class RTS_PROJECT_API ARTSOrderCamera : public ARTSSelectionCamera
 		virtual TArray<TScriptInterface<IRTSObjectInterface>> GetOrderableUnitsFromSelection() const;
 
 	protected:
-		virtual void SelectPressed() override;
-
-	protected:
 		// Called to bind functionality to input
 		virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	protected:
-		URTSTargetedOrder* EnqueuedOrder = nullptr;
 };

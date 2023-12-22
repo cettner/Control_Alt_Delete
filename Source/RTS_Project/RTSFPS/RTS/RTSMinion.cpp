@@ -142,7 +142,7 @@ const TSubclassOf<URTSTargetedOrder> ARTSMinion::GetDefaultOrderClass(const FHit
 void ARTSMinion::IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
 {
 	ARTSAIController* rtscontrol = GetController<ARTSAIController>();
-	rtscontrol->EnqueueOrder(InOrder, InbIsQueuedOrder);
+	rtscontrol->SetActiveOrder(InOrder);
 }
 
 float ARTSMinion::GetMinionStrayDistance() const

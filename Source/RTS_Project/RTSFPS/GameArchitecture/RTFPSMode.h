@@ -7,6 +7,7 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/RTS/Camera/RTSCamera.h"
 #include "RTS_Project/RTSFPS/GameSystems/ResourceSystem/Resource.h"
+#include "RTS_Project/RTSFPS/RTS/Orders/RTSOrderManager.h"
 #include "RTFPSMode.generated.h"
 
 
@@ -28,7 +29,7 @@ protected:
 	virtual void InitializeDeferredDefaultPawn(APawn * DefferedPawn, AController * InheritingController) override;
 	virtual void StartMatch() override;
 	virtual bool ReadyToEndMatch_Implementation() override;
-
+	virtual void PostInitializeComponents() override;
 
 
 	/********************RTS Initialization*********************/
@@ -37,7 +38,13 @@ public:
 	FReplicationResourceMap GetStartingResources() const;
 	TArray<TSubclassOf<UResource>> GetResourceTypes() const;
 	TMap<TSubclassOf<UObject>, FReplicationResourceMap> GetDefaultUnitCosts() const;
+	void InitializeOrderManager();
 	/***********************************************************/
+	
+	/**********************RTS Runtime**************************/
+	FORCEINLINE ARTSOrderManager* GetOrderManager() const { return OrderManager; }
+	/***********************************************************/
+
 
 public:
 	/********************FPS Initialization*********************/
@@ -48,10 +55,10 @@ public:
 
 protected:
 	/** The default pawn class used by RTS players. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	UPROPERTY(EditDefaultsOnly, Category = Classes)
 	TSubclassOf<ARTSCamera> DefaultRTSClass = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes)
+	UPROPERTY(EditDefaultsOnly, Category = Classes)
 	TSubclassOf<ACommander> DefaultFPSClass = nullptr;
 
 protected:
@@ -73,7 +80,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "FPS Initialization")
 	uint32 MaxLevel = 10U;
-
-
 	/**********************************************************/
+
+protected:
+	ARTSOrderManager* OrderManager = nullptr;
 };

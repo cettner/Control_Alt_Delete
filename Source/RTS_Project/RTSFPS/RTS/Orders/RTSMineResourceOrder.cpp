@@ -8,7 +8,7 @@ const FName URTSMineResourceOrder::ResourceClassKey = "ResourceClass";
 const FName URTSMineResourceOrder::LastMinedLocationKey = "LastMinedLocation";
 const FName URTSMineResourceOrder::ResourceDroppointKey = "ResourceDroppoint";
 
-void URTSMineResourceOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
+void URTSMineResourceOrder::SetTargetContext(const FHitResult& InContext)
 {
 	AMineableResource* node = CastChecked<AMineableResource>(InContext.GetActor());
 	StartNode = TWeakObjectPtr<AMineableResource>(node);

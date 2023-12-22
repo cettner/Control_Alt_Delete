@@ -24,12 +24,8 @@ class RTS_PROJECT_API ARTSPlayerController : public ADefaultPlayerController
 	GENERATED_BODY()
 	
 public:
-	virtual void IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
-
 	virtual void IssueDefaultOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
-
-protected:
-	virtual URTSTargetedOrder* CreateTargetOrder(const TSubclassOf<URTSTargetedOrder> OrderClass, const FHitResult& InHitContext = FHitResult());
+	virtual void IssueOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, URTSOrder* InOrder, const FHitResult InHitContext = FHitResult(), const bool InbIsQueuedOrder = false);
 
 protected:
 	ARTSPlayerController();

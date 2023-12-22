@@ -8,10 +8,13 @@
 
 #include "RTSOrder.generated.h"
 
-constexpr int ORDER_APPLY_ALL = -1;
+constexpr int ORDER_APPLY_ALL = -1; 
+#define INVALID_ORDER_ID 0xFFFFFFFF
+
 
 /*Forward Declaration*/
 class IRTSObjectInterface;
+class URTSOrderGroup;
 
 UCLASS(Blueprintable)
 class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
@@ -30,6 +33,12 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 
 		virtual TArray<TScriptInterface<IRTSObjectInterface>> GetBestMinionsForOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InMinionSet, const FHitResult& InTarget = FHitResult()) const;
 
+		virtual URTSOrderGroup* GetOrderGroup() const;
+
+		uint32 GetOrderID() const;
+
+		void SetOrderGroup(URTSOrderGroup* InOrderGroup) { OrderGroup = InOrderGroup; }
+
 	protected:
 		/*The number of units that will be exclusively ordered */
 		UPROPERTY(EditDefaultsOnly)
@@ -40,4 +49,7 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 
 		UPROPERTY(EditDefaultsOnly)
 		bool bUseDefaultOnFail = false;
+
+	protected:
+		URTSOrderGroup* OrderGroup = nullptr;
 };

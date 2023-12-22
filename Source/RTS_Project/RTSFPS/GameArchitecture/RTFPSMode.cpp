@@ -182,6 +182,12 @@ bool ARTFPSMode::ReadyToEndMatch_Implementation()
 	return retval;
 }
 
+void ARTFPSMode::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	InitializeOrderManager();
+}
+
 TSubclassOf<ARTSCamera> ARTFPSMode::GetDefaultRTSClass() const
 {
 	return DefaultRTSClass;
@@ -200,6 +206,16 @@ TArray<TSubclassOf<UResource>> ARTFPSMode::GetResourceTypes() const
 TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTFPSMode::GetDefaultUnitCosts() const
 {
 	return DefaultUnitCosts;
+}
+
+void ARTFPSMode::InitializeOrderManager()
+{
+	UWorld * world = GetWorld();
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.Instigator = GetInstigator();
+	SpawnInfo.ObjectFlags |= RF_Transient;
+
+	OrderManager = world->SpawnActor<ARTSOrderManager>(ARTSOrderManager::StaticClass(), SpawnInfo);
 }
 
 TSubclassOf<ACommander> ARTFPSMode::GetDefaultFPSClass() const

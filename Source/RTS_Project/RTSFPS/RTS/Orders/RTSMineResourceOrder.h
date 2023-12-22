@@ -16,7 +16,7 @@ class RTS_PROJECT_API URTSMineResourceOrder : public URTSTargetedOrder
 {
 	GENERATED_BODY()
 	protected:
-		virtual void SetTargetContext(AController* Issuer, const FHitResult& InContext) override;
+		virtual void SetTargetContext(const FHitResult& InContext) override;
 		virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const override;
 
 	public:

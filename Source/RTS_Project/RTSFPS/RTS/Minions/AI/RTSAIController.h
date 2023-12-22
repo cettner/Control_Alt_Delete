@@ -10,7 +10,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/Navigation/VectorFieldNavigationSystem.h"
-#include "../../Orders/RTSOrder.h"
+#include "../../Orders/RTSOrderGroup.h"
 #include "RTSAIPerceptionComponent.h"
 #include "RTSAIController.generated.h"
 
@@ -71,14 +71,11 @@ public:
 	bool IsAbortingTask() const;
 
 public:
-	virtual void EnqueueOrder(URTSOrder* InOrder, bool InbIsEnquedOrder = false);
-
-	virtual URTSOrder* GetCurrentOrder() const;
+	virtual URTSOrder* GetActiveOrder() const;
+	virtual void SetActiveOrder(URTSOrder* InOrder);
 
 	template<class T>
-	T* GetCurrentOrder() const { return Cast<T>(GetCurrentOrder()); }
-
-	virtual URTSOrder* GetAbortingOrder() const;
+	T* GetActiveOrder() const { return Cast<T>(GetActiveOrder()); }
 
 	/*Called from the Tree*/
 	virtual void OnOrderFinished(UBTTaskNode * InTaskNode, const bool InOrderSuccess);
@@ -86,7 +83,7 @@ public:
 
 protected:
 	virtual void ClearOrders();
-	virtual void SetCurrentOrder(URTSOrder* InOrder);
+
 
 protected:
 	virtual void ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors) override;
@@ -136,10 +133,6 @@ protected:
 
 	int NumOrders = 0;
 
-	UPROPERTY(Transient)
-	URTSOrder* CurrentOrder = nullptr;
-
-
-	UPROPERTY(Transient)
-	URTSOrder* AbortingOrder = nullptr;
+	/*The Last Issued Order*/
+	URTSOrder * OrderGroupKey = nullptr;
 };

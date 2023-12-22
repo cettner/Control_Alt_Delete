@@ -53,13 +53,7 @@ AMineableResource* ARTSBUILDER::GetTargetResource() const
 {
 	AMineableResource* retval = nullptr;
 	const ARTSAIController* controller = GetController<ARTSAIController>();
-	URTSMineResourceOrder * mineorder = controller->GetCurrentOrder<URTSMineResourceOrder>();
-
-	if (IsValid(mineorder))
-	{
-		const FName& resourcenodekey = mineorder->GetResourceNodeKey();
-		retval = Cast<AMineableResource>(controller->GetBlackBoardKeyAsObject(resourcenodekey));
-	}
+	retval = Cast<AMineableResource>(controller->GetBlackBoardKeyAsObject(URTSMineResourceOrder::ResourceNodeKey));
 
 	return retval;
 }

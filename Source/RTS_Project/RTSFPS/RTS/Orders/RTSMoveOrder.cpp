@@ -3,7 +3,7 @@
 
 #include "RTSMoveOrder.h"
 
-void URTSMoveOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
+void URTSMoveOrder::SetTargetContext(const FHitResult& InContext)
 {
 	MoveToLocation = InContext.Location;
 }

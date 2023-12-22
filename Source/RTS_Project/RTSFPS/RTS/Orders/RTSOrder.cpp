@@ -3,6 +3,7 @@
 
 #include "RTSOrder.h"
 #include "../../Shared/Interfaces/RTSObjectInterface.h"
+#include "RTSOrderGroup.h"
 
 TArray<TScriptInterface<IRTSObjectInterface>> URTSOrder::GetBestMinionsForOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InMinionSet, const FHitResult& InTarget) const
 {
@@ -25,6 +26,21 @@ TArray<TScriptInterface<IRTSObjectInterface>> URTSOrder::GetBestMinionsForOrder(
 		retval = TArray<TScriptInterface<IRTSObjectInterface>>(InMinionSet);
 	}
 
+	return retval;
+}
+
+URTSOrderGroup* URTSOrder::GetOrderGroup() const
+{
+	return OrderGroup;
+}
+
+uint32 URTSOrder::GetOrderID() const
+{
+	uint32 retval = INVALID_ORDER_ID;
+	if (URTSOrderGroup* ordergroup = GetOrderGroup())
+	{
+		retval = OrderGroup->GetOrderID();
+	}
 	return retval;
 }
 

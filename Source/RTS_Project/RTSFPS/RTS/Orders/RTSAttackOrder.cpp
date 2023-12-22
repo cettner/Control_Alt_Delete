@@ -3,7 +3,7 @@
 
 #include "RTSAttackOrder.h"
 
-void URTSAttackOrder::SetTargetContext(AController* Issuer, const FHitResult& InContext)
+void URTSAttackOrder::SetTargetContext(const FHitResult& InContext)
 {
 	Target = InContext.GetActor();
 }
