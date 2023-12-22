@@ -293,6 +293,11 @@ bool ARTSStructure::IsLocalEnemy() const
 	return bIsLocalEnemy;
 }
 
+FOnUnitDeathDelegate& ARTSStructure::GetUnitDeathDelegate()
+{
+	return DeathDelegate;
+}
+
 void ARTSStructure::SetTeamColors(FLinearColor TeamColor)
 {
 	if (Selection)

@@ -79,7 +79,7 @@ public:
 
 	/*Called from the Tree*/
 	virtual void OnOrderFinished(UBTTaskNode * InTaskNode, const bool InOrderSuccess);
-
+	virtual void OnUnitDeath(TScriptInterface<IRTSObjectInterface> InUnit);
 
 protected:
 	virtual void ClearOrders();

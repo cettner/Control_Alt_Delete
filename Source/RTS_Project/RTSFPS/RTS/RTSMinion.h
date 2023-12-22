@@ -83,33 +83,20 @@ public:
 /**************IRTSObjectInterface****************/
 public:
 	virtual void SetSelected()  override;
-
 	virtual void SetDeselected() override;
-
 	virtual void SetTeam(int team_id) override;
-
 	virtual int GetTeam() const override;
-
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
-
 	virtual bool IsLocalEnemy() const override;
-
 	virtual IRTSObjectInterface * GetLeadRTSObject() override;
-
 	virtual void SetTeamColors(FLinearColor TeamColor) override; 
-
+	virtual FOnUnitDeathDelegate& GetUnitDeathDelegate() override;
 	virtual bool IsAlive() const override;
-
 	virtual bool IsBoxSelectable() const override;
-
 	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
-	
 	virtual FName GetUnitName() const override;
-
 	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
-
 	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder = nullptr, const bool InbIsQueuedOrder = false) override;
-
 	virtual float GetMinionStrayDistance() const override;
 
 protected:
@@ -201,5 +188,7 @@ protected:
 	bool bIsBoxSelectable = false;
 
 	bool bIsLocalEnemy = false;
+
+	FOnUnitDeathDelegate DeathDelegate = FOnUnitDeathDelegate();
 };
 

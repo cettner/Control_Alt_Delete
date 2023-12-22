@@ -78,6 +78,7 @@ public:
 	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
 	virtual bool IsLocalEnemy() const override;
+	virtual FOnUnitDeathDelegate& GetUnitDeathDelegate() override;
 
 protected:
 	virtual void RegisterRTSObject() override;
@@ -230,6 +231,9 @@ protected:
 
 protected:
 	bool bIsLocalEnemy = false;
+
+protected:
+	FOnUnitDeathDelegate DeathDelegate = FOnUnitDeathDelegate();
 
 protected:
 	UStructureSpawnQueueWidget* Menu;

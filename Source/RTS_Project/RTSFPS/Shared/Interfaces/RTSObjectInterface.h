@@ -16,6 +16,7 @@ class URTSObjectInterface : public UInterface
 };
 
 constexpr int NEUTRAL_TEAM_INDEX = -1;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnUnitDeathDelegate, TScriptInterface<IRTSObjectInterface>);
 
 class RTS_PROJECT_API IRTSObjectInterface
 {
@@ -35,6 +36,7 @@ public:
 	virtual bool IsLocalEnemy() const;
 
 	virtual bool IsAlive() const;
+	virtual FOnUnitDeathDelegate& GetUnitDeathDelegate() PURE_VIRTUAL(IRTSObjectInterface::BindResourceValueChangedEvent, return *new FOnUnitDeathDelegate(););
 	static bool IsRTSObjectValid(const IRTSObjectInterface * InRTSObject);
 
 	virtual bool IsOrderablebyController(const AController * InController) const;

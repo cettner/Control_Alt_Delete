@@ -176,6 +176,8 @@ void ARTSMinion::UnRegisterRTSObject()
 
 void ARTSMinion::OnDeath()
 {
+	DeathDelegate.Broadcast(this);
+
 	if (HasAuthority())
 	{
 		/*Unregister Minion to be percieved from AI perception*/
@@ -297,6 +299,11 @@ void ARTSMinion::SetTeamColors(FLinearColor TeamColor)
 	{
 		Selection->SetSelectionColor(TeamColor);
 	}
+}
+
+FOnUnitDeathDelegate& ARTSMinion::GetUnitDeathDelegate()
+{
+	return DeathDelegate;
 }
 
 IRTSObjectInterface * ARTSMinion::GetLeadRTSObject()

@@ -45,6 +45,9 @@ void ARTSAIController::OnPossess(APawn * InPawn)
 
 	if (Minion != NULL && Minion->GetBehavior() != NULL)
 	{
+		FOnUnitDeathDelegate& deathdelegate = Minion->GetUnitDeathDelegate();
+		deathdelegate.AddUObject(this, &ARTSAIController::OnUnitDeath);
+
 		BlackboardComp->InitializeBlackboard(*Minion->GetBehavior()->BlackboardAsset);
 		BehaviorComp->StartTree(*Minion->GetBehavior());
 
@@ -293,6 +296,16 @@ void ARTSAIController::SetActiveOrder(URTSOrder* InOrder)
 void ARTSAIController::OnOrderFinished(UBTTaskNode* InTaskNode, const bool InOrderSuccess)
 {
 	SetActiveOrder(nullptr);
+}
+
+void ARTSAIController::OnUnitDeath(TScriptInterface<IRTSObjectInterface> InUnit)
+{
+	if (IsValid(OrderGroupKey))
+	{
+		URTSOrderGroup* ordergroup = OrderGroupKey->GetOrderGroup();
+		ordergroup->DeregisterUnit(InUnit, OrderGroupKey);
+		OrderGroupKey = nullptr;
+	}
 }
 
 void ARTSAIController::ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
