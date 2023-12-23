@@ -13,11 +13,9 @@ TArray<TScriptInterface<IRTSObjectInterface>> URTSOrderGroup::GetAllActiveUnits(
 	return retval;
 }
 
-const TArray<URTSOrder *> URTSOrderGroup::GetOrders() const
+const TSet<URTSOrder *>& URTSOrderGroup::GetOrders() const
 {
-	TArray<URTSOrder *> retval = TArray<URTSOrder*>();
-	OrderMapping.GetKeys(retval);
-	return retval;
+	return OrderMapping;
 }
 
 bool URTSOrderGroup::InitalizeOrderGroup(const uint32 InID, const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits, AController* Issuer, const FHitResult& InHitContext, const bool InbIsQueuedOrder)
@@ -53,41 +51,27 @@ bool URTSOrderGroup::InitalizeOrderGroup(const uint32 InID, const TArray<TScript
 		outunits.Reset();
 		URTSOrder * ordertoissue = CreateTargetOrder(keys[i], InHitContext);
 		ordermap.MultiFind(keys[i], outunits);
-		ordercount += outunits.Num();
-		for (int k = 0; k < outunits.Num(); k++)
-		{
-			OrderMapping.Emplace(ordertoissue, outunits[k]);
-		}
+		ordertoissue->InitRegistration(outunits);
+		ordercount += ordertoissue->GetUnitCount();
+		OrderMapping.Emplace(ordertoissue);
 	}
 
 	const bool retval = unitcount == ordercount;
 	return retval;
 }
 
-bool URTSOrderGroup::IssueOrder()
+bool URTSOrderGroup::IssueAllOrders()
 {
 	if (bIsIssued == true) return false;
 
-	for (const TTuple<URTSOrder *, TScriptInterface<IRTSObjectInterface>> orderpair : OrderMapping)
+	for (URTSOrder * orderpair : OrderMapping)
 	{
-		orderpair.Value->IssueOrder(OrderIssuer, OriginalContext, orderpair.Key);
+		orderpair->IssueOrder();
 	}
 
 	bIsIssued = true;
 
 	return bIsIssued;
-}
-
-bool URTSOrderGroup::DeregisterUnit(const TScriptInterface<IRTSObjectInterface>& InUnit, URTSOrder * InKey)
-{
-	const bool retval = (OrderMapping.RemoveSingle(InKey, InUnit) == 1);
-	if (OrderMapping.Num() == 0)
-	{
-		ARTSOrderManager * manager = CastChecked<ARTSOrderManager>(GetOuter());
-		manager->OnGroupEmptied(this);
-	}
-
-	return retval;
 }
 
 bool URTSOrderGroup::MatchingContext(const FHitResult& InHitContext, const AController* InController) const
@@ -98,22 +82,23 @@ bool URTSOrderGroup::MatchingContext(const FHitResult& InHitContext, const ACont
 URTSTargetedOrder* URTSOrderGroup::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder>& OrderClass, const FHitResult& InHitContext)
 {
 	URTSTargetedOrder* retval = NewObject<URTSTargetedOrder>(this, OrderClass);
-	retval->AddToRoot();
 	retval->SetTargetContext(InHitContext);
 	retval->SetOrderGroup(this);
+	retval->OrderAbandonedDelegate.AddUObject(this, &URTSOrderGroup::OnOrderAbandoned);
 	return retval;
+}
+
+void URTSOrderGroup::OnOrderAbandoned(URTSOrder* AbandonedOrder)
+{
+	OrderMapping.Remove(AbandonedOrder);
+	if (OrderMapping.Num() == 0)
+	{
+		ARTSOrderManager* manager = CastChecked<ARTSOrderManager>(GetOuter());
+		manager->OnGroupEmptied(this);
+	}
 }
 
 void URTSOrderGroup::BeginDestroy()
 {
-	const TArray<URTSOrder*> orders = GetOrders();
-	for (int i = 0; i < orders.Num(); i++)
-	{
-		if (IsValid(orders[i]))
-		{
-			orders[i]->RemoveFromRoot();
-			orders[i]->ConditionalBeginDestroy();
-		}
-	}
 	Super::BeginDestroy();
 }

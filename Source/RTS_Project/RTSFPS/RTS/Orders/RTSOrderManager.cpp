@@ -7,9 +7,9 @@ URTSOrderGroup* ARTSOrderManager::BuildOrderGroup(const TArray<TScriptInterface<
 {
     URTSOrderGroup* group = NewObject<URTSOrderGroup>(this);
     const uint32 nextid = GenerateNextGroupID();
-    check(group->InitalizeOrderGroup(nextid, InUnits, Issuer, InHitContext));
+    checkf(group->InitalizeOrderGroup(nextid, InUnits, Issuer, InHitContext), TEXT("ARTSOrderManager::BuildOrderGroup Failed To Initialize group for all group members"));
     OrderGroups.Emplace(nextid, group);
-    group->IssueOrder();
+    group->IssueAllOrders();
     GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Group Created")));
 
     return group;

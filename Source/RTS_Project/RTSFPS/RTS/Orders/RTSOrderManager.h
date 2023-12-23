@@ -32,6 +32,7 @@ protected:
 	};
 
 protected:
+	UPROPERTY()
 	TMap<uint32, URTSOrderGroup*> OrderGroups = TMap<uint32, URTSOrderGroup*>();
 
 	uint32 NextGroupID = 0;

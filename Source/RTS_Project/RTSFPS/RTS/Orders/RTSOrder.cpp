@@ -37,11 +37,43 @@ URTSOrderGroup* URTSOrder::GetOrderGroup() const
 uint32 URTSOrder::GetOrderID() const
 {
 	uint32 retval = INVALID_ORDER_ID;
-	if (URTSOrderGroup* ordergroup = GetOrderGroup())
+	if (const URTSOrderGroup* ordergroup = GetOrderGroup())
 	{
 		retval = OrderGroup->GetOrderID();
 	}
 	return retval;
+}
+
+void URTSOrder::InitRegistration(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits)
+{
+	AssignedUnits = TArray<TScriptInterface<IRTSObjectInterface>>(InUnits);
+}
+
+bool URTSOrder::DeRegisterUnit(TScriptInterface<IRTSObjectInterface> InUnit)
+{
+	const int32 removednum = AssignedUnits.Remove(InUnit);
+	if (AssignedUnits.Num() == 0)
+	{
+		OnOrderAbandoned();
+	}
+	const bool retval = removednum == 1;
+	return retval;
+}
+
+void URTSOrder::OnOrderAbandoned()
+{
+	OrderAbandonedDelegate.Broadcast(this);
+	OrderAbandonedDelegate.Clear();
+}
+
+bool URTSOrder::IssueOrder()
+{
+	URTSOrderGroup* ordergroup = GetOrderGroup();
+	for (TScriptInterface<IRTSObjectInterface> unit : AssignedUnits)
+	{
+		unit->IssueOrder(ordergroup->GetOrderIssuer(), ordergroup->GetOrderContext(), this);
+	}
+	return true;
 }
 
 void URTSOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const

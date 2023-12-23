@@ -276,10 +276,9 @@ void ARTSAIController::SetActiveOrder(URTSOrder* InOrder)
 {
 	if (InOrder != nullptr)
 	{
-		if (IsValid(OrderGroupKey) && (InOrder->GetOrderGroup() != OrderGroupKey->GetOrderGroup()))
+		if (IsValid(OrderGroupKey) && (InOrder != OrderGroupKey))
 		{
-			URTSOrderGroup* ordergroup = OrderGroupKey->GetOrderGroup();
-			ordergroup->DeregisterUnit(TScriptInterface<IRTSObjectInterface>(GetPawn()), OrderGroupKey);
+			OrderGroupKey->DeRegisterUnit(TScriptInterface<IRTSObjectInterface>(GetPawn()));
 			OrderGroupKey = nullptr;
 		}
 
@@ -302,8 +301,7 @@ void ARTSAIController::OnUnitDeath(TScriptInterface<IRTSObjectInterface> InUnit)
 {
 	if (IsValid(OrderGroupKey))
 	{
-		URTSOrderGroup* ordergroup = OrderGroupKey->GetOrderGroup();
-		ordergroup->DeregisterUnit(InUnit, OrderGroupKey);
+		OrderGroupKey->DeRegisterUnit(TScriptInterface<IRTSObjectInterface>(GetPawn()));
 		OrderGroupKey = nullptr;
 	}
 }
