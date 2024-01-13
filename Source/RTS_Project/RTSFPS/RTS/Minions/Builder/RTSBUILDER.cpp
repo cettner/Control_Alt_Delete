@@ -122,7 +122,7 @@ bool ARTSBUILDER::ExtractResource(AMineableResource* Node)
 			actualpull = MineAmount;
 		}
 		const uint32 minedresource = Node->Mine(actualpull);
-		AddResource(resourceclass, actualpull);
+		AddResource(resourceclass, minedresource);
 		retval = (actualpull > 0U);
 	}
 
