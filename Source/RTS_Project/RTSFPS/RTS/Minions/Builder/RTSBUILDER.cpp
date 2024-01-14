@@ -74,6 +74,16 @@ const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FHi
 	return retval;
 }
 
+void ARTSBUILDER::OnDeath()
+{
+	if (IsMining())
+	{
+		StopMining();
+	}
+
+	Super::OnDeath();
+}
+
 void ARTSBUILDER::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -82,7 +92,7 @@ void ARTSBUILDER::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 
 bool ARTSBUILDER::IsMining() const
 {
-	return(bIsMining && IsAlive());
+	return bIsMining;
 }
 
 void ARTSBUILDER::MineResource()
