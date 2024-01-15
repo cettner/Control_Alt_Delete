@@ -23,7 +23,7 @@ bool ARTSBUILDER::DeliverResources(ARTSStructure* Structure)
 {
 	if (Structure == nullptr) return false;
 
-	bool retval = Structure->ScoreResource(this);
+	const bool retval = Structure->ScoreResource(this);
 
 	return(retval);
 }
@@ -32,7 +32,7 @@ void ARTSBUILDER::StartMining(AMineableResource * Node)
 {
 	/*Start the cooldown based off of current cooldown rate*/
 	GetWorldTimerManager().SetTimer(MineHandler, this, &ARTSBUILDER::MineResource, 1.0, true, MineInterval);
-	NodeDestroyedHandle = Node->OnResourceDestroyedDelegate.AddUFunction(this, "OnResourceNodeDepleted"); 
+	NodeDestroyedHandle = Node->OnResourceDestroyedDelegate.AddUObject(this, &ARTSBUILDER::OnResourceNodeDepleted);
 	bIsMining = true;
 }
 
