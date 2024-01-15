@@ -75,11 +75,7 @@ void UAbility::SetIsAbilityEnabled(const bool InEnabledState)
 	if (HasAuthority() && (bIsAbilityEnabled != InEnabledState))
 	{
 		bIsAbilityEnabled = InEnabledState;
-
-		if (GetNetMode() == ENetMode::NM_DedicatedServer)
-		{
-			OnRep_bIsAbilityEnabled();
-		}
+		OnRep_bIsAbilityEnabled();
 	}
 }
 
