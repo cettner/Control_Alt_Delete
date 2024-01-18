@@ -49,21 +49,27 @@ Unit selections are captured in the unit selection pane, which provides quick ac
 
 ### **FPS Systems**
 
+#### **Ability System**
+Any action performed with a weapon in the game is considered an ability, abilities can have a blend aggressive, defensive, or even logistical benefits in nature.  Depending on the equipped weapon many abilities may be executed independently of each other. 
+
 #### **Weapon System**
-All Commanders are instatiated with several weapons that each contain a small number of default abilities.  The Commander may spend talent points over the course of the game to aquire to grow additional abilities or empower/extend existing ones.  Weapons may be switched between at any time, but require a small delay when be equipped/unequipped.  
+All Commanders are instatiated with several weapons that each contain a small number of default abilities.  The Commander may spend talent points over the course of the game to aquire to grow additional abilities or empower/extend existing ones.  Weapons may be switched between at any time, but require a small delay before an ability may be used when being equipped/unequipped. 
+
+<img src ="./Docs/Gifs/FPSWeaponSwitch.gif" alt="FPSWeaponSwitchGif" height="420">
 
 ##### **Mage Hands**
+The "mage" playstyle / weapon type involves casting various spells and abilties in either the right, left or both hands. Each of these abilites pull from the mana pool on use.
+
 <img src ="./Docs/Gifs/FPSFireball.gif" alt="FireballGif" height="420">
 
 ##### **BroadSword**
+The Broadsword serves as the Melee Weapon Archtype, allowing for damage to be dealt at close range.  Given its lack of range, basic melee attacks do not consume mana on use.
 
-#### **Ability System**
-Any action performed with a weapon in the game is considered an ability, abilities can have a blend aggressive, defensive, or even logistical benefits in nature.  Depending on the weapon many abilities have be executed independently of each other.  
 
 #### **Experiance System**
 
 ### **Shared Systems**
-#### **Skill System**
+#### **Upgrade System**
 Both playtype utilizes skill trees as means of progressing either themselves individually or the team globally.  The primary goal of the codebase is to make adding upgrades to the game as simple as possible while being able to effect a variety of object. In order to achieve this, an upgradable interface was contructed, allowing modification of gameplay objects in an easy and controllable manner.  One need only create a single class, implement what the upgrade does, and specify a target class or classes for the upgrade to effect.  Even the UI and associated tooltip are generalized to make additions to the game as simple as possible.   
 <img src ="./Docs/Gifs/FPSSkillTree.gif" alt="SkillGif" height="420">
 
