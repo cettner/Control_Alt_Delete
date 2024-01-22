@@ -4,3 +4,8 @@
 
 #include "CoreMinimal.h"
 
+class RTS_PROJECT_API FRTSModule : public IModuleInterface
+{
+	virtual void StartupModule() override;
+	virtual void ShutdownModule() override;
+};

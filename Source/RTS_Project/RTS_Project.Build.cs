@@ -27,7 +27,8 @@ public class RTS_Project : ModuleRules
             "OnlineSubsystemNull",
             "OnlineSubsystemSteam",
             "ProceduralMeshComponent",
-            "Niagara"
+            "Niagara",
+            "GameplayDebugger",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

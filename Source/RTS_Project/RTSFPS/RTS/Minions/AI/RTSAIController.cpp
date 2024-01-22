@@ -5,6 +5,7 @@
 #include "RTS_Project/RTSFPS/FPS/Commander.h"
 #include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/Navigation/FlowFieldFollowingComponent.h"
+#include "Navigation/BoidPathFollowingComponent.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
@@ -23,6 +24,7 @@ ARTSAIController::ARTSAIController(const FObjectInitializer& ObjectInitializer) 
 	PerceptionComp = CreateDefaultSubobject<URTSAIPerceptionComponent>(TEXT("PerceptionComp"));
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
+	SetPathFollowingComponent(CreateDefaultSubobject<UBoidPathFollowingComponent>(TEXT("PathFollowingComp")));
 	SetPerceptionComponent(*PerceptionComp);
 
 	SightConfig->SightRadius = DefaultPerceptionConfig.SightRadius;
