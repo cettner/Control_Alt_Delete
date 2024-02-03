@@ -25,12 +25,29 @@ public:
 
 protected:
 	const TArray<ARTSMinion*> GetNeighboringBoids() const;
-	bool ShouldSeperateFrom(ARTSMinion* InAgent, float& outdistsquared) const;
-	bool ShouldSeperateFrom(ARTSMinion* InAgent) const;
+	const TSet<ARTSMinion*> GetObstacleBoids() const;
+	const TSet<ARTSMinion*> GetFlockingBoids() const;
+
+	bool IsFlockMember(const ARTSMinion* InAgent) const;
+	bool IsObstacleBoid(const ARTSMinion* InAgent) const;
+
+	FORCEINLINE bool IsGoalActor(const AActor* InActor) const
+	{
+		bool retval = false;
+		if (Path.IsValid() && IsValid(InActor))
+		{
+			retval = InActor == Path.Get()->GetGoalActor();
+			return retval;
+		}
+		return retval;
+	}
 	FORCEINLINE FVector GetSeperationForce() const { return SeperationForce; }
 	FORCEINLINE FVector GetGoalForce() const { return GoalForce; }
 	FORCEINLINE FVector GetBoidForce() const { return BoidForce; }
-	FVector CalculateSeperationForce(const TArray<ARTSMinion*>& InAvoidAgents) const;
+	FORCEINLINE FVector GetAlignmentForce() const { return AlignmentForce; }
+
+	FVector CalculateSeperationForce(const TSet<ARTSMinion*>& InAvoidAgents) const;
+	FVector CalculateAlignmentForce(const TSet<ARTSMinion*>& InFlockAgents) const;
 	FVector CalculateGoalForce() const;
 	FVector CalculateBoidForce() const;
 
@@ -50,11 +67,15 @@ public:
 public:
 	FVector BoidForce = FVector::ZeroVector;
 	FVector SeperationForce = FVector::ZeroVector;
+	FVector AlignmentForce = FVector::ZeroVector;
 	FVector GoalForce = FVector::ZeroVector;
+
+
 	float MaxSeperationForceDistance = 200.0f;
 
 	float GoalScaleFactor = 250.0f;
 	float SeperationFactor = .33f;
+	float AlignmentFactor = .5;
 
 protected:
 	float MaxSeperationForceDistSqrd;

@@ -274,6 +274,17 @@ void ARTSAIController::ClearOrders()
 	}
 }
 
+URTSOrderGroup* ARTSAIController::GetOrderGroup() const
+{
+	URTSOrderGroup* retval = nullptr;
+	if (IsValid(OrderGroupKey))
+	{
+		retval = OrderGroupKey->GetOrderGroup();
+	}
+
+	return retval;
+}
+
 void ARTSAIController::SetActiveOrder(URTSOrder* InOrder)
 {
 	if (InOrder != nullptr)

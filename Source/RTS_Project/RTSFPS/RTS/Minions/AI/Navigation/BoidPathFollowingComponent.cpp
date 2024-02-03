@@ -11,57 +11,120 @@ UBoidPathFollowingComponent::UBoidPathFollowingComponent()
 	MaxSeperationForceDistSqrd = FMath::Square(MaxSeperationForceDistance);
 }
 
-
 const TArray<ARTSMinion*> UBoidPathFollowingComponent::GetNeighboringBoids() const
 {
 	TArray<ARTSMinion*> retval = TArray<ARTSMinion*>();
 	TArray<AActor*> actors = TArray<AActor*>();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARTSMinion::StaticClass(), actors);
 
+
 	for (int i = 0; i < actors.Num(); i++)
 	{
 		/*Make sure we dont include ourselves*/
 		if (actors[i] != MovementComp->GetOwner())
 		{
-			retval.Emplace(CastChecked<ARTSMinion>(actors[i]));
+			ARTSMinion * minion = CastChecked<ARTSMinion>(actors[i]);
+			retval.Emplace(minion);
 		}
 	}
 
 	return retval;
 }
 
-bool UBoidPathFollowingComponent::ShouldSeperateFrom(ARTSMinion* InAgent, float& outdistsquared) const
+const TSet<ARTSMinion*> UBoidPathFollowingComponent::GetObstacleBoids() const
 {
-	bool retval = false;
-	const FVector myagentlocation = MovementComp->GetOwner<INavAgentInterface>()->GetNavAgentLocation();
-	const FVector otheragentlocation = InAgent->GetNavAgentLocation();
+    TSet<ARTSMinion*> retval = TSet<ARTSMinion*>();
+	const TArray<ARTSMinion*> neighbors = GetNeighboringBoids();
+	const TSet<ARTSMinion*> flock = GetFlockingBoids();
 
-	outdistsquared = FVector::DistSquared(myagentlocation, otheragentlocation);
-	if(outdistsquared <= MaxSeperationForceDistSqrd)
+	for (int i = 0; i < neighbors.Num(); i++)
 	{
-		retval = true;
+		if (!IsGoalActor(neighbors[i]))
+		{
+			if (!flock.Contains(neighbors[i]))
+			{
+				retval.Emplace(neighbors[i]);
+			}
+			else if (flock.Contains(neighbors[i]) && (neighbors[i]->GetVelocity() == FVector::ZeroVector))
+			{
+				retval.Emplace(neighbors[i]);
+			}
+		}
+
 	}
 
-	return true;
+	return retval;
 }
 
-bool UBoidPathFollowingComponent::ShouldSeperateFrom(ARTSMinion* InAgent) const
+const TSet<ARTSMinion*> UBoidPathFollowingComponent::GetFlockingBoids() const
 {
-	float throwaway = 0.0f;
-	return ShouldSeperateFrom(InAgent,throwaway);
+	TSet<ARTSMinion*> retval = TSet<ARTSMinion*>();
+	ARTSAIController * aic = GetOwner<ARTSAIController>();
+
+	if (const URTSOrderGroup * ordergroup = aic->GetOrderGroup())
+	{
+		for (TScriptInterface<IRTSObjectInterface> object : ordergroup->GetAllActiveUnits())
+		{
+			if (ARTSMinion * minion = Cast<ARTSMinion>(object.GetObject()))
+			{
+				/*Skip ourselves*/
+				if (minion != MovementComp->GetOwner<ARTSMinion>())
+				{
+					retval.Emplace(minion);
+				}
+			}
+		}
+	}
+
+	return retval;
 }
 
-FVector UBoidPathFollowingComponent::CalculateSeperationForce(const TArray<ARTSMinion*>& InAvoidAgents) const
+bool UBoidPathFollowingComponent::IsFlockMember(const ARTSMinion* InAgent) const
+{
+	return GetFlockingBoids().Contains(InAgent);
+}
+
+bool UBoidPathFollowingComponent::IsObstacleBoid(const ARTSMinion* InAgent) const
+{
+	return GetObstacleBoids().Contains(InAgent);
+}
+
+FVector UBoidPathFollowingComponent::CalculateSeperationForce(const TSet<ARTSMinion*>& InAvoidAgents) const
 {
 	FVector retval = FVector::ZeroVector;
+	const FVector myagentlocation = MovementComp->GetOwner<INavAgentInterface>()->GetNavAgentLocation();
 
-	for (int i = 0; i < InAvoidAgents.Num(); i++)
+	for (const ARTSMinion* agent : InAvoidAgents)
 	{
-		float distancescaling = 0.0f;
-		if (ShouldSeperateFrom(InAvoidAgents[i], distancescaling))
+		const FVector otheragentlocation = agent->GetNavAgentLocation();
+		const float distancescaling = FVector::DistSquared(myagentlocation, otheragentlocation);
+		if (distancescaling > 0.0f)
 		{
-			retval += (MovementComp->GetActorFeetLocation() - InAvoidAgents[i]->GetNavAgentLocation()) * (MaxSeperationForceDistSqrd / distancescaling);
+			retval += (MovementComp->GetActorFeetLocation() - agent->GetNavAgentLocation()) * (MaxSeperationForceDistSqrd / distancescaling);
 		}
+	}
+
+	return retval;
+}
+
+FVector UBoidPathFollowingComponent::CalculateAlignmentForce(const TSet<ARTSMinion*>& InFlockAgents) const
+{
+	FVector retval = FVector::ZeroVector;
+	int32 contributionnumber = 0;
+
+	for (const ARTSMinion* minion : InFlockAgents)
+	{
+		const FVector velocity = minion->GetVelocity();
+		if (velocity != FVector::ZeroVector)
+		{
+			retval += velocity;
+			contributionnumber++;
+		}
+	}
+
+	if (contributionnumber > 0)
+	{
+		retval /= contributionnumber;
 	}
 
 	return retval;
@@ -100,7 +163,7 @@ FVector UBoidPathFollowingComponent::CalculateGoalForce() const
 
 FVector UBoidPathFollowingComponent::CalculateBoidForce() const
 {
-	return SeperationForce + GoalForce;
+	return SeperationForce + GoalForce + AlignmentForce;
 }
 
 void UBoidPathFollowingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -123,8 +186,12 @@ void UBoidPathFollowingComponent::UpdatePathSegment()
 	if (Status == EPathFollowingStatus::Moving)
 	{
 		const TArray<ARTSMinion*> boidneighbors = GetNeighboringBoids();
+		const TSet<ARTSMinion*> flock = GetFlockingBoids();
+		const TSet<ARTSMinion*> obstacles = GetObstacleBoids();
+
 		GoalForce = CalculateGoalForce() * GoalScaleFactor;
-		SeperationForce = CalculateSeperationForce(boidneighbors) * SeperationFactor;
+		SeperationForce = CalculateSeperationForce(obstacles) * SeperationFactor;
+		AlignmentForce = CalculateAlignmentForce(flock) * AlignmentFactor;
 
 		if (SeperationForce.SquaredLength() > GoalForce.SquaredLength())
 		{
@@ -173,18 +240,20 @@ void UBoidPathFollowingComponent::DescribeSelfToGameplayDebugger(FGameplayDebugg
 {
 	const TArray<ARTSMinion*> neighbors = GetNeighboringBoids();
 	const FVector agentlocation = MovementComp->GetActorFeetLocation();
-	const FVector serperationforce = GetSeperationForce();
-	const FVector goalforce = GetGoalForce();
 
-	InDebug->ForceMap.Emplace("Seperation", serperationforce);
-	InDebug->ForceMap.Emplace("Goal", goalforce);
+	InDebug->ForceMap.Emplace("Seperation", GetSeperationForce());
+	InDebug->ForceMap.Emplace("Goal", GetGoalForce());
 	InDebug->ForceMap.Emplace("Boid", GetBoidForce());
-
+	InDebug->ForceMap.Emplace("Alignment", GetAlignmentForce());
 
 	for (int i = 0; i < neighbors.Num(); i++)
 	{
 		FColor boidlinecolor = FColor::Blue;
-		if (ShouldSeperateFrom(neighbors[i]))
+		if (IsFlockMember(neighbors[i]))
+		{
+			boidlinecolor = FColor::Green;
+		}
+		else if (IsObstacleBoid(neighbors[i]))
 		{
 			boidlinecolor = FColor::Red;
 		}
@@ -201,10 +270,17 @@ void UBoidPathFollowingComponent::DescribeSelfToGameplayDebugger(FGameplayDebugg
 			InDebug->AddShape(FGameplayDebuggerShape::MakeArrow(agentlocation, agentlocation + SeperationForce, 6.0f, 6.0f, FColor::Red));
 		}
 
+		if (AlignmentForce != FVector::ZeroVector)
+		{
+			InDebug->AddShape(FGameplayDebuggerShape::MakeArrow(agentlocation, agentlocation + AlignmentForce, 6.0f, 6.0f, FColor::Magenta));
+		}
+
 		if (BoidForce != FVector::ZeroVector)
 		{
 			InDebug->AddShape(FGameplayDebuggerShape::MakeArrow(agentlocation, agentlocation + BoidForce, 6.0f, 6.0f, FColor::Yellow));
 		}
+
+
 	}
 
 }

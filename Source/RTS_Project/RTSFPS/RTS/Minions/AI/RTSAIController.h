@@ -71,6 +71,7 @@ public:
 	bool IsAbortingTask() const;
 
 public:
+	virtual URTSOrderGroup* GetOrderGroup() const;
 	virtual URTSOrder* GetActiveOrder() const;
 	virtual void SetActiveOrder(URTSOrder* InOrder);
 
@@ -134,5 +135,6 @@ protected:
 	int NumOrders = 0;
 
 	/*The Last Issued Order*/
+	UPROPERTY()
 	URTSOrder * OrderGroupKey = nullptr;
 };

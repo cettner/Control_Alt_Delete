@@ -10,6 +10,11 @@ TArray<TScriptInterface<IRTSObjectInterface>> URTSOrderGroup::GetAllActiveUnits(
 {
 	TArray<TScriptInterface<IRTSObjectInterface>> retval = TArray<TScriptInterface<IRTSObjectInterface>>();
 
+	for (const URTSOrder* order : OrderMapping)
+	{
+		retval.Append(order->AssignedUnits);
+	}
+
 	return retval;
 }
 

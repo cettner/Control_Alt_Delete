@@ -16,7 +16,16 @@ class RTS_PROJECT_API ABoidNavMeshBounds : public ANavMeshBoundsVolume
 {
 	GENERATED_BODY()
 
+
+public:
+	ABoidNavMeshBounds();
+
+protected:
 	virtual void BuildPartitions();
+
+
+protected:
+	virtual void OnConstruction(const FTransform& Transform);
 
 protected:
 	UPROPERTY(EditAnyWhere, Category = "Navigation")
