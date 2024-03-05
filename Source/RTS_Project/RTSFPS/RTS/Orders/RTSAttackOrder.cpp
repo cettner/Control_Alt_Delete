@@ -3,12 +3,8 @@
 
 #include "RTSAttackOrder.h"
 
-void URTSAttackOrder::SetTargetContext(const FHitResult& InContext)
-{
-	Target = InContext.GetActor();
-}
-
 void URTSAttackOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
 {
-	InBlackBoard->SetValueAsObject("Target", Target.GetObject());
+	const FOrderContext& ordercontext = GetOrderGroup()->GetOrderContext();
+	InBlackBoard->SetValueAsObject("Target", Cast<AActor>(ordercontext.GetRTSContext()));
 }

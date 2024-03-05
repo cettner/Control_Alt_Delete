@@ -67,7 +67,7 @@ const TArray<const URTSOrder*> IRTSObjectInterface::GetAvailableOrders() const
 	return TArray<const URTSOrder*>();
 }
 
-const TSubclassOf<URTSTargetedOrder> IRTSObjectInterface::GetDefaultOrderClass(const FHitResult& InHitContext) const
+const TSubclassOf<URTSTargetedOrder> IRTSObjectInterface::GetDefaultOrderClass(const FOrderContext& InHitContext) const
 {
 	return nullptr;
 }
@@ -122,7 +122,7 @@ FName IRTSObjectInterface::GetUnitName() const
 	return FName();
 }
 
-void IRTSObjectInterface::IssueOrder(AController * InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
+void IRTSObjectInterface::IssueOrder(AController * InIssuer, const FOrderContext& InHitContext, URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
 {
 
 }

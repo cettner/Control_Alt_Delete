@@ -5,6 +5,12 @@
 #include "../../Shared/Interfaces/RTSObjectInterface.h"
 #include "RTSOrderGroup.h"
 
+#include "EnvironmentQuery/EnvQueryManager.h"
+
+URTSOrder::URTSOrder() : Super()
+{
+}
+
 TArray<TScriptInterface<IRTSObjectInterface>> URTSOrder::GetBestMinionsForOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InMinionSet, const FHitResult& InTarget) const
 {
 	const int applicationcount = GetApplicationCount();
@@ -13,7 +19,6 @@ TArray<TScriptInterface<IRTSObjectInterface>> URTSOrder::GetBestMinionsForOrder(
 
 
 	/*Determine if the number of units ordered needs to be an exact amount or specific unit*/
-	int iterationcount = -1;
 	if (UsesExactApplicationCount() && canapplytocount)
 	{
 		for (int i = 0; i < applicationcount; i++)
@@ -42,6 +47,21 @@ uint32 URTSOrder::GetOrderID() const
 		retval = OrderGroup->GetOrderID();
 	}
 	return retval;
+}
+
+void URTSOrder::InitializeOrder(URTSOrderGroup* InOrderGroup)
+{
+	checkf(InOrderGroup, TEXT("URTSOrder::InitializeOrder OrderGroup was null"));
+	OrderGroup = InOrderGroup;
+	InitOrderContext(InOrderGroup->GetOrderContext());
+	if (GetQueryForContext().Get() != nullptr)
+	{
+		StartOrderQuery();
+	}
+}
+
+void URTSOrder::InitOrderContext(const FOrderContext& InContext)
+{
 }
 
 void URTSOrder::InitRegistration(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits)
@@ -74,6 +94,42 @@ bool URTSOrder::IssueOrder()
 		unit->IssueOrder(ordergroup->GetOrderIssuer(), ordergroup->GetOrderContext(), this);
 	}
 	return true;
+}
+
+bool URTSOrder::StartOrderQuery()
+{
+	ActiveQuery = GetQueryForContext();
+	PendingQueryDelegate = GetOrderGroup()->RequestStartQuery(ActiveQuery, this);
+
+	return PendingQueryDelegate != nullptr;
+}
+
+bool URTSOrder::IsQueryResultAvailable() const
+{
+	return false;
+}
+
+bool URTSOrder::StartQuery(const TSubclassOf<UEnvQuery>& InTemplate, bool bInvalidateExistingResults)
+{
+	return false;
+}
+
+void URTSOrder::OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult)
+{
+	checkf(ActiveQuery, TEXT("URTSOrder::OnOrderQueryComplete, NoActiveQueryFound"))
+	URTSOrderGroup* ordergroup = GetOrderGroup();
+	ordergroup->AddOrderQueryResult(GetActiveQuery(), InResult);
+	ActiveQuery = nullptr;
+}
+
+TObjectPtr<UEnvQuery> URTSOrder::GetActiveQuery() const
+{
+	return ActiveQuery;
+}
+
+TObjectPtr<UEnvQuery> URTSOrder::GetQueryForContext() const
+{
+	return OrderQuery;
 }
 
 void URTSOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const

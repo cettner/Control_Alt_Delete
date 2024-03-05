@@ -50,7 +50,6 @@ const TSet<ARTSMinion*> UBoidPathFollowingComponent::GetObstacleBoids() const
 				retval.Emplace(neighbors[i]);
 			}
 		}
-
 	}
 
 	return retval;
@@ -249,13 +248,13 @@ void UBoidPathFollowingComponent::DescribeSelfToGameplayDebugger(FGameplayDebugg
 	for (int i = 0; i < neighbors.Num(); i++)
 	{
 		FColor boidlinecolor = FColor::Blue;
-		if (IsFlockMember(neighbors[i]))
-		{
-			boidlinecolor = FColor::Green;
-		}
-		else if (IsObstacleBoid(neighbors[i]))
+		if (IsObstacleBoid(neighbors[i]))
 		{
 			boidlinecolor = FColor::Red;
+		}
+		else if (IsFlockMember(neighbors[i]))
+		{
+			boidlinecolor = FColor::Green;
 		}
 
 		InDebug->AddShape(FGameplayDebuggerShape::MakeSegment(agentlocation, neighbors[i]->GetNavAgentLocation(), boidlinecolor));

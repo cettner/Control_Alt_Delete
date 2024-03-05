@@ -8,17 +8,16 @@ const FName URTSMineResourceOrder::ResourceClassKey = "ResourceClass";
 const FName URTSMineResourceOrder::LastMinedLocationKey = "LastMinedLocation";
 const FName URTSMineResourceOrder::ResourceDroppointKey = "ResourceDroppoint";
 
-void URTSMineResourceOrder::SetTargetContext(const FHitResult& InContext)
-{
-	AMineableResource* node = CastChecked<AMineableResource>(InContext.GetActor());
-	StartNode = TWeakObjectPtr<AMineableResource>(node);
-	StartNodeLocation = node->GetActorLocation();
-	ResourceClassToMine = node->GetResourceClass();
-}
-
 void URTSMineResourceOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
 {
-	InBlackBoard->SetValueAsObject(ResourceNodeKey, StartNode.Get()); 
-	InBlackBoard->SetValueAsObject(ResourceClassKey, ResourceClassToMine);
-	InBlackBoard->SetValueAsVector(LastMinedLocationKey, StartNodeLocation);
+	const FOrderContext& ordercontext = GetOrderGroup()->GetOrderContext();
+	AMineableResource* node = Cast<AMineableResource>(ordercontext.GetRTSContext());
+
+	InBlackBoard->SetValueAsObject(ResourceNodeKey, node);
+	if (node)
+	{
+		InBlackBoard->SetValueAsObject(ResourceClassKey, node->GetResourceClass());
+		InBlackBoard->SetValueAsVector(LastMinedLocationKey, ordercontext.GetContextPoint());
+	}
+
 }

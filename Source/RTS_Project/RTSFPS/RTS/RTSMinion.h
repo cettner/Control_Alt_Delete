@@ -36,6 +36,8 @@ public:
 
 	virtual bool IsEnemy(const AActor* InMinion) const;
 
+	virtual bool IsEnemy(const IRTSObjectInterface* InRTSObject) const;
+
 	virtual void ClearCommander();
 
 	virtual void SetCommander(ACommander* Commander);
@@ -95,8 +97,9 @@ public:
 	virtual bool IsBoxSelectable() const override;
 	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;
 	virtual FName GetUnitName() const override;
-	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
-	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder = nullptr, const bool InbIsQueuedOrder = false) override;
+	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FOrderContext& InHitContext) const override;
+	virtual void IssueOrder(AController* Issuer, const FOrderContext& InHitContext, URTSOrder* InOrder = nullptr, const bool InbIsQueuedOrder = false) override;
+	virtual URTSOrder* GetCurrentOrder() const override;
 	virtual float GetMinionStrayDistance() const override;
 
 protected:

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "../../RTS/Orders/RTSOrderGroup.h"
 #include "../../RTS/Orders/RTSTargetedOrder.h"
 #include "../../RTS/UI/Properties/RTSPropertyContainer.h"
 #include "RTSObjectInterface.generated.h"
@@ -42,9 +43,9 @@ public:
 	virtual bool IsOrderablebyController(const AController * InController) const;
 	virtual bool CanCompleteOrder(const URTSOrder* InOrder) const;
 	virtual const TArray<const URTSOrder*> GetAvailableOrders() const;
-	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const;
+	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FOrderContext& InHitContext) const;
 	
-	virtual void IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
+	virtual void IssueOrder(AController* Issuer, const FOrderContext& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false);
 
 	virtual const URTSOrder* GetCurrentOrder() const;
 	virtual TArray<const URTSOrder*> GetAllIssuedOrders() const;

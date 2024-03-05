@@ -182,7 +182,7 @@ void ACommander::OnDeath()
 	Super::OnDeath();
 }
 
-void ACommander::IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
+void ACommander::IssueOrder(AController* Issuer, const FOrderContext& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
 {
 	/*TODO:: Add waypoint highlighting for incoming order*/
 }

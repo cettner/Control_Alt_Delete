@@ -6,6 +6,8 @@
 #include "RTSOrderManager.h"
 #include "../../Shared/Interfaces/RTSObjectInterface.h"
 
+#include "EnvironmentQuery/EnvQueryManager.h"
+
 TArray<TScriptInterface<IRTSObjectInterface>> URTSOrderGroup::GetAllActiveUnits() const
 {
 	TArray<TScriptInterface<IRTSObjectInterface>> retval = TArray<TScriptInterface<IRTSObjectInterface>>();
@@ -27,8 +29,9 @@ bool URTSOrderGroup::InitalizeOrderGroup(const uint32 InID, const TArray<TScript
 {
 	const int32 unitcount = InUnits.Num();
 	int32 ordercount = 0;
+	OrderContext = ReadyOrderContext(InHitContext);
 
-	if (unitcount == 0) return false;
+	if (unitcount == 0  || !OrderContext.IsValid()) return false;
 
 	OrderIssuer = Issuer;
 	OrderID = InID;
@@ -38,7 +41,7 @@ bool URTSOrderGroup::InitalizeOrderGroup(const uint32 InID, const TArray<TScript
 	{
 		if (IsValid(InUnits[i].GetObject()))
 		{
-			const TSubclassOf<URTSTargetedOrder> defaultorder = InUnits[i]->GetDefaultOrderClass(InHitContext);
+			const TSubclassOf<URTSTargetedOrder> defaultorder = InUnits[i]->GetDefaultOrderClass(OrderContext);
 			/*This can return null if the unit has nothing to do for the given context*/
 			if (defaultorder != nullptr)
 			{
@@ -54,7 +57,7 @@ bool URTSOrderGroup::InitalizeOrderGroup(const uint32 InID, const TArray<TScript
 	for (int i = 0; i < keys.Num(); i++)
 	{
 		outunits.Reset();
-		URTSOrder * ordertoissue = CreateTargetOrder(keys[i], InHitContext);
+		URTSOrder * ordertoissue = CreateTargetOrder(keys[i]);
 		ordermap.MultiFind(keys[i], outunits);
 		ordertoissue->InitRegistration(outunits);
 		ordercount += ordertoissue->GetUnitCount();
@@ -62,6 +65,17 @@ bool URTSOrderGroup::InitalizeOrderGroup(const uint32 InID, const TArray<TScript
 	}
 
 	const bool retval = unitcount == ordercount;
+	return retval;
+}
+
+FOrderContext URTSOrderGroup::ReadyOrderContext(const FHitResult& InHitContext)
+{
+	FOrderContext retval = FOrderContext();
+	retval.ContextActor = Cast<IRTSObjectInterface>(InHitContext.GetActor());
+	retval.OriginalContextHitPoint = InHitContext.Location;
+	retval.LastValidOrderPoint = InHitContext.Location;
+	retval.bIsValid = InHitContext.bBlockingHit;
+
 	return retval;
 }
 
@@ -79,16 +93,67 @@ bool URTSOrderGroup::IssueAllOrders()
 	return bIsIssued;
 }
 
-bool URTSOrderGroup::MatchingContext(const FHitResult& InHitContext, const AController* InController) const
+bool URTSOrderGroup::AreQueryResultsAvailable(const TObjectPtr<UEnvQuery>& InTemplate) const
 {
-	return false;
+	const bool retval = QueryMapping.Find(InTemplate) != nullptr;
+	return retval;
 }
 
-URTSTargetedOrder* URTSOrderGroup::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder>& OrderClass, const FHitResult& InHitContext)
+FQueryFinishedSignature* URTSOrderGroup::IsQueryPending(const TObjectPtr<UEnvQuery>& InTemplate)
+{
+	FQueryFinishedSignature * retval = PendingQueries.Find(InTemplate);
+	return retval;
+}
+
+FQueryFinishedSignature* URTSOrderGroup::RequestStartQuery(const TObjectPtr<UEnvQuery>& InTemplate, URTSOrder* RequestingOrder)
+{
+	FQueryFinishedSignature* retval = nullptr;
+	if (FQueryFinishedSignature* pendingsignature = IsQueryPending(InTemplate))
+	{
+		retval = pendingsignature;
+	}
+	else
+	{
+		FEnvQueryRequest queryrequest = FEnvQueryRequest(InTemplate, RequestingOrder);
+		FQueryFinishedSignature& outsignature = PendingQueries.Emplace(InTemplate, FQueryFinishedSignature());
+		outsignature.BindUObject(RequestingOrder, &URTSOrder::OnOrderQueryComplete);
+
+		if (queryrequest.Execute(EEnvQueryRunMode::AllMatching, outsignature) > INDEX_NONE)
+		{
+			retval = &outsignature;
+		}
+	}
+
+	return retval;
+}
+
+const TSharedPtr<FEnvQueryResult> URTSOrderGroup::GetQueryResults(const TObjectPtr<UEnvQuery>& InTemplate) const
+{
+	TSharedPtr<FEnvQueryResult> retval = TSharedPtr<FEnvQueryResult>();
+
+	if (const TSharedPtr<FEnvQueryResult>* foundptr = QueryMapping.Find(InTemplate))
+	{
+		retval = *foundptr;
+	}
+
+	return retval;
+}
+
+void URTSOrderGroup::AddOrderQueryResult(const TObjectPtr<UEnvQuery>& InQueryClass, const TSharedPtr<FEnvQueryResult>& InResult)
+{
+	if (FQueryFinishedSignature* querycompletedelegate = PendingQueries.Find(InQueryClass))
+	{
+		querycompletedelegate->Unbind();
+		PendingQueries.Remove(InQueryClass);
+	}
+
+	QueryMapping.Emplace(InQueryClass, InResult);
+}
+
+URTSTargetedOrder* URTSOrderGroup::CreateTargetOrder(const TSubclassOf<URTSTargetedOrder>& OrderClass)
 {
 	URTSTargetedOrder* retval = NewObject<URTSTargetedOrder>(this, OrderClass);
-	retval->SetTargetContext(InHitContext);
-	retval->SetOrderGroup(this);
+	retval->InitializeOrder(this);
 	retval->OrderAbandonedDelegate.AddUObject(this, &URTSOrderGroup::OnOrderAbandoned);
 	return retval;
 }
@@ -103,7 +168,20 @@ void URTSOrderGroup::OnOrderAbandoned(URTSOrder* AbandonedOrder)
 	}
 }
 
-void URTSOrderGroup::BeginDestroy()
+FVector FOrderContext::GetContextPoint() const
 {
-	Super::BeginDestroy();
+	FVector retval = FVector();
+	if (IRTSObjectInterface* rtsobject = GetRTSContext())
+	{
+		retval = CastChecked<AActor>(rtsobject)->GetActorLocation();
+	}
+	else if (LastValidOrderPoint != FVector())
+	{
+		retval = LastValidOrderPoint;
+	}
+	else
+	{
+		retval = OriginalContextHitPoint;
+	}
+	return retval;
 }

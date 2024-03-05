@@ -42,7 +42,7 @@ protected:
 	virtual AMineableResource* GetTargetResource() const;
 
 protected:
-	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FHitResult& InHitContext) const override;
+	virtual const TSubclassOf<URTSTargetedOrder> GetDefaultOrderClass(const FOrderContext& InHitContext) const override;
 	virtual void OnDeath() override;
 
 protected:

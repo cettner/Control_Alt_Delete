@@ -13,6 +13,7 @@
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/EQS/Interface/QueryBoundsInterface.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/GridAttachmentActor.h"
 #include "Interfaces/BuildableInterface.h"
+#include "StructureBoundsComponent.h"
 
 #include "AI/Navigation/NavRelevantInterface.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -75,7 +76,7 @@ public:
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
 	virtual TArray<URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
-	virtual void IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
+	virtual void IssueOrder(AController* InIssuer, const FOrderContext& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
 	virtual bool IsLocalEnemy() const override;
 	virtual FOnUnitDeathDelegate& GetUnitDeathDelegate() override;
@@ -110,8 +111,7 @@ protected:
 
 	/*************************IQueryBoundsInterface***************************/
 public:
-	virtual bool IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context = nullptr) override;
-	virtual bool SupportsContext(const TSubclassOf<UEnvQueryContext>& Context) override;
+	virtual bool IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context = nullptr) const override;
 
 	/*************************************************************************/
 protected:
@@ -194,8 +194,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = Mesh)
 	USkeletalMeshComponent* MeshComp = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, Category = Navigation)
-	UBoxComponent* ResourceDropBounds = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category = Mesh)
+	UStructureBoundsComponent* BaseStructureBounds = nullptr;
 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_TeamID, EditAnywhere, Category = Gameplay)
@@ -228,6 +228,9 @@ protected:
 	float queuestatus = 0.0f;
 
 	TQueue<FStructureQueueData> StructureQueue;
+
+protected:
+	TArray<UStructureBoundsComponent*> StructureBounds = TArray<UStructureBoundsComponent*>();
 
 protected:
 	bool bIsLocalEnemy = false;

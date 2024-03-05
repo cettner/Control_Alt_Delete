@@ -23,7 +23,6 @@ class RTS_PROJECT_API IQueryBoundsInterface
 	GENERATED_BODY()
 
 public:
-	virtual bool IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context = nullptr);
-	virtual bool SupportsContext(const TSubclassOf<UEnvQueryContext>& Context);
+	virtual bool IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context = nullptr) const;
 
 };

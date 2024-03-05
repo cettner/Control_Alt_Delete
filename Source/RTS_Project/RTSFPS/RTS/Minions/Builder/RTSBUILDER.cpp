@@ -58,10 +58,10 @@ AMineableResource* ARTSBUILDER::GetTargetResource() const
 	return retval;
 }
 
-const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FHitResult& InHitContext) const
+const TSubclassOf<URTSTargetedOrder> ARTSBUILDER::GetDefaultOrderClass(const FOrderContext& InHitContext) const
 {
 	TSubclassOf<URTSTargetedOrder> retval = nullptr;
-	const AMineableResource* resource = Cast<AMineableResource>(InHitContext.GetActor());
+	const AMineableResource* resource = Cast<AMineableResource>(InHitContext.GetRTSContext());
 	if (IsValid(resource))
 	{
 		retval = MineOrderClass;

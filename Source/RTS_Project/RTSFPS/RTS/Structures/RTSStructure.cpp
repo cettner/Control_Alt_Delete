@@ -29,10 +29,8 @@ ARTSStructure::ARTSStructure() : Super()
 	DeathComp->OnDeathStart.BindUFunction(this, "OnDeath");
 	DeathComp->SetIsReplicated(true);
 
-	ResourceDropBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("ResourceDropBounds"));
-	ResourceDropBounds->SetupAttachment(RootComponent);
-	ResourceDropBounds->SetCanEverAffectNavigation(false);
-
+	BaseStructureBounds = CreateDefaultSubobject<UStructureBoundsComponent>(TEXT("StructureBounds"));
+	BaseStructureBounds->SetupAttachment(MeshComp);
 }
 
 void ARTSStructure::PostInitializeComponents()
@@ -156,28 +154,35 @@ const TMap<TSubclassOf<UObject>, FReplicationResourceMap> ARTSStructure::GetAllD
 	return gs->GetAllDefaultUnitPrices();
 }
 
-bool ARTSStructure::IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context)
+bool ARTSStructure::IsPointWithinContextBounds(const FVector& InPoint, const TSubclassOf<UEnvQueryContext>& Context) const
 {
-	FTransform BoxTransform = ResourceDropBounds->GetComponentTransform();
+	bool retval = false;
+	TArray<UStructureBoundsComponent*> structurebounds = TArray<UStructureBoundsComponent*>();
+	/*todo, make this a member variable rather than grabbing them all at runtime*/
+	GetComponents(UStructureBoundsComponent::StaticClass(), structurebounds);
 
-	// Invert the transform to get the local space of the box
-	FVector LocalPoint = BoxTransform.InverseTransformPosition(InPoint);
+	for (int i = 0; i < structurebounds.Num(); i++)
+	{
+		const FTransform BoxTransform = structurebounds[i]->GetComponentTransform();
 
-	// Get the box extent
-	FVector BoxExtent = ResourceDropBounds->GetScaledBoxExtent();
+		// Invert the transform to get the local space of the box
+		const FVector LocalPoint = BoxTransform.InverseTransformPosition(InPoint);
 
-	// Check if the point is within the box extent
-	bool bIsInside = FMath::Abs(LocalPoint.X) <= BoxExtent.X &&
-		FMath::Abs(LocalPoint.Y) <= BoxExtent.Y &&
-		FMath::Abs(LocalPoint.Z) <= BoxExtent.Z;
+		// Get the box extent
+		const FVector BoxExtent = structurebounds[i]->GetScaledBoxExtent();
 
+		// Check if the point is within the box extent
+		retval = FMath::Abs(LocalPoint.X) <= BoxExtent.X &&
+			FMath::Abs(LocalPoint.Y) <= BoxExtent.Y &&
+			FMath::Abs(LocalPoint.Z) <= BoxExtent.Z;
 
-	return bIsInside;
-}
+		if (retval == true)
+		{
+			break;
+		}
+	}
 
-bool ARTSStructure::SupportsContext(const TSubclassOf<UEnvQueryContext>& Context)
-{
-	return false;
+	return retval;
 }
 
 void ARTSStructure::OnDeath()
@@ -267,7 +272,7 @@ TArray<URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedPropert
 	return retval;
 }
 
-void ARTSStructure::IssueOrder(AController* InIssuer, const FHitResult& InHitContext, URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
+void ARTSStructure::IssueOrder(AController* InIssuer, const FOrderContext& InHitContext, URTSOrder* InOrderClass, const bool InbIsQueuedOrder)
 {
 	if (const URTSResourcePurchaseOrder* purchaseorder = Cast<URTSResourcePurchaseOrder>(InOrderClass))
 	{

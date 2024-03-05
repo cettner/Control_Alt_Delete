@@ -134,15 +134,21 @@ FName ARTSMinion::GetUnitName() const
 	return MinionName;
 }
 
-const TSubclassOf<URTSTargetedOrder> ARTSMinion::GetDefaultOrderClass(const FHitResult& InHitContext) const
+const TSubclassOf<URTSTargetedOrder> ARTSMinion::GetDefaultOrderClass(const FOrderContext& InHitContext) const
 {
 	return MoveOrderClass;
 }
 
-void ARTSMinion::IssueOrder(AController* Issuer, const FHitResult& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
+void ARTSMinion::IssueOrder(AController* Issuer, const FOrderContext& InHitContext, URTSOrder* InOrder, const bool InbIsQueuedOrder)
 {
 	ARTSAIController* rtscontrol = GetController<ARTSAIController>();
 	rtscontrol->SetActiveOrder(InOrder);
+}
+
+URTSOrder* ARTSMinion::GetCurrentOrder() const
+{
+	ARTSAIController* rtscontrol = GetController<ARTSAIController>();
+	return rtscontrol->GetActiveOrder();
 }
 
 float ARTSMinion::GetMinionStrayDistance() const
@@ -251,17 +257,26 @@ void ARTSMinion::OnNotifyReadyforRegistration(AGameStateBase* GameState)
 
 bool ARTSMinion::IsEnemy(const AActor* FriendOrFoe) const
 {
-	bool Enemy = false;
+	bool retval = false;
 	if (!IsValid(FriendOrFoe)) return false;
 
-	const IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(FriendOrFoe);
-
-	if (rtsobj && rtsobj->GetTeam() != this->GetTeam() && rtsobj->GetTeam() >= 0)
+	if (const IRTSObjectInterface* rtsobj = Cast<IRTSObjectInterface>(FriendOrFoe))
 	{
-		Enemy = true;
+		retval = IsEnemy(rtsobj);
 	}
 
-	return(Enemy);
+	return(retval);
+}
+
+bool ARTSMinion::IsEnemy(const IRTSObjectInterface* InRTSObject) const
+{
+	bool retval = false;
+	if (InRTSObject && InRTSObject->GetTeam() != this->GetTeam() && InRTSObject->GetTeam() >= 0)
+	{
+		retval = true;
+	}
+
+	return retval;
 }
 
 void ARTSMinion::SetSelected()

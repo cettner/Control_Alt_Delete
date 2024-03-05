@@ -187,10 +187,10 @@ bool ARTSScion::IsAttacking() const
 	return CurrentAttackIndex.Get() != CANT_ATTACK_INDEX;
 }
 
-const TSubclassOf<URTSTargetedOrder> ARTSScion::GetDefaultOrderClass(const FHitResult& InHitContext) const
+const TSubclassOf<URTSTargetedOrder> ARTSScion::GetDefaultOrderClass(const FOrderContext& InHitContext) const
 {
 	TSubclassOf<URTSTargetedOrder> retval = nullptr;
-	if (IsEnemy(InHitContext.GetActor()))
+	if (IsEnemy(InHitContext.GetRTSContext()))
 	{
 		retval = AttackOrderClass;
 	}

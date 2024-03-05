@@ -47,7 +47,7 @@ void ARTSPlayerController::IssueOrder(const TArray<TScriptInterface<IRTSObjectIn
 		{
 			if (IsValid(InUnits[i].GetObject()))
 			{
-				InUnits[i]->IssueOrder(this, InHitContext, InOrder, InbIsQueuedOrder);
+				//InUnits[i]->IssueOrder(this, InHitContext, InOrder, InbIsQueuedOrder);
 			}
 
 		}

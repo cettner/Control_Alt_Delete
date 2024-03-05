@@ -16,7 +16,6 @@ class RTS_PROJECT_API URTSAttackOrder : public URTSTargetedOrder
 
 public:
 	FORCEINLINE TScriptInterface<IRTSObjectInterface> GetTarget() const { return Target; }
-	virtual void SetTargetContext(const FHitResult& InContext) override;
 	virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const override;
 
 	protected:

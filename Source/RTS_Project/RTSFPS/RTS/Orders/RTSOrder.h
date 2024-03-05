@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "../UI/Properties/RTSActiveProperty.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "EnvironmentQuery/EnvQuery.h"
 
 #include "RTSOrder.generated.h"
 
@@ -25,6 +26,9 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOrderAbandonedDelegate, URTSOrder *);
 
 	public:
+		URTSOrder();
+
+	public:
 		FORCEINLINE int GetApplicationCount() const { return PropertyApplicationCount;}
 
 		FORCEINLINE bool UsesExactApplicationCount() const { return bUseExactApplicationCountOnly; }
@@ -38,17 +42,28 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 
 		virtual TArray<TScriptInterface<IRTSObjectInterface>> GetBestMinionsForOrder(const TArray<TScriptInterface<IRTSObjectInterface>>& InMinionSet, const FHitResult& InTarget = FHitResult()) const;
 
-		virtual URTSOrderGroup* GetOrderGroup() const;
+		virtual class URTSOrderGroup* GetOrderGroup() const;
 
-		uint32 GetOrderID() const;
+		uint32 GetOrderID() const; 
 
 		bool DeRegisterUnit(TScriptInterface<IRTSObjectInterface> InUnit);
 
 	protected:
-		void SetOrderGroup(URTSOrderGroup* InOrderGroup) { OrderGroup = InOrderGroup; }
+		void InitializeOrder(class URTSOrderGroup* InOrderGroup);
+		/*Called Before Unit Registration if valid context is provided to give the order some Initial Data Population*/
+		virtual void InitOrderContext(const struct FOrderContext& InContext);
 		void InitRegistration(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits);
 		void OnOrderAbandoned();
 		bool IssueOrder();
+
+	protected:
+		bool StartOrderQuery();
+		bool IsQueryResultAvailable() const;
+		bool StartQuery(const TSubclassOf<UEnvQuery>& InTemplate, bool bInvalidateExistingResults = false);
+		TObjectPtr<UEnvQuery> GetActiveQuery() const;
+		virtual TObjectPtr<UEnvQuery> GetQueryForContext() const;
+
+		virtual void OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult);
 
 	protected:
 		/*The number of units that will be exclusively ordered */
@@ -61,10 +76,17 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 		UPROPERTY(EditDefaultsOnly)
 		bool bUseDefaultOnFail = false;
 
+		UPROPERTY(EditDefaultsOnly)
+		TObjectPtr<UEnvQuery> OrderQuery = nullptr;
+
 	protected:
 		URTSOrderGroup* OrderGroup = nullptr;
 
 		TArray<TScriptInterface<IRTSObjectInterface>> AssignedUnits = TArray<TScriptInterface<IRTSObjectInterface>>();
 
 		FOnOrderAbandonedDelegate OrderAbandonedDelegate = FOnOrderAbandonedDelegate();
+		
+		FQueryFinishedSignature* PendingQueryDelegate = nullptr;
+
+		TObjectPtr<UEnvQuery> ActiveQuery = nullptr;
 };
