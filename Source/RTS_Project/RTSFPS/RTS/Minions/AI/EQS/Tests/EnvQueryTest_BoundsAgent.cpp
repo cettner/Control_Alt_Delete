@@ -2,22 +2,20 @@
 
 
 #include "EnvQueryTest_BoundsAgent.h"
-
 #include "../Context/EnvQueryItemType_Order.h"
 #include "RTS_Project/RTSFPS/RTS/Minions/AI/EQS/Interface/QueryBoundsInterface.h"
 
 UEnvQueryTest_BoundsAgent::UEnvQueryTest_BoundsAgent(const FObjectInitializer& InObjectInitializer) : Super(InObjectInitializer)
 {
 	Cost = EEnvTestCost::Low;
-	ValidItemType = UEnvQueryItemType_Order::StaticClass();
-	/*All this test can do is filter currently*/
-	SetWorkOnFloatValues(false);
+	ValidItemType = UEnvQueryItemType_VectorBase::StaticClass();
+
+	SetWorkOnFloatValues(true);
 }
 
 void UEnvQueryTest_BoundsAgent::RunTest(FEnvQueryInstance& QueryInstance) const
 {
 	UObject* QueryOwner = QueryInstance.Owner.Get();
-	QueryInstance.ContextCache.Find(Context);
 
 	if (QueryOwner == nullptr)
 	{
@@ -30,47 +28,57 @@ void UEnvQueryTest_BoundsAgent::RunTest(FEnvQueryInstance& QueryInstance) const
 	FloatValueMax.BindData(QueryOwner, QueryInstance.QueryID);
 	const float MaxThresholdValue = FloatValueMax.GetValue();
 
-	TArray<AActor*> ContextActors;
-	TArray<FVector> ContextLocations;
-	if (!QueryInstance.PrepareContext(Context, ContextActors))
-	{
-
-	}
-	else if (!QueryInstance.PrepareContext(Context, ContextLocations))
+	TArray<AActor*> ContextActors = TArray<AActor*>();
+	TArray<FVector> ContextLocations = TArray<FVector>();
+	QueryInstance.PrepareContext(Context, ContextActors);
+	if(!QueryInstance.PrepareContext(Context, ContextLocations))
 	{
 		return;
 	}
 
-	for (FEnvQueryInstance::ItemIterator It(this, QueryInstance); It; ++It)
+	if (ContextActors.Num() && (Cast<IQueryBoundsInterface>(ContextActors[0]) != nullptr))
 	{
-		const FVector ItemLocation = GetItemLocation(QueryInstance, It.GetIndex());
-		for (int32 ContextIndex = 0; ContextIndex < ContextActors.Num(); ContextIndex++)
+		for (FEnvQueryInstance::ItemIterator It(this, QueryInstance); It; ++It)
 		{
-			const IQueryBoundsInterface * boundinginterface = Cast<IQueryBoundsInterface>(ContextActors[ContextIndex]);
-			const bool isinbounds = boundinginterface->IsPointWithinContextBounds(ItemLocation, Context);
-			
-			if (GetWorkOnFloatValues())
+			const FVector ItemLocation = GetItemLocation(QueryInstance, It.GetIndex());
+			for (int32 ContextIndex = 0; ContextIndex < ContextActors.Num(); ContextIndex++)
 			{
-				const float boundsscore = isinbounds ? MaxThresholdValue : MinThresholdValue;
-				It.SetScore(TestPurpose, FilterType, boundsscore, MinThresholdValue, MaxThresholdValue);
-			}
-			else
-			{
-				It.SetScore(TestPurpose, FilterType, isinbounds, true);
-			}
-			
-			if (isinbounds)
-			{
+				const IQueryBoundsInterface* boundinginterface = Cast<IQueryBoundsInterface>(ContextActors[ContextIndex]);
+				const bool isinbounds = boundinginterface->IsPointWithinContextBounds(ItemLocation, Context);
 
-			}
-			else
-			{
-				/*The point fails*/
-				It.ForceItemState(EEnvItemStatus::Failed);
+
+				if (isinbounds)
+				{
+					It.SetScore(TestPurpose, FilterType, isinbounds, true);
+				}
+				else
+				{
+					float distance = NAN;
+					for (int32 It2 = 0; It2 < ContextLocations.Num(); ++It2) 
+					{
+						const FVector ContextItemLoc = ContextLocations[It2];
+						distance = FVector::Dist(ItemLocation, ContextItemLoc);
+					}
+					It.SetScore(TestPurpose, FilterType, distance, MinThresholdValue, MaxThresholdValue);
+				}
+
 			}
 		}
 	}
-
+	else
+	{
+		for (FEnvQueryInstance::ItemIterator It(this, QueryInstance); It; ++It)
+		{
+			const FVector ItemLocation = GetItemLocation(QueryInstance, It.GetIndex());
+			float distance = NAN;
+			for (int32 It2 = 0; It2 < ContextLocations.Num(); ++It2) 
+			{
+				const FVector ContextItemLoc = ContextLocations[It2];
+				distance = FVector::Dist(ItemLocation, ContextItemLoc);
+			}
+			It.SetScore(TestPurpose, FilterType, distance, MinThresholdValue, MaxThresholdValue);
+		}
+	}
 }
 
 FText UEnvQueryTest_BoundsAgent::GetDescriptionTitle() const

@@ -4,14 +4,14 @@
 #include "RTS_Project/RTSFPS/RTS/Orders/RTSOrder.h"
 
 #include "CoreMinimal.h"
-#include "EnvironmentQuery/Items/EnvQueryItemType_VectorBase.h"
+#include "EnvironmentQuery/Items/EnvQueryItemType_ActorBase.h"
 #include "EnvQueryItemType_Order.generated.h"
 
 struct FEnvQueryContextData;
 struct FWeakObjectPtr;
 
 UCLASS()
-class RTS_PROJECT_API UEnvQueryItemType_Order : public UEnvQueryItemType_VectorBase
+class RTS_PROJECT_API UEnvQueryItemType_Order : public UEnvQueryItemType_ActorBase
 {
 	GENERATED_BODY()
 
@@ -21,6 +21,7 @@ public:
 	static URTSOrder* GetValue(const uint8* RawData);
 	static void SetValue(uint8* RawData, const FWeakObjectPtr& Value);
 
+	virtual AActor* GetActor(const uint8* RawData) const override;
 	virtual FVector GetItemLocation(const uint8* RawData) const override;
 	virtual URTSOrder* GetOrder(const uint8* RawData) const;
 };

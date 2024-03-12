@@ -3,6 +3,7 @@
 
 #include "EnvQueryItemType_Order.h"
 #include "RTS_Project/RTSFPS/RTS/Orders/RTSOrderGroup.h"
+#include "RTS_Project/RTSFPS/Shared/Interfaces/RTSObjectInterface.h"
 
 #include "AITypes.h"
 
@@ -25,6 +26,21 @@ void UEnvQueryItemType_Order::SetValue(uint8* RawData, const FWeakObjectPtr& Val
 {
 	FWeakObjectPtr WeakObjPtr(Value);
 	SetValueInMemory<FWeakObjectPtr>(RawData, WeakObjPtr);
+}
+
+AActor* UEnvQueryItemType_Order::GetActor(const uint8* RawData) const
+{
+	AActor* retval = nullptr;
+	const URTSOrder* myorder = UEnvQueryItemType_Order::GetValue(RawData);
+	if (myorder)
+	{
+		if (const URTSOrderGroup* ordergroup = myorder->GetOrderGroup())
+		{
+			const FOrderContext& ordercontext = ordergroup->GetOrderContext();
+			retval = Cast<AActor>(ordercontext.GetRTSContext());
+		}
+	}
+	return retval;
 }
 
 FVector UEnvQueryItemType_Order::GetItemLocation(const uint8* RawData) const

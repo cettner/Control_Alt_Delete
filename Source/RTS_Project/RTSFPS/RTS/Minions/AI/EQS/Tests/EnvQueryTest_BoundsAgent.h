@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EnvironmentQuery/EnvQueryTest.h"
+#include "EnvironmentQuery/Contexts/EnvQueryContext_Item.h"
 #include "EnvQueryTest_BoundsAgent.generated.h"
 
 /**
@@ -21,5 +22,5 @@ class RTS_PROJECT_API UEnvQueryTest_BoundsAgent : public UEnvQueryTest
 
 	protected:
 		UPROPERTY(EditDefaultsOnly, Category = Bounds)
-		TSubclassOf<UEnvQueryContext> Context;
+		TSubclassOf<UEnvQueryContext> Context = nullptr;
 };
