@@ -17,6 +17,7 @@ class RTS_PROJECT_API URTSProperty : public UObject
 		UTexture2D* GetThumbnail() const;
 
 		virtual FText GetPropertyDescription() const;
+		FORCEINLINE FName GetPropertyName() const { return PropertyName; }
 
 protected:
 		virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
@@ -28,5 +29,8 @@ protected:
 		UTexture2D* PropertyThumbnail = nullptr;
 
 		UPROPERTY(EditDefaultsOnly)
-		FText PropertyDescription = FText::FromString(FString("DefaultProperty"));
+		FText PropertyDescription = FText::FromString(FString(TEXT("Default Property Description")));
+		
+		UPROPERTY(EditDefaultsOnly)
+		FName PropertyName = TEXT("Default Property Name");
 };

@@ -7,6 +7,10 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "EnvironmentQuery/EnvQuery.h"
 
+#if WITH_GAMEPLAY_DEBUGGER_MENU
+#include "Debug/GameplayDebuggerCategory_Order.h"
+#endif
+
 #include "RTSOrder.generated.h"
 
 constexpr int ORDER_APPLY_ALL = -1; 
@@ -23,6 +27,7 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 	GENERATED_BODY()
 
 	friend class URTSOrderGroup;
+	friend FGameplayDebuggerCategory_Order;
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnOrderAbandonedDelegate, URTSOrder *);
 
 	public:
@@ -64,6 +69,10 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 		virtual TObjectPtr<UEnvQuery> GetQueryForContext() const;
 
 		virtual void OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult);
+
+	#if WITH_GAMEPLAY_DEBUGGER_MENU
+		virtual void DescribeSelfToGameplayDebugger(FGameplayDebuggerCategory_Order * Debugger) const;
+	#endif
 
 	protected:
 		/*The number of units that will be exclusively ordered */

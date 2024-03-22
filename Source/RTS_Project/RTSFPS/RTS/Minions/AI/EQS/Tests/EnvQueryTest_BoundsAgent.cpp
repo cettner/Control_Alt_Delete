@@ -49,7 +49,8 @@ void UEnvQueryTest_BoundsAgent::RunTest(FEnvQueryInstance& QueryInstance) const
 
 				if (isinbounds)
 				{
-					It.SetScore(TestPurpose, FilterType, isinbounds, true);
+					//It.SetScore(TestPurpose, FilterType, isinbounds, true);
+					It.SetScore(TestPurpose, FilterType, 0.0f, MinThresholdValue, MaxThresholdValue);
 				}
 				else
 				{

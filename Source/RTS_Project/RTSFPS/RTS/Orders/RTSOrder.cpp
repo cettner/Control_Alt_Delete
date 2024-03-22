@@ -117,8 +117,12 @@ bool URTSOrder::StartQuery(const TSubclassOf<UEnvQuery>& InTemplate, bool bInval
 void URTSOrder::OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult)
 {
 	checkf(ActiveQuery, TEXT("URTSOrder::OnOrderQueryComplete, NoActiveQueryFound"))
-	URTSOrderGroup* ordergroup = GetOrderGroup();
-	ordergroup->AddOrderQueryResult(GetActiveQuery(), InResult);
+
+	if (URTSOrderGroup* ordergroup = GetOrderGroup())
+	{
+		ordergroup->AddOrderQueryResult(GetActiveQuery(), InResult);
+	}
+
 	ActiveQuery = nullptr;
 }
 
@@ -135,4 +139,12 @@ TObjectPtr<UEnvQuery> URTSOrder::GetQueryForContext() const
 void URTSOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
 {
 
+}
+
+void URTSOrder::DescribeSelfToGameplayDebugger(FGameplayDebuggerCategory_Order * Debugger) const
+{
+	const URTSOrderGroup * ordergroup = GetOrderGroup();
+	Debugger->StringPropertyMap.Emplace(TEXT("Specific OrderName "),  GetPropertyName().ToString());
+	Debugger->IntegerPropertyMap.Emplace(TEXT("OrderID: "), GetOrderID());
+	Debugger->IntegerPropertyMap.Emplace(TEXT("Order Count"), AssignedUnits.Num());
 }

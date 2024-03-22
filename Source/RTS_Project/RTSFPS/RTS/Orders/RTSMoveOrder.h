@@ -13,6 +13,8 @@ class RTS_PROJECT_API URTSMoveOrder : public URTSTargetedOrder
 {
 	GENERATED_BODY()
 
+	URTSMoveOrder();
+
 public:
 	virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const override;
 };
