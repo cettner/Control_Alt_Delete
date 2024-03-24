@@ -7,8 +7,9 @@
 #include "GenericTeamAgentInterface.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "BrainComponent.h"
-#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "RTS_Project/RTSFPS/GameSystems/GridSystem/Navigation/VectorFieldNavigationSystem.h"
 #include "../../Orders/RTSOrderGroup.h"
 #include "RTSAIPerceptionComponent.h"
@@ -43,7 +44,7 @@ UCLASS()
 class RTS_PROJECT_API ARTSAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
 protected:
 	ARTSAIController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
@@ -64,6 +65,7 @@ public:
 	UObject* GetBlackBoardKeyAsObject(const FName InKeyName) const;
 
 public:
+	FORCEINLINE UBlackboardComponent* GetMinonBlackBoard() const { return BlackboardComp; }
 	FORCEINLINE FAIRequestID GetAIRequestId() const { return AIRequestId; }
 	FORCEINLINE FAIRequestID GetAIAbortId() const { return AIAbortID; }
 	void SendAIMessage(const FName AIMessage, FAIMessage::EStatus Status, EAIMessageType MessageType);
@@ -105,7 +107,7 @@ public:
 
 protected:
 	UPROPERTY(transient)
-	class UBlackboardComponent* BlackboardComp;
+	UBlackboardComponent* BlackboardComp;
 
 	UPROPERTY(transient)
 	class UBehaviorTreeComponent* BehaviorComp;

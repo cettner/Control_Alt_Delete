@@ -378,6 +378,11 @@ bool ARTSMinion::IsLocalEnemy() const
 	return bIsLocalEnemy;
 }
 
+FVector ARTSMinion::GetUnitLocation() const
+{
+	return GetNavAgentLocation();
+}
+
 void ARTSMinion::OnRep_TeamID()
 {
 	UWorld* World = GetWorld();

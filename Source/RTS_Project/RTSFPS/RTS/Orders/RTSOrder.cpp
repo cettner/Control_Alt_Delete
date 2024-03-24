@@ -67,6 +67,19 @@ void URTSOrder::InitOrderContext(const FOrderContext& InContext)
 void URTSOrder::InitRegistration(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits)
 {
 	AssignedUnits = TArray<TScriptInterface<IRTSObjectInterface>>(InUnits);
+	URTSOrderGroup* ordergroup = GetOrderGroup();
+	const FOrderContext& ordercontext = ordergroup->GetOrderContext();
+	const FVector& contextpoint = ordercontext.GetContextPoint();
+
+	// sort Assignedunits based on squared distance to the context point using IRTSObjectInterface::GetUnitLocation()
+	AssignedUnits.Sort([contextpoint](const TScriptInterface<IRTSObjectInterface>& A, const TScriptInterface<IRTSObjectInterface>& B) {
+		const FVector& LocationA = A->GetUnitLocation();
+		const FVector& LocationB = B->GetUnitLocation();
+		const float& DistanceSquaredA = FVector::DistSquared(contextpoint, LocationA);
+		const float& DistanceSquaredB = FVector::DistSquared(contextpoint, LocationB);
+		return DistanceSquaredA < DistanceSquaredB;
+		});
+
 }
 
 bool URTSOrder::DeRegisterUnit(TScriptInterface<IRTSObjectInterface> InUnit)
@@ -109,11 +122,6 @@ bool URTSOrder::IsQueryResultAvailable() const
 	return false;
 }
 
-bool URTSOrder::StartQuery(const TSubclassOf<UEnvQuery>& InTemplate, bool bInvalidateExistingResults)
-{
-	return false;
-}
-
 void URTSOrder::OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult)
 {
 	checkf(ActiveQuery, TEXT("URTSOrder::OnOrderQueryComplete, NoActiveQueryFound"))
@@ -124,6 +132,12 @@ void URTSOrder::OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult)
 	}
 
 	ActiveQuery = nullptr;
+	UpdateUnitsWithResults(InResult);
+}
+
+void URTSOrder::UpdateUnitsWithResults(TSharedPtr<FEnvQueryResult>& InResult)
+{
+
 }
 
 TObjectPtr<UEnvQuery> URTSOrder::GetActiveQuery() const

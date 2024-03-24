@@ -40,6 +40,11 @@ bool IRTSObjectInterface::IsLocalEnemy() const
 	return false;
 }
 
+FVector IRTSObjectInterface::GetUnitLocation() const
+{
+	return FVector();
+}
+
 bool IRTSObjectInterface::IsAlive() const
 {
 	return false;

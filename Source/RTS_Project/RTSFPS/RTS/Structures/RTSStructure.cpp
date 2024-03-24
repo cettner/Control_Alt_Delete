@@ -256,6 +256,11 @@ void ARTSStructure::SetTeam(int newteamindex)
 	}
 }
 
+FVector ARTSStructure::GetUnitLocation() const
+{
+	return GetActorLocation();
+}
+
 TArray<URTSProperty*> ARTSStructure::GetRTSProperties(bool bIncludeNestedProperties) const
 {
 	TArray<URTSProperty*> retval = TArray<URTSProperty*>();

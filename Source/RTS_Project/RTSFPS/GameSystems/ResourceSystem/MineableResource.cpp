@@ -60,6 +60,11 @@ void AMineableResource::SetDeselected()
 	SelectionComp->SetHiddenInGame(true);
 }
 
+FVector AMineableResource::GetUnitLocation() const
+{
+	return GetActorLocation();
+}
+
 void AMineableResource::RegisterRTSObject()
 {
 	const UWorld* world = GetWorld();

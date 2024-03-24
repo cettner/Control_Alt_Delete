@@ -36,6 +36,8 @@ public:
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID);
 	virtual bool IsLocalEnemy() const;
 
+	virtual FVector GetUnitLocation() const;
+
 	virtual bool IsAlive() const;
 	virtual FOnUnitDeathDelegate& GetUnitDeathDelegate() PURE_VIRTUAL(IRTSObjectInterface::BindResourceValueChangedEvent, return *new FOnUnitDeathDelegate(););
 	static bool IsRTSObjectValid(const IRTSObjectInterface * InRTSObject);

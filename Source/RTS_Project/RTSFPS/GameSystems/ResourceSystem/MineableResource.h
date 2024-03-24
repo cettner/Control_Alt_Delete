@@ -30,6 +30,7 @@ public:
 	/*RTSObject Interface Overrides*/
 	virtual void SetSelected() override;
 	virtual void SetDeselected() override;
+	virtual FVector GetUnitLocation() const override;
 	virtual void RegisterRTSObject() override;
 	virtual void UnRegisterRTSObject() override;
 	virtual UTexture* GetThumbnail(const UUserWidget* InDisplayContext = nullptr) const override;

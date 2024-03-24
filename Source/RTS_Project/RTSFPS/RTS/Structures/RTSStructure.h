@@ -75,6 +75,7 @@ public:
 	virtual void SetDeselected() override;
 	virtual int GetTeam() const override;
 	virtual void SetTeam(int newteamindex) override;
+	virtual FVector GetUnitLocation() const override;
 	virtual TArray<URTSProperty*> GetRTSProperties(bool bIncludeNestedProperties = false) const override;
 	virtual void IssueOrder(AController* InIssuer, const FOrderContext& InHitContext, URTSOrder* InOrderClass = nullptr, const bool InbIsQueuedOrder = false) override;
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;

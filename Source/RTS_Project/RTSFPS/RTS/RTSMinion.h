@@ -90,6 +90,7 @@ public:
 	virtual int GetTeam() const override;
 	virtual void OnLocalPlayerTeamChange(int InLocalTeamID) override;
 	virtual bool IsLocalEnemy() const override;
+	virtual FVector GetUnitLocation() const override;
 	virtual IRTSObjectInterface * GetLeadRTSObject() override;
 	virtual void SetTeamColors(FLinearColor TeamColor) override; 
 	virtual FOnUnitDeathDelegate& GetUnitDeathDelegate() override;

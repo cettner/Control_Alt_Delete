@@ -17,4 +17,5 @@ class RTS_PROJECT_API URTSMoveOrder : public URTSTargetedOrder
 
 public:
 	virtual void LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const override;
+	virtual void UpdateUnitsWithResults(TSharedPtr<FEnvQueryResult>& InResult) override;
 };

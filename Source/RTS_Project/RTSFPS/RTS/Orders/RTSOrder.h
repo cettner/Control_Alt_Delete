@@ -69,6 +69,7 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 		virtual TObjectPtr<UEnvQuery> GetQueryForContext() const;
 
 		virtual void OnOrderQueryComplete(TSharedPtr<FEnvQueryResult> InResult);
+		virtual void UpdateUnitsWithResults(TSharedPtr<FEnvQueryResult>& InResult);
 
 	#if WITH_GAMEPLAY_DEBUGGER_MENU
 		virtual void DescribeSelfToGameplayDebugger(FGameplayDebuggerCategory_Order * Debugger) const;
