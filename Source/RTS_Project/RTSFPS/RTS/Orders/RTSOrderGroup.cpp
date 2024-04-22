@@ -8,9 +8,9 @@
 
 #include "EnvironmentQuery/EnvQueryManager.h"
 
-TArray<TScriptInterface<IRTSObjectInterface>> URTSOrderGroup::GetAllActiveUnits() const
+TSet<TScriptInterface<IRTSObjectInterface>, FInterfaceObjectHash> URTSOrderGroup::GetAllActiveUnits() const
 {
-	TArray<TScriptInterface<IRTSObjectInterface>> retval = TArray<TScriptInterface<IRTSObjectInterface>>();
+	TSet<TScriptInterface<IRTSObjectInterface>,FInterfaceObjectHash> retval = TSet<TScriptInterface<IRTSObjectInterface>, FInterfaceObjectHash>();
 
 	for (const URTSOrder* order : OrderMapping)
 	{

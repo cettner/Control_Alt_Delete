@@ -69,3 +69,4 @@ protected:
 	virtual void RegisterRTSObject() = 0;
 	virtual void UnRegisterRTSObject() = 0;
 };
+

@@ -11,14 +11,7 @@ ABoidPartitionBounds::ABoidPartitionBounds()
 	RootComponent = BoidBounds;
 }
 
-void ABoidPartitionBounds::BeginPlay()
+UBoxPartitionComponent* ABoidPartitionBounds::GetPartitionFromPosition(const FVector& InPosition) const
 {
-    Super::BeginPlay();
+    return BoidBounds->GetPartitionFromPosition(InPosition);
 }
-
-#if WITH_EDITOR
-void ABoidPartitionBounds::OnConstruction(const FTransform& Transform)
-{
-    Super::OnConstruction(Transform);
-}
-#endif

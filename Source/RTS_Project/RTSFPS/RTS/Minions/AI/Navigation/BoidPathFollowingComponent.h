@@ -7,6 +7,7 @@
 
 
 #include "../../../RTSMinion.h"
+#include "BoidPartitionBounds.h"
 #include "Debug/GameplayDebuggerCategory_Boid.h"
 
 #include "BoidPathFollowingComponent.generated.h"
@@ -24,9 +25,11 @@ public:
 	UBoidPathFollowingComponent();
 
 protected:
+	UBoxPartitionComponent* GetCurrentNavPartition() const;
+	ABoidPartitionBounds* GetPartitionBounds() const;
 	const TArray<ARTSMinion*> GetNeighboringBoids() const;
 	const TSet<ARTSMinion*> GetObstacleBoids() const;
-	const TSet<ARTSMinion*> GetFlockingBoids() const;
+	const TSet<ARTSMinion*> GetFlockingBoids(const bool InOnlyLocalNeighbors = true) const;
 
 	bool IsFlockMember(const ARTSMinion* InAgent) const;
 	bool IsObstacleBoid(const ARTSMinion* InAgent) const;

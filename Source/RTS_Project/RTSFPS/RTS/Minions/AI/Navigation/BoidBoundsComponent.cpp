@@ -332,6 +332,8 @@ void UBoidBoundsComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	const FString& partitionbasename = TEXT("BoxPartition_");
+	FAttachmentTransformRules boxtransformrules = FAttachmentTransformRules::KeepRelativeTransform;
+	boxtransformrules.ScaleRule = EAttachmentRule::KeepWorld;
 
 	FVector outextent;
 	TArray<FVector> outcenters;
@@ -342,7 +344,8 @@ void UBoidBoundsComponent::BeginPlay()
 		const FName partitionname = FName(partitionbasename + FString::FromInt(i));
 		UBoxPartitionComponent * boxbounds = NewObject<UBoxPartitionComponent>(this, partitionname);
 		boxbounds->RegisterComponent();
-		boxbounds->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+		
+		boxbounds->AttachToComponent(this, boxtransformrules);
 		boxbounds->SetCollisionResponseToAllChannels(ECR_Ignore);
 		boxbounds->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		boxbounds->SetPartitionID(i);
@@ -353,10 +356,7 @@ void UBoidBoundsComponent::BeginPlay()
 
 		const FVector& boxlocation = boxbounds->GetComponentLocation();
 		const FVector& boxextent = boxbounds->GetScaledBoxExtent();
-		DrawDebugBox(GetWorld(), boxlocation, boxextent, FColor::Green, true, -1, 0, 5);
 	}
-
-	DrawDebugBox(GetWorld(), GetComponentLocation(), GetScaledBoxExtent(), FColor::Purple, true, -1, 0, 5);
 
 	InitializeBoundsNeighbors();
 }

@@ -38,9 +38,9 @@ void URTSMoveOrder::UpdateUnitsWithResults(TSharedPtr<FEnvQueryResult>& InResult
 	const int32 smallestnum = (outvectors.Num() > AssignedUnits.Num()) ? outvectors.Num() : AssignedUnits.Num();
 	for (int32 i = 0; i < smallestnum; i++)
 	{
-		for (int32 k = i; k < AssignedUnits.Num(); k++)
+		for (auto unit : AssignedUnits)
 		{
-			if (ARTSMinion* minion = Cast<ARTSMinion>(AssignedUnits[k].GetObject()))
+			if (ARTSMinion* minion = Cast<ARTSMinion>(unit.GetObject()))
 			{
 				const ARTSAIController * aic = minion->GetController<ARTSAIController>();
 				const FVector& relativemovelocation = outvectors[i];

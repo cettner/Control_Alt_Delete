@@ -16,16 +16,10 @@ class RTS_PROJECT_API ABoidPartitionBounds : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABoidPartitionBounds();
+	UBoxPartitionComponent* GetPartitionFromPosition(const FVector& InPosition) const;
 
-protected:
-	virtual void BeginPlay() override;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	UBoidBoundsComponent* BoidBounds = nullptr;
-
-#if WITH_EDITOR
-protected:
-	virtual void OnConstruction(const FTransform& Transform) override;
-#endif
 };

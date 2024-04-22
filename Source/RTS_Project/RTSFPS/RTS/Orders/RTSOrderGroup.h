@@ -49,7 +49,7 @@ public:
 	FORCEINLINE uint32 GetOrderID() const { return OrderID; }
 	FORCEINLINE const FOrderContext& GetOrderContext() const { return OrderContext; }
 	FORCEINLINE AController* GetOrderIssuer() const { return OrderIssuer; }
-	TArray<TScriptInterface<IRTSObjectInterface>> GetAllActiveUnits() const;
+	TSet<TScriptInterface<IRTSObjectInterface>, FInterfaceObjectHash> GetAllActiveUnits() const;
 
 protected:
 	const TSet<URTSOrder*>& GetOrders() const;

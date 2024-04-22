@@ -21,7 +21,6 @@ void UBoxPartitionComponent::OnActorOverlapped(UPrimitiveComponent* OverlappedCo
 		AddActor(OtherActor);
 		UBoidBoundsComponent * owningbounds = Cast<UBoidBoundsComponent>(GetOuter());
 		UBoxPartitionComponent * outpartition = owningbounds->GetPartitionFromPosition(OtherActor->GetActorLocation());
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Entering Partition %d Count %d"), GetPartitionID(), GetNeighbors().Num()));
 	}
 }
 
@@ -30,7 +29,6 @@ void UBoxPartitionComponent::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, A
 	if (PartitionActors.Contains(OtherActor))
 	{
 		RemoveActor(OtherActor);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Leaving Partition %d Count %d"), GetPartitionID(), GetNeighbors().Num()));
 	}
 }
 

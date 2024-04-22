@@ -66,20 +66,18 @@ void URTSOrder::InitOrderContext(const FOrderContext& InContext)
 
 void URTSOrder::InitRegistration(const TArray<TScriptInterface<IRTSObjectInterface>>& InUnits)
 {
-	AssignedUnits = TArray<TScriptInterface<IRTSObjectInterface>>(InUnits);
+	AssignedUnits.Reset();
+	AssignedUnits.Reserve(InUnits.Num());
+
+	for (int i = 0; i < InUnits.Num(); i++)
+	{
+		const TScriptInterface<IRTSObjectInterface>& unit = InUnits[i];
+		AssignedUnits.Emplace(unit);
+	}
+
 	URTSOrderGroup* ordergroup = GetOrderGroup();
 	const FOrderContext& ordercontext = ordergroup->GetOrderContext();
 	const FVector& contextpoint = ordercontext.GetContextPoint();
-
-	// sort Assignedunits based on squared distance to the context point using IRTSObjectInterface::GetUnitLocation()
-	AssignedUnits.Sort([contextpoint](const TScriptInterface<IRTSObjectInterface>& A, const TScriptInterface<IRTSObjectInterface>& B) {
-		const FVector& LocationA = A->GetUnitLocation();
-		const FVector& LocationB = B->GetUnitLocation();
-		const float& DistanceSquaredA = FVector::DistSquared(contextpoint, LocationA);
-		const float& DistanceSquaredB = FVector::DistSquared(contextpoint, LocationB);
-		return DistanceSquaredA < DistanceSquaredB;
-		});
-
 }
 
 bool URTSOrder::DeRegisterUnit(TScriptInterface<IRTSObjectInterface> InUnit)

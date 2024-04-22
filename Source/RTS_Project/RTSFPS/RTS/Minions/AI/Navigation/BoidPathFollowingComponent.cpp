@@ -11,20 +11,51 @@ UBoidPathFollowingComponent::UBoidPathFollowingComponent()
 	MaxSeperationForceDistSqrd = FMath::Square(MaxSeperationForceDistance);
 }
 
+UBoxPartitionComponent* UBoidPathFollowingComponent::GetCurrentNavPartition() const
+{
+	UBoxPartitionComponent* retval = nullptr;
+	if (ABoidPartitionBounds* partitionbounds = GetPartitionBounds())
+	{
+		retval = partitionbounds->GetPartitionFromPosition(MovementComp->GetActorFeetLocation());
+	}
+
+	return retval;
+}
+
+ABoidPartitionBounds* UBoidPathFollowingComponent::GetPartitionBounds() const
+{
+	ABoidPartitionBounds* retval = Cast<ABoidPartitionBounds>(UGameplayStatics::GetActorOfClass(GetWorld(), ABoidPartitionBounds::StaticClass()));
+	return retval;
+}
+
 const TArray<ARTSMinion*> UBoidPathFollowingComponent::GetNeighboringBoids() const
 {
 	TArray<ARTSMinion*> retval = TArray<ARTSMinion*>();
-	TArray<AActor*> actors = TArray<AActor*>();
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARTSMinion::StaticClass(), actors);
 
-
-	for (int i = 0; i < actors.Num(); i++)
+	if(UBoxPartitionComponent * mypartition = GetCurrentNavPartition())
 	{
-		/*Make sure we dont include ourselves*/
-		if (actors[i] != MovementComp->GetOwner())
+		for (AActor* partitionactor : mypartition->GetActors())
 		{
-			ARTSMinion * minion = CastChecked<ARTSMinion>(actors[i]);
-			retval.Emplace(minion);
+			if (IsValid(partitionactor) && partitionactor != MovementComp->GetOwner())
+			{
+				retval.Emplace(CastChecked<ARTSMinion>(partitionactor));
+			}
+		}
+	}
+	else
+	{
+		TArray<AActor*> actors = TArray<AActor*>();
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARTSMinion::StaticClass(), actors);
+
+
+		for (int i = 0; i < actors.Num(); i++)
+		{
+			/*Make sure we dont include ourselves*/
+			if (actors[i] != MovementComp->GetOwner())
+			{
+				ARTSMinion* minion = CastChecked<ARTSMinion>(actors[i]);
+				retval.Emplace(minion);
+			}
 		}
 	}
 
@@ -55,21 +86,41 @@ const TSet<ARTSMinion*> UBoidPathFollowingComponent::GetObstacleBoids() const
 	return retval;
 }
 
-const TSet<ARTSMinion*> UBoidPathFollowingComponent::GetFlockingBoids() const
+const TSet<ARTSMinion*> UBoidPathFollowingComponent::GetFlockingBoids(const bool InOnlyLocalNeighbors) const
 {
 	TSet<ARTSMinion*> retval = TSet<ARTSMinion*>();
 	ARTSAIController * aic = GetOwner<ARTSAIController>();
 
 	if (const URTSOrderGroup * ordergroup = aic->GetOrderGroup())
 	{
-		for (TScriptInterface<IRTSObjectInterface> object : ordergroup->GetAllActiveUnits())
+		if (InOnlyLocalNeighbors)
 		{
-			if (ARTSMinion * minion = Cast<ARTSMinion>(object.GetObject()))
+			UBoxPartitionComponent* partition = GetCurrentNavPartition();
+
+			for (TScriptInterface<IRTSObjectInterface> object : ordergroup->GetAllActiveUnits())
 			{
-				/*Skip ourselves*/
-				if (minion != MovementComp->GetOwner<ARTSMinion>())
+				if (ARTSMinion* minion = Cast<ARTSMinion>(object.GetObject()) )
 				{
-					retval.Emplace(minion);
+
+				}
+			}
+
+			for (AActor * object : partition->GetActors())
+			{
+
+			}
+		}
+		else
+		{
+			for (TScriptInterface<IRTSObjectInterface> object : ordergroup->GetAllActiveUnits())
+			{
+				if (ARTSMinion* minion = Cast<ARTSMinion>(object.GetObject()))
+				{
+					/*Skip ourselves*/
+					if (minion != MovementComp->GetOwner<ARTSMinion>())
+					{
+						retval.Emplace(minion);
+					}
 				}
 			}
 		}
@@ -240,10 +291,19 @@ void UBoidPathFollowingComponent::DescribeSelfToGameplayDebugger(FGameplayDebugg
 	const TArray<ARTSMinion*> neighbors = GetNeighboringBoids();
 	const FVector agentlocation = MovementComp->GetActorFeetLocation();
 
+
 	InDebug->ForceMap.Emplace("Seperation", GetSeperationForce());
 	InDebug->ForceMap.Emplace("Goal", GetGoalForce());
 	InDebug->ForceMap.Emplace("Boid", GetBoidForce());
 	InDebug->ForceMap.Emplace("Alignment", GetAlignmentForce());
+
+	if (UBoxPartitionComponent* mypartition = GetCurrentNavPartition())
+	{
+		const FVector& boxcenter = mypartition->GetComponentLocation();
+		const FVector& extent = mypartition->GetUnscaledBoxExtent();
+		InDebug->AddShape(FGameplayDebuggerShape::MakeBox(boxcenter, extent, FColor::Green));
+	}
+
 
 	for (int i = 0; i < neighbors.Num(); i++)
 	{

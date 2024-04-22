@@ -21,6 +21,31 @@ constexpr int ORDER_APPLY_ALL = -1;
 class IRTSObjectInterface;
 
 
+struct FInterfaceObjectHash
+{
+	typedef TScriptInterface<IRTSObjectInterface> KeyInitType;
+	typedef TScriptInterface<IRTSObjectInterface> ElementInitType;
+
+	static const bool bAllowDuplicateKeys = false;
+
+	static bool Matches(const TScriptInterface<IRTSObjectInterface>& InterfaceA, const TScriptInterface<IRTSObjectInterface>& InterfaceB)
+	{
+		return InterfaceA.GetObject() == InterfaceB.GetObject();
+	}
+
+	// Define a function to extract the key from the TScriptInterface object
+	static KeyInitType GetSetKey(const TScriptInterface<IRTSObjectInterface>& Interface)
+	{
+		return Interface;
+	}
+
+	// Define a function to get the key hash
+	static uint32 GetKeyHash(const TScriptInterface<IRTSObjectInterface>& Key)
+	{
+		return GetTypeHash(Key.GetObject());
+	}
+};
+
 UCLASS(Blueprintable)
 class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 {
@@ -92,7 +117,7 @@ class RTS_PROJECT_API URTSOrder : public URTSActiveProperty
 	protected:
 		URTSOrderGroup* OrderGroup = nullptr;
 
-		TArray<TScriptInterface<IRTSObjectInterface>> AssignedUnits = TArray<TScriptInterface<IRTSObjectInterface>>();
+		TSet<TScriptInterface<IRTSObjectInterface>, FInterfaceObjectHash> AssignedUnits = TSet<TScriptInterface<IRTSObjectInterface>, FInterfaceObjectHash>();
 
 		FOnOrderAbandonedDelegate OrderAbandonedDelegate = FOnOrderAbandonedDelegate();
 		

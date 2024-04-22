@@ -136,3 +136,5 @@ IRTSObjectInterface* IRTSObjectInterface::GetLeadRTSObject()
 {
 	return nullptr;
 }
+
+
