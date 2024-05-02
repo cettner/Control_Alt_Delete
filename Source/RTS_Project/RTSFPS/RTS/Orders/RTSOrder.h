@@ -33,13 +33,11 @@ struct FInterfaceObjectHash
 		return InterfaceA.GetObject() == InterfaceB.GetObject();
 	}
 
-	// Define a function to extract the key from the TScriptInterface object
 	static KeyInitType GetSetKey(const TScriptInterface<IRTSObjectInterface>& Interface)
 	{
 		return Interface;
 	}
 
-	// Define a function to get the key hash
 	static uint32 GetKeyHash(const TScriptInterface<IRTSObjectInterface>& Key)
 	{
 		return GetTypeHash(Key.GetObject());

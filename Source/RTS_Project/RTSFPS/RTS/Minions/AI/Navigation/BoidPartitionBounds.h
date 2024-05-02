@@ -17,7 +17,9 @@ public:
 	// Sets default values for this actor's properties
 	ABoidPartitionBounds();
 	UBoxPartitionComponent* GetPartitionFromPosition(const FVector& InPosition) const;
-
+	float GetPartitionWidth() const;
+	float GetPartitionHieght() const;
+	float GetPartitionLength() const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

@@ -24,6 +24,11 @@ public:
 	FORCEINLINE const FVector& GetMinBounds() const { return MinBounds; }
 	FORCEINLINE const FVector& GetMaxBounds() const { return MaxBounds; }
 
+	FORCEINLINE float GetPartitionLength() const { return (GetScaledBoxExtent().X / LengthPartitions * 2.0f); };
+	FORCEINLINE float GetPartitionWidth() const { return (GetScaledBoxExtent().Y / LengthPartitions * 2.0f); }
+	FORCEINLINE float GetPartitionHieght() const { return (GetScaledBoxExtent().Z / LengthPartitions * 2.0f); };
+	FORCEINLINE FVector GetPartitionExtent() const { return GetScaledBoxExtent() / FVector(LengthPartitions, WidthPartitions, HeightPartitions); }
+
 protected:
 	virtual FPrimitiveSceneProxy* CreateSceneProxy() override;
 	static void CalculateBoxCenters(const FVector& InBoxCenter, const FVector& InBoxExtent, const uint32 InNumLengthPartitions, const uint32 InNumWidthPartitions, const uint32 InNumHeightPartitons, TArray<FVector>& OutCenters, FVector& OutExtent);

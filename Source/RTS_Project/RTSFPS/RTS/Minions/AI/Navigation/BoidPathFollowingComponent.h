@@ -26,14 +26,15 @@ public:
 
 protected:
 	UBoxPartitionComponent* GetCurrentNavPartition() const;
+	TSet<UBoxPartitionComponent*> GetRelevantPartitions(float InFilterAngle = 45.0f) const;
 	ABoidPartitionBounds* GetPartitionBounds() const;
-	const TArray<ARTSMinion*> GetNeighboringBoids() const;
 	const TSet<ARTSMinion*> GetObstacleBoids() const;
 	const TSet<ARTSMinion*> GetFlockingBoids(const bool InOnlyLocalNeighbors = true) const;
 
 	bool IsFlockMember(const ARTSMinion* InAgent) const;
 	bool IsObstacleBoid(const ARTSMinion* InAgent) const;
 
+	FORCEINLINE const TSet<ARTSMinion*>& GetNeighboringBoids() const { return NeighboringBoids; }
 	FORCEINLINE bool IsGoalActor(const AActor* InActor) const
 	{
 		bool retval = false;
@@ -48,7 +49,9 @@ protected:
 	FORCEINLINE FVector GetGoalForce() const { return GoalForce; }
 	FORCEINLINE FVector GetBoidForce() const { return BoidForce; }
 	FORCEINLINE FVector GetAlignmentForce() const { return AlignmentForce; }
+	virtual bool ShouldUseBoidSteering() const;
 
+	virtual void UpdateBoidNeighbors();
 	FVector CalculateSeperationForce(const TSet<ARTSMinion*>& InAvoidAgents) const;
 	FVector CalculateAlignmentForce(const TSet<ARTSMinion*>& InFlockAgents) const;
 	FVector CalculateGoalForce() const;
@@ -60,14 +63,15 @@ protected:
 	virtual void UpdatePathSegment() override;
 	virtual void FollowPathSegment(float DeltaTime) override;
 	virtual void OnPathFinished(const FPathFollowingResult& Result) override;
-
+	virtual FVector GetMoveFocus(bool bAllowStrafe) const override;
 
 public:
 	virtual void DescribeSelfToGameplayDebugger(FGameplayDebuggerCategory_Boid* InDebug);
 
 
 
-public:
+protected:
+	TSet<ARTSMinion*> NeighboringBoids = TSet<ARTSMinion*>();
 	FVector BoidForce = FVector::ZeroVector;
 	FVector SeperationForce = FVector::ZeroVector;
 	FVector AlignmentForce = FVector::ZeroVector;
@@ -77,8 +81,8 @@ public:
 	float MaxSeperationForceDistance = 200.0f;
 
 	float GoalScaleFactor = 250.0f;
-	float SeperationFactor = .33f;
-	float AlignmentFactor = .5;
+	float SeperationFactor = .44f;
+	float AlignmentFactor = .3;
 
 protected:
 	float MaxSeperationForceDistSqrd;

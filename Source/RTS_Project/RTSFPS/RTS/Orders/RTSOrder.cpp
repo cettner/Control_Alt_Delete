@@ -74,10 +74,6 @@ void URTSOrder::InitRegistration(const TArray<TScriptInterface<IRTSObjectInterfa
 		const TScriptInterface<IRTSObjectInterface>& unit = InUnits[i];
 		AssignedUnits.Emplace(unit);
 	}
-
-	URTSOrderGroup* ordergroup = GetOrderGroup();
-	const FOrderContext& ordercontext = ordergroup->GetOrderContext();
-	const FVector& contextpoint = ordercontext.GetContextPoint();
 }
 
 bool URTSOrder::DeRegisterUnit(TScriptInterface<IRTSObjectInterface> InUnit)
