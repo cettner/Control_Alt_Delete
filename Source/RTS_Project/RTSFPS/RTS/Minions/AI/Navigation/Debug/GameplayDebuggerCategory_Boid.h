@@ -19,6 +19,7 @@ public:
 
 public:
 	TMap<FString, FVector> ForceMap = TMap<FString, FVector>();
+	TMap<FString, int32> CountMap = TMap<FString, int32>();
 };
 
 #endif // WITH_GAMEPLAY_DEBUGGER_MENU

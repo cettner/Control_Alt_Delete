@@ -26,7 +26,7 @@ public:
 protected:
 	FORCEINLINE uint32 GenerateNextGroupID() 
 	{ 
-		uint32 retval = NextGroupID;
+		const uint32 retval = NextGroupID;
 		NextGroupID++;
 		return retval;
 	};
@@ -35,5 +35,5 @@ protected:
 	UPROPERTY()
 	TMap<uint32, URTSOrderGroup*> OrderGroups = TMap<uint32, URTSOrderGroup*>();
 
-	uint32 NextGroupID = 0;
+	uint32 NextGroupID = 0U;
 };

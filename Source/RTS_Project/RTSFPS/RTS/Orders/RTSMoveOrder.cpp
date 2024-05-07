@@ -20,27 +20,15 @@ void URTSMoveOrder::LoadAIBlackBoard(UBlackboardComponent* InBlackBoard) const
 
 void URTSMoveOrder::UpdateUnitsWithResults(TSharedPtr<FEnvQueryResult>& InResult)
 {
-	bool ismultigoal = false;
-	if (InResult->Items.Num() >= 2)
-	{
-		const float firstscore = InResult->GetItemScore(0);
-		const float secondscore = InResult->GetItemScore(1);
-		ismultigoal = (firstscore >= 1.0f) && (secondscore >= 1.0f);
-	}
-	if (ismultigoal)
-	{
-		int debug = 9;
-	}
-
 	TArray<FVector> outvectors = TArray<FVector>();
 	InResult->GetAllAsLocations(outvectors);
 
-	const int32 smallestnum = (outvectors.Num() > AssignedUnits.Num()) ? outvectors.Num() : AssignedUnits.Num();
+	const int32 smallestnum = (outvectors.Num() < AssignedUnits.Num()) ? outvectors.Num() : AssignedUnits.Num();
 	for (int32 i = 0; i < smallestnum; i++)
 	{
-		for (auto unit : AssignedUnits)
+		for (const TScriptInterface<IRTSObjectInterface>& unit : AssignedUnits)
 		{
-			if (ARTSMinion* minion = Cast<ARTSMinion>(unit.GetObject()))
+			if (const ARTSMinion* minion = Cast<ARTSMinion>(unit.GetObject()))
 			{
 				const ARTSAIController * aic = minion->GetController<ARTSAIController>();
 				const FVector& relativemovelocation = outvectors[i];

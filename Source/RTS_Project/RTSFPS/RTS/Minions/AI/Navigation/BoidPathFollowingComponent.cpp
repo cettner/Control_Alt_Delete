@@ -161,7 +161,7 @@ bool UBoidPathFollowingComponent::ShouldUseBoidSteering() const
 void UBoidPathFollowingComponent::UpdateBoidNeighbors()
 {
 	NeighboringBoids.Reset();
-	const TSet<UBoxPartitionComponent* >& navpartitions = GetRelevantPartitions(180.0f);
+	const TSet<UBoxPartitionComponent* >& navpartitions = GetRelevantPartitions(180);
 
 	for (UBoxPartitionComponent* mypartition : navpartitions)
 	{
@@ -225,26 +225,6 @@ FVector UBoidPathFollowingComponent::CalculateGoalForce() const
 	const FVector& currentLocation = MovementComp->GetActorFeetLocation();
 	const FVector& currentTarget = GetCurrentTargetLocation();
 
-	/*
-	const float distSquared = FVector::DistSquared(currentLocation, currentTarget);
-	float squaredgoaldistance = FMath::Square(15000.0f);
-
-	if (Path.IsValid())
-	{
-		const FNavigationPath* PathInstance = Path.Get();
-		const FNavPathPoint& PathPt0 = PathInstance->GetPathPoints()[MoveSegmentStartIndex];
-		const FNavPathPoint& PathPt1 = PathInstance->GetPathPoints()[MoveSegmentEndIndex];
-
-		squaredgoaldistance = FVector::DistSquared(PathPt0.Location, PathPt1.Location);
-	}
-
-
-	if (distSquared > 0.0f)
-	{
-		retval = ((currentTarget - currentLocation).GetSafeNormal() * (squaredgoaldistance / distSquared));
-	}
-	*/
-
 	retval = (currentTarget - currentLocation).GetSafeNormal();
 	return retval;
 }
@@ -265,6 +245,7 @@ void UBoidPathFollowingComponent::Reset()
 	BoidForce = FVector::ZeroVector;
 	GoalForce = FVector::ZeroVector;
 	SeperationForce = FVector::ZeroVector;
+	NeighboringBoids.Reset();
 }
 
 void UBoidPathFollowingComponent::UpdatePathSegment()
@@ -355,8 +336,8 @@ FVector UBoidPathFollowingComponent::GetMoveFocus(bool bAllowStrafe) const
 
 void UBoidPathFollowingComponent::DescribeSelfToGameplayDebugger(FGameplayDebuggerCategory_Boid* InDebug)
 {
-	const TSet<ARTSMinion*> neighbors = GetNeighboringBoids();
-	const FVector agentlocation = MovementComp->GetActorFeetLocation();
+	const TSet<ARTSMinion*>& neighbors = GetNeighboringBoids();
+	const FVector& agentlocation = MovementComp->GetActorFeetLocation();
 
 
 	InDebug->ForceMap.Emplace("Seperation", GetSeperationForce());
@@ -371,7 +352,7 @@ void UBoidPathFollowingComponent::DescribeSelfToGameplayDebugger(FGameplayDebugg
 		InDebug->AddShape(FGameplayDebuggerShape::MakeBox(boxcenter, extent, FColor::Green));
 
 
-		TSet<UBoxPartitionComponent*> partitionset = GetRelevantPartitions();
+		TSet<UBoxPartitionComponent*> partitionset = GetRelevantPartitions(180);
 		for (UBoxPartitionComponent* neighborpartition : partitionset)
 		{
 			if (neighborpartition != mypartition)
