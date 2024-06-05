@@ -123,9 +123,6 @@ void FGameplayDebuggerCategory_Order::DrawData(APlayerController* OwnerPC, FGame
 			OptionsDesc += (Idx == ShownQueryData.UsedOption) ? TEXT("{white}] ") : TEXT("] ");
 		}
 		CanvasContext.Print(OptionsDesc);
-
-		//const int32 DebugItemIdx = DrawLookedAtItem(ShownQueryData, OwnerPC, CanvasContext);
-		//DrawDetailedItemTable(ShownQueryData, DebugItemIdx, CanvasContext);
 	}
 #endif
 }

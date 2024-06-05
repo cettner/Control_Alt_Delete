@@ -74,6 +74,15 @@ void URTSOrder::InitRegistration(const TArray<TScriptInterface<IRTSObjectInterfa
 		const TScriptInterface<IRTSObjectInterface>& unit = InUnits[i];
 		AssignedUnits.Emplace(unit);
 	}
+	const FOrderContext& context = GetOrderGroup()->GetOrderContext();
+	const FVector& contextpoint = context.GetContextPoint();
+
+	AssignedUnits.Sort([contextpoint](const TScriptInterface<IRTSObjectInterface>& AUnit, const TScriptInterface<IRTSObjectInterface>& BUnit)
+		{
+			return FVector::DistSquared(AUnit->GetUnitLocation(), contextpoint) < FVector::DistSquared(BUnit->GetUnitLocation(), contextpoint);
+		}
+	);
+
 }
 
 bool URTSOrder::DeRegisterUnit(TScriptInterface<IRTSObjectInterface> InUnit)
