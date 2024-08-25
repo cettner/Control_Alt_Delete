@@ -372,6 +372,7 @@ void UBoidBoundsComponent::OnRegister()
 	FractionalPartitionHeight = 1 / (GetScaledBoxExtent().Z / HeightPartitions * 2.0f);
 }
 
+#if WITH_EDITOR
 void UBoidBoundsComponent::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	const static FName LocationName("RelativeLocation");
@@ -380,3 +381,4 @@ void UBoidBoundsComponent::PostEditChangeProperty(FPropertyChangedEvent& Propert
 	 
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 }
+#endif

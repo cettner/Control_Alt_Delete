@@ -37,7 +37,11 @@ protected:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnRegister() override;
+
+#if WITH_EDITOR
+protected:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 
 protected:
 	UPROPERTY(EditAnyWhere, meta = (ClampMin = 1U))

@@ -68,6 +68,7 @@ void UBoxPartitionComponent::AddNeighbor(UBoxPartitionComponent* InPartition)
 void UBoxPartitionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+#if WITH_EDITORONLY_DATA
 	if (PartitionActors.Num())
 	{
 		EnableDebug(true, true);
@@ -76,7 +77,7 @@ void UBoxPartitionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	{
 		EnableDebug(false);
 	}
-
+#endif
 }
 
 #if WITH_EDITORONLY_DATA
